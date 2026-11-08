@@ -4,7 +4,7 @@
 {
   "id": "2026-11-08-lookout-opens",
   "date": "2026-11-08",
-  "updated": "2026-11-08",
+  "updated": "2026-11-09",
   "title": "Lookout opens: a public watch on AI, read from Softanza's point of view",
   "kind": "idea",
   "summary": "Softanza opened Lookout, a public repository that reads developments in AI at their source and judges each one against what Softanza builds. Every entry is written twice in one file, as a page for people and as data for programs, and a feed is generated from the data.",
@@ -81,7 +81,7 @@ first form of that feature. Because it is open, any program can do the same toda
 
 - The desk runs a survey once a week and writes a digest (`docs/WEEKLY.md`).
 - The feed contract is at version 1 (`docs/FEED.md`). Applications that show notices follow its rules.
-- A Softanza command that reads the feed is proposed to stzlib. It does not exist yet.
+- A Softanza command that reads the feed is proposed to stzlib in `docs/READER.md`.
 
 ## Sources
 
@@ -92,3 +92,4 @@ first form of that feature. Because it is open, any program can do the same toda
 
 - 2026-11-08: the repository was renamed on the day it opened, before the feed had any reader, so that its name is
   plain English like the rest of Softanza's internal names. This entry's id and addresses changed with it.
+- 2026-11-09: the paragraph on Softanza now says what holds and what is proposed, in affirmative sentences; the facts are unchanged.

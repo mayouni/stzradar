@@ -4,6 +4,7 @@
 {
   "id": "2026-11-08-spillway-target-admission",
   "date": "2026-11-08",
+  "updated": "2026-11-09",
   "title": "SPILLWAY: an agent may act only on targets that came from a trusted, typed field",
   "kind": "paper",
   "summary": "A paper submitted on November 4, 2026 proposes a defence for tool-using agents against prompt injection that does not rely on a model: a call with side effects is admitted only if every target it names that is not in the user's request was returned in a typed identity field, such as an email address or a channel, by a read-only tool. A rule-based sanitizer removes instruction-like text, and a local model reviews only the calls the rule refused. The authors report no successful in-scope attack across twelve benchmark settings.",
@@ -58,7 +59,7 @@ the abstract.
 
 Softanza governs its agents with deterministic rules: doors that open or stay shut, permissions checked before a run.
 That is the same bet this paper makes, and it is good to see it win a benchmark against defences built on models.
-The paper adds a question Softanza's rules do not yet ask, as far as this desk knows: not only **which tool** may run,
+The paper adds a question for Softanza's rules to ask: not only **which tool** may run,
 but **where its target came from**. The answer is a set lookup and costs nothing at run time.
 
 ## What we do
@@ -69,3 +70,7 @@ but **where its target came from**. The answer is a set lookup and costs nothing
 
 - Woosang Lim et al., [SPILLWAY](https://arxiv.org/abs/2611.07222), arXiv 2611.07222, submitted November 4, 2026, and
   its [HTML full text](https://arxiv.org/html/2611.07222v1), read 2026-11-08.
+
+## Corrections
+
+- 2026-11-09: the paragraph on Softanza now says what holds and what is proposed, in affirmative sentences; the facts are unchanged.

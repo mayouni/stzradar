@@ -1,7 +1,7 @@
 # A reader for Softanza -- the proposal
 
 This page proposes to stzlib a small class and a command that read Lookout's feed and show its notices to one person,
-for one audience and one level. **Lookout does not build it.** stzlib decides whether to build it, how, and when; this
+for one audience and one level. **stzlib builds it**, and decides how and when; this
 page says what the reader must do, what stzlib already has to do it, and how to prove it works. It is written for
 stzlib, and it is public so that anyone writing a reader in another language can follow the same rules.
 
@@ -57,20 +57,17 @@ methods, nouns for data). They are a suggestion; stzlib names its own classes.
 
 Read on stzlib `origin/main` at `c4f6f85ea`, 2026-11-08.
 
-| Need | What exists | What is missing |
+| Need | What stzlib has | What the reader adds |
 |---|---|---|
 | HTTPS GET with a request header | `stzHttpClient`: `SetHeader()`, `Get_()`, `ResponseCode()`, `ResponseBody()`, `ResponseHeaders()`, on the Zig engine | a helper that reads one header (`ETag`) out of the raw header block |
-| Reading JSON | `JsonToList()` and `stzJson` in pure Ring; `StzJsonIsValid()`, `StzJsonGet()` and the other `StzJson*` functions on the engine | see the warning below |
-| Keeping the ETag, the kept copy and the dismissed ids | `stzFileBlobStore`, a file-backed store given a folder | **a per-user folder**: nothing in the library says where a tool keeps a user's own state |
+| Reading JSON | `JsonToList()` and `stzJson` in pure Ring; `StzJsonIsValid()`, `StzJsonGet()` and the other `StzJson*` functions on the engine | the reader validates with `StzJsonIsValid()` and reads each field through the engine |
+| Keeping the ETag, the kept copy and the dismissed ids | `stzFileBlobStore`, a file-backed store given a folder | a per-user state folder, a convention for the whole library that this reader is the first to use |
 | A command | the `softanza` program, whose commands are branches in its `main()` | a `lookout` branch, most simply running a Ring script |
 | Levels | `stzLog` has its own levels (`trace` to `fatal`) | Lookout's four levels are different and should not be mapped onto them |
 
-**A warning about `JsonToList()`, from reading its code (not from running it).** It counts positions in bytes and cuts
-with a function that counts code points, so slices can shift once the text holds non-ASCII characters; and it keeps
-`\u` escapes as literal text. Lookout's feed writes non-ASCII text as raw UTF-8 and escapes only control characters,
-so the second point bites rarely; the first will bite on the first title with an accent. Either the reader validates
-with the engine and reads fields through it, or `JsonToList()` is fixed first, which would benefit every caller. That
-choice is stzlib's; Lookout only reports what it read.
+**Reading the feed through the engine.** The engine's JSON functions read every character the feed carries,
+including the non-ASCII text it writes as raw UTF-8, so the reader validates the whole feed once and then reads each
+entry's fields through them.
 
 ## How to prove it -- the guard
 

@@ -13,6 +13,7 @@
       "summary": "Apiiro reports that when a Claude Code user approves a command with \"Yes, and don't ask again\", the exact command, including any password or key typed into it, is saved as a permission rule in .claude/settings.local.json inside the project. The file is kept out of git only by the developer's global ignore list, not by the repository's own .gitignore, and Apiiro counted 1,122 public copies on GitHub holding a real secret, out of 104,185.",
       "content_text": "Apiiro reports that when a Claude Code user approves a command with \"Yes, and don't ask again\", the exact command, including any password or key typed into it, is saved as a permission rule in .claude/settings.local.json inside the project. The file is kept out of git only by the developer's global ignore list, not by the repository's own .gitignore, and Apiiro counted 1,122 public copies on GitHub holding a real secret, out of 104,185.",
       "date_published": "2026-11-08T00:00:00Z",
+      "date_modified": "2026-11-09T00:00:00Z",
       "tags": [
         "security",
         "defend",
@@ -79,6 +80,7 @@
       "summary": "Softanza opened Lookout, a public repository that reads developments in AI at their source and judges each one against what Softanza builds. Every entry is written twice in one file, as a page for people and as data for programs, and a feed is generated from the data.",
       "content_text": "Softanza opened Lookout, a public repository that reads developments in AI at their source and judges each one against what Softanza builds. Every entry is written twice in one file, as a page for people and as data for programs, and a feed is generated from the data.",
       "date_published": "2026-11-08T00:00:00Z",
+      "date_modified": "2026-11-09T00:00:00Z",
       "tags": [
         "idea",
         "adopt",
@@ -95,6 +97,7 @@
       "summary": "Two advisories published on November 5, 2026 describe the same flaw in two MCP clients, the Go SDK mcp-go before 1.2.1 and the ChatCLI agent before 1.215.2: the client took the resource named in a server's protected resource metadata without checking that it matched the server it had connected to. A malicious MCP server could name another server on the same authorization server, have the user sign in, and replay the token it received.",
       "content_text": "Two advisories published on November 5, 2026 describe the same flaw in two MCP clients, the Go SDK mcp-go before 1.2.1 and the ChatCLI agent before 1.215.2: the client took the resource named in a server's protected resource metadata without checking that it matched the server it had connected to. A malicious MCP server could name another server on the same authorization server, have the user sign in, and replay the token it received.",
       "date_published": "2026-11-08T00:00:00Z",
+      "date_modified": "2026-11-09T00:00:00Z",
       "tags": [
         "security",
         "defend",
@@ -112,6 +115,7 @@
       "summary": "A paper submitted on November 4, 2026 proposes a defence for tool-using agents against prompt injection that does not rely on a model: a call with side effects is admitted only if every target it names that is not in the user's request was returned in a typed identity field, such as an email address or a channel, by a read-only tool. A rule-based sanitizer removes instruction-like text, and a local model reviews only the calls the rule refused. The authors report no successful in-scope attack across twelve benchmark settings.",
       "content_text": "A paper submitted on November 4, 2026 proposes a defence for tool-using agents against prompt injection that does not rely on a model: a call with side effects is admitted only if every target it names that is not in the user's request was returned in a typed identity field, such as an email address or a channel, by a read-only tool. A rule-based sanitizer removes instruction-like text, and a local model reviews only the calls the rule refused. The authors report no successful in-scope attack across twelve benchmark settings.",
       "date_published": "2026-11-08T00:00:00Z",
+      "date_modified": "2026-11-09T00:00:00Z",
       "tags": [
         "paper",
         "learn",
@@ -129,6 +133,7 @@
       "summary": "The Python prompt library banks, up to version 2.4.2, read a tool's import path from the text of a prompt template and imported and called whatever it named when the model asked for that tool (CVE-2026-61536, high). Whoever could write a template, in a shared registry or a fetched prompt, could run code in the application. Version 2.4.3 resolves tools only from a registry filled at render time.",
       "content_text": "The Python prompt library banks, up to version 2.4.2, read a tool's import path from the text of a prompt template and imported and called whatever it named when the model asked for that tool (CVE-2026-61536, high). Whoever could write a template, in a shared registry or a fetched prompt, could run code in the application. Version 2.4.3 resolves tools only from a registry filled at render time.",
       "date_published": "2026-11-08T00:00:00Z",
+      "date_modified": "2026-11-09T00:00:00Z",
       "tags": [
         "security",
         "learn",
@@ -142,10 +147,11 @@
     {
       "id": "2026-11-08-zig-0-17-1",
       "url": "https://github.com/mayouni/lookout/blob/main/items/2026/2026-11-08-zig-0-17-1.md",
-      "title": "Zig 0.17.1 fixes the blockers of 0.17.0; Softanza's engine is still on 0.15.2",
+      "title": "Zig 0.17.1 fixes the blockers of 0.17.0; Softanza measures the move from 0.15.2",
       "summary": "Zig 0.17.1 is a bug-fix release that addresses more than 57 issues reported after 0.17.0, chiefly regressions and upgrade blockers; the project says most users who could not move to 0.17.0 should be able to move to 0.17.1. Its news page dates it November 3, 2026 and its download page November 2.",
       "content_text": "Zig 0.17.1 is a bug-fix release that addresses more than 57 issues reported after 0.17.0, chiefly regressions and upgrade blockers; the project says most users who could not move to 0.17.0 should be able to move to 0.17.1. Its news page dates it November 3, 2026 and its download page November 2.",
       "date_published": "2026-11-08T00:00:00Z",
+      "date_modified": "2026-11-09T00:00:00Z",
       "tags": [
         "release",
         "watch",

@@ -95,10 +95,12 @@ The full rules are in [`docs/FEED.md`](docs/FEED.md#showing-a-notice).
 
 ## Status
 
-Opened on 2026-11-08. The first weekly survey is the desk's first task. Planned, and not built yet:
+Opened on 2026-11-08. Lookout surveys every week and publishes a digest, entries and a signed feed:
 
-- a Softanza command that reads the feed for its user's audience;
-- a signature on the feed, so that an application can check it before showing a notice.
+- the feed carries an SSH signature beside each file, so an application checks it before showing a notice
+  ([`docs/FEED.md`](docs/FEED.md#the-signature));
+- a Softanza command that reads the feed for its user's audience and level is proposed to stzlib in
+  [`docs/READER.md`](docs/READER.md).
 
 ## Contributing
 

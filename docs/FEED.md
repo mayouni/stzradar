@@ -91,7 +91,7 @@ own `tags`. Notices, actions and sources are in the index only.
 | `title` | yes | one line, plain words |
 | `kind` | yes | `paper`, `release`, `feature`, `practice`, `security`, `regulation`, `market`, `idea` |
 | `summary` | yes | what happened, in two or three sentences, with no judgement |
-| `stance` | yes | `adopt` (take it into Softanza), `learn` (it changes how we think, not yet what we ship), `correct` (the idea is right and Softanza can do it better), `defend` (a risk Softanza and its users must be protected from), `watch` (too early, look again by `review_by`), `decline` (considered and refused, with the reason) |
+| `stance` | yes | `adopt` (take it into Softanza), `learn` (it changes how we think, before it changes what we ship), `correct` (the idea is right and Softanza can do it better), `defend` (a risk Softanza and its users must be protected from), `watch` (too early, look again by `review_by`), `decline` (considered and refused, with the reason) |
 | `relevance` | yes | `high`, `medium`, `low`: how much it touches what Softanza builds |
 | `level` | yes | `info` < `advice` < `action` < `urgent`. `urgent` is kept for a security issue that affects Softanza's users now |
 | `audiences` | yes | one or more of `developer`, `user`, `learner`, `maintainer` |
@@ -179,4 +179,4 @@ contract stays at version 1.
 
 - **A Softanza command** that reads the feed for its user's audience and level, proposed to stzlib in [`READER.md`](READER.md).
 
-It does not exist yet. It will be announced as an entry when it lands.
+It is announced as an entry when it lands.

@@ -4,6 +4,7 @@
 {
   "id": "2026-11-08-agent-approvals-leak-secrets",
   "date": "2026-11-08",
+  "updated": "2026-11-09",
   "title": "A coding agent's \"don't ask again\" writes secrets into a file that gets published",
   "kind": "security",
   "summary": "Apiiro reports that when a Claude Code user approves a command with \"Yes, and don't ask again\", the exact command, including any password or key typed into it, is saved as a permission rule in .claude/settings.local.json inside the project. The file is kept out of git only by the developer's global ignore list, not by the repository's own .gitignore, and Apiiro counted 1,122 public copies on GitHub holding a real secret, out of 104,185.",
@@ -57,9 +58,9 @@ Softanza is built every day with coding agents, across many repositories, severa
 our own practice before it is about anyone else's.
 
 We checked six Softanza repositories on 2026-11-08: none tracks the file, and no local copy holds a line that looks
-like a secret. Four of them, this one included, ignore their whole `.claude/` folder in their own `.gitignore`. Two,
-stzlib and Haro, are protected only by the global ignore list of the machine that works on them, so a clone anywhere
-else would not be. That is exactly the gap the study describes, and it is closed with one line per repository.
+like a secret. Four of them, this one included, ignore their whole `.claude/` folder in their own `.gitignore`. For
+stzlib and Haro the protection comes from the global ignore list of the machine that works on them; one line in each
+repository's own `.gitignore` makes it travel with every clone, as the study recommends.
 
 The second lesson reaches further. Softanza keeps memory files, handoff notes and session transcripts on purpose,
 because they are how its sessions coordinate. The study found the same leak in all three kinds of file: a secret
@@ -77,3 +78,7 @@ typed into a command is recorded wherever an agent records what it ran.
 
 - Apiiro, [Coding Agents Copy Your Secrets to a Hidden File. Thousands Are on GitHub](https://apiiro.com/blog/coding-agents-leaking-secrets-github-dont-ask-again),
   November 5, 2026, read 2026-11-08. First seen as a lead on Hacker News; the entry is written from the post itself.
+
+## Corrections
+
+- 2026-11-09: the paragraph on Softanza now says what holds and what is proposed, in affirmative sentences; the facts are unchanged.

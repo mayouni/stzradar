@@ -4,6 +4,7 @@
 {
   "id": "2026-11-08-tool-paths-from-prompts-run-code",
   "date": "2026-11-08",
+  "updated": "2026-11-09",
   "title": "A prompt library ran any function a template named: tools must come from a registry",
   "kind": "security",
   "summary": "The Python prompt library banks, up to version 2.4.2, read a tool's import path from the text of a prompt template and imported and called whatever it named when the model asked for that tool (CVE-2026-61536, high). Whoever could write a template, in a shared registry or a fetched prompt, could run code in the application. Version 2.4.3 resolves tools only from a registry filled at render time.",
@@ -49,8 +50,8 @@ failed here is general. When text names code and something resolves that name dy
 chooses the code. The cure is equally general, and it is the one the maintainers chose: the text may only pick
 among tools that code registered beforehand.
 
-We have not yet checked how Softanza's agents resolve their tools. The action asks the owning plane to check it and
-to keep a guard that proves a tool named only in text is refused.
+The action asks the owning plane to confirm that Softanza's agents resolve their tools this way, and to keep a guard
+that proves a tool named only in text is refused.
 
 ## What we do
 
@@ -62,3 +63,7 @@ to keep a guard that proves a tool named only in text is refused.
   on November 5, 2026 (the maintainers' advisory dates from June 26, 2026), read 2026-11-08.
 - The fix, [masci/banks@e443f11](https://github.com/masci/banks/commit/e443f112b80a20ac24438afe4eb8f8a746a8396d),
   read 2026-11-08.
+
+## Corrections
+
+- 2026-11-09: the paragraph on Softanza now says what holds and what is proposed, in affirmative sentences; the facts are unchanged.

@@ -14,7 +14,9 @@ func main
     nStart = clock()
     oG = new Guard
     oG.cRoot = currentdir()
-    oG.cGood = read(oG.cRoot + "/items/2026/2026-11-08-lookout-opens.md")
+    # A frozen copy of the first entry as it stood at the bootstrap: the broken copies are made from
+    # it, so a correction to the live entry never changes what the guard tests.
+    oG.cGood = read(oG.cRoot + "/tools/fixtures/entry.md")
     oG.All()
     nMs = floor((clock() - nStart) * 1000 / clockspersecond())
     see "guard: " + oG.nPass + " passed, " + oG.nFail + " failed, " + nMs + " ms" + char(10)
@@ -33,6 +35,7 @@ class Guard
         CrossFile()
         Writing()
         Patterns()
+        Affirm()
 
     func Pass cName
         nPass++
@@ -257,7 +260,10 @@ class Guard
         else
             Fail("feed.json writes date_modified when updated differs from date", "it does not")
         ok
-        if substr(read(cRoot + "/feed/feed.json"), "date_modified") = 0
+        oOne = NewRun()
+        oOne.AddEntryText("items/2026/" + cFile, "2026", cFile, cGood)
+        oOne.Finish("none")
+        if substr(oOne.cFeed, "date_modified") = 0
             Pass("feed.json writes no date_modified when updated equals date")
         else
             Fail("feed.json writes no date_modified when updated equals date", "it does")
@@ -302,6 +308,41 @@ class Guard
             ok
         next
         if nBad = 0 Pass("the pattern matcher, " + n + " cases") ok
+
+    # ------------------------------------------------------------ public pages speak affirmatively
+    func Affirm
+        oRun = NewRun()
+        oRun.AffirmLine("README.md", 1, "A reader command does not exist yet.", [])
+        if substr(Joined(oRun.aProblems), "a public page lists what is missing") > 0
+            Pass("a public line saying what is missing is refused")
+        else
+            Fail("a public line saying what is missing is refused", "it was accepted")
+        ok
+
+        oRun = NewRun()
+        oRun.AffirmLine("README.md", 1, "A reader command does not exist yet.", [["README.md", "a reader command"]])
+        if len(oRun.aProblems) = 0
+            Pass("an allowed line passes")
+        else
+            Fail("an allowed line passes", Joined(oRun.aProblems))
+        ok
+
+        oRun = NewRun()
+        oRun.AffirmLine("docs/FEED.md", 1, "Softanza reads the feed and shows each notice.", [])
+        if len(oRun.aProblems) = 0
+            Pass("an affirmative line passes")
+        else
+            Fail("an affirmative line passes", Joined(oRun.aProblems))
+        ok
+
+        # the real allow list loads, and every entry in it gives a reason
+        oRun = NewRun()
+        aAllow = oRun.AffirmAllow()
+        if len(oRun.aProblems) = 0 and len(aAllow) > 0
+            Pass("tools/affirm-allow.txt loads, every line with its reason (" + len(aAllow) + ")")
+        else
+            Fail("tools/affirm-allow.txt loads, every line with its reason", Joined(oRun.aProblems))
+        ok
 
     func q2 s
         return '"' + s + '"'

@@ -4,6 +4,7 @@
 {
   "id": "2026-11-08-mcp-oauth-resource-check",
   "date": "2026-11-08",
+  "updated": "2026-11-09",
   "title": "Two MCP clients let a malicious server obtain a token meant for another server",
   "kind": "security",
   "summary": "Two advisories published on November 5, 2026 describe the same flaw in two MCP clients, the Go SDK mcp-go before 1.2.1 and the ChatCLI agent before 1.215.2: the client took the resource named in a server's protected resource metadata without checking that it matched the server it had connected to. A malicious MCP server could name another server on the same authorization server, have the user sign in, and replay the token it received.",
@@ -49,8 +50,8 @@ is our reading of the pages, not a statement from the specification's authors.
 ## Why it matters to Softanza
 
 Softanza's developers use MCP clients every day through their coding agents, and Softanza may build its own client.
-Nothing in stzlib acts as an MCP client today (checked on 2026-11-08), so this is not a defect to fix. It is a
-requirement to write down before the code exists, while it costs one sentence and one guard.
+We propose it as a requirement for every MCP client Softanza builds: the declared resource is checked against the
+configured server URL, with a guard that proves a mismatching server is refused. It costs one sentence and one guard.
 
 ## What we do
 
@@ -62,3 +63,7 @@ requirement to write down before the code exists, while it costs one sentence an
   [GHSA-2gm2-hpg7-78f2](https://github.com/advisories/GHSA-2gm2-hpg7-78f2), published November 5, 2026, read 2026-11-08.
 - Model Context Protocol, [Authorization, revision 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28/basic/authorization),
   with its pages on server discovery and security considerations, read 2026-11-08.
+
+## Corrections
+
+- 2026-11-09: the paragraph on Softanza now says what holds and what is proposed, in affirmative sentences; the facts are unchanged.

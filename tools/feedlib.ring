@@ -273,8 +273,103 @@ class FeedRun
     # The whole run over this repository: generate writes the feeds, check only compares them.
     func Go cMode
         if not Prepare() return ok
+        AffirmScan()
         ReadEntries()
         Finish(cMode)
+
+    # ------------------------------------------------------------ public pages speak affirmatively
+    #
+    # A public page says what Softanza is and does; it never lists what has not been done, shown or
+    # measured. Each line of README.md, docs/, digests/ and every entry is read for that class of
+    # phrase. tools/affirm-allow.txt lists the lines that may keep one, each with its reason.
+
+    func AffirmPhrases
+        return ["not yet", "nobody has", "never been", "limit:", "does not exist", "doesn't exist",
+                "not built", "is missing", "are missing", "what is missing", "still on ",
+                "only by one", "protected only by", "has no ", "have no ", "nothing in stzlib",
+                "nothing in softanza", "we have not", "not checked"]
+
+    func AffirmScan
+        aAllow = AffirmAllow()
+        aFiles = ["README.md"]
+        aDirs = ["docs", "digests"]
+        nD = len(aDirs)
+        for d = 1 to nD
+            aIn = dir(cRoot + "/" + aDirs[d])
+            nIn = len(aIn)
+            for i = 1 to nIn
+                if aIn[i][2] = 0 and right(aIn[i][1], 3) = ".md"
+                    aFiles + (aDirs[d] + "/" + aIn[i][1])
+                ok
+            next
+        next
+        aYears = dir(cRoot + "/items")
+        nY = len(aYears)
+        for y = 1 to nY
+            if aYears[y][2] = 1
+                aIn = dir(cRoot + "/items/" + aYears[y][1])
+                nIn = len(aIn)
+                for i = 1 to nIn
+                    if aIn[i][2] = 0 and right(aIn[i][1], 3) = ".md"
+                        aFiles + ("items/" + aYears[y][1] + "/" + aIn[i][1])
+                    ok
+                next
+            ok
+        next
+        nF = len(aFiles)
+        for f = 1 to nF
+            aLines = str2list(StripCR(read(cRoot + "/" + aFiles[f])))
+            nL1 = len(aLines)
+            for i = 1 to nL1
+                AffirmLine(aFiles[f], i, aLines[i], aAllow)
+            next
+        next
+
+    # One line of one public page. The guard calls this directly with lines it wrote.
+    func AffirmLine cFile, nLine, cLine, aAllow
+        cLow = lower(cLine)
+        aP = AffirmPhrases()
+        nP = len(aP)
+        for p = 1 to nP
+            if substr(cLow, aP[p]) > 0 and not AffirmAllowed(cFile, cLow, aAllow)
+                Problem(cFile + ":" + nLine, "a public page lists what is missing (" + aP[p] +
+                        "); say what holds or what is proposed, or allow the line in tools/affirm-allow.txt with its reason")
+            ok
+        next
+
+    func AffirmAllowed cFile, cLow, aAllow
+        nA = len(aAllow)
+        for a = 1 to nA
+            if aAllow[a][1] = cFile and substr(cLow, aAllow[a][2]) > 0 return 1 ok
+        next
+        return 0
+
+    # tools/affirm-allow.txt: one line each, "file | words from the line | reason". A line with no
+    # reason is refused, so nothing is allowed without saying why.
+    func AffirmAllow
+        aOut = []
+        cPath = cRoot + "/tools/affirm-allow.txt"
+        if not fexists(cPath) return aOut ok
+        aLines = str2list(StripCR(read(cPath)))
+        nL1 = len(aLines)
+        for i = 1 to nL1
+            cL = trim(aLines[i])
+            if cL = "" or left(cL, 1) = "#" loop ok
+            n1 = substr(cL, " | ")
+            if n1 = 0
+                Problem("tools/affirm-allow.txt:" + i, "a line is: file | words from the line | reason")
+                loop
+            ok
+            cFile = trim(left(cL, n1 - 1))
+            cRest = substr(cL, n1 + 3, len(cL) - n1 - 2)
+            n2 = substr(cRest, " | ")
+            if n2 = 0 or trim(substr(cRest, n2 + 3, len(cRest) - n2 - 2)) = ""
+                Problem("tools/affirm-allow.txt:" + i, "every allowed line gives its reason")
+                loop
+            ok
+            aOut + [cFile, lower(trim(left(cRest, n2 - 1)))]
+        next
+        return aOut
 
     # Loads the item schema. Returns 0 when the run cannot start.
     func Prepare
