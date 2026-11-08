@@ -146,6 +146,6 @@ an attack surface, so it is treated as one.
 ## What is planned
 
 - **A signature** beside each feed file, so that a reader can check the feed came from this repository unchanged.
-- **A Softanza command** that reads the feed for its user's audience and level.
+- **A Softanza command** that reads the feed for its user's audience and level, proposed to stzlib in [`READER.md`](READER.md).
 
 Neither exists yet. Each one will be announced as an entry when it lands.
