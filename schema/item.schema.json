@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/mayouni/labari/schema/item.schema.json",
-  "title": "Labari entry, version 1",
+  "$id": "https://github.com/mayouni/lookout/schema/item.schema.json",
+  "title": "Lookout entry, version 1",
   "type": "object",
   "required": ["id", "date", "title", "kind", "summary", "stance", "relevance", "level", "audiences", "notice", "status", "confidence", "sources", "review_by"],
   "properties": {
@@ -54,6 +54,6 @@
     },
     "review_by": { "type": "string", "format": "date" },
     "tags": { "type": "array", "items": { "type": "string", "pattern": "^[a-z0-9-]+$" } },
-    "url": { "type": "string", "pattern": "^https://github\\.com/mayouni/labari/" }
+    "url": { "type": "string", "pattern": "^https://github\\.com/mayouni/lookout/" }
   }
 }

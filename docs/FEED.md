@@ -1,6 +1,6 @@
 # The feed -- contract, version 1
 
-This file is the contract between Labari and every program that reads it: a shell one-liner, a Softanza command, an
+This file is the contract between Lookout and every program that reads it: a shell one-liner, a Softanza command, an
 application that shows notices to its users, or an assistant that reads them aloud. It is versioned. A change that
 would break a reader bumps the major version, and that change is announced as an entry before it lands.
 
@@ -8,8 +8,8 @@ would break a reader bumps the major version, and that change is announced as an
 
 | File | What it holds | Address |
 |---|---|---|
-| `feed/index.json` | every entry, newest first, with its full data | `https://raw.githubusercontent.com/mayouni/labari/main/feed/index.json` |
-| `feed/feed.json` | the same entries as a [JSON Feed 1.1](https://www.jsonfeed.org/version/1.1/), for feed readers | `https://raw.githubusercontent.com/mayouni/labari/main/feed/feed.json` |
+| `feed/index.json` | every entry, newest first, with its full data | `https://raw.githubusercontent.com/mayouni/lookout/main/feed/index.json` |
+| `feed/feed.json` | the same entries as a [JSON Feed 1.1](https://www.jsonfeed.org/version/1.1/), for feed readers | `https://raw.githubusercontent.com/mayouni/lookout/main/feed/feed.json` |
 | `schema/feed.schema.json` | the shape of `index.json`, as JSON Schema 2020-12 | in this repository |
 | `schema/item.schema.json` | the shape of one entry | in this repository |
 
@@ -21,10 +21,10 @@ those blocks, and nobody edits them by hand.
 
 ```json
 {
-  "feed": "labari",
+  "feed": "lookout",
   "version": 1,
   "updated": "2026-11-08T11:30:00Z",
-  "home": "https://github.com/mayouni/labari",
+  "home": "https://github.com/mayouni/lookout",
   "items": [ { "...": "one entry, as below, plus its url" } ]
 }
 ```
@@ -39,9 +39,9 @@ the order the entry writes them, entries newest `date` first and then by `id`, L
 
 ```json
 {
-  "id": "2026-11-08-labari-opens",
+  "id": "2026-11-08-lookout-opens",
   "date": "2026-11-08",
-  "title": "Labari opens: a public watch on AI, read from Softanza's point of view",
+  "title": "Lookout opens: a public watch on AI, read from Softanza's point of view",
   "kind": "idea",
   "summary": "Two or three plain sentences: what happened.",
   "stance": "adopt",
@@ -60,11 +60,11 @@ the order the entry writes them, entries newest `date` first and then by `id`, L
   "status": "done",
   "confidence": "read",
   "sources": [
-    { "title": "Labari's README", "url": "https://github.com/mayouni/labari", "by": "Softanza", "read": "2026-11-08" }
+    { "title": "Lookout's README", "url": "https://github.com/mayouni/lookout", "by": "Softanza", "read": "2026-11-08" }
   ],
   "review_by": "2027-05-08",
   "tags": ["watch", "feed"],
-  "url": "https://github.com/mayouni/labari/blob/main/items/2026/2026-11-08-labari-opens.md"
+  "url": "https://github.com/mayouni/lookout/blob/main/items/2026/2026-11-08-lookout-opens.md"
 }
 ```
 
@@ -97,7 +97,7 @@ does not know**. That lets the feed grow without breaking anyone.
 ## Asking it questions
 
 ```sh
-FEED=https://raw.githubusercontent.com/mayouni/labari/main/feed/index.json
+FEED=https://raw.githubusercontent.com/mayouni/lookout/main/feed/index.json
 
 # what is new since a day
 curl -s $FEED | jq '[.items[] | select(.date > "2026-11-01")] | length'
@@ -116,12 +116,12 @@ curl -s $FEED | jq -r --arg min action '
 
 ## Showing a notice
 
-These rules are for any program that shows Labari's notices to people. A feed that puts text in front of users is
+These rules are for any program that shows Lookout's notices to people. A feed that puts text in front of users is
 an attack surface, so it is treated as one.
 
 1. **Plain text only.** Never render a notice, a title or a summary as HTML or Markdown.
 2. **Your audience only.** Show `notice[<your audience>]`. If the entry has no notice for your audience, show nothing.
-3. **One link, and it is ours.** Link to the entry's `url` on `github.com/mayouni/labari`, never straight to a
+3. **One link, and it is ours.** Link to the entry's `url` on `github.com/mayouni/lookout`, never straight to a
    source from a notice. The entry's page carries the sources.
 4. **Respect time and state.** Hide an entry after `review_by`, and hide `declined` and `superseded` entries.
 5. **Once is enough.** Remember dismissed ids on the reader's side and never show a dismissed id again.

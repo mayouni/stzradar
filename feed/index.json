@@ -1,15 +1,16 @@
 {
-  "feed": "labari",
+  "feed": "lookout",
   "version": 1,
   "updated": "2026-11-08T00:00:00Z",
-  "home": "https://github.com/mayouni/labari",
+  "home": "https://github.com/mayouni/lookout",
   "items": [
     {
-      "id": "2026-11-08-labari-opens",
+      "id": "2026-11-08-lookout-opens",
       "date": "2026-11-08",
-      "title": "Labari opens: a public watch on AI, read from Softanza's point of view",
+      "updated": "2026-11-08",
+      "title": "Lookout opens: a public watch on AI, read from Softanza's point of view",
       "kind": "idea",
-      "summary": "Softanza opened Labari, a public repository that reads developments in AI at their source and judges each one against what Softanza builds. Every entry is written twice in one file, as a page for people and as data for programs, and a feed is generated from the data.",
+      "summary": "Softanza opened Lookout, a public repository that reads developments in AI at their source and judges each one against what Softanza builds. Every entry is written twice in one file, as a page for people and as data for programs, and a feed is generated from the data.",
       "stance": "adopt",
       "relevance": "high",
       "level": "info",
@@ -21,7 +22,7 @@
       "notice": {
         "developer": "Softanza now keeps a public watch on AI developments: read it on GitHub, or fetch feed/index.json to show its notices in your own tools.",
         "learner": "There is now one place that explains, in plain words, what changes in AI mean for what you learn with Softanza.",
-        "maintainer": "Labari is open: send it the AI developments that touch your project, and expect the tasks it proposes to reach you through Bangalo."
+        "maintainer": "Lookout is open: send it the AI developments that touch your project, and expect the tasks it proposes to reach you through Bangalo."
       },
       "areas": [
         "softanza"
@@ -42,14 +43,14 @@
       "confidence": "read",
       "sources": [
         {
-          "title": "Labari's README",
-          "url": "https://github.com/mayouni/labari",
+          "title": "Lookout's README",
+          "url": "https://github.com/mayouni/lookout",
           "by": "Softanza",
           "read": "2026-11-08"
         },
         {
           "title": "The feed contract, version 1",
-          "url": "https://github.com/mayouni/labari/blob/main/docs/FEED.md",
+          "url": "https://github.com/mayouni/lookout/blob/main/docs/FEED.md",
           "by": "Softanza",
           "read": "2026-11-08"
         }
@@ -60,7 +61,7 @@
         "feed",
         "notices"
       ],
-      "url": "https://github.com/mayouni/labari/blob/main/items/2026/2026-11-08-labari-opens.md"
+      "url": "https://github.com/mayouni/lookout/blob/main/items/2026/2026-11-08-lookout-opens.md"
     }
   ]
 }

@@ -1,11 +1,11 @@
-# Labari
+# Lookout
 
 **A public watch on what is changing in AI, read from Softanza's point of view, with a feed that any program can read.**
 
-*Labari* is the Hausa word for news: the account of what happened, told to the people it concerns.
+A lookout is the one who keeps watch and calls out what is coming, in time for the others to act.
 
 AI moves every week. New projects appear, papers change how we think, labs ship features, companies change their
-practices, and security researchers find holes and fixes. Labari keeps one place where each of these is read at its
+practices, and security researchers find holes and fixes. Lookout keeps one place where each of these is read at its
 source, judged against what [Softanza](https://github.com/mayouni/stzlib) builds, and turned into something useful:
 
 - **something to learn**: where Softanza stands, and what it should take from others;
@@ -21,7 +21,7 @@ that wants to do the same.
 
 ```mermaid
 flowchart LR
-  S["Sources<br/>papers, releases, advisories,<br/>practices, the author's links"] --> D["The Labari desk<br/>reads at the source,<br/>judges, writes"]
+  S["Sources<br/>papers, releases, advisories,<br/>practices, the author's links"] --> D["The Lookout desk<br/>reads at the source,<br/>judges, writes"]
   D --> I["items/<br/>one file per entry:<br/>narrative + data"]
   D --> W["digests/<br/>one per week"]
   I --> F["feed/index.json<br/>feed/feed.json"]
@@ -45,10 +45,10 @@ because they are one file.
 
 The feed is a plain JSON file, refreshed whenever an entry changes:
 
-    https://raw.githubusercontent.com/mayouni/labari/main/feed/index.json
+    https://raw.githubusercontent.com/mayouni/lookout/main/feed/index.json
 
 ```sh
-FEED=https://raw.githubusercontent.com/mayouni/labari/main/feed/index.json
+FEED=https://raw.githubusercontent.com/mayouni/lookout/main/feed/index.json
 
 # the five newest entries
 curl -s $FEED | jq -r '.items[:5][] | "\(.date)  \(.level)  \(.title)"'
@@ -62,7 +62,7 @@ curl -s $FEED | jq -r '.items[]
 ```
 
 ```powershell
-$feed = Invoke-RestMethod https://raw.githubusercontent.com/mayouni/labari/main/feed/index.json
+$feed = Invoke-RestMethod https://raw.githubusercontent.com/mayouni/lookout/main/feed/index.json
 $feed.items | Where-Object { $_.audiences -contains 'learner' } | Select-Object date, title
 ```
 
@@ -71,7 +71,7 @@ including every field, is [`docs/FEED.md`](docs/FEED.md).
 
 ## Showing notices inside an application
 
-An application built with Softanza, or any other, can show Labari's notices to its own people. The rules are short,
+An application built with Softanza, or any other, can show Lookout's notices to its own people. The rules are short,
 and they exist because a remote feed that shows text to users is itself something to defend:
 
 1. Show only the notice written for your audience (`notice.developer`, `notice.user`, `notice.learner`,

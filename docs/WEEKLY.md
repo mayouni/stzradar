@@ -1,6 +1,6 @@
 # The weekly survey -- what a scheduled run does
 
-This is the instruction a scheduled, unattended run of the Labari desk follows. An attended session follows it too
+This is the instruction a scheduled, unattended run of the Lookout desk follows. An attended session follows it too
 when the author says "run the week".
 
 ## Before anything
