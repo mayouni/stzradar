@@ -95,6 +95,16 @@ class Guard
             return
         ok
         Pass("control: the real entry passes")
+
+        # every entry in items/, built in memory, must give the committed bytes
+        oRun = NewRun()
+        oRun.ReadEntries()
+        oRun.Finish("none")
+        if len(oRun.aProblems) > 0
+            Fail("control: every entry in items/ passes", Joined(oRun.aProblems))
+            return
+        ok
+        Pass("control: every entry in items/ passes (" + oRun.nEntries + ")")
         if oRun.cIndex = read(cRoot + "/feed/index.json")
             Pass("control: in memory, index.json is the committed bytes")
         else

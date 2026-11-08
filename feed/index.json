@@ -5,6 +5,163 @@
   "home": "https://github.com/mayouni/lookout",
   "items": [
     {
+      "id": "2026-11-08-agent-approvals-leak-secrets",
+      "date": "2026-11-08",
+      "title": "A coding agent's \"don't ask again\" writes secrets into a file that gets published",
+      "kind": "security",
+      "summary": "Apiiro reports that when a Claude Code user approves a command with \"Yes, and don't ask again\", the exact command, including any password or key typed into it, is saved as a permission rule in .claude/settings.local.json inside the project. The file is kept out of git only by the developer's global ignore list, not by the repository's own .gitignore, and Apiiro counted 1,122 public copies on GitHub holding a real secret, out of 104,185.",
+      "stance": "defend",
+      "relevance": "high",
+      "level": "action",
+      "audiences": [
+        "developer",
+        "maintainer"
+      ],
+      "notice": {
+        "developer": "Open .claude/settings.local.json in each project you use a coding agent in, delete any rule that contains a password, key or token, and rotate it if the file was ever committed.",
+        "maintainer": "Add .claude/settings.local.json to your repository's own .gitignore, and scan agent folders, transcripts and memory files for passwords written inside commands."
+      },
+      "areas": [
+        "softanza",
+        "stzlib",
+        "stzlib.security",
+        "haro"
+      ],
+      "actions": [
+        {
+          "area": "stzlib",
+          "do": "add .claude/settings.local.json to the repository's own .gitignore, so the protection travels with the repository and not with one machine",
+          "state": "proposed"
+        },
+        {
+          "area": "haro",
+          "do": "add .claude/settings.local.json to the repository's own .gitignore, for the same reason",
+          "state": "proposed"
+        },
+        {
+          "area": "stzlib.security",
+          "do": "add a check for passwords written inside commands (PGPASSWORD=, sshpass -p, mysql -p, bearer headers) over agent settings, transcripts, memory files and handoff notes",
+          "state": "proposed"
+        },
+        {
+          "area": "softanza",
+          "do": "write the house rule: a secret is referenced as an environment variable in a command, never typed into it",
+          "state": "proposed"
+        }
+      ],
+      "status": "analysed",
+      "confidence": "read",
+      "sources": [
+        {
+          "title": "Coding Agents Copy Your Secrets to a Hidden File. Thousands Are on GitHub",
+          "url": "https://apiiro.com/blog/coding-agents-leaking-secrets-github-dont-ask-again",
+          "by": "Apiiro",
+          "read": "2026-11-08"
+        }
+      ],
+      "review_by": "2027-02-08",
+      "tags": [
+        "coding-agents",
+        "secrets",
+        "permissions",
+        "supply-chain"
+      ],
+      "url": "https://github.com/mayouni/lookout/blob/main/items/2026/2026-11-08-agent-approvals-leak-secrets.md"
+    },
+    {
+      "id": "2026-11-08-github-blocks-pull-request-target",
+      "date": "2026-11-08",
+      "title": "GitHub will block pull_request_target in public repositories from December 2",
+      "kind": "practice",
+      "summary": "GitHub announced on November 2, 2026 that from December 2, 2026, GitHub Actions blocks pull_request_target events by default in every public repository unless an Actions event policy allows them. Enforcement is tried in two windows, November 9 and November 16, 16:00 to 18:00 UTC. Private and internal repositories are not affected.",
+      "stance": "adopt",
+      "relevance": "low",
+      "level": "info",
+      "audiences": [
+        "developer",
+        "maintainer"
+      ],
+      "notice": {
+        "developer": "If your public project's workflows use pull_request_target, expect them to fail on November 9 and 16 between 16:00 and 18:00 UTC, and to stop from December 2 unless you allow them.",
+        "maintainer": "Check your public repositories for pull_request_target before December 2; Softanza's own repositories do not use it."
+      },
+      "areas": [
+        "softanza"
+      ],
+      "status": "done",
+      "confidence": "read",
+      "sources": [
+        {
+          "title": "pull_request_target blocked by default December 2",
+          "url": "https://github.blog/changelog/2026-11-02-pull_request_target-blocked-by-default-december-2",
+          "by": "GitHub",
+          "read": "2026-11-08"
+        }
+      ],
+      "review_by": "2026-12-03",
+      "tags": [
+        "ci",
+        "github-actions",
+        "supply-chain"
+      ],
+      "url": "https://github.com/mayouni/lookout/blob/main/items/2026/2026-11-08-github-blocks-pull-request-target.md"
+    },
+    {
+      "id": "2026-11-08-llm-repairs-pass-wrong",
+      "date": "2026-11-08",
+      "title": "Code repaired by a model after an API change can pass its checks and still be wrong",
+      "kind": "paper",
+      "summary": "A study submitted on November 5, 2026 looks at code that models repair after documented changes in CPython, Node.js and SQLite. Repairs that run cleanly can still give wrong answers: a gate built on typical inputs let 41% of the wrong repairs through, and adding one input written from the release note cut that to 6.5%. The expected outputs came from the old program on the old runtime.",
+      "stance": "adopt",
+      "relevance": "high",
+      "level": "advice",
+      "audiences": [
+        "developer",
+        "learner",
+        "maintainer"
+      ],
+      "notice": {
+        "developer": "When an agent repairs code for a changed API, test the repair with one input that exercises the change, and take the expected answer from the old version.",
+        "learner": "A program that runs without errors can still be wrong: test it with the case that changed, not only with the usual ones.",
+        "maintainer": "Gate every model-made port or repair on edge inputs taken from the change itself, with expected outputs from the old runtime, never from the model's own tests alone."
+      },
+      "areas": [
+        "stzlib",
+        "haro"
+      ],
+      "actions": [
+        {
+          "area": "stzlib",
+          "do": "for code moved from Ring++ to Haro by an agent, gate each change on at least one input that exercises the documented difference, with the expected output read off the old runtime",
+          "state": "proposed"
+        }
+      ],
+      "status": "analysed",
+      "confidence": "read",
+      "sources": [
+        {
+          "title": "Accepted but Wrong: Silent Failures of LLM Code Repairs after API Migrations",
+          "url": "https://arxiv.org/abs/2611.08269",
+          "by": "Xiaobo Chen et al.",
+          "read": "2026-11-08"
+        },
+        {
+          "title": "Accepted but Wrong, full text (HTML)",
+          "url": "https://arxiv.org/html/2611.08269v1",
+          "by": "Xiaobo Chen et al.",
+          "read": "2026-11-08"
+        }
+      ],
+      "review_by": "2027-05-08",
+      "tags": [
+        "code-repair",
+        "testing",
+        "migration",
+        "paper"
+      ],
+      "url": "https://github.com/mayouni/lookout/blob/main/items/2026/2026-11-08-llm-repairs-pass-wrong.md"
+    },
+    {
       "id": "2026-11-08-lookout-opens",
       "date": "2026-11-08",
       "updated": "2026-11-08",
@@ -62,6 +219,227 @@
         "notices"
       ],
       "url": "https://github.com/mayouni/lookout/blob/main/items/2026/2026-11-08-lookout-opens.md"
+    },
+    {
+      "id": "2026-11-08-mcp-oauth-resource-check",
+      "date": "2026-11-08",
+      "title": "Two MCP clients let a malicious server obtain a token meant for another server",
+      "kind": "security",
+      "summary": "Two advisories published on November 5, 2026 describe the same flaw in two MCP clients, the Go SDK mcp-go before 1.2.1 and the ChatCLI agent before 1.215.2: the client took the resource named in a server's protected resource metadata without checking that it matched the server it had connected to. A malicious MCP server could name another server on the same authorization server, have the user sign in, and replay the token it received.",
+      "stance": "defend",
+      "relevance": "medium",
+      "level": "advice",
+      "audiences": [
+        "developer",
+        "maintainer"
+      ],
+      "notice": {
+        "developer": "If you use mcp-go or ChatCLI, update to mcp-go 1.2.1 or ChatCLI 1.215.2, and only sign in to MCP servers you chose yourself.",
+        "maintainer": "An MCP client must check that the resource a server declares is the server URL it connected to before it asks for a token."
+      },
+      "areas": [
+        "stzlib",
+        "haro"
+      ],
+      "actions": [
+        {
+          "area": "stzlib",
+          "do": "record as a requirement for any MCP client Softanza builds: the declared resource is checked against the configured server URL before a token is requested, with a guard that a mismatching server is refused",
+          "state": "proposed"
+        }
+      ],
+      "status": "analysed",
+      "confidence": "read",
+      "sources": [
+        {
+          "title": "GHSA-h3x9-8c36-m89w: mcp-go OAuth protected resource metadata not validated",
+          "url": "https://github.com/advisories/GHSA-h3x9-8c36-m89w",
+          "by": "GitHub Advisory Database",
+          "read": "2026-11-08"
+        },
+        {
+          "title": "GHSA-2gm2-hpg7-78f2: ChatCLI MCP OAuth resource indicator",
+          "url": "https://github.com/advisories/GHSA-2gm2-hpg7-78f2",
+          "by": "GitHub Advisory Database",
+          "read": "2026-11-08"
+        },
+        {
+          "title": "MCP specification 2026-07-28: Authorization",
+          "url": "https://modelcontextprotocol.io/specification/2026-07-28/basic/authorization",
+          "by": "Model Context Protocol",
+          "read": "2026-11-08"
+        }
+      ],
+      "review_by": "2027-02-08",
+      "tags": [
+        "mcp",
+        "oauth",
+        "agents",
+        "tokens"
+      ],
+      "url": "https://github.com/mayouni/lookout/blob/main/items/2026/2026-11-08-mcp-oauth-resource-check.md"
+    },
+    {
+      "id": "2026-11-08-spillway-target-admission",
+      "date": "2026-11-08",
+      "title": "SPILLWAY: an agent may act only on targets that came from a trusted, typed field",
+      "kind": "paper",
+      "summary": "A paper submitted on November 4, 2026 proposes a defence for tool-using agents against prompt injection that does not rely on a model: a call with side effects is admitted only if every target it names that is not in the user's request was returned in a typed identity field, such as an email address or a channel, by a read-only tool. A rule-based sanitizer removes instruction-like text, and a local model reviews only the calls the rule refused. The authors report no successful in-scope attack across twelve benchmark settings.",
+      "stance": "learn",
+      "relevance": "high",
+      "level": "advice",
+      "audiences": [
+        "developer",
+        "maintainer"
+      ],
+      "notice": {
+        "developer": "A strong defence against prompt injection is a plain rule, not a smarter model: let an agent send or pay only to a target that came from the user or from a trusted, typed field.",
+        "maintainer": "Compare Softanza's tool governance with SPILLWAY's admission rule: where a side effect's target comes from matters as much as which tool is allowed."
+      },
+      "areas": [
+        "stzlib.intelligence",
+        "stzlib.security"
+      ],
+      "actions": [
+        {
+          "area": "stzlib.security",
+          "do": "study whether Softanza's agent governance can check the provenance of a side effect's target, not only the tool's name, and report what it would take",
+          "state": "proposed"
+        }
+      ],
+      "status": "analysed",
+      "confidence": "read",
+      "sources": [
+        {
+          "title": "SPILLWAY: Separating Target Admission from Sanitization to Defend Tool-Using Agents against Prompt Injection",
+          "url": "https://arxiv.org/abs/2611.07222",
+          "by": "Woosang Lim et al.",
+          "read": "2026-11-08"
+        },
+        {
+          "title": "SPILLWAY, full text (HTML)",
+          "url": "https://arxiv.org/html/2611.07222v1",
+          "by": "Woosang Lim et al.",
+          "read": "2026-11-08"
+        }
+      ],
+      "review_by": "2027-05-08",
+      "tags": [
+        "prompt-injection",
+        "agents",
+        "governance",
+        "paper"
+      ],
+      "url": "https://github.com/mayouni/lookout/blob/main/items/2026/2026-11-08-spillway-target-admission.md"
+    },
+    {
+      "id": "2026-11-08-tool-paths-from-prompts-run-code",
+      "date": "2026-11-08",
+      "title": "A prompt library ran any function a template named: tools must come from a registry",
+      "kind": "security",
+      "summary": "The Python prompt library banks, up to version 2.4.2, read a tool's import path from the text of a prompt template and imported and called whatever it named when the model asked for that tool (CVE-2026-61536, high). Whoever could write a template, in a shared registry or a fetched prompt, could run code in the application. Version 2.4.3 resolves tools only from a registry filled at render time.",
+      "stance": "learn",
+      "relevance": "medium",
+      "level": "advice",
+      "audiences": [
+        "developer",
+        "maintainer"
+      ],
+      "notice": {
+        "developer": "If your agent resolves a tool from a name or path found in a prompt or a config file, resolve it only against a list of tools you registered in code.",
+        "maintainer": "Check that every way an agent finds a tool goes through an explicit registry, never through an import or a lookup built from text."
+      },
+      "areas": [
+        "stzlib",
+        "stzlib.intelligence",
+        "stzlib.security"
+      ],
+      "actions": [
+        {
+          "area": "stzlib.intelligence",
+          "do": "check that declarative agents resolve their tools only against tools registered in code, and add a guard that a tool named only in the agent's text is refused",
+          "state": "proposed"
+        }
+      ],
+      "status": "analysed",
+      "confidence": "read",
+      "sources": [
+        {
+          "title": "GHSA-64vx-6h2c-rjh7: banks CompletionExtension tool import path",
+          "url": "https://github.com/advisories/GHSA-64vx-6h2c-rjh7",
+          "by": "GitHub Advisory Database",
+          "read": "2026-11-08"
+        },
+        {
+          "title": "The fix: resolve tool callables from an explicit registry",
+          "url": "https://github.com/masci/banks/commit/e443f112b80a20ac24438afe4eb8f8a746a8396d",
+          "by": "banks maintainers",
+          "read": "2026-11-08"
+        }
+      ],
+      "review_by": "2027-02-08",
+      "tags": [
+        "agents",
+        "tools",
+        "code-execution",
+        "prompt-templates"
+      ],
+      "url": "https://github.com/mayouni/lookout/blob/main/items/2026/2026-11-08-tool-paths-from-prompts-run-code.md"
+    },
+    {
+      "id": "2026-11-08-zig-0-17-1",
+      "date": "2026-11-08",
+      "title": "Zig 0.17.1 fixes the blockers of 0.17.0; Softanza's engine is still on 0.15.2",
+      "kind": "release",
+      "summary": "Zig 0.17.1 is a bug-fix release that addresses more than 57 issues reported after 0.17.0, chiefly regressions and upgrade blockers; the project says most users who could not move to 0.17.0 should be able to move to 0.17.1. Its news page dates it November 3, 2026 and its download page November 2.",
+      "stance": "watch",
+      "relevance": "medium",
+      "level": "advice",
+      "audiences": [
+        "maintainer"
+      ],
+      "notice": {
+        "maintainer": "Zig 0.17.1 is the first 0.17 release meant to be upgraded to; Softanza builds on 0.15.2, two minor versions behind, so an upgrade should be measured on a branch before it is planned."
+      },
+      "areas": [
+        "stzlib",
+        "haro"
+      ],
+      "actions": [
+        {
+          "area": "stzlib",
+          "do": "measure what building the engine on Zig 0.17.1 breaks, on a branch, as one capped build, and report the count before planning the move",
+          "state": "proposed"
+        },
+        {
+          "area": "haro",
+          "do": "measure the same for Haro's VM, after stzlib's measurement and never at the same time",
+          "state": "proposed"
+        }
+      ],
+      "status": "analysed",
+      "confidence": "read",
+      "sources": [
+        {
+          "title": "0.17.1 Released",
+          "url": "https://ziglang.org/news/0.17.1-released/",
+          "by": "Zig Software Foundation",
+          "read": "2026-11-08"
+        },
+        {
+          "title": "Zig downloads",
+          "url": "https://ziglang.org/download/",
+          "by": "Zig Software Foundation",
+          "read": "2026-11-08"
+        }
+      ],
+      "review_by": "2026-12-08",
+      "tags": [
+        "zig",
+        "toolchain",
+        "engine"
+      ],
+      "url": "https://github.com/mayouni/lookout/blob/main/items/2026/2026-11-08-zig-0-17-1.md"
     }
   ]
 }

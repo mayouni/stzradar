@@ -415,7 +415,7 @@ project it concerns, and publishes a feed that programs read. Start with `README
    repository is building.
 
 **Fast path:** regenerating and checking the feed is one process over `items/`: `haro tools/feed.ring` (or `check`
-to write nothing), 4 ms for one entry on 2026-11-08. Its guard is `haro tools/guard.ring`, 32 cases in 56 ms. Run the
+to write nothing), 4 ms for one entry on 2026-11-08. Its guard is `haro tools/guard.ring`, 33 cases in 80 ms. Run the
 guard after changing `tools/` or `schema/`. A survey is the slow path and runs once a week.
 
 **Haro traps met here.** Ring's names are case-insensitive, so a local named `oR` is the keyword `or` and fails to
