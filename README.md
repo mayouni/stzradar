@@ -100,7 +100,9 @@ Opened on 2026-11-08. Lookout surveys every week and publishes a digest, entries
 - the feed carries an SSH signature beside each file, so an application checks it before showing a notice
   ([`docs/FEED.md`](docs/FEED.md#the-signature));
 - a Softanza command that reads the feed for its user's audience and level is proposed to stzlib in
-  [`docs/READER.md`](docs/READER.md).
+  [`docs/READER.md`](docs/READER.md);
+- Softanza's assistant reads the feed aloud and drafts the work it proposes, leaving every action to a person, as
+  proposed in [`docs/ASSISTANT.md`](docs/ASSISTANT.md).
 
 ## Contributing
 

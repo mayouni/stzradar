@@ -178,5 +178,7 @@ contract stays at version 1.
 ## What is planned
 
 - **A Softanza command** that reads the feed for its user's audience and level, proposed to stzlib in [`READER.md`](READER.md).
+- **Softanza's assistant** reading the feed aloud and proposing work without acting on it, proposed to Softanza's
+  intelligence desk in [`ASSISTANT.md`](ASSISTANT.md).
 
-It is announced as an entry when it lands.
+Each is announced as an entry when it lands.
