@@ -8,7 +8,9 @@ when the author says "run the week".
 - You are an **unattended run**. Everything you write stays inside this repository. Your memo goes into
   `.central/outbox.md` and Central relays it. You message no other session.
 - Read `CLAUDE.md`, `docs/METHOD.md` and `docs/FEED.md`.
-- Read the clock. The week is the ISO week of that reading: `YYYY-Www`.
+- Read the clock. The week is the latest ISO week that has **ended** at that reading, Monday to Sunday: a run on a
+  Monday surveys the week before (`docs/SCHEDULE.md`). An attended run may survey the current week when the author
+  asks. Write it `YYYY-Www`.
 - Read `feed/index.json` and the latest file in `digests/`, so that you never write an entry twice.
 
 ## The survey
