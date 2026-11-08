@@ -17,9 +17,9 @@
   },
   "areas": ["stzlib", "stzlib.intelligence", "stzlib.security"],
   "actions": [
-    { "area": "stzlib.intelligence", "do": "check that declarative agents resolve their tools only against tools registered in code, and add a guard that a tool named only in the agent's text is refused", "state": "proposed" }
+    { "area": "stzlib.intelligence", "do": "check that declarative agents resolve their tools only against tools registered in code, and add a guard that a tool named only in the agent's text is refused", "state": "routed" }
   ],
-  "status": "analysed",
+  "status": "routed",
   "confidence": "read",
   "sources": [
     { "title": "GHSA-64vx-6h2c-rjh7: banks CompletionExtension tool import path", "url": "https://github.com/advisories/GHSA-64vx-6h2c-rjh7", "by": "GitHub Advisory Database", "read": "2026-11-08" },

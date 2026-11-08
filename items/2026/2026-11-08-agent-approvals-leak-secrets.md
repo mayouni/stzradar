@@ -17,12 +17,12 @@
   },
   "areas": ["softanza", "stzlib", "stzlib.security", "haro"],
   "actions": [
-    { "area": "stzlib", "do": "add .claude/settings.local.json to the repository's own .gitignore, so the protection travels with the repository and not with one machine", "state": "proposed" },
-    { "area": "haro", "do": "add .claude/settings.local.json to the repository's own .gitignore, for the same reason", "state": "proposed" },
-    { "area": "stzlib.security", "do": "add a check for passwords written inside commands (PGPASSWORD=, sshpass -p, mysql -p, bearer headers) over agent settings, transcripts, memory files and handoff notes", "state": "proposed" },
-    { "area": "softanza", "do": "write the house rule: a secret is referenced as an environment variable in a command, never typed into it", "state": "proposed" }
+    { "area": "stzlib", "do": "add .claude/settings.local.json to the repository's own .gitignore, so the protection travels with the repository and not with one machine", "state": "routed" },
+    { "area": "haro", "do": "add .claude/settings.local.json to the repository's own .gitignore, for the same reason", "state": "routed" },
+    { "area": "stzlib.security", "do": "add a check for passwords written inside commands (PGPASSWORD=, sshpass -p, mysql -p, bearer headers) over agent settings, transcripts, memory files and handoff notes", "state": "routed" },
+    { "area": "softanza", "do": "write the house rule: a secret is referenced as an environment variable in a command, never typed into it", "state": "routed" }
   ],
-  "status": "analysed",
+  "status": "routed",
   "confidence": "read",
   "sources": [
     { "title": "Coding Agents Copy Your Secrets to a Hidden File. Thousands Are on GitHub", "url": "https://apiiro.com/blog/coding-agents-leaking-secrets-github-dont-ask-again", "by": "Apiiro", "read": "2026-11-08" }

@@ -17,9 +17,9 @@
   },
   "areas": ["stzlib.intelligence", "stzlib.security"],
   "actions": [
-    { "area": "stzlib.security", "do": "study whether Softanza's agent governance can check the provenance of a side effect's target, not only the tool's name, and report what it would take", "state": "proposed" }
+    { "area": "stzlib.security", "do": "study whether Softanza's agent governance can check the provenance of a side effect's target, not only the tool's name, and report what it would take", "state": "routed" }
   ],
-  "status": "analysed",
+  "status": "routed",
   "confidence": "read",
   "sources": [
     { "title": "SPILLWAY: Separating Target Admission from Sanitization to Defend Tool-Using Agents against Prompt Injection", "url": "https://arxiv.org/abs/2611.07222", "by": "Woosang Lim et al.", "read": "2026-11-08" },

@@ -17,9 +17,9 @@
   },
   "areas": ["stzlib", "haro"],
   "actions": [
-    { "area": "stzlib", "do": "record as a requirement for any MCP client Softanza builds: the declared resource is checked against the configured server URL before a token is requested, with a guard that a mismatching server is refused", "state": "proposed" }
+    { "area": "stzlib", "do": "record as a requirement for any MCP client Softanza builds: the declared resource is checked against the configured server URL before a token is requested, with a guard that a mismatching server is refused", "state": "routed" }
   ],
-  "status": "analysed",
+  "status": "routed",
   "confidence": "read",
   "sources": [
     { "title": "GHSA-h3x9-8c36-m89w: mcp-go OAuth protected resource metadata not validated", "url": "https://github.com/advisories/GHSA-h3x9-8c36-m89w", "by": "GitHub Advisory Database", "read": "2026-11-08" },

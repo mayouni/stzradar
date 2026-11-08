@@ -18,9 +18,9 @@
   },
   "areas": ["stzlib", "haro"],
   "actions": [
-    { "area": "stzlib", "do": "for code moved from Ring++ to Haro by an agent, gate each change on at least one input that exercises the documented difference, with the expected output read off the old runtime", "state": "proposed" }
+    { "area": "stzlib", "do": "for code moved from Ring++ to Haro by an agent, gate each change on at least one input that exercises the documented difference, with the expected output read off the old runtime", "state": "routed" }
   ],
-  "status": "analysed",
+  "status": "routed",
   "confidence": "read",
   "sources": [
     { "title": "Accepted but Wrong: Silent Failures of LLM Code Repairs after API Migrations", "url": "https://arxiv.org/abs/2611.08269", "by": "Xiaobo Chen et al.", "read": "2026-11-08" },
