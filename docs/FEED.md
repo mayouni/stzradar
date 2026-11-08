@@ -34,6 +34,19 @@ so that regenerating an unchanged feed gives the same bytes, and a reader can tr
 
 **How the files are written**, so that any generator produces the same bytes: UTF-8, two-space indentation, keys in
 the order the entry writes them, entries newest `date` first and then by `id`, LF line endings, one final newline.
+Text is written as UTF-8 and not escaped, except `"`, `\` and the control characters, which are escaped as JSON
+requires (`\n`, `\t` and the like, and `\u00XX` for the rest). An empty list is written `[]`. In the index, each
+entry is its data block with `url` added as its last key.
+
+**The generator is `tools/feed.ring`**, run with Haro from the repository root. `haro tools/feed.ring` checks every
+entry and rewrites both files if their bytes change; `haro tools/feed.ring check` writes nothing and also refuses a
+committed feed that is not what the entries generate. The exit code is the number of problems found. Its guard,
+`haro tools/guard.ring`, shows each rule refusing an entry broken on purpose.
+
+**The JSON Feed** carries, for each entry: `id`, `url`, `title`, `summary`, `content_text` (the summary again, since
+JSON Feed 1.1 requires a content field), `date_published` (the entry's `date` at midnight UTC), `date_modified`
+(its `updated`, only when that differs from `date`), and `tags`: the entry's `kind`, `stance` and `level`, then its
+own `tags`. Notices, actions and sources are in the index only.
 
 ## One entry
 

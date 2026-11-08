@@ -25,7 +25,8 @@ when the author says "run the week".
 ## The outputs
 
 1. Write `digests/<YYYY-Www>.md`: one paragraph per entry, most important first, each linking to its page.
-2. Regenerate `feed/index.json` and `feed/feed.json` from the entries, and check both against `schema/`.
+2. Regenerate `feed/index.json` and `feed/feed.json` from the entries, and check both against `schema/`:
+   `haro tools/feed.ring` from the repository root. It writes nothing while any entry is refused.
 3. Commit with a message that names the week and the number of entries.
 4. **Publish only if the author has ruled that weekly runs publish** (the `publish` line in `docs/SCHEDULE.md`). If
    they have, push `main` to `origin` and check that `git ls-remote origin main` equals your commit. If they have not,

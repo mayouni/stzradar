@@ -414,5 +414,10 @@ project it concerns, and publishes a feed that programs read. Start with `README
 9. **One heavy job at a time.** A survey is a corpus job. Never run two at once, and never run one while another
    repository is building.
 
-**Fast path:** regenerating and checking the feed is one process over `items/`, measured in seconds. A survey is the
-slow path and runs once a week.
+**Fast path:** regenerating and checking the feed is one process over `items/`: `haro tools/feed.ring` (or `check`
+to write nothing), 4 ms for one entry on 2026-11-08. Its guard is `haro tools/guard.ring`, 32 cases in 56 ms. Run the
+guard after changing `tools/` or `schema/`. A survey is the slow path and runs once a week.
+
+**Haro traps met here.** Ring's names are case-insensitive, so a local named `oR` is the keyword `or` and fails to
+parse; Haro has no `systemcmd()`, so the guard tests in one process rather than through child runs; a stored object
+is a copy, so the schema check hands its problems back to the run instead of calling into it.
