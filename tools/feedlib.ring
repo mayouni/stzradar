@@ -275,7 +275,42 @@ class FeedRun
         if not Prepare() return ok
         AffirmScan()
         ReadEntries()
+        LessonsCheck()
         Finish(cMode)
+
+    # app/lessons.json is what Lookout Radar shows under Build and Learn. It must be valid JSON, and
+    # every key under "entries" must name an entry that exists, so the site never shows an orphan.
+    func LessonsCheck
+        cPath = cRoot + "/app/lessons.json"
+        if not fexists(cPath) return ok
+        oReader = new JsonReader
+        try
+            oL = oReader.Parse(StripCR(read(cPath)), "app/lessons.json")
+        catch e
+            Problem("app/lessons.json", "is not valid JSON: " + e.Message())
+            return
+        done
+        if JKind(oL) != "object" or not JHas(oL, "entries")
+            Problem("app/lessons.json", 'holds an object with an "entries" object, keyed by entry id')
+            return
+        ok
+        oE = JGet(oL, "entries")
+        if JKind(oE) != "object"
+            Problem("app/lessons.json", '"entries" is an object keyed by entry id')
+            return
+        ok
+        aIds = []
+        nE = len(aEntries)
+        for i = 1 to nE
+            aIds + JGet(aEntries[i][2], "id")
+        next
+        aKeys = JKeys(oE)
+        nK = len(aKeys)
+        for i = 1 to nK
+            if find(aIds, aKeys[i]) = 0
+                Problem("app/lessons.json", "has lessons for " + aKeys[i] + ", and there is no entry with that id")
+            ok
+        next
 
     # ------------------------------------------------------------ public pages speak affirmatively
     #

@@ -27,6 +27,10 @@ when the author says "run the week".
 ## The outputs
 
 1. Write `digests/<YYYY-Www>.md`: one paragraph per entry, most important first, each linking to its page.
+   Then add each new entry to `app/lessons.json`, which Lookout Radar shows beside it: under `build`, the checks a
+   programmer runs in their own project (each with `why` and `cmd`; say so in `why` when a command writes); under
+   `lesson`, `terms` and `quiz`, the entry explained for a learner. `haro tools/feed.ring` accepts a lesson only under the id
+   of an entry.
 2. Regenerate `feed/index.json` and `feed/feed.json` from the entries, and check both against `schema/`:
    `haro tools/feed.ring` from the repository root. It writes nothing while any entry is refused.
 3. Commit with a message that names the week and the number of entries.

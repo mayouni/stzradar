@@ -2,6 +2,9 @@
 
 **A public watch on what is changing in AI, read from Softanza's point of view, with a feed that any program can read.**
 
+**Open it: [Lookout Radar](https://mayouni.github.io/lookout/)**, the week on a radar, with each signal to watch, to build
+from and to learn from, for developers, learners, maintainers and users.
+
 A lookout is the one who keeps watch and calls out what is coming, in time for the others to act.
 
 AI moves every week. New projects appear, papers change how we think, labs ship features, companies change their

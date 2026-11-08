@@ -1,0 +1,270 @@
+{
+  "about": "Checks and lessons that Lookout Radar shows beside each entry, keyed by entry id. Written by the desk with each weekly survey.",
+  "entries": {
+    "2026-11-08-agent-approvals-leak-secrets": {
+      "build": [
+        {
+          "why": "Is the agent's local permission file tracked in this repository?",
+          "cmd": "git ls-files | grep -i \"settings.local.json\""
+        },
+        {
+          "why": "Was it ever committed, even if it is gone today?",
+          "cmd": "git log --all --oneline -- .claude/settings.local.json"
+        },
+        {
+          "why": "Keep it out of every clone, not only your machine. This one writes: it adds a line to .gitignore.",
+          "cmd": "echo \".claude/settings.local.json\" >> .gitignore"
+        },
+        {
+          "why": "Name a secret in a command, never type it.",
+          "cmd": "psql \"$DATABASE_URL\" -c \"select 1\""
+        }
+      ],
+      "lesson": "A coding agent asks before it runs a command. When you approve a command for good, it remembers the exact text of that command, so it can recognise it next time. If the command contained a password, the password is now stored in a plain file inside your project. Files in a project tend to get committed and published. The cure is to keep secrets out of commands: put them in environment variables and write their names.",
+      "terms": [
+        [
+          "allow list",
+          "the commands an agent may run without asking"
+        ],
+        [
+          "environment variable",
+          "a named value the shell keeps outside your files"
+        ],
+        [
+          "rotate",
+          "replace a secret with a new one after it leaked"
+        ]
+      ],
+      "quiz": [
+        [
+          "Why does deleting the file not fix a leak that was pushed?",
+          "Git keeps every earlier version, and forks and clones keep their own copies. The secret must be replaced, which is called rotating it."
+        ],
+        [
+          "What should a command contain instead of a password?",
+          "A reference such as $DATABASE_URL, so the stored rule records the name and not the value."
+        ]
+      ]
+    },
+    "2026-11-08-tool-paths-from-prompts-run-code": {
+      "build": [
+        {
+          "why": "Find places where code is chosen by a name read from text.",
+          "cmd": "grep -rnE \"import_module|getattr\\(|eval\\(\" --include=*.py ."
+        },
+        {
+          "why": "The safe shape: tools come from a registry written in code.",
+          "cmd": "TOOLS = {\"search\": search, \"summarise\": summarise}\nfn = TOOLS[name]   # a name outside the registry raises KeyError"
+        }
+      ],
+      "lesson": "An agent's tools are functions. If the agent finds which function to run by reading a name or a path from a prompt or a file, then whoever writes that text chooses which code runs. The safe pattern is a registry: the program lists its tools in code, and text may only pick among them.",
+      "terms": [
+        [
+          "dynamic import",
+          "loading code by a name known only at run time"
+        ],
+        [
+          "registry",
+          "a fixed table that maps names to the functions allowed"
+        ]
+      ],
+      "quiz": [
+        [
+          "Who controls the code that runs when a tool path comes from a template?",
+          "Whoever can write the template: a shared prompt store, a fetched file, or a user's input."
+        ]
+      ]
+    },
+    "2026-11-08-mcp-oauth-resource-check": {
+      "build": [
+        {
+          "why": "Which mcp-go version does your Go module use? 1.2.1 carries the fix.",
+          "cmd": "go list -m github.com/mark3labs/mcp-go"
+        },
+        {
+          "why": "The rule a client follows before asking for a token.",
+          "cmd": "if metadata.resource != configured_server_url:\n    refuse(\"server declared another resource\")"
+        }
+      ],
+      "lesson": "When an MCP server needs you to sign in, it tells your client which resource the token is for. A dishonest server can name a different, legitimate server. If the client believes it, your sign-in produces a token for that other server, and the dishonest one receives it. The client must check that the resource named is the server it actually connected to.",
+      "terms": [
+        [
+          "MCP",
+          "Model Context Protocol, how agents connect to tool servers"
+        ],
+        [
+          "resource indicator",
+          "the field that says which server a token is for"
+        ],
+        [
+          "token replay",
+          "using someone's valid token somewhere it was not meant for"
+        ]
+      ],
+      "quiz": [
+        [
+          "What does the client compare before requesting a token?",
+          "The resource the server declares, against the server URL the client was configured with."
+        ]
+      ]
+    },
+    "2026-11-08-github-blocks-pull-request-target": {
+      "build": [
+        {
+          "why": "Does any workflow here use the event?",
+          "cmd": "grep -rn \"pull_request_target\" .github/workflows"
+        }
+      ],
+      "lesson": "GitHub Actions can run a workflow when someone opens a pull request. The pull_request_target event runs it with the main repository's secrets, even for a pull request from a stranger's fork. If that workflow runs the stranger's code, the code can take the secrets. GitHub now blocks the event by default in public repositories.",
+      "terms": [
+        [
+          "fork",
+          "a copy of a repository under another account"
+        ],
+        [
+          "workflow",
+          "an automated job that GitHub runs on events"
+        ]
+      ],
+      "quiz": [
+        [
+          "Why is running fork code under pull_request_target risky?",
+          "It runs with the base repository's secrets, so outside code can read them."
+        ]
+      ]
+    },
+    "2026-11-08-zig-0-17-1": {
+      "build": [
+        {
+          "why": "Which Zig builds your project today?",
+          "cmd": "zig version"
+        },
+        {
+          "why": "Try the new release on a branch, with capped parallelism.",
+          "cmd": "git switch -c try-zig-0.17.1\nzig build -j2"
+        }
+      ],
+      "lesson": "Zig is the language Softanza's engine is written in. A minor version of Zig can change the language and its standard library, so moving two minor versions is a project: build on a branch, count what breaks, then plan.",
+      "terms": [
+        [
+          "minor version",
+          "the middle number, 0.17 in 0.17.1; in Zig it may change the language"
+        ],
+        [
+          "regression",
+          "something that worked before and broke in a new release"
+        ]
+      ],
+      "quiz": [
+        [
+          "Why measure on a branch first?",
+          "So the count of what breaks is known before anyone commits to the move."
+        ]
+      ]
+    },
+    "2026-11-08-spillway-target-admission": {
+      "build": [
+        {
+          "why": "The admission rule in a few lines: where did the target come from?",
+          "cmd": "def admit(call, task_text, trusted_ids):\n    for target in call.targets:\n        if target not in task_text and target not in trusted_ids:\n            return False   # target came from untrusted text\n    return True"
+        }
+      ],
+      "lesson": "Prompt injection hides instructions in text an agent reads, such as an email. SPILLWAY does not try to recognise every trick. It asks one plain question about each action: did its target, such as a recipient or a payee, come from the user's request or from a trusted, typed field? If it came from free text, the action is refused.",
+      "terms": [
+        [
+          "prompt injection",
+          "instructions hidden in data an AI reads"
+        ],
+        [
+          "side effect",
+          "an action that changes something: send, pay, delete"
+        ],
+        [
+          "provenance",
+          "where a value came from"
+        ]
+      ],
+      "quiz": [
+        [
+          "What does SPILLWAY check that a list of allowed tools does not?",
+          "Where an action's target came from, not only which tool is called."
+        ]
+      ]
+    },
+    "2026-11-08-llm-repairs-pass-wrong": {
+      "build": [
+        {
+          "why": "Add one test that exercises the documented change, with the answer taken from the old version.",
+          "cmd": "# expected output recorded on the OLD runtime\nexpected = run_on_old_runtime(edge_input)\nassert repaired(edge_input) == expected"
+        }
+      ],
+      "lesson": "When an API changes, an AI can repair code so that it runs without errors and still gives wrong answers. Tests with ordinary inputs miss this. One input chosen from the change note, with the right answer taken from the old program, catches most wrong repairs.",
+      "terms": [
+        [
+          "regression test",
+          "a test that pins behaviour so a change cannot alter it unseen"
+        ],
+        [
+          "edge input",
+          "an input chosen to hit the exact case that changed"
+        ]
+      ],
+      "quiz": [
+        [
+          "Where should the expected answer for the edge input come from?",
+          "From the old program on the old runtime, not from the model that wrote the repair."
+        ]
+      ]
+    },
+    "2026-11-08-feed-signing": {
+      "build": [
+        {
+          "why": "Check a feed file against Lookout's key.",
+          "cmd": "curl -sO https://raw.githubusercontent.com/mayouni/lookout/main/feed/index.json\ncurl -sO https://raw.githubusercontent.com/mayouni/lookout/main/feed/index.json.sig\ncurl -sO https://raw.githubusercontent.com/mayouni/lookout/main/keys/allowed_signers\nssh-keygen -Y verify -f allowed_signers -I feed@lookout -n lookout-feed -s index.json.sig < index.json"
+        }
+      ],
+      "lesson": "A signature lets a reader check that a file is exactly what its publisher signed. Lookout signs its feed with one key and publishes the public half. Your tool checks the signature and the key's fingerprint before it shows a single notice.",
+      "terms": [
+        [
+          "public key",
+          "the half of a key pair anyone may hold to check signatures"
+        ],
+        [
+          "fingerprint",
+          "a short hash that names one key"
+        ]
+      ],
+      "quiz": [
+        [
+          "Why pin the fingerprint in your own code?",
+          "A key fetched beside the feed only proves the two agree; a pinned fingerprint proves it is Lookout's key."
+        ]
+      ]
+    },
+    "2026-11-08-lookout-opens": {
+      "build": [
+        {
+          "why": "Every entry touching one area, from the terminal.",
+          "cmd": "curl -s https://raw.githubusercontent.com/mayouni/lookout/main/feed/index.json \\\n | jq -r '.items[] | select(.areas // [] | index(\"stzlib\")) | .title'"
+        }
+      ],
+      "lesson": "Lookout reads developments in AI at their source and writes each one twice: as a page for people and as data for programs. The data is a feed any tool can read, filtered by who you are and how urgent the matter is.",
+      "terms": [
+        [
+          "feed",
+          "a file of entries that programs fetch and read"
+        ],
+        [
+          "audience",
+          "who a notice is written for: developer, user, learner, maintainer"
+        ]
+      ],
+      "quiz": [
+        [
+          "What is the difference between level and relevance?",
+          "Relevance says how much it touches Softanza; level says how much it asks of the reader."
+        ]
+      ]
+    }
+  }
+}

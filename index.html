@@ -1,0 +1,378 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Lookout Radar: what changed in AI this week, read from Softanza's point of view. Watch, build and learn from each signal.">
+<title>Lookout Radar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a sticky console bar (role + level + lens), then a radar scope beside a signal list; the detail opens as a sheet. */
+:root{
+  --bg:#f3f5f8; --panel:#ffffff; --ink:#15202c; --muted:#5a6878; --line:#d9dfe7;
+  --accent:#2950c8; --accent-ink:#ffffff; --scope:#e8edf5; --scope-line:#c5cfdd;
+  --lv-info:#6b7a8c; --lv-advice:#2950c8; --lv-action:#c27a0b; --lv-urgent:#c3322b;
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0e131a; --panel:#151c26; --ink:#e6ebf2; --muted:#93a1b3; --line:#263141;
+  --accent:#7d9cff; --accent-ink:#0e131a; --scope:#121924; --scope-line:#2a3647;
+  --lv-info:#8d9bad; --lv-advice:#7d9cff; --lv-action:#e6a33b; --lv-urgent:#ef6a5f; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0e131a; --panel:#151c26; --ink:#e6ebf2; --muted:#93a1b3; --line:#263141;
+  --accent:#7d9cff; --accent-ink:#0e131a; --scope:#121924; --scope-line:#2a3647;
+  --lv-info:#8d9bad; --lv-advice:#7d9cff; --lv-action:#e6a33b; --lv-urgent:#ef6a5f; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 var(--f-body);margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--panel)}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+button,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+header.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--panel);border-bottom:1px solid var(--line)}
+.bar .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;padding-block:12px}
+.brand{display:flex;align-items:baseline;gap:10px;margin-right:auto}
+.brand h1{font:700 1.45rem/1 var(--f-display);margin:0;letter-spacing:-.01em}
+.brand small{font:400 .78rem var(--f-mono);color:var(--muted)}
+.ctl{display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--muted)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.seg button{background:transparent;border:0;padding:6px 11px;cursor:pointer;font-size:.9rem}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+select{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:5px 8px}
+
+.intro{padding-block:22px 6px;display:flex;flex-wrap:wrap;gap:12px 32px;align-items:end}
+.intro p{margin:0;max-width:62ch;color:var(--muted)}
+.intro strong{color:var(--ink)}
+.stamp{font:400 .8rem var(--f-mono);color:var(--muted);display:flex;flex-direction:column;gap:2px}
+.stamp b{color:var(--ink);font-weight:600}
+
+main.grid{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:24px;padding-block:16px 48px}
+@media (max-width:860px){main.grid{grid-template-columns:minmax(0,1fr)}}
+
+.scope{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;align-self:start;position:sticky;top:calc(env(safe-area-inset-top,0px) + 76px)}
+@media (max-width:860px){.scope{position:static}}
+.scope h2,.list h2{font:700 .8rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:2px 4px 10px}
+.scope svg{width:100%;height:auto;display:block}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin:10px 4px 2px;font-size:.82rem;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.blip{cursor:pointer}
+.blip:focus{outline:none}
+.blip:focus-visible circle.ring,.blip:hover circle.ring{stroke-width:3}
+.sweep{transform-origin:200px 200px;animation:sweep 9s linear infinite}
+@keyframes sweep{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.sweep{animation:none}}
+
+.list{min-width:0}
+.cards{display:flex;flex-direction:column;gap:10px}
+.card{display:grid;grid-template-columns:6px minmax(0,1fr);background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;cursor:pointer;text-align:left;padding:0;width:100%}
+.card:hover{border-color:var(--accent)}
+.card .stripe{background:var(--lv-info)}
+.card .body{padding:12px 16px 14px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font:400 .75rem var(--f-mono);color:var(--muted)}
+.pill{border:1px solid var(--line);border-radius:999px;padding:1px 8px;white-space:nowrap}
+.pill.lv{color:var(--panel);border-color:transparent;font-weight:600}
+.new{color:var(--accent);font-weight:600}
+.card h3{font:700 1.08rem/1.3 var(--f-display);margin:0;text-wrap:balance}
+.card p{margin:0;color:var(--ink)}
+.card p.quiet{color:var(--muted)}
+.empty{background:var(--panel);border:1px dashed var(--line);border-radius:12px;padding:20px;color:var(--muted)}
+
+/* detail sheet */
+.sheet{position:fixed;inset:0;z-index:20;display:flex;justify-content:flex-end;background:color-mix(in srgb,var(--ink) 35%,transparent)}
+.sheet[hidden]{display:none!important}
+.panel{background:var(--panel);width:min(680px,100%);height:100%;overflow:auto;padding-block:calc(env(safe-area-inset-top,0px) + 18px) calc(env(safe-area-inset-bottom,0px) + 32px);padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));border-left:1px solid var(--line)}
+.panel .top{display:flex;justify-content:space-between;gap:12px;align-items:start}
+.panel h2{font:700 1.5rem/1.2 var(--f-display);margin:6px 0 10px;text-wrap:balance}
+.close{background:transparent;border:1px solid var(--line);border-radius:8px;padding:4px 10px;cursor:pointer}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:14px 0 16px}
+.tabs button{background:transparent;border:0;border-bottom:2px solid transparent;padding:8px 12px;cursor:pointer;color:var(--muted);font-weight:600}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.sec{display:flex;flex-direction:column;gap:14px}
+.sec h4{font:700 .78rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:6px 0 0}
+.sec p{margin:0;max-width:66ch}
+.notice{border-left:3px solid var(--accent);padding:4px 0 4px 12px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:.92rem}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0}
+ul.src,ul.act{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px}
+a{color:var(--accent)}
+.code{position:relative;background:var(--scope);border:1px solid var(--line);border-radius:10px;overflow-x:auto}
+.code pre{margin:0;padding:12px 14px;font:400 .85rem/1.5 var(--f-mono);white-space:pre}
+.code .why{padding:8px 14px 0;font-size:.88rem;color:var(--muted)}
+.copy{position:absolute;top:6px;right:6px;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:2px 8px;font-size:.78rem;cursor:pointer}
+details{border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+details summary{cursor:pointer;font-weight:600}
+details p{margin-top:8px}
+.terms{display:flex;flex-wrap:wrap;gap:8px}
+.term{border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:.9rem;max-width:100%}
+.term b{font-family:var(--f-mono);font-size:.82rem}
+.foot{border-top:1px solid var(--line);padding-block:18px 28px;color:var(--muted);font-size:.88rem;display:flex;flex-wrap:wrap;gap:8px 24px}
+.foot code{font-family:var(--f-mono);font-size:.8rem;overflow-wrap:anywhere}
+</style>
+</head>
+<body>
+
+
+<header class="bar"><div class="wrap">
+  <div class="brand"><h1>Lookout Radar</h1><small id="weekTag"></small></div>
+  <label class="ctl" for="role">I am a
+    <select id="role">
+      <option value="developer">developer</option>
+      <option value="learner">learner</option>
+      <option value="maintainer">maintainer</option>
+      <option value="user">user</option>
+    </select>
+  </label>
+  <label class="ctl" for="level">showing
+    <select id="level">
+      <option value="info">everything</option>
+      <option value="advice">advice and above</option>
+      <option value="action">action and above</option>
+      <option value="urgent">urgent only</option>
+    </select>
+  </label>
+  <div class="ctl"><span>lens</span>
+    <div class="seg" role="group" aria-label="Lens">
+      <button type="button" data-lens="watch" aria-pressed="true">Watch</button>
+      <button type="button" data-lens="build" aria-pressed="false">Build</button>
+      <button type="button" data-lens="learn" aria-pressed="false">Learn</button>
+    </div>
+  </div>
+</div></header>
+
+<div class="wrap intro">
+  <p id="lensIntro"></p>
+  <div class="stamp"><span>feed <b id="feedStamp"></b></span><span>signed · <b>SHA256:ZUij0x…s49I</b></span></div>
+</div>
+
+<main class="wrap grid">
+  <section class="scope" aria-label="Radar">
+    <h2>This week on the radar</h2>
+    <svg id="radar" viewBox="0 0 400 400" role="img" aria-label="Radar of this week's entries: closer to the centre means more relevant to Softanza"></svg>
+    <div class="legend" id="legend"></div>
+  </section>
+  <section class="list" aria-label="Signals">
+    <h2 id="listTitle">Signals</h2>
+    <div class="cards" id="cards"></div>
+  </section>
+</main>
+
+<div class="wrap foot">
+  <span>Data: Lookout's public feed, <a href="https://github.com/mayouni/lookout" target="_blank" rel="noopener">github.com/mayouni/lookout</a>. Every link opens the entry's page there.</span>
+  <span>Check the feed yourself: <code>ssh-keygen -Y verify -f allowed_signers -I feed@lookout -n lookout-feed -s index.json.sig &lt; index.json</code></span>
+</div>
+
+<div class="sheet" id="sheet" hidden>
+  <article class="panel" role="dialog" aria-modal="true" aria-labelledby="dTitle">
+    <div class="top"><div class="meta" id="dMeta"></div><button class="close" type="button" id="dClose">Close</button></div>
+    <h2 id="dTitle"></h2>
+    <div class="tabs" role="tablist">
+      <button type="button" role="tab" data-tab="watch" aria-selected="true">Watch</button>
+      <button type="button" role="tab" data-tab="build" aria-selected="false">Build</button>
+      <button type="button" role="tab" data-tab="learn" aria-selected="false">Learn</button>
+    </div>
+    <div id="dBody"></div>
+  </article>
+</div>
+
+<script>
+let FEED = null;
+
+/* The app's own layer over the feed: for each entry, checks a programmer can run, and a short lesson.
+   Written by the desk, shown under the Build and Learn lenses; the feed's own text is shown under Watch. */
+let EXTRA = {};
+
+const LEVELS = ["info","advice","action","urgent"];
+const KINDS = ["security","paper","release","practice","feature","idea","regulation","market"];
+const KIND_COLOR = {security:"--lv-urgent",paper:"--accent",release:"--lv-action",practice:"--muted",feature:"--lv-info",idea:"--lv-info",regulation:"--muted",market:"--muted"};
+const LENS_INTRO = {
+  watch:"<strong>Watch</strong> what changed in AI this week, judged against what Softanza builds. Pick who you are, and each signal speaks to you in one sentence.",
+  build:"<strong>Build</strong>: every signal turned into checks and code you can run in your own project today.",
+  learn:"<strong>Learn</strong>: every signal explained in plain words, with the terms it uses and a question to test yourself."
+};
+
+const $ = s => document.querySelector(s);
+const el = (t, cls, txt) => { const e = document.createElement(t); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const store = { get(k,d){ try{ const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); }catch(e){ return d; } },
+                set(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} } };
+const clean = s => String(s ?? "").replace(/[\u0000-\u001f\u007f]/g, " ");   /* plain text only, control characters out */
+const today = new Date().toISOString().slice(0,10);
+
+let state = { role: store.get("role","developer"), level: store.get("level","info"), lens: "watch" };
+const seen = new Set(store.get("seen", []));
+let live = [];
+
+function visible(){
+  const min = LEVELS.indexOf(state.level);
+  return live.filter(it => LEVELS.indexOf(it.level) >= min)
+             .filter(it => state.lens !== "watch" || (it.notice && it.notice[state.role]))
+             .sort((a,b) => LEVELS.indexOf(b.level) - LEVELS.indexOf(a.level) || (b.relevance === "high") - (a.relevance === "high"));
+}
+
+function levelPill(lv){ const p = el("span","pill lv",lv); p.style.background = css("--lv-"+lv); return p; }
+
+function renderCards(){
+  const box = $("#cards"); box.replaceChildren();
+  const items = visible();
+  $("#listTitle").textContent = items.length + (items.length === 1 ? " signal" : " signals") + (state.lens === "watch" ? " for a " + state.role : "");
+  if (!items.length){
+    box.append(el("div","empty", state.lens === "watch"
+      ? "This week's signals speak to developers and maintainers. Switch the role, or open the Learn lens to read every one."
+      : "Lower the level to see more signals."));
+    return;
+  }
+  for (const it of items){
+    const c = el("button","card"); c.type = "button";
+    const stripe = el("span","stripe"); stripe.style.background = css("--lv-"+it.level);
+    const b = el("span","body");
+    const m = el("span","meta");
+    m.append(levelPill(it.level), el("span","pill",it.kind), el("span","pill",it.stance), el("span",null,"relevance " + it.relevance));
+    if (!seen.has(it.id)) m.append(el("span","new","new"));
+    b.append(m, el("h3",null,clean(it.title)));
+    if (state.lens === "watch") b.append(el("p",null,clean(it.notice[state.role])));
+    else if (state.lens === "build") b.append(el("p","quiet",(EXTRA[it.id]?.build?.length || 0) + " check" + ((EXTRA[it.id]?.build?.length||0)===1?"":"s") + " to run · " + clean(EXTRA[it.id]?.build?.[0]?.why || "")));
+    else b.append(el("p","quiet",clean((EXTRA[it.id]?.lesson || it.summary).split(". ")[0] + ".")));
+    c.append(stripe, b);
+    c.addEventListener("click", () => openEntry(it.id));
+    box.append(c);
+  }
+}
+
+function renderRadar(){
+  const svg = $("#radar"); const NS = "http://www.w3.org/2000/svg";
+  const mk = (t, a) => { const e = document.createElementNS(NS,t); for (const k in a) e.setAttribute(k,a[k]); return e; };
+  svg.replaceChildren();
+  const C = 200, R = {high:70, medium:120, low:165};
+  svg.append(mk("circle",{cx:C,cy:C,r:185,fill:css("--scope"),stroke:css("--scope-line")}));
+  for (const [k,r] of Object.entries(R)){
+    svg.append(mk("circle",{cx:C,cy:C,r,fill:"none",stroke:css("--scope-line"),"stroke-dasharray":"3 5"}));
+    const t = mk("text",{x:C+4,y:C-r+14,fill:css("--muted"),"font-size":"11","font-family":"JetBrains Mono, monospace"}); t.textContent = k; svg.append(t);
+  }
+  svg.append(mk("line",{x1:C,y1:15,x2:C,y2:385,stroke:css("--scope-line")}), mk("line",{x1:15,y1:C,x2:385,y2:C,stroke:css("--scope-line")}));
+  const sw = mk("g",{class:"sweep"});
+  sw.append(mk("path",{d:`M${C},${C} L${C},15 A185,185 0 0,1 ${C+185*Math.sin(Math.PI/7)},${C-185*Math.cos(Math.PI/7)} Z`,fill:css("--accent"),opacity:"0.10"}));
+  svg.append(sw);
+  const items = visible();
+  const kinds = [...new Set(items.map(i => i.kind))];
+  items.forEach((it, i) => {
+    const k = KINDS.indexOf(it.kind); const sameRing = items.filter(x => x.relevance === it.relevance);
+    const idx = sameRing.indexOf(it);
+    const ang = (k * 45 + idx * 23 + 15) * Math.PI / 180;
+    const r = R[it.relevance] - 22 + (idx % 2) * 14;
+    const x = C + r * Math.sin(ang), y = C - r * Math.cos(ang);
+    const g = mk("g",{class:"blip",tabindex:"0",role:"button","aria-label":clean(it.title)});
+    const size = {info:6,advice:8,action:10,urgent:12}[it.level];
+    g.append(mk("circle",{class:"ring",cx:x,cy:y,r:size+4,fill:"none",stroke:css("--lv-"+it.level),"stroke-width":"1.5"}));
+    g.append(mk("circle",{cx:x,cy:y,r:size,fill:css(KIND_COLOR[it.kind] || "--muted")}));
+    const tt = mk("title",{}); tt.textContent = it.kind + " · " + it.level + " — " + clean(it.title); g.append(tt);
+    g.addEventListener("click", () => openEntry(it.id));
+    g.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " "){ e.preventDefault(); openEntry(it.id); }});
+    svg.append(g);
+  });
+  const lg = $("#legend"); lg.replaceChildren();
+  for (const k of kinds){ const s = el("span"); const d = el("i"); d.style.background = css(KIND_COLOR[k]); s.append(d, document.createTextNode(k)); lg.append(s); }
+  const s2 = el("span",null,"ring = level · centre = most relevant"); lg.append(s2);
+}
+
+function codeBlock(c){
+  const w = el("div","code");
+  if (c.why) w.append(el("div","why",c.why));
+  const pre = el("pre"); pre.textContent = c.cmd; w.append(pre);
+  const b = el("button","copy","Copy"); b.type = "button";
+  b.addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText(c.cmd); b.textContent = "Copied"; }
+    catch(e){ const r = document.createRange(); r.selectNodeContents(pre); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = "Selected"; }
+    setTimeout(() => b.textContent = "Copy", 1600);
+  });
+  w.append(b); return w;
+}
+
+let current = null;
+function openEntry(id, tab){
+  const it = FEED.items.find(x => x.id === id); if (!it) return;
+  current = it; seen.add(id); store.set("seen",[...seen]);
+  $("#dMeta").replaceChildren(levelPill(it.level), el("span","pill",it.kind), el("span","pill",it.stance), el("span",null,it.date));
+  $("#dTitle").textContent = clean(it.title);
+  showTab(tab || state.lens);
+  $("#sheet").hidden = false; $("#dClose").focus();
+  renderCards();
+}
+function showTab(t){
+  document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === t)));
+  const it = current, x = EXTRA[it.id] || {}, body = $("#dBody"); body.replaceChildren();
+  const sec = el("div","sec");
+  if (t === "watch"){
+    const note = it.notice?.[state.role];
+    if (note){ sec.append(el("h4",null,"For a " + state.role)); sec.append(el("p","notice",clean(note))); }
+    sec.append(el("h4",null,"What happened"), el("p",null,clean(it.summary)));
+    const kv = el("dl","kv");
+    for (const [k,v] of [["stance",it.stance],["relevance",it.relevance],["level",it.level],["confidence",it.confidence],["areas",(it.areas||[]).join(", ")],["look again by",it.review_by]]){ kv.append(el("dt",null,k), el("dd",null,clean(v))); }
+    sec.append(kv);
+    if (it.actions?.length){
+      sec.append(el("h4",null,"Proposed to Softanza's maintainers"));
+      const ul = el("ul","act"); for (const a of it.actions) ul.append(el("li",null,clean(a.area + ": " + a.do + " (" + a.state + ")"))); sec.append(ul);
+    }
+    sec.append(el("h4",null,"Sources, as listed on the entry"));
+    const ul = el("ul","src"); for (const s of it.sources) ul.append(el("li",null,clean(s.title + " — " + (s.by || "") + ", read " + s.read))); sec.append(ul);
+    const p = el("p"); const a = el("a",null,"Read the full entry on Lookout"); a.href = it.url; a.target = "_blank"; a.rel = "noopener"; p.append(a); sec.append(p);
+  } else if (t === "build"){
+    sec.append(el("p",null,"Run these in your own project. Each one is read-only unless it says it writes."));
+    for (const c of (x.build || [])) sec.append(codeBlock(c));
+  } else {
+    sec.append(el("h4",null,"In plain words"), el("p",null,x.lesson || clean(it.summary)));
+    if (x.terms?.length){ sec.append(el("h4",null,"Terms")); const box = el("div","terms");
+      for (const [k,v] of x.terms){ const s = el("span","term"); s.append(el("b",null,k), document.createTextNode(" — " + v)); box.append(s); } sec.append(box); }
+    if (x.quiz?.length){ sec.append(el("h4",null,"Check yourself"));
+      for (const [q,a] of x.quiz){ const d = el("details"); d.append(el("summary",null,q), el("p",null,a)); sec.append(d); } }
+  }
+  body.append(sec);
+}
+function closeSheet(){ $("#sheet").hidden = true; current = null; }
+
+function setLens(l){
+  state.lens = l;
+  document.querySelectorAll("[data-lens]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lens === l)));
+  $("#lensIntro").innerHTML = LENS_INTRO[l];
+  renderCards(); renderRadar();
+}
+
+async function start(){
+  try {
+    const [f, l] = await Promise.all([
+      fetch("feed/index.json", {cache: "no-cache"}).then(r => { if (!r.ok) throw new Error("feed " + r.status); return r.json(); }),
+      fetch("app/lessons.json", {cache: "no-cache"}).then(r => r.ok ? r.json() : {entries:{}}).catch(() => ({entries:{}}))
+    ]);
+    if (f.feed !== "lookout" || f.version !== 1) throw new Error("this page reads feed version 1");
+    FEED = f; EXTRA = l.entries || {};
+  } catch (e) {
+    document.querySelector("#cards").replaceChildren(el("div", "empty", "The feed could not be loaded (" + e.message + "). Reload the page to try again."));
+    return;
+  }
+  live = FEED.items.filter(it => !["declined","superseded"].includes(it.status) && it.review_by >= today);
+  $("#role").value = state.role; $("#level").value = state.level;
+  $("#role").addEventListener("change", e => { state.role = e.target.value; store.set("role",state.role); renderCards(); renderRadar(); });
+  $("#level").addEventListener("change", e => { state.level = e.target.value; store.set("level",state.level); renderCards(); renderRadar(); });
+  document.querySelectorAll("[data-lens]").forEach(b => b.addEventListener("click", () => setLens(b.dataset.lens)));
+  document.querySelectorAll(".tabs button").forEach(b => b.addEventListener("click", () => showTab(b.dataset.tab)));
+  $("#dClose").addEventListener("click", closeSheet);
+  $("#sheet").addEventListener("click", e => { if (e.target.id === "sheet") closeSheet(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("#sheet").hidden) closeSheet(); });
+  matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", renderRadar);
+  new MutationObserver(renderRadar).observe(document.documentElement, {attributes:true, attributeFilter:["data-theme"]});
+
+  const d = new Date(FEED.items.map(i => i.date).sort().pop() + "T00:00:00Z"); const wk = (() => { const t = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate())); const day = t.getUTCDay() || 7; t.setUTCDate(t.getUTCDate() + 4 - day); const y0 = new Date(Date.UTC(t.getUTCFullYear(),0,1)); return t.getUTCFullYear() + "-W" + String(Math.ceil(((t - y0) / 864e5 + 1) / 7)).padStart(2,"0"); })();
+  $("#weekTag").textContent = "week " + wk;
+  $("#feedStamp").textContent = FEED.items.length + " entries · " + FEED.updated.slice(0,10);
+  setLens("watch");
+
+}
+start();
+</script>
+
+</body>
+</html>
