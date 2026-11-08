@@ -32,7 +32,8 @@ when the author says "run the week".
 3. Commit with a message that names the week and the number of entries.
 4. **Publish only if the author has ruled that weekly runs publish** (the `publish` line in `docs/SCHEDULE.md`). If
    they have, push `main` to `origin` and check that `git ls-remote origin main` equals your commit. If they have not,
-   leave the commit unpushed and say so in the memo.
+   leave the commit unpushed and say so in the memo. A run never signs: the feed is signed at publish, by the author,
+   and `haro tools/feed.ring verify` must pass before any push (`docs/FEED.md`, "The signature").
 5. Write the memo in `.central/outbox.md`. List the entries, their levels, and every action proposed, with its area,
    so that Central can route it. An `urgent` entry goes first, with the word URGENT in the subject.
 6. Append the cost line to `.central/cost.jsonl`, reading `closed` from the clock just before you write it, in UTC.

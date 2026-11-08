@@ -1,1 +1,6 @@
 * text=auto eol=lf
+
+# Signed files: their bytes must never be changed by a checkout (docs/FEED.md, "The signature").
+feed/*.json -text
+feed/*.sig -text
+keys/* -text

@@ -416,7 +416,9 @@ project it concerns, and publishes a feed that programs read. Start with `README
 
 **Fast path:** regenerating and checking the feed is one process over `items/`: `haro tools/feed.ring` (or `check`
 to write nothing), 4 ms for one entry on 2026-11-08. Its guard is `haro tools/guard.ring`, 33 cases in 80 ms. Run the
-guard after changing `tools/` or `schema/`. A survey is the slow path and runs once a week.
+guard after changing `tools/` or `schema/`. Before any push, `haro tools/feed.ring verify` must pass: the attended
+session signs at publish, after the author approves the digest, with the key kept in the author's `.ssh` folder. The
+key has no passphrase, by the author's ruling of 2026-11-08: no secret for them to keep. A survey is the slow path and runs once a week.
 
 **Haro traps met here.** Ring's names are case-insensitive, so a local named `oR` is the keyword `or` and fails to
 parse; Haro has no `systemcmd()`, so the guard tests in one process rather than through child runs; a stored object

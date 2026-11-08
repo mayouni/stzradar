@@ -71,9 +71,10 @@
     {
       "id": "2026-11-08-feed-signing",
       "date": "2026-11-08",
-      "title": "Lookout's feed will be signed: check it came from this repository unchanged",
+      "updated": "2026-11-08",
+      "title": "Lookout's feed is signed: check it came from this repository unchanged",
       "kind": "feature",
-      "summary": "Lookout will publish an SSH signature beside each feed file, feed/index.json.sig and feed/feed.json.sig, made with one Ed25519 key kept for this purpose by Lookout's maintainer. Any reader with OpenSSH can check a feed with ssh-keygen against the public key and the namespace lookout-feed. The change adds files and adds nothing to the feed itself, so the feed stays at version 1.",
+      "summary": "Lookout publishes an SSH signature beside each feed file, feed/index.json.sig and feed/feed.json.sig, made with one Ed25519 key kept for this purpose by Lookout's maintainer. Any reader with OpenSSH can check a feed with ssh-keygen against the public key and the namespace lookout-feed. The change adds files and adds nothing to the feed itself, so the feed stays at version 1; docs/FEED.md gives the key, its fingerprint and the command.",
       "stance": "adopt",
       "relevance": "medium",
       "level": "info",
@@ -82,8 +83,8 @@
         "maintainer"
       ],
       "notice": {
-        "developer": "Lookout's feed will carry a signature beside each file; a program that shows its notices should check it with ssh-keygen before showing anything.",
-        "maintainer": "When the signature lands, pin Lookout's key fingerprint in your reader rather than fetching the key from the same place as the feed."
+        "developer": "Lookout's feed carries a signature beside each file; a program that shows its notices should check it with ssh-keygen before showing anything.",
+        "maintainer": "Pin Lookout's key fingerprint in your reader rather than fetching the key from the same place as the feed."
       },
       "areas": [
         "softanza",
@@ -96,7 +97,7 @@
           "state": "proposed"
         }
       ],
-      "status": "new",
+      "status": "done",
       "confidence": "read",
       "sources": [
         {
