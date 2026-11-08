@@ -24,6 +24,22 @@
       ]
     },
     {
+      "id": "2026-11-08-feed-signing",
+      "url": "https://github.com/mayouni/lookout/blob/main/items/2026/2026-11-08-feed-signing.md",
+      "title": "Lookout's feed will be signed: check it came from this repository unchanged",
+      "summary": "Lookout will publish an SSH signature beside each feed file, feed/index.json.sig and feed/feed.json.sig, made with one Ed25519 key kept for this purpose by Lookout's maintainer. Any reader with OpenSSH can check a feed with ssh-keygen against the public key and the namespace lookout-feed. The change adds files and adds nothing to the feed itself, so the feed stays at version 1.",
+      "content_text": "Lookout will publish an SSH signature beside each feed file, feed/index.json.sig and feed/feed.json.sig, made with one Ed25519 key kept for this purpose by Lookout's maintainer. Any reader with OpenSSH can check a feed with ssh-keygen against the public key and the namespace lookout-feed. The change adds files and adds nothing to the feed itself, so the feed stays at version 1.",
+      "date_published": "2026-11-08T00:00:00Z",
+      "tags": [
+        "feature",
+        "adopt",
+        "info",
+        "feed",
+        "signature",
+        "supply-chain"
+      ]
+    },
+    {
       "id": "2026-11-08-github-blocks-pull-request-target",
       "url": "https://github.com/mayouni/lookout/blob/main/items/2026/2026-11-08-github-blocks-pull-request-target.md",
       "title": "GitHub will block pull_request_target in public repositories from December 2",

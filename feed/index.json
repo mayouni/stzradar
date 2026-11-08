@@ -69,6 +69,52 @@
       "url": "https://github.com/mayouni/lookout/blob/main/items/2026/2026-11-08-agent-approvals-leak-secrets.md"
     },
     {
+      "id": "2026-11-08-feed-signing",
+      "date": "2026-11-08",
+      "title": "Lookout's feed will be signed: check it came from this repository unchanged",
+      "kind": "feature",
+      "summary": "Lookout will publish an SSH signature beside each feed file, feed/index.json.sig and feed/feed.json.sig, made with one Ed25519 key kept for this purpose by Lookout's maintainer. Any reader with OpenSSH can check a feed with ssh-keygen against the public key and the namespace lookout-feed. The change adds files and adds nothing to the feed itself, so the feed stays at version 1.",
+      "stance": "adopt",
+      "relevance": "medium",
+      "level": "info",
+      "audiences": [
+        "developer",
+        "maintainer"
+      ],
+      "notice": {
+        "developer": "Lookout's feed will carry a signature beside each file; a program that shows its notices should check it with ssh-keygen before showing anything.",
+        "maintainer": "When the signature lands, pin Lookout's key fingerprint in your reader rather than fetching the key from the same place as the feed."
+      },
+      "areas": [
+        "softanza",
+        "stzlib"
+      ],
+      "actions": [
+        {
+          "area": "stzlib",
+          "do": "add the signature check to the reader proposed in docs/READER.md, with the key's fingerprint pinned in the library",
+          "state": "proposed"
+        }
+      ],
+      "status": "new",
+      "confidence": "read",
+      "sources": [
+        {
+          "title": "The feed contract, version 1",
+          "url": "https://github.com/mayouni/lookout/blob/main/docs/FEED.md",
+          "by": "Softanza",
+          "read": "2026-11-08"
+        }
+      ],
+      "review_by": "2027-05-08",
+      "tags": [
+        "feed",
+        "signature",
+        "supply-chain"
+      ],
+      "url": "https://github.com/mayouni/lookout/blob/main/items/2026/2026-11-08-feed-signing.md"
+    },
+    {
       "id": "2026-11-08-github-blocks-pull-request-target",
       "date": "2026-11-08",
       "title": "GitHub will block pull_request_target in public repositories from December 2",
