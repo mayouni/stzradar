@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mayouni/labari/schema/item.schema.json",
+  "title": "Labari entry, version 1",
+  "type": "object",
+  "required": ["id", "date", "title", "kind", "summary", "stance", "relevance", "level", "audiences", "notice", "status", "confidence", "sources", "review_by"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}-[a-z0-9]+(-[a-z0-9]+)*$" },
+    "date": { "type": "string", "format": "date" },
+    "updated": { "type": "string", "format": "date" },
+    "title": { "type": "string", "minLength": 1 },
+    "kind": { "enum": ["paper", "release", "feature", "practice", "security", "regulation", "market", "idea"] },
+    "summary": { "type": "string", "minLength": 1 },
+    "stance": { "enum": ["adopt", "learn", "correct", "defend", "watch", "decline"] },
+    "relevance": { "enum": ["high", "medium", "low"] },
+    "level": { "enum": ["info", "advice", "action", "urgent"] },
+    "audiences": {
+      "type": "array", "minItems": 1, "uniqueItems": true,
+      "items": { "enum": ["developer", "user", "learner", "maintainer"] }
+    },
+    "notice": {
+      "type": "object", "minProperties": 1,
+      "propertyNames": { "enum": ["developer", "user", "learner", "maintainer"] },
+      "additionalProperties": { "type": "string", "minLength": 1 }
+    },
+    "areas": { "type": "array", "items": { "type": "string", "pattern": "^[a-z0-9]+(\\.[a-z0-9-]+)*$" } },
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["area", "do", "state"],
+        "properties": {
+          "area": { "type": "string" },
+          "do": { "type": "string", "minLength": 1 },
+          "state": { "enum": ["proposed", "routed", "in-progress", "done", "declined"] }
+        }
+      }
+    },
+    "status": { "enum": ["new", "analysed", "routed", "done", "declined", "superseded"] },
+    "supersedes": { "type": "string" },
+    "confidence": { "enum": ["read", "reported", "claimed"] },
+    "sources": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["title", "url", "read"],
+        "properties": {
+          "title": { "type": "string" },
+          "url": { "type": "string", "pattern": "^https://" },
+          "by": { "type": "string" },
+          "read": { "type": "string", "format": "date" }
+        }
+      }
+    },
+    "review_by": { "type": "string", "format": "date" },
+    "tags": { "type": "array", "items": { "type": "string", "pattern": "^[a-z0-9-]+$" } },
+    "url": { "type": "string", "pattern": "^https://github\\.com/mayouni/labari/" }
+  }
+}

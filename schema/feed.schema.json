@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mayouni/labari/schema/feed.schema.json",
+  "title": "Labari feed index, version 1",
+  "type": "object",
+  "required": ["feed", "version", "updated", "home", "items"],
+  "properties": {
+    "feed": { "const": "labari" },
+    "version": { "const": 1 },
+    "updated": { "type": "string", "format": "date-time" },
+    "home": { "const": "https://github.com/mayouni/labari" },
+    "items": {
+      "type": "array",
+      "items": {
+        "allOf": [
+          { "$ref": "item.schema.json" },
+          { "required": ["url"] }
+        ]
+      }
+    }
+  }
+}

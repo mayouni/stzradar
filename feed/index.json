@@ -1,0 +1,66 @@
+{
+  "feed": "labari",
+  "version": 1,
+  "updated": "2026-11-08T00:00:00Z",
+  "home": "https://github.com/mayouni/labari",
+  "items": [
+    {
+      "id": "2026-11-08-labari-opens",
+      "date": "2026-11-08",
+      "title": "Labari opens: a public watch on AI, read from Softanza's point of view",
+      "kind": "idea",
+      "summary": "Softanza opened Labari, a public repository that reads developments in AI at their source and judges each one against what Softanza builds. Every entry is written twice in one file, as a page for people and as data for programs, and a feed is generated from the data.",
+      "stance": "adopt",
+      "relevance": "high",
+      "level": "info",
+      "audiences": [
+        "developer",
+        "learner",
+        "maintainer"
+      ],
+      "notice": {
+        "developer": "Softanza now keeps a public watch on AI developments: read it on GitHub, or fetch feed/index.json to show its notices in your own tools.",
+        "learner": "There is now one place that explains, in plain words, what changes in AI mean for what you learn with Softanza.",
+        "maintainer": "Labari is open: send it the AI developments that touch your project, and expect the tasks it proposes to reach you through Bangalo."
+      },
+      "areas": [
+        "softanza"
+      ],
+      "actions": [
+        {
+          "area": "softanza",
+          "do": "run the first weekly survey and publish its digest",
+          "state": "proposed"
+        },
+        {
+          "area": "stzlib",
+          "do": "propose a command that reads this feed for its user's audience and level",
+          "state": "proposed"
+        }
+      ],
+      "status": "done",
+      "confidence": "read",
+      "sources": [
+        {
+          "title": "Labari's README",
+          "url": "https://github.com/mayouni/labari",
+          "by": "Softanza",
+          "read": "2026-11-08"
+        },
+        {
+          "title": "The feed contract, version 1",
+          "url": "https://github.com/mayouni/labari/blob/main/docs/FEED.md",
+          "by": "Softanza",
+          "read": "2026-11-08"
+        }
+      ],
+      "review_by": "2027-05-08",
+      "tags": [
+        "watch",
+        "feed",
+        "notices"
+      ],
+      "url": "https://github.com/mayouni/labari/blob/main/items/2026/2026-11-08-labari-opens.md"
+    }
+  ]
+}

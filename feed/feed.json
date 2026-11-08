@@ -1,0 +1,26 @@
+{
+  "version": "https://jsonfeed.org/version/1.1",
+  "title": "Labari",
+  "home_page_url": "https://github.com/mayouni/labari",
+  "feed_url": "https://raw.githubusercontent.com/mayouni/labari/main/feed/feed.json",
+  "description": "A public watch on what is changing in AI, read from Softanza's point of view.",
+  "language": "en",
+  "items": [
+    {
+      "id": "2026-11-08-labari-opens",
+      "url": "https://github.com/mayouni/labari/blob/main/items/2026/2026-11-08-labari-opens.md",
+      "title": "Labari opens: a public watch on AI, read from Softanza's point of view",
+      "summary": "Softanza opened Labari, a public repository that reads developments in AI at their source and judges each one against what Softanza builds. Every entry is written twice in one file, as a page for people and as data for programs, and a feed is generated from the data.",
+      "content_text": "Softanza opened Labari, a public repository that reads developments in AI at their source and judges each one against what Softanza builds. Every entry is written twice in one file, as a page for people and as data for programs, and a feed is generated from the data.",
+      "date_published": "2026-11-08T00:00:00Z",
+      "tags": [
+        "idea",
+        "adopt",
+        "info",
+        "watch",
+        "feed",
+        "notices"
+      ]
+    }
+  ]
+}
