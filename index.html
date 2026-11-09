@@ -102,16 +102,26 @@ nav.views a[aria-current="page"]{border-bottom-color:var(--accent);color:var(--d
 /* the reading measure, everywhere: a line of prose stops near 78 characters, whatever the width of its container */
 main :is(p,li,dd,figcaption,summary,.lede){max-width:78ch}
 /* reading pages: a steering column on the left, the text at a reading measure beside it, both from the header's edge */
-.railpage{display:grid;grid-template-columns:17rem minmax(0,54rem);gap:56px;align-items:start}
-.rail{position:sticky;top:calc(var(--head,150px) + 20px);display:flex;flex-direction:column;gap:12px}
-.rail .railh{font:600 1.125rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);margin:6px 0 0}
-.rail .toc{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;font-size:1.125rem;line-height:1.35}
-.rail .toc a,.rail .back{color:var(--deep);text-decoration:underline}
-.rail .filters{display:flex;flex-direction:column;align-items:stretch;gap:12px;border:0;padding:0;margin:0}
-.rail .period{margin:0;font-size:1.125rem}.rail .period b{display:none}.rail .period select{margin:0 0 6px;display:block}
-@media (max-width:1000px){.railpage{grid-template-columns:minmax(0,1fr);gap:20px}.rail{position:static}.rail .toc,.rail .railh:not(:first-child){display:none}
-  .rail .filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 18px}}
-@media (max-width:560px){.rail .filters{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.railpage{display:grid;grid-template-columns:minmax(0,54rem) 17rem;gap:56px;align-items:start}
+.railpage > .railmain{grid-column:1;grid-row:1;min-width:0}
+.rail{grid-column:2;grid-row:1;position:sticky;top:calc(var(--head,150px) + 24px);display:flex;flex-direction:column;gap:28px}
+/* Zane's outline (stzzui site/stz.css, nav.list3.sections): the label grey and plain, outside the line; entries in ink,
+   no underline, one line each; the pointer turns an entry to the link colour; the section being read is bold */
+.rail .outline-title{margin:0 0 .8rem;font-weight:400;font-size:1rem;color:var(--ink2)}
+.outline ul{list-style:none;margin:0;padding:0 0 0 .9rem;border-left:1px solid var(--line)}
+.outline li{margin:0;max-width:none}
+.outline a{display:block;padding:.3rem .6rem;color:var(--ink);text-decoration:none;font-size:1.125rem;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.outline a:hover{color:var(--deep)}
+.outline a[aria-current]{font-weight:700;color:var(--ink)}
+.railtools .filters{display:flex;flex-direction:column;align-items:stretch;gap:12px;border:0;padding:0;margin:0}
+.railtools .period{margin:0;font-size:1.125rem;color:var(--ink2)}.railtools .period b{display:none}.railtools .period select{margin:0 0 6px;display:block}
+@media (max-height:640px){.rail{position:static}}
+/* a narrow screen: the tools go above the text, the outline below it, as Zane's site does */
+@media (max-width:1000px){.railpage{grid-template-columns:minmax(0,1fr);gap:20px}.rail{display:contents}
+  .railtools{grid-row:1}.railpage > .railmain{grid-row:2}.outline{grid-row:3;border-top:1px solid var(--line);padding-top:.8rem}
+  .outline ul{border-left:0;padding-left:0}
+  .railtools .filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 18px}}
+@media (max-width:560px){.railtools .filters{grid-template-columns:repeat(2,minmax(0,1fr))}}
 /* the front page: the hero in two halves (text, live radar), then one row of three columns */
 /* the whole hero -- promise and radar -- fits the window under the header at 100% zoom (author, 2026-11-09): its
    height is the window's, the radar takes what its pane has left, and the type steps with the window's height */
@@ -610,27 +620,44 @@ function head(eyebrow, title, ledes){
   h.append(w); return h;
 }
 
-/* ------------------------------------------------------------ the reading-page layout
-   A wide screen is used by giving a reading page a second column, never by stretching its text (author, 2026-11-09:
-   "making best use of the space does not mean creating divs as large as this"). The left column holds what steers
-   the page (filters, the period, the page's own contents) and stays in view; the right column keeps a reading measure
-   and starts at the same left edge as the header, so nothing floats in the middle of the screen. */
-function railPage(main, title, railNodes){
+/* ------------------------------------------------------------ the reading-page layout, as on Zane's own site
+   The text starts at the header's left edge and keeps a reading measure. On its right, a column that stays in view:
+   at its top what steers the page (the filters, the period), and under it "On this page", Zane's outline -- a grey
+   label, a thin line, one entry per section in the body ink, the section being read in bold (the author, 2026-11-09:
+   "use the same 'On this page' submenu we used in the Zane website"). */
+function railPage(main, opt = {}){
   const s = el("section","block wrap railpage"), aside = el("aside","rail");
-  if (title) aside.append(el("h2","railh",title));
-  aside.append(...railNodes); s.append(aside, main); return s;
+  if (opt.tools){ const t = el("div","railtools"); if (opt.label) t.append(el("p","outline-title",opt.label)); t.append(...opt.tools); aside.append(t); }
+  if (opt.outline && opt.outline.querySelector("li")){
+    const nav = el("nav","outline"); nav.setAttribute("aria-label","Sections of this page");
+    nav.append(el("p","outline-title","On this page"), opt.outline); aside.append(nav);
+    spyOn(opt.outline);
+  }
+  s.append(main, aside); return s;
 }
-/* the page's own contents: one line per heading of the main column, each scrolling to it (the hash belongs to the router) */
+/* the page's own sections: one entry per heading, each scrolling to it (the hash belongs to the router) */
 function contentsOf(main, sel){
-  const ul = el("ul","toc");
+  const ul = el("ul");
   main.querySelectorAll(sel).forEach(h => {
-    const a = el("a",null,h.textContent.replace(/^\d+\.\s*/,"")); a.href = location.hash || "#/";
+    const t = h.textContent.replace(/^\d+\.\s*/,"");
+    const a = el("a",null,t); a.href = location.hash || "#/"; a.title = t; a._target = h;
     a.addEventListener("click", e => { e.preventDefault(); h.scrollIntoView({block:"start"}); });
     const li = el("li"); li.append(a); ul.append(li);
   });
   return ul;
 }
-
+/* the entry of the section being read is marked, as Zane's outline marks it: the last heading above the reading line */
+let spyList = null;
+function spyOn(ul){ spyList = ul; setTimeout(spy, 0); }
+function spy(){
+  if (!spyList || !spyList.isConnected) return;
+  const line = (parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--head")) || 120) + 40;
+  let cur = null;
+  for (const a of spyList.querySelectorAll("a")) if (a._target.getBoundingClientRect().top <= line) cur = a;
+  cur = cur || spyList.querySelector("a");
+  for (const a of spyList.querySelectorAll("a")) a.toggleAttribute("aria-current", a === cur);
+}
+addEventListener("scroll", spy, {passive:true});
 /* ------------------------------------------------------------ view: the front page
    What the watch is for, before any week. The hero holds two halves (author, 2026-11-09: "use the space"): on the
    left the promise, the two ways in and this week's key figures; on the right this week's radar itself, live, so a
@@ -919,7 +946,7 @@ function viewSignals(q){
   s.append(el("p","count", plural(items.length, "signal")));
   if (!items.length){ const e = el("div","empty"); e.append(document.createTextNode("Widen a filter to see more: ")); const a = el("a",null,"every signal"); a.href = "#/signals"; e.append(a, document.createTextNode(".")); s.append(e); }
   const cs = el("div","cards"); for (const it of items) cs.append(card(it)); s.append(cs);
-  frag.append(railPage(s, "Filter", [f])); return frag;
+  frag.append(railPage(s, {label:"Filter", tools:[f]})); return frag;
 }
 
 /* ------------------------------------------------------------ view: one signal */
@@ -944,7 +971,7 @@ function viewSignal(id){
   const m = el("div","meta"); m.append(levelPill(it.level), el("span","pill",it.kind), el("span","pill",it.stance), el("span",null,it.date));
   frag.append(head("", clean(it.title), [m]));
   const s = el("div","railmain sig");
-  const back = el("a","back","All signals"); back.href = "#/signals";
+  const back = el("a","back","All signals"); back.href = "#/signals"; s.append(back);
   const part = (title, ...nodes) => { const p = el("div","part"); if (title) p.append(el("h2",null,title)); p.append(...nodes); return p; };
   const P = {
     notice: () => it.notice?.[reader] ? part("For a " + reader, el("p","notice",clean(it.notice[reader]))) : null,
@@ -973,7 +1000,7 @@ function viewSignal(id){
       return part("Sources", ul, p); }
   };
   for (const k of READERS[reader].order){ const n = P[k](); if (n) s.append(n); }
-  frag.append(railPage(s, "In this signal", [contentsOf(s, ".part > h2"), back])); return frag;
+  frag.append(railPage(s, {outline: contentsOf(s, ".part > h2")})); return frag;
 }
 
 /* ------------------------------------------------------------ view: trends
@@ -1134,7 +1161,7 @@ function viewTrends(q){
   rep.append(figure("The richest lessons", "For each signal: the checks, terms and questions written beside it.", hbars(lr, {unit:"items"}), ["Signal","checks, terms and questions"], lr.map(r => [r.label, r.value])));
   const ul = el("ul","plain"); for (const i of soon){ const li = el("li"); const a = el("a",null,clean(i.title)); a.href = "#/signal/" + i.id; li.append(el("b",null,i.review_by + " "), a); ul.append(li); }
   rep.append(figure("Looked at again next", "Each signal carries the day " + NAME() + " reviews it; these come first.", ul, ["Review by","signal"], soon.map(i => [i.review_by, clean(i.title)])));
-  frag.append(railPage(rep, "Period", [fr, el("h2","railh","Chapters"), contentsOf(rep, "h2.chap")]));
+  frag.append(railPage(rep, {label:"Period", tools:[fr], outline: contentsOf(rep, "h2.chap")}));
   return frag;
 }
 
@@ -1409,7 +1436,7 @@ function viewFeed(){
   cb.append(pre);
   doc.append(el("h2",null,"What this browser checked"), p1, p2, el("h2",null,"Where the data lives"), p3, el("h2",null,"Check it yourself"), p4, cb,
     el("p",null,"It answers \"Good signature\" with the signer's name. Any change to the file, even one character, makes the check fail."));
-  frag.append(railPage(doc, "On this page", [contentsOf(doc, "h2")]));
+  frag.append(railPage(doc, {outline: contentsOf(doc, "h2")}));
   return frag;
 }
 
@@ -1477,7 +1504,7 @@ function renderDoc(md, eyebrow){
     flushList(); para.push(L.trim()); i++;
   }
   flushPara();
-  nodes.push(head(eyebrow, title, []), railPage(body, "On this page", [contentsOf(body, "h2")]));
+  nodes.push(head(eyebrow, title, []), railPage(body, {outline: contentsOf(body, "h2")}));
   return nodes;
 }
 /* a mermaid flowchart, drawn as boxes in layers from its first node down: the same diagram GitHub shows, at the
