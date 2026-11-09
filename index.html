@@ -97,23 +97,30 @@ main :is(p,li,dd,figcaption,summary,.lede){max-width:78ch}
   .rail .filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 18px}}
 @media (max-width:560px){.rail .filters{grid-template-columns:repeat(2,minmax(0,1fr))}}
 /* the front page: the hero in two halves (text, live radar), then one row of three columns */
-.hero .wrap{padding-block:48px 44px}
-.herogrid{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap:56px;align-items:center}
-.hero h1{font-size:clamp(2.1rem,3.6vw,3.4rem);max-width:20ch;margin-bottom:18px}
-.hero .lede{max-width:60ch}
-.hero .cta{margin:28px 0 0;display:flex;flex-wrap:wrap;align-items:center;gap:12px 28px}
+/* the whole hero -- promise and radar -- fits the window under the header at 100% zoom (author, 2026-11-09): its
+   height is the window's, the radar takes what its pane has left, and the type steps with the window's height */
+.hero .wrap{padding-block:clamp(16px,3vh,40px)}
+.herogrid{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap:56px;align-items:stretch;
+  height:calc(100svh - var(--head,76px) - 1px);min-height:34rem;box-sizing:border-box}
+.herotext{align-self:center}
+.heroradar{display:flex;flex-direction:column;min-height:0}
+.heroradar > div{display:flex;flex-direction:column;flex:1 1 auto;min-height:0}
+.hero h1{font-size:clamp(2rem,min(3.6vw,5.6vh),3.4rem);max-width:20ch;margin-bottom:clamp(10px,1.8vh,18px)}
+.hero .lede{max-width:60ch;font-size:clamp(1.125rem,2.2vh,1.375rem)}
+.hero .cta{margin:clamp(14px,2.8vh,28px) 0 0;display:flex;flex-wrap:wrap;align-items:center;gap:12px 28px}
 .hero .cta a{text-decoration:none;display:inline-block}   /* the border marks it as the way in; no underline on top (one emphasis) */
 .hero .cta a.out{color:var(--deep);font-size:1.1875rem;text-decoration:underline}
-.hero .herofact{text-wrap:balance;margin:26px 0 0;font:600 1.125rem var(--f-mono);letter-spacing:.04em;text-transform:uppercase;color:var(--deep)}
+.hero .herofact{text-wrap:balance;margin:clamp(14px,2.6vh,26px) 0 0;font:600 1.125rem var(--f-mono);letter-spacing:.04em;text-transform:uppercase;color:var(--deep)}
 .hero .herofacts{margin-top:8px;max-width:40rem}
 .heroradar h2{font:700 1.4rem/1.2 var(--f-title);margin:0 0 6px}
-.heroradar .radarstage{position:relative;aspect-ratio:6/5}
+.heroradar .radarstage{position:relative;flex:1 1 0;min-height:14rem}
 .homecols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:48px;padding-block:40px 28px}
 .homecol{border-top:3px solid var(--accent);padding-top:16px}
 .homecol h2{font:700 1.6rem/1.2 var(--f-title);margin:0 0 14px}
 .homecol p{margin:0;font-size:1.25rem;line-height:1.55}
 .homecol ul{margin:0;padding-left:24px;display:flex;flex-direction:column;gap:12px;font-size:1.25rem;line-height:1.5}
-@media (max-width:1100px){.herogrid{grid-template-columns:minmax(0,1fr);gap:32px}.hero h1{max-width:24ch}.heroradar{max-width:46rem}}
+@media (max-width:1100px){.herogrid{grid-template-columns:minmax(0,1fr);gap:32px;height:auto;min-height:0}.hero h1{max-width:24ch}.heroradar{max-width:46rem}
+  .heroradar .radarstage{flex:none;aspect-ratio:6/5;min-height:0}}
 @media (max-width:900px){.homecols{grid-template-columns:minmax(0,1fr);gap:32px}}/* page heads */
 .head{background:var(--tint);border-bottom:1px solid var(--line)}
 .head .wrap{padding-block:28px 26px}
