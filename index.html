@@ -21,7 +21,7 @@
   --f-title:"Source Serif 4", Georgia, serif;
   --f-body:"Source Sans 3", "Segoe UI", system-ui, sans-serif;
   --f-mono:"JetBrains Mono", ui-monospace, Consolas, monospace;
-  --read:1.1875rem;  /* 19 px */
+  --read:1.3125rem;  /* 21 px: the author found 19 small (2026-11-09) */
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
   --bg:#0C1617; --panel:#122022; --tint:#16292C; --ink:#E3F1F2; --ink2:#B9CFD2; --line:#28403F;
@@ -70,7 +70,7 @@ nav.views a[aria-current="page"]{border-bottom-color:var(--accent);color:var(--d
 :root[data-theme="dark"] .eyebrow{color:var(--accent)}
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .eyebrow{color:var(--accent)} }
 h1{font:700 clamp(1.75rem,3.2vw,2.5rem)/1.15 var(--f-title);margin:0 0 12px;max-width:30ch;text-wrap:balance}
-.lede{max-width:66ch;margin:0;color:var(--ink)}
+.lede{max-width:62ch;margin:0;color:var(--ink);font-size:1.375rem;line-height:1.5}
 .lede+.lede{margin-top:10px}
 h2{font:700 1.5rem/1.2 var(--f-title);margin:0 0 12px}
 h3{font:700 1.25rem/1.25 var(--f-title);margin:0}
@@ -196,7 +196,8 @@ dialog.helpbox::backdrop{background:rgba(16,38,42,.45)}
 @media (max-width:520px){.helpbox{padding:16px 18px}.helpbox dl{grid-template-columns:1fr;gap:2px;font-size:1rem;line-height:1.4}.helpbox dd{margin-bottom:8px}}
 .btn{background:var(--accent);color:var(--accent-ink);border:0;border-radius:8px;padding:6px 16px;font-weight:700;cursor:pointer}
 footer{border-top:1px solid var(--line);margin-top:36px}
-footer .wrap{padding-block:20px 32px;display:flex;flex-direction:column;gap:8px;font-size:1rem;color:var(--ink2)}
+footer .wrap{padding-block:20px 32px;display:flex;flex-direction:column;gap:8px;font-size:1.0625rem;color:var(--ink2)}
+footer .made{color:var(--ink);font-weight:600}
 footer code{font-family:var(--f-mono);overflow-wrap:anywhere}
 .ok{color:var(--deep);font-weight:700}
 :root[data-theme="dark"] .ok{color:var(--accent)}
@@ -226,6 +227,7 @@ footer code{font-family:var(--f-mono);overflow-wrap:anywhere}
 <main id="view"></main>
 
 <footer><div class="wrap">
+  <span class="made">Lookout is a <a href="https://mayouni.github.io/stzsite/" target="_blank" rel="noopener">Softanza</a> project. © 2026 Mansour Ayouni. Released under the <a href="https://github.com/mayouni/lookout/blob/main/LICENSE" target="_blank" rel="noopener">MIT licence</a>.</span>
   <span id="checked">Checking the feed's signature in this browser...</span>
   <span>Data: Lookout's public feed and estate map, <a href="https://github.com/mayouni/lookout" target="_blank" rel="noopener">github.com/mayouni/lookout</a>. A signal's full entry opens there.</span>
   <span>Check it yourself: <code>ssh-keygen -Y verify -f allowed_signers -I feed@lookout -n lookout-feed -s index.json.sig &lt; index.json</code></span>

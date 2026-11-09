@@ -117,4 +117,5 @@ Opened on 2026-11-08. Lookout surveys every week and publishes a digest, entries
 Open an issue with a link and one line about why it matters. The desk reads it at the source and answers with an
 entry, or with a line saying why it was not kept.
 
-MIT licence, see [LICENSE](LICENSE).
+Lookout is a [Softanza](https://mayouni.github.io/stzsite/) project. © 2026 Mansour Ayouni. Released under the MIT
+licence, see [LICENSE](LICENSE).
