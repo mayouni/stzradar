@@ -3,7 +3,7 @@
 **A public watch on what is changing in AI, read from Softanza's point of view, with a feed that any program can read.**
 
 **Open it: [Lookout Radar](https://mayouni.github.io/lookout/)**. It shows the week on a radar whose slices are the
-layers of the Softanza estate, and the whole estate as a stack of layers and a grid of domains. Every signal reads
+layers of Softanza, and, under In Softanza, the whole platform as a stack of layers and a grid of domains. Every signal reads
 in the order its reader needs it, whether developer, maintainer, learner or user. Radar checks the feed's signature
 in your browser before it shows anything.
 

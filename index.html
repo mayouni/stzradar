@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Lookout Radar</title>
-<meta name="description" content="Lookout Radar: what changed in AI this week, placed on the Softanza estate -- Harobanda, Haro, Softanza, HaroBase, HaroServ, HaroScript, Aïcha, Zane -- and what each reader can do with it.">
+<meta name="description" content="Lookout Radar: what changed in AI this week, placed on the Softanza platform -- Harobanda, Haro, Softanza, HaroBase, HaroServ, HaroScript, Aïcha, Zane -- and what each reader can do with it.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Source+Sans+3:wght@400;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
@@ -209,7 +209,7 @@ footer code{font-family:var(--f-mono);overflow-wrap:anywhere}
     <a class="brand" href="#/week">Lookout <span>Radar</span></a>
     <nav class="views" aria-label="Views">
       <a href="#/week" data-view="week">This week</a>
-      <a href="#/estate" data-view="estate">The estate</a>
+      <a href="#/softanza" data-view="softanza">In Softanza</a>
       <a href="#/signals" data-view="signals">All signals</a>
       <a href="#/bar" data-view="bar">Lookout bar</a>
     </nav>
@@ -227,17 +227,17 @@ footer code{font-family:var(--f-mono);overflow-wrap:anywhere}
 <footer><div class="wrap">
   <span class="made">Lookout is a <a href="https://mayouni.github.io/stzsite/" target="_blank" rel="noopener">Softanza</a> project. © 2026 Mansour Ayouni. Released under the <a href="https://github.com/mayouni/lookout/blob/main/LICENSE" target="_blank" rel="noopener">MIT licence</a>.</span>
   <span id="checked">Checking the feed's signature in this browser...</span>
-  <span>Data: Lookout's public feed and estate map, <a href="https://github.com/mayouni/lookout" target="_blank" rel="noopener">github.com/mayouni/lookout</a>. A signal's full entry opens there.</span>
+  <span>Data: Lookout's public feed and its map of Softanza, <a href="https://github.com/mayouni/lookout" target="_blank" rel="noopener">github.com/mayouni/lookout</a>. A signal's full entry opens there.</span>
   <span>Check it yourself: <code>ssh-keygen -Y verify -f allowed_signers -I feed@lookout -n lookout-feed -s index.json.sig &lt; index.json</code></span>
 </div></footer>
 
 <dialog class="helpbox" id="help" aria-labelledby="helpTitle">
   <h2 id="helpTitle">How to read Lookout Radar</h2>
   <dl>
-    <dt>What it is</dt><dd>Every week Lookout reads what changed in AI at its source, and places each piece of news on the Softanza estate: the machine, the language, the foundation and every project built on them.</dd>
+    <dt>What it is</dt><dd>Every week Lookout reads what changed in AI at its source, and places each piece of news where it lands in Softanza: the machine, the language, the foundation and every project built on them.</dd>
     <dt>Reading as</dt><dd>Say who you are once. Each signal then speaks to you in one sentence, and its page opens with what you need first: checks to run for a developer, the work proposed for a maintainer, a lesson for a learner.</dd>
-    <dt>This week</dt><dd>The week's signals on a radar: each slice is a layer of the estate, and the closer a dot sits to the centre, the more it matters.</dd>
-    <dt>The estate</dt><dd>The whole Softanza stack, layer by layer, and a grid of domains against layers: click any number to see those signals.</dd>
+    <dt>This week</dt><dd>The week's signals on a radar: each slice is a layer of Softanza, and the closer a dot sits to the centre, the more it matters.</dd>
+    <dt>In Softanza</dt><dd>The whole Softanza stack, layer by layer, and a grid of domains against layers: click any number to see those signals.</dd>
     <dt>All signals</dt><dd>Every live signal, filtered by project, layer, domain, concern or level.</dd>
     <dt>Lookout bar</dt><dd>One line of these notices on your own site, from one script tag.</dd>
     <dt>Levels</dt><dd><b>to know</b>, <b>to consider</b>, <b>to do</b>, <b>to do now</b>.</dd>
@@ -327,7 +327,7 @@ function viewWeek(){
   const items = live.filter(i => weekOf(i.date) === wk).sort(byLevel);
   const frag = document.createDocumentFragment();
   const h = head("Week " + wk, "What changed in AI this week, and what it means for what you build",
-    ["Lookout reads the week's papers, releases, security findings and practices at their source, and places each one on the Softanza estate: the machine (Harobanda), the language (Haro), the foundation (Softanza), and the projects built on them."]);
+    ["Lookout reads the week's papers, releases, security findings and practices at their source, and shows where each one lands in Softanza: the machine (Harobanda), the language (Haro), the foundation (Softanza), and the projects built on them."]);
   const facts = el("div","facts");
   const fact = (n, w) => { if (n > 0){ const f = el("div","fact"); f.append(el("b",null,String(n)), document.createTextNode(w)); facts.append(f); } };
   fact(items.length, items.length === 1 ? "signal this week" : "signals this week");
@@ -337,7 +337,7 @@ function viewWeek(){
   h.querySelector(".wrap").append(facts);
   frag.append(h);
   const s = el("section","block wrap week");
-  const scope = el("div","scope"); scope.append(el("h2",null,"The week on the estate"), radar(items));
+  const scope = el("div","scope"); scope.append(el("h2",null,"The week across Softanza"), radar(items));
   const list = el("div");
   for (const lv of ["urgent","action","advice","info"]){
     const g = items.filter(i => i.level === lv); if (!g.length) continue;
@@ -350,7 +350,7 @@ function viewWeek(){
 
 function radar(items){
   const NS = "http://www.w3.org/2000/svg", mk = (t, a) => { const e = document.createElementNS(NS,t); for (const k in a) e.setAttribute(k,a[k]); return e; };
-  const svg = mk("svg",{viewBox:"0 0 440 440",role:"img","aria-label":"Radar: each slice is a layer of the Softanza estate; the closer to the centre, the more relevant"});
+  const svg = mk("svg",{viewBox:"0 0 440 440",role:"img","aria-label":"Radar: each slice is a layer of Softanza; the closer to the centre, the more relevant"});
   const C = 220, R = {high:72, medium:122, low:168}, layers = MAP.layers, n = layers.length, step = 360 / n;
   svg.append(mk("circle",{cx:C,cy:C,r:186,fill:css("--tint"),stroke:css("--line")}));
   for (const r of Object.values(R)) svg.append(mk("circle",{cx:C,cy:C,r,fill:"none",stroke:css("--line"),"stroke-dasharray":"4 6"}));
@@ -385,7 +385,7 @@ function radar(items){
 /* ------------------------------------------------------------ view: the estate */
 function viewEstate(){
   const frag = document.createDocumentFragment();
-  frag.append(head("The estate", "Softanza and its family, layer by layer",
+  frag.append(head("In Softanza", "Softanza and its family, layer by layer",
     ["Softanza is the foundation of a family of projects: a machine beneath it, a language that runs on it, a store, a server and a browser runtime, an intelligence layer, and the interfaces and applications people use. Lookout places every signal on this map, so each project sees what touches it."]));
   const count = pid => live.filter(it => projectsOf(it).includes(pid)).length;
   const projTile = p => {
@@ -516,7 +516,7 @@ function viewSignal(id){
       for (const c of (it.concerns||[])) chip(CONCERN[c]?.name || c, "#/signals?c=" + c);
       const kv = el("dl","kv");
       for (const [k,v] of [["stance",it.stance],["relevance",it.relevance],["confidence",it.confidence],["look again by",it.review_by]]) kv.append(el("dt",null,k), el("dd",null,clean(v)));
-      return part("Where it sits on the estate", el("p",null,"Each name opens every live signal that touches the same project, domain or concern."), chips, kv);
+      return part("Where it lands in Softanza", el("p",null,"Each name opens every live signal that touches the same project, domain or concern."), chips, kv);
     },
     actions: () => it.actions?.length ? part("Proposed to Softanza's maintainers", (() => { const ul = el("ul","plain"); for (const a of it.actions){ const p = projOf(a.area); ul.append(el("li",null,clean((p ? PROJ[p].name : a.area) + ": " + a.do + " (" + a.state + ")"))); } return ul; })()) : null,
     sources: () => { const ul = el("ul","plain"); for (const so of it.sources) ul.append(el("li",null,clean(so.title + " — " + (so.by || "") + ", read " + so.read)));
@@ -594,13 +594,13 @@ function route(keepScroll){
   const v = parts[0] || "week";
   const main = $("#view"); main.replaceChildren();
   let node, title = "Lookout Radar";
-  if (v === "estate"){ node = viewEstate(); title = "The estate · Lookout Radar"; }
+  if (v === "softanza" || v === "estate"){ node = viewEstate(); title = "In Softanza · Lookout Radar"; }
   else if (v === "signals"){ node = viewSignals(new URLSearchParams(qs || "")); title = "All signals · Lookout Radar"; }
   else if (v === "signal"){ node = viewSignal(decodeURIComponent(parts[1] || "")); title = (FEED.items.find(i => i.id === parts[1])?.title || "Signal") + " · Lookout Radar"; }
   else if (v === "bar"){ node = viewBar(); title = "Lookout bar · Lookout Radar"; }
   else { node = viewWeek(); }
   main.append(node); document.title = title;
-  document.querySelectorAll("nav.views a").forEach(a => a.toggleAttribute("aria-current", a.dataset.view === (v === "signal" ? "signals" : v)));
+  document.querySelectorAll("nav.views a").forEach(a => a.toggleAttribute("aria-current", a.dataset.view === (v === "signal" ? "signals" : v === "estate" ? "softanza" : v)));
   document.querySelectorAll("nav.views a[aria-current]").forEach(a => a.setAttribute("aria-current","page"));
   if (!keepScroll) window.scrollTo(0, 0);
 }

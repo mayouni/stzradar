@@ -9,7 +9,7 @@
     { "id": "foundation",   "name": "Foundation",                  "line": "the library and its engine, under everything else" },
     { "id": "language",     "name": "Language",                    "line": "the language you declare your domain in" },
     { "id": "machine",      "name": "Machine",                     "line": "the computer itself, declared in one file" },
-    { "id": "harness",      "name": "Harness",                     "line": "how the estate is built and kept watch over", "beside": true }
+    { "id": "harness",      "name": "Harness",                     "line": "how Softanza is built and kept watch over", "beside": true }
   ],
   "projects": [
     { "id": "zane",       "name": "Zane",               "layer": "experience",   "line": "The interface language and its constitution: rules a machine checks, so every screen reads well.", "link": "https://github.com/mayouni/zane", "aliases": ["stzzui"] },
