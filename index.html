@@ -178,7 +178,13 @@ details p{margin-top:8px}
 .preview .fake{padding:14px 16px;color:var(--ink2)}
 .cfg{display:grid;grid-template-columns:repeat(auto-fill,minmax(13rem,1fr));gap:12px;margin-bottom:16px}
 .cfg label{display:flex;flex-direction:column;gap:4px;font-weight:600;font-size:1rem}
-.cfg .boxes{display:flex;flex-wrap:wrap;gap:6px 14px;font-weight:400}
+.cfg .picks{grid-column:1/-1;display:flex;flex-direction:column;gap:8px}
+.cfg .plab{font-weight:600;font-size:1rem}
+.cfg .hint{color:var(--ink2);font-size:1rem}
+.toggles{display:flex;flex-wrap:wrap;gap:8px}
+.tog{border:1px solid var(--line);border-radius:999px;padding:4px 14px;background:var(--panel);font-weight:600;font-size:1rem;cursor:pointer}
+.tog:hover{border-color:var(--accent)}
+.tog[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
 
 /* help, and the foot */
 dialog.helpbox{border:1px solid var(--line);border-radius:14px;background:var(--panel);color:var(--ink);padding:20px 22px;width:min(560px,calc(100% - 32px))}
@@ -531,10 +537,16 @@ function viewBar(){
   const mkSel = (label, opts, val) => { const l = el("label"); l.append(document.createTextNode(label)); const sl = el("select"); for (const [v,t] of opts) sl.append(new Option(t,v)); sl.value = val; l.append(sl); cfg.append(l); return sl; };
   const aud = mkSel("Your readers are", Object.keys(READERS).map(r => [r, READERS[r].label + "s"]), reader === "user" ? "user" : reader);
   const lev = mkSel("Show from level", LEVELS.map(v => [v, WORD[v]]), "advice");
-  const pl = el("label"); pl.append(document.createTextNode("Only signals touching"));
-  const boxes = el("div","boxes"); const picks = [];
-  for (const p of MAP.projects){ const lb = el("label"); const cb = el("input"); cb.type = "checkbox"; cb.value = p.id; picks.push(cb); lb.append(cb, document.createTextNode(" " + p.name)); boxes.append(lb); }
-  pl.append(boxes); cfg.append(pl);
+  /* projects as toggle chips, in the order of the stack; none chosen means every project */
+  const pl = el("div","picks"); const plab = el("span","plab","Only signals touching"); plab.id = "picksLab"; pl.append(plab);
+  const row = el("div","toggles"); row.setAttribute("role","group"); row.setAttribute("aria-labelledby","picksLab");
+  const picks = [];
+  for (const l of MAP.layers) for (const p of MAP.projects.filter(p => p.layer === l.id)){
+    const b = el("button","tog",p.name); b.type = "button"; b.value = p.id; b.setAttribute("aria-pressed","false");
+    b.addEventListener("click", () => { b.setAttribute("aria-pressed", String(b.getAttribute("aria-pressed") !== "true")); update(); });
+    picks.push(b); row.append(b);
+  }
+  pl.append(row, el("span","hint","None chosen: every project.")); cfg.append(pl);
   s.append(cfg);
   const pv = el("div","preview"), host = el("div"); host.setAttribute("data-lookout-bar",""); pv.append(host, el("div","fake","Your page starts here."));
   s.append(pv);
@@ -543,11 +555,11 @@ function viewBar(){
   s.append(el("h2",null,"Add it to your page"), el("p",null,"Paste this line into your page's head. The integrity value pins this exact version: the browser refuses the script if one byte differs."), code);
   cp.addEventListener("click", async () => { try { await navigator.clipboard.writeText(pre.textContent); cp.textContent = "Copied"; } catch(e){ cp.textContent = "Select it"; } setTimeout(() => cp.textContent = "Copy", 1600); });
   const update = () => {
-    const projects = picks.filter(c => c.checked).map(c => c.value).join(",");
+    const projects = picks.filter(c => c.getAttribute("aria-pressed") === "true").map(c => c.value).join(",");
     pre.textContent = '<script src="https://mayouni.github.io/lookout/bar/lookout-bar-' + BAR_VERSION + '.js"\n        integrity="' + BAR_SRI + '" crossorigin="anonymous"\n        data-audience="' + aud.value + '" data-level="' + lev.value + '"' + (projects ? ' data-projects="' + projects + '"' : '') + ' defer></' + 'script>';
     if (window.LookoutBar) LookoutBar.mount(host, {audience:aud.value, level:lev.value, projects}, {base:new URL(".", location.href).href, keepDismissed:true});
   };
-  [aud, lev, ...picks].forEach(c => c.addEventListener("change", update));
+  [aud, lev].forEach(c => c.addEventListener("change", update));
   update();
   const s2 = el("section","block wrap"); s2.append(el("h2",null,"How it behaves"));
   const ul = el("ul","plain");
