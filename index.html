@@ -17,7 +17,9 @@
 :root{
   --bg:#F6F8F8; --panel:#FFFFFF; --tint:#EAF4F4; --ink:#10262A; --ink2:#34474B; --line:#CFDCDD;
   --accent:#1B6B72; --accent-ink:#FFFFFF; --deep:#0E4E54;
-  --lv-info:#4F6266; --lv-advice:#1B6B72; --lv-action:#B54708; --lv-urgent:#B42318;
+  --lv-info:#6250D6; --lv-advice:#2A9D8F; --lv-action:#D97706; --lv-urgent:#B42318;
+  /* level colours: checked with the dataviz palette checker, every pair, on the white card (worst colour-blind dE 13.2) */
+  --lv-info-on:#FFFFFF; --lv-advice-on:#10262A; --lv-action-on:#10262A; --lv-urgent-on:#FFFFFF;
   --f-title:"Source Serif 4", Georgia, serif;
   --f-body:"Source Sans 3", "Segoe UI", system-ui, sans-serif;
   --f-mono:"JetBrains Mono", ui-monospace, Consolas, monospace;
@@ -26,11 +28,13 @@
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
   --bg:#0C1617; --panel:#122022; --tint:#16292C; --ink:#E3F1F2; --ink2:#B9CFD2; --line:#28403F;
   --accent:#8FD3D8; --accent-ink:#0C1617; --deep:#5FB6BC;
-  --lv-info:#A7BDC0; --lv-advice:#8FD3D8; --lv-action:#F2A65A; --lv-urgent:#F28B82; color-scheme:dark }}
+  --lv-info:#8478E0; --lv-advice:#1E9C89; --lv-action:#C98500; --lv-urgent:#E04848;
+  --lv-info-on:#0C1617; --lv-advice-on:#0C1617; --lv-action-on:#0C1617; --lv-urgent-on:#0C1617; color-scheme:dark }}
 :root[data-theme="dark"]{
   --bg:#0C1617; --panel:#122022; --tint:#16292C; --ink:#E3F1F2; --ink2:#B9CFD2; --line:#28403F;
   --accent:#8FD3D8; --accent-ink:#0C1617; --deep:#5FB6BC;
-  --lv-info:#A7BDC0; --lv-advice:#8FD3D8; --lv-action:#F2A65A; --lv-urgent:#F28B82; color-scheme:dark }
+  --lv-info:#8478E0; --lv-advice:#1E9C89; --lv-action:#C98500; --lv-urgent:#E04848;
+  --lv-info-on:#0C1617; --lv-advice-on:#0C1617; --lv-action-on:#0C1617; --lv-urgent-on:#0C1617; color-scheme:dark }
 
 *{box-sizing:border-box}
 html{font-size:16px}
@@ -358,7 +362,7 @@ function indexMap(){
 const projOf = a => ALIAS[a] || ALIAS[a.split(".")[0]] || null;
 const projectsOf = it => [...new Set((it.areas||[]).map(projOf).filter(Boolean))];
 const layersOf = it => [...new Set(projectsOf(it).map(p => PROJ[p].layer))];
-const levelPill = lv => { const p = el("span","pill lv",WORD[lv]); p.style.background = css("--lv-"+lv); return p; };
+const levelPill = lv => { const p = el("span","pill lv",WORD[lv]); p.style.background = css("--lv-"+lv); p.style.color = css("--lv-"+lv+"-on"); return p; };
 function weekOf(dateStr){
   const d = new Date(dateStr + "T00:00:00Z"); const day = d.getUTCDay() || 7; d.setUTCDate(d.getUTCDate() + 4 - day);
   const y0 = new Date(Date.UTC(d.getUTCFullYear(),0,1)); return d.getUTCFullYear() + "-W" + String(Math.ceil(((d - y0) / 864e5 + 1) / 7)).padStart(2,"0");
