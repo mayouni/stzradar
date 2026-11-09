@@ -29,7 +29,7 @@
   },
   "home": {
     "headline": "AI changes every week. Softanza hears what concerns it the same week.",
-    "promise": "Softanza AI Radar reads the week's papers, releases, security findings and practices at their source, judges each one from Softanza's point of view, and tells every reader what it means for them: a check to run, a lesson to learn, or work proposed to the part it concerns.",
+    "promise": "Softanza AI Radar reads the week's papers, releases, security findings and practices at their source, judges each one from Softanza's point of view, and tells us, the Softanza team, what it means for us and what we should do about it: a check to run, a lesson to learn, or work proposed to the part it concerns.",
     "why": "Softanza is the governed software platform of the AI age, so almost every development in AI touches something it builds: its library and engine, its language Haro, its declared machine Harobanda, its interfaces, its intelligence layer. A finding that matters reaches the part it concerns within days, as work someone can act on, and what was learned is written down once, with its sources, where every session, project and reader finds it again.",
     "need": [
       "Which of this week's developments touch Softanza, and which part of it",

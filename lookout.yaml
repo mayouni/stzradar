@@ -46,8 +46,8 @@ home:                             # the front page: what the watch is for, befor
     {topic} changes every week. {project} hears what concerns it the same week.
   promise: >
     {title} reads the week's papers, releases, security findings and practices at their source, judges each
-    one from {project}'s point of view, and tells every reader what it means for them: a check to run, a lesson
-    to learn, or work proposed to the part it concerns.
+    one from {project}'s point of view, and tells us, the {project} team, what it means for us and what we
+    should do about it: a check to run, a lesson to learn, or work proposed to the part it concerns.
   why: >
     {project} is the governed software platform of the AI age, so almost every development in {topic} touches
     something it builds: its library and engine, its language Haro, its declared machine Harobanda, its
