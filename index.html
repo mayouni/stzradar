@@ -15,7 +15,7 @@
    - no motion while navigating; a bar never covers content; no tabs that hide content (Rule 12).
    The palette is the Compass palette the estate's sites share (teal accent, serif titles). */
 :root{
-  --bg:#F6F8F8; --panel:#FFFFFF; --tint:#EAF4F4; --ink:#10262A; --ink2:#34474B; --line:#CFDCDD;
+  --bg:#F6F8F8; --panel:#FFFFFF; --tint:#EAF4F4; --ink:#10262A; --ink2:#34474B; --lab:#56686B; --line:#CFDCDD;
   --accent:#1B6B72; --accent-ink:#FFFFFF; --deep:#0E4E54;
   --lv-info:#6250D6; --lv-advice:#2A9D8F; --lv-action:#D97706; --lv-urgent:#B42318;
   /* level colours: checked with the dataviz palette checker, every pair, on the white card (worst colour-blind dE 13.2) */
@@ -26,12 +26,12 @@
   --read:1.3125rem;  /* 21 px: the author found 19 small (2026-11-09) */
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
-  --bg:#0C1617; --panel:#122022; --tint:#16292C; --ink:#E3F1F2; --ink2:#B9CFD2; --line:#28403F;
+  --bg:#0C1617; --panel:#122022; --tint:#16292C; --ink:#E3F1F2; --ink2:#B9CFD2; --lab:#9DB2B5; --line:#28403F;
   --accent:#8FD3D8; --accent-ink:#0C1617; --deep:#5FB6BC;
   --lv-info:#8478E0; --lv-advice:#1E9C89; --lv-action:#C98500; --lv-urgent:#E04848;
   --lv-info-on:#0C1617; --lv-advice-on:#0C1617; --lv-action-on:#0C1617; --lv-urgent-on:#0C1617; color-scheme:dark }}
 :root[data-theme="dark"]{
-  --bg:#0C1617; --panel:#122022; --tint:#16292C; --ink:#E3F1F2; --ink2:#B9CFD2; --line:#28403F;
+  --bg:#0C1617; --panel:#122022; --tint:#16292C; --ink:#E3F1F2; --ink2:#B9CFD2; --lab:#9DB2B5; --line:#28403F;
   --accent:#8FD3D8; --accent-ink:#0C1617; --deep:#5FB6BC;
   --lv-info:#8478E0; --lv-advice:#1E9C89; --lv-action:#C98500; --lv-urgent:#E04848;
   --lv-info-on:#0C1617; --lv-advice-on:#0C1617; --lv-action-on:#0C1617; --lv-urgent-on:#0C1617; color-scheme:dark }
@@ -135,7 +135,8 @@ section.block{padding-block:28px 8px}
 .radarhint{margin:0 0 6px;font-size:1.1875rem;line-height:1.4;color:var(--ink2)}
 /* around the rim, each slice's number sits just outside it and its name runs outward from the number, as plain text
    (author, 2026-11-09: labels are not links) */
-.radarstage .sl{position:absolute;display:flex;align-items:center;gap:.4em;font-size:1.125rem;line-height:1.25;color:var(--ink2)}
+.radarstage .sl{position:absolute;display:flex;align-items:center;gap:.4em;font-size:1.125rem;line-height:1.25;color:var(--lab)}
+.radarstage .sl.one span{max-width:none;white-space:nowrap}
 .radarstage .sl.left{flex-direction:row-reverse;text-align:right}
 /* the number stands on the line nearest the circle, so a second line of the name runs away from it, never into it */
 .radarstage .sl.up{align-items:flex-end}.radarstage .sl.down{align-items:flex-start}
@@ -661,31 +662,39 @@ function radar(items, total = items.length){
   const labs = layers.map((l, i) => {
     const m = ((i + .5) * step) * Math.PI / 180, s = el("div", "sl" + (Math.sin(m) < 0 ? " left" : "") + (Math.cos(m) > 0 ? " up" : " down") + (Math.abs(Math.sin(m)) > .7 ? " side" : ""));
     s.append(el("b",null,String(i + 1)), el("span",null,l.name)); stage.append(s);
-    return { s, m, b: s.firstChild };
+    return { s, m, b: s.firstChild, pole: Math.abs(Math.cos(m)) > .7 };   /* pole: above or below the circle */
   });
   const order = el("ol","slices"); layers.forEach(l => order.append(el("li",null,l.name)));
   const place = () => {
     const W = stage.clientWidth, H0 = stage.clientHeight; let H = H0; if (!W || !H) return;
     if (!order.hidden && getComputedStyle(stage).flexGrow === "1") H += order.offsetHeight + 10;   /* judge with the list gone, as it will be */
     labs.forEach(o => o.s.hidden = false);
-    /* the largest rim at which every label, at its own width and height, stays inside the stage */
-    const gap = 18; let rim = Math.min(W, H) / 2;                 /* the number's centre this far outside the rim keeps its box off the circle */
-    for (const o of labs){
-      /* the number's centre sits on the circle rim + gap; the label runs outward from it and is centred on it in height */
-      const w = o.s.offsetWidth - o.b.offsetWidth / 2 + 4, h = o.s.offsetHeight + 4, sx = Math.abs(Math.sin(o.m)), cy = Math.abs(Math.cos(o.m));
-      rim = Math.min(rim, (W / 2 - w) / Math.max(sx, .01) - gap);
-      if (cy > .05) rim = Math.min(rim, (H / 2 - (h - o.b.offsetHeight / 2)) / cy - gap);
-    }
+    /* the largest rim at which every label, at its own width and height, stays inside the stage. The labels above and
+       below the circle sit clear of its top and bottom (the author's drawing, 2026-11-09) and keep their name on one
+       line while the radar stays a readable size; only a narrow card lets them wrap. */
+    const gap = 18, clear = 8;                                      /* the number's centre this far outside the rim keeps its box off the circle */
+    const fit = () => { let r = Math.min(W, H) / 2;
+      for (const o of labs){
+        const w = o.s.offsetWidth - o.b.offsetWidth / 2 + 4, h = o.s.offsetHeight + 4, sx = Math.abs(Math.sin(o.m)), cy = Math.abs(Math.cos(o.m));
+        r = Math.min(r, (W / 2 - w) / Math.max(sx, .01) - gap);
+        r = Math.min(r, o.pole ? H / 2 - h - clear : (H / 2 - (h - o.b.offsetHeight / 2)) / cy - gap);
+      }
+      return r; };
+    labs.forEach(o => o.s.classList.toggle("one", o.pole));
+    let rim = fit();
+    if (rim < 110){ labs.forEach(o => o.s.classList.remove("one")); rim = fit(); }
     const beside = rim >= 80;
     order.hidden = beside; labs.forEach(o => o.s.hidden = !beside);
     if (!beside) rim = Math.min(W, H0) / 2 * 186 / 220;
     const D = rim * 2 * 220 / 186, cx = W / 2, cy = H / 2;
     Object.assign(svg.style, { inset:"auto", position:"absolute", width: D + "px", height: D + "px", left: (cx - D / 2) + "px", top: (cy - D / 2) + "px" });
     if (beside) for (const o of labs){
-      const sx = Math.sin(o.m), cyy = Math.cos(o.m), x = cx + (rim + gap) * sx, y = cy - (rim + gap) * cyy;
-      const half = o.b.offsetWidth / 2;
-      Object.assign(o.s.style, sx >= 0 ? { left: (x - half) + "px", right: "auto" } : { right: (W - x - half) + "px", left: "auto" },
-                    { top: y + "px", transform: cyy > 0 ? "translateY(calc(-100% + " + (o.b.offsetHeight / 2) + "px))" : "translateY(-" + (o.b.offsetHeight / 2) + "px)" });
+      const sx = Math.sin(o.m), cyy = Math.cos(o.m), x = cx + (rim + gap) * sx, half = o.b.offsetWidth / 2;
+      /* above the circle a label's foot rests just over its top; below, its head just under its bottom; beside it, the
+         number stands on the rim's line out from the slice */
+      const pos = o.pole ? (cyy > 0 ? { top: (cy - rim - clear) + "px", transform: "translateY(-100%)" } : { top: (cy + rim + clear) + "px", transform: "none" })
+                         : { top: (cy - (rim + gap) * cyy) + "px", transform: cyy > 0 ? "translateY(calc(-100% + " + (o.b.offsetHeight / 2) + "px))" : "translateY(-" + (o.b.offsetHeight / 2) + "px)" };
+      Object.assign(o.s.style, sx >= 0 ? { left: (x - half) + "px", right: "auto" } : { right: (W - x - half) + "px", left: "auto" }, pos);
     }
   };
   new ResizeObserver(place).observe(stage);
