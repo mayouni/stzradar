@@ -113,6 +113,10 @@ main :is(p,li,dd,figcaption,summary,.lede){max-width:78ch}
 .outline a{display:block;padding:.3rem .6rem;color:var(--ink);text-decoration:none;font-size:1.125rem;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .outline a:hover{color:var(--deep)}
 .outline a[aria-current]{font-weight:700;color:var(--ink)}
+.filterbox{margin:0 0 6px}
+.filterbox .plab{margin:0 0 8px;font-size:1rem;color:var(--ink2)}
+.filterbox .filters{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:560px){.filterbox .filters{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .railtools .filters{display:flex;flex-direction:column;align-items:stretch;gap:12px;border:0;padding:0;margin:0}
 .railtools .period{margin:0;font-size:1.125rem;color:var(--ink2)}.railtools .period b{display:none}.railtools .period select{margin:0 0 6px;display:block}
 @media (max-height:640px){.rail{position:static}}
@@ -939,6 +943,8 @@ function viewSignals(q){
   sel("c","Concern", MAP.concerns.map(c => [c.id, c.name]));
   sel("v","Level at least", LEVELS.map(v => [v, WORD[v]]));
   sel("w","Week", weeksAll().map(w => [w, w + " · " + weekSpan(w)]));
+  /* the filters at the top left of the list, under a small label (author, 2026-11-09), as on Trends */
+  const fbox = el("div","filterbox"); fbox.append(el("p","plab","Narrow the list by project, layer, domain, concern, level or week"), f); s.append(fbox);
   /* a chosen week reads the archive (every entry of that week); otherwise the live signals */
   const pool = q.get("w") ? FEED.items.filter(it => weekOf(it.date) === q.get("w") && it.status !== "superseded") : live;
   const items = pool.filter(it =>
@@ -950,7 +956,7 @@ function viewSignals(q){
   s.append(el("p","count", plural(items.length, "signal")));
   if (!items.length){ const e = el("div","empty"); e.append(document.createTextNode("Widen a filter to see more: ")); const a = el("a",null,"every signal"); a.href = "#/signals"; e.append(a, document.createTextNode(".")); s.append(e); }
   const cs = el("div","cards"); for (const it of items) cs.append(card(it)); s.append(cs);
-  frag.append(railPage(s, {label:"Filter", tools:[f]})); return frag;
+  frag.append(railPage(s, {})); return frag;
 }
 
 /* ------------------------------------------------------------ view: one signal */
