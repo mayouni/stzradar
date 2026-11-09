@@ -99,7 +99,7 @@ section.block{padding-block:28px 8px}
    own scroll moves only the list. On a narrow screen the radar sits above the list. */
 .week{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:32px;align-items:start}
 .week .scope{position:sticky;top:calc(var(--head,150px) + 16px);display:flex;flex-direction:column;max-height:calc(100vh - var(--head,150px) - 32px)}
-.week .scope svg{flex:1 1 auto;min-height:0;max-height:calc(100vh - var(--head,150px) - 250px);width:100%}
+.week .scope svg{flex:1 1 auto;min-height:0;max-height:calc(100vh - var(--head,150px) - 330px);width:100%}
 @media (max-width:900px){.week{grid-template-columns:minmax(0,1fr)}.week .scope{position:static;max-height:none}.week .scope svg{max-height:none}}
 .scope{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:0 1px 3px rgba(16,38,42,.06)}
 .scope svg{width:100%;height:auto;display:block}
@@ -109,11 +109,11 @@ section.block{padding-block:28px 8px}
 .blip{cursor:pointer}
 .blip:focus-visible circle.halo,.blip:hover circle.halo{stroke-width:4}
 .blip:focus{outline:none}
-/* the radar's tooltip: plain text in a plain box beside the dot, no delay, no motion, nothing to click */
-.radarhint{margin:0 0 6px;font-size:1.0625rem;color:var(--ink2)}
-.radarstage{position:relative}
-.tip{position:absolute;z-index:3;max-width:min(22rem,92%);pointer-events:none;background:var(--ink);color:var(--panel);border-radius:6px;padding:6px 10px;font-size:1rem;line-height:1.4}
-.tip[hidden]{display:none}
+/* the info bar under the radar: one height, information only; the level stands out as its tinted label */
+.infobar{min-height:4.4rem;margin-top:8px;padding:8px 12px;border-left:4px solid var(--line);background:var(--bg);border-radius:0 10px 10px 0;display:flex;align-items:center;gap:6px 12px;flex-wrap:wrap}
+.infobar.on{border-left-color:var(--accent)}
+.infobar .ihint{color:var(--ink2);font-size:1.0625rem}
+.infobar .ititle{font:700 1.0625rem/1.35 var(--f-title);flex:1 1 14rem;min-width:0}
 .scope .slices{margin:6px 2px 0;font-size:1rem;color:var(--ink2);line-height:1.5}
 .scope .slices a{white-space:nowrap}
 .group{margin-bottom:22px}
@@ -318,7 +318,8 @@ pre.yfile .ln.hl{background:color-mix(in srgb,var(--accent) 20%,var(--panel));bo
 .farrow{font-size:1.6rem;line-height:1;color:var(--accent)}
 .row2[hidden]{display:none}
 /* the About section's row names its parent and shares the section's tint, so it reads as About's own pages */
-.subnav{gap:6px 22px;background:var(--tint);margin:0 calc(-1 * max(16px,env(safe-area-inset-left,0px)));padding:8px max(16px,env(safe-area-inset-left,0px)) 10px;border-top:1px solid var(--line)}
+/* the tint runs the full width of the page, edge to edge, while the links keep the page's left edge */
+.subnav{gap:6px 22px;background:var(--tint);box-shadow:0 0 0 100vmax var(--tint);clip-path:inset(0 -100vmax);padding-block:8px 10px}
 .subnav .parent{font-weight:700;font-size:1.0625rem;color:var(--deep)}
 :root[data-theme="dark"] .subnav .parent{color:var(--accent)}
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .subnav .parent{color:var(--accent)} }
@@ -423,7 +424,8 @@ const RADAR = () => WATCH() + " Radar";
 const poss = s => s + (/s$/.test(s) ? "'" : "'s");
 let live = [];
 const LEVELS = ["info","advice","action","urgent"];
-const WORD = {info:"to know", advice:"to consider", action:"to do", urgent:"to do now"};
+/* the level labels, capitalized wherever they stand as labels; inside a sentence they are lowercased */
+const WORD = {info:"To know", advice:"To consider", action:"To do", urgent:"To do now"};
 const GROUP = {urgent:"To do now", action:"To do", advice:"To consider", info:"To know"};
 
 /* one reader, chosen once; it decides what a card says and in which order a signal's page reads */
@@ -589,44 +591,33 @@ function radar(items, total = items.length){
     }
     if (!moved) break;
   }
-  /* a designed tooltip beside the dot, on the author's ruling (2026-11-09): it appears at once, next to the dot the
-     pointer or the keyboard is on, says what the signal is and that a click opens its page in All signals. The line
-     above the radar says how it works. */
+  /* an info bar under the radar, on the author's ruling (2026-11-09): at rest it asks the reader to hover a signal;
+     on a hovered or focused dot it shows the signal's level and title. It is information only, with nothing to click,
+     and it keeps one height so the radar never moves. */
   const stage = el("div","radarstage");
-  const tip = el("div","tip"); tip.setAttribute("role","tooltip"); tip.id = "radarTip"; tip.hidden = true;
-  const show = (it, node) => {
-    /* plain text only: what the signal is. Nothing in it looks clickable, since it goes when the pointer leaves the dot. */
-    tip.textContent = WORD[it.level] + ": " + clean(it.title);
-    tip.hidden = false;
-    /* above the dot, centred on it, kept inside the radar's box; below the dot when there is no room above */
-    const c = node.querySelector("circle.halo").getBoundingClientRect(), b = stage.getBoundingClientRect();
-    const cx = c.left + c.width / 2 - b.left, tw = tip.offsetWidth, th = tip.offsetHeight;
-    const x = Math.max(0, Math.min(b.width - tw, cx - tw / 2));
-    let y = c.top - b.top - th - 8, place = "above";
-    if (y < 0){ y = c.bottom - b.top + 8; place = "below"; }
-    tip.style.left = x + "px"; tip.style.top = y + "px"; tip.dataset.place = place;
-    
-  };
-  const hide = () => { tip.hidden = true; };
+  const info = el("div","infobar"); info.id = "radarInfo"; info.setAttribute("aria-live","polite");
+  const hide = () => { info.classList.remove("on"); info.replaceChildren(el("span","ihint","Hover a signal on the radar to see a short description here.")); };
+  const show = it => { info.classList.add("on"); info.replaceChildren(levelPill(it.level), el("span","ititle",clean(it.title))); };
+  hide();
   for (const d of dots){
     const it = d.it, [x, y] = xy(d), size = d.size;
-    const g = mk("a",{class:"blip",tabindex:"0",href:"#/signal/" + it.id,"aria-describedby":"radarTip","aria-label":WORD[it.level] + ": " + clean(it.title) + ". Opens its page in All signals."});
+    const g = mk("a",{class:"blip",tabindex:"0",href:"#/signal/" + it.id,"aria-describedby":"radarInfo","aria-label":WORD[it.level] + ": " + clean(it.title) + ". Opens its page in All signals."});
     g.append(mk("circle",{class:"halo",cx:x,cy:y,r:size+4,fill:"none",stroke:css("--lv-"+it.level),"stroke-width":"2"}));
     g.append(mk("circle",{cx:x,cy:y,r:size,fill:css("--lv-"+it.level)}));
-    g.addEventListener("mouseenter", () => show(it, g)); g.addEventListener("focusin", () => show(it, g));
+    g.addEventListener("mouseenter", () => show(it)); g.addEventListener("focusin", () => show(it));
     g.addEventListener("mouseleave", hide); g.addEventListener("focusout", hide);
     svg.append(g);
   }
-  stage.append(svg, tip);
+  stage.append(svg);
   const box = el("div");
-  box.append(el("p","radarhint","Hover a dot to see what it is; click it to open its page in All signals." +
+  box.append(el("p","radarhint","Click a signal on the radar to open its page in All signals." +
     (total > items.length ? " The radar highlights the " + items.length + " that ask most of this week's " + total + "; the list holds them all." : "")), stage);
   const key = el("div","key");
   for (const lv of ["urgent","action","advice","info"]){ const s = el("span"); const d = el("i"); d.style.background = css("--lv-"+lv); s.append(d, document.createTextNode(WORD[lv])); key.append(s); }
   key.append(el("span",null,"centre: most relevant"));
   const order = el("p","slices"); order.append(el("b",null,"Slices, clockwise: "));
   layers.forEach((l, i) => { if (i) order.append(document.createTextNode(" · ")); const a = el("a",null,(i + 1) + " " + l.name); a.href = "#/signals?l=" + l.id; order.append(a); });
-  box.append(key, order); return box;
+  box.append(info, key, order); return box;
 }
 
 /* ------------------------------------------------------------ view: the estate */
@@ -865,7 +856,7 @@ function viewTrends(q){
   const read = items.filter(i => i.confidence === "read").length, srcs = items.flatMap(i => i.sources).length;
   chapter(1, "What was read",
     plural(n, "signal") + " in " + plural(weeks.length, "week") + ", " + pct(read) + " of them read at their source, from " + plural(srcs, "source") + ". " +
-    (byLv[0]?.n ? "Most ask " + NAME() + " " + WORD[byLv[0].k] + " (" + byLv[0].n + " of " + n + "). " : "") +
+    (byLv[0]?.n ? "Most ask " + NAME() + " " + WORD[byLv[0].k].toLowerCase() + " (" + byLv[0].n + " of " + n + "). " : "") +
     (dom.length ? "The news was mostly about " + list2(dom.slice(0,2).map(d => d.label.toLowerCase() + " (" + d.value + ")")) + ", " : "") +
     (con.length ? "and what it put most at stake was " + con[0].label.toLowerCase() + " (" + con[0].value + ")." : ""));
   keyfigs([[n, "signals read"], [pct(read), "read at the source"], [srcs, "sources"], [(n / Math.max(1,weeks.length)).toFixed(1).replace(".0",""), "signals a week"]]);
