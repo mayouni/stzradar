@@ -361,6 +361,10 @@ pre.yfile .ln.hl{background:color-mix(in srgb,var(--accent) 20%,var(--panel));bo
 .seg a{display:inline-block;padding:5px 14px;font-size:1.125rem;font-weight:600;color:var(--ink);text-decoration:none}
 .seg a + a{border-left:1px solid var(--line)}
 .seg a[aria-current="page"]{background:var(--accent);color:var(--accent-ink)}
+/* the About bar's four pages on a phone: two full rows of two, never one alone and never cut off */
+@media (max-width:560px){#aboutNav .seg{display:grid;grid-template-columns:1fr 1fr;width:100%}
+  #aboutNav .seg a{text-align:center}#aboutNav .seg a:nth-child(odd){border-left:0}#aboutNav .seg a:nth-child(n+3){border-top:1px solid var(--line)}}
+.doc code{overflow-wrap:anywhere}
 
 
 
@@ -396,11 +400,8 @@ dialog.helpbox::backdrop{background:rgba(16,38,42,.45)}
 footer{border-top:1px solid var(--line);margin-top:36px}
 footer .wrap{padding-block:20px 32px;display:flex;flex-direction:column;gap:8px;font-size:1.1875rem;color:var(--ink2)}
 footer .made{color:var(--ink);font-weight:600}
-/* the technical lines: the site's smallest size (16 px, its floor), on the author's word "should be smaller" */
-footer .tech{display:flex;flex-direction:column;gap:4px;font-size:1.125rem;line-height:1.45}
-footer .tech .ok{font-weight:600}
-footer .tech code{font-size:1.125rem}
-footer code{font-family:var(--f-mono);overflow-wrap:anywhere}
+/* the feed's check lives on its own About page, not in the footer (author, 2026-11-09: "dense and worth writing elsewhere") */
+.feedok{font-weight:600;color:var(--deep)}
 .ok{color:var(--deep);font-weight:700}
 :root[data-theme="dark"] .ok{color:var(--accent)}
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .ok{color:var(--accent)} }
@@ -436,7 +437,7 @@ footer code{font-family:var(--f-mono);overflow-wrap:anywhere}
   <nav class="row2" id="aboutNav" aria-labelledby="aboutLab" hidden>
     <span class="lab" id="aboutLab">About</span>
     <div class="seg">
-      <a href="#/about/why" data-sub="why">Why</a><a href="#/about/method" data-sub="method">Method</a><a href="#/yours" data-sub="yours">Make your own</a>
+      <a href="#/about/why" data-sub="why">Why</a><a href="#/about/method" data-sub="method">Method</a><a href="#/about/feed" data-sub="feed">The feed</a><a href="#/yours" data-sub="yours">Make your own</a>
     </div>
     <span class="why" id="aboutWhy"></span>
   </nav>
@@ -446,11 +447,6 @@ footer code{font-family:var(--f-mono);overflow-wrap:anywhere}
 
 <footer><div class="wrap">
   <span class="made" id="made"></span>
-  <div class="tech">
-    <span id="checked">Checking the feed's signature in this browser...</span>
-    <span id="dataLine"></span>
-    <span>Check it yourself: <code>ssh-keygen -Y verify -f allowed_signers -I feed@lookout -n lookout-feed -s index.json.sig &lt; index.json</code></span>
-  </div>
 </div></footer>
 
 <dialog class="helpbox" id="help" aria-labelledby="helpTitle">
@@ -1250,8 +1246,7 @@ function dress(){
   $("#made").replaceChildren(document.createTextNode(RADAR() + " is a "), link(NAME(), CONFIG.project.site),
     document.createTextNode(" project, built with " + WATCH() + ". © " + year + " " + CONFIG.project.owner + ". Released under the "),
     link(CONFIG.project.licence + " licence", CONFIG.project.licence_url || CONFIG.watch.repository), document.createTextNode("."));
-  $("#dataLine").replaceChildren(document.createTextNode("Data: " + poss(RADAR()) + " public feed and its map of " + NAME() + ", "),
-    link(CONFIG.watch.repository.replace("https://",""), CONFIG.watch.repository), document.createTextNode(". A signal's full entry opens there."));
+
   const dl = $("#helpList"); dl.replaceChildren();
   for (const [t, d] of [
     ["What it is", TOPIC() + " news read at its source, and where it lands in " + NAME() + "."],
@@ -1263,6 +1258,28 @@ function dress(){
     ["About", "Why this watch exists, its method, and how to make your own."]
   ]) dl.append(el("dt",null,t), el("dd",null,d));
   dl.append(el("dt",null,"Levels")); const lv = el("dd"); LEVELS.forEach((k, i) => { if (i) lv.append(document.createTextNode(", ")); lv.append(el("b",null,WORD[k])); }); lv.append(document.createTextNode(".")); dl.append(lv);
+}
+
+/* ------------------------------------------------------------ the About page on the feed: what is signed, by which key,
+   where the data lives, and the command that checks it outside this site. Every page reaches it only after the check
+   below has passed, so it states the result rather than waiting for it. */
+function viewFeed(){
+  const frag = document.createDocumentFragment(), repo = CONFIG.watch.repository, doc = el("div","doc");
+  frag.append(head("", "The feed, and how to check it",
+    ["Everything on this site comes from one public feed. It is signed, and this page shows only a feed whose signature checks."]));
+  const p1 = el("p"); p1.append(el("span","feedok","Checked in this browser."), document.createTextNode(" The feed was signed with " + poss(RADAR()) + " key and is unchanged since. It holds " + FEED.items.length + (FEED.items.length === 1 ? " entry" : " entries") + ", updated " + FEED.updated.slice(0,10) + "."));
+  const p2 = el("p"); p2.append(document.createTextNode("The key's fingerprint: "), el("code",null,CONFIG.feed.fingerprint), document.createTextNode("."));
+  const p3 = el("p"); p3.append(document.createTextNode("The feed and the map of " + NAME() + " it is placed on live in the repository, "), link(repo.replace("https://",""), repo), document.createTextNode(". A signal's full entry opens there."));
+  const p4 = el("p"); p4.append(document.createTextNode("Download "), link("feed/index.json", repo + "/blob/main/feed/index.json"), document.createTextNode(", its signature "),
+    link("feed/index.json.sig", repo + "/blob/main/feed/index.json.sig"), document.createTextNode(" and the signer's key "), link("keys/allowed_signers", repo + "/blob/main/keys/allowed_signers"),
+    document.createTextNode(" into one folder, then run:"));
+  const cb = el("div","code"), pre = el("pre");
+  pre.textContent = "ssh-keygen -Y verify -f allowed_signers -I " + CONFIG.feed.signer + " -n " + CONFIG.feed.namespace + " -s index.json.sig < index.json";
+  cb.append(pre);
+  doc.append(el("h2",null,"What this browser checked"), p1, p2, el("h2",null,"Where the data lives"), p3, el("h2",null,"Check it yourself"), p4, cb,
+    el("p",null,"It answers \"Good signature\" with the signer's name. Any change to the file, even one character, makes the check fail."));
+  frag.append(doc);
+  return frag;
 }
 
 /* ------------------------------------------------------------ the About pages: docs/WHY.md and docs/METHOD.md
@@ -1428,15 +1445,16 @@ function route(keepScroll){
   else if (v === "signal"){ node = viewSignal(decodeURIComponent(parts[1] || "")); title = (FEED.items.find(i => i.id === parts[1])?.title || "Signal") + " · " + RADAR(); }
   else if (v === "yours" || v === "bar"){ node = viewYours(); title = "Make your own · " + RADAR(); }
   else if (v === "about" && parts[1] === "method"){ node = viewDoc("method"); title = "Method · " + RADAR(); }
+  else if (v === "about" && parts[1] === "feed"){ node = viewFeed(); title = "The feed · " + RADAR(); }
   else if (v === "about"){ node = viewDoc("why"); title = "Why · " + RADAR(); }
   else if (v === "trends"){ node = viewTrends(new URLSearchParams(qs || "")); title = "Trends · " + RADAR(); }
   else { node = viewWeek(parts[1]); if (parts[1]) title = "Week " + parts[1] + " · " + RADAR(); }
   main.append(node); document.title = title;
   /* the About section: its three pages share the pinned second row, where the reader choice stands elsewhere */
-  const about = v === "about" || v === "yours" || v === "bar", sub = v === "about" ? (parts[1] === "method" ? "method" : "why") : "yours";
+  const about = v === "about" || v === "yours" || v === "bar", sub = v === "about" ? (["method","feed"].includes(parts[1]) ? parts[1] : "why") : "yours";
   $("#aboutNav").hidden = !about; $("#readerRow").hidden = about;
   document.querySelectorAll("#aboutNav a").forEach(a => { if (about && a.dataset.sub === sub) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
-  $("#aboutWhy").textContent = {why:"what this watch answers, and the requirements behind it.", method:"how a signal is read, judged, written and published.", yours:"the same watch for your own project, and the bar for your pages."}[sub];
+  $("#aboutWhy").textContent = {why:"what this watch answers, and the requirements behind it.", method:"how a signal is read, judged, written and published.", feed:"how the feed is signed, and how to check it yourself.", yours:"the same watch for your own project, and the bar for your pages."}[sub];
   window.headH?.();
   const navv = v === "signal" ? "signals" : v === "estate" ? "softanza" : about ? "about" : v;
   document.querySelectorAll("nav.views a").forEach(a => a.toggleAttribute("aria-current", a.dataset.view === navv));
@@ -1464,14 +1482,14 @@ async function start(){
     ]).then(([f, m, l, d]) => { DIGESTS = Array.isArray(d) ? d : []; return [f, m, l]; });
     FEED = f; MAP = m; LESSONS = l.entries || {};
   } catch (e) {
-    $("#checked").textContent = "";
+
     $("#view").replaceChildren(head("", "The feed did not pass its check in this browser", ["Radar shows a feed only after its signature checks: " + e.message + ". Reload the page, or open it in a current browser."]));
     return;
   }
   indexMap();
   dress();
   live = FEED.items.filter(it => !["declined","superseded"].includes(it.status) && it.review_by >= today);
-  const ok = el("span","ok","Signature checked in this browser"); $("#checked").replaceChildren(ok, document.createTextNode(": the feed was signed by " + poss(RADAR()) + " key " + CONFIG.feed.fingerprint.slice(0, 13) + "…" + CONFIG.feed.fingerprint.slice(-4) + " and is unchanged since. " + FEED.items.length + " entries, updated " + FEED.updated.slice(0,10) + "."));
+
   /* the pinned header's height, so the fixed radar sits just under it */
   const headH = window.headH = () => document.documentElement.style.setProperty("--head", document.querySelector("header.top").offsetHeight + "px");
   headH(); addEventListener("resize", headH);
