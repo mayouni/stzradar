@@ -149,9 +149,11 @@ ul.points{margin:0 0 12px;padding-left:22px;display:flex;flex-direction:column;g
 .browser .bh{height:18px;width:45%;border-radius:4px;background:#DDE3E3}
 .browser .bl{height:10px;border-radius:4px;background:#ECEFEF}.browser .bl.short{width:60%}
 /* the front page's way in for adopters */
-.homeadopt{margin:24px 0 40px;padding:0;display:flex;flex-wrap:wrap;align-items:center;gap:14px 28px}
-.homeadopt h2{margin:0;font:700 1.6rem/1.2 var(--f-title)}
-.homeadopt p{margin:0;flex:1 1 30rem;font-size:1.25rem;color:var(--ink2)}
+/* the way in for adopters: one softly outlined box -- the offer and its reason on the left, the action on the right */
+.homeadopt{margin:28px 0 44px;padding:22px 26px;border:1px solid var(--line);border-radius:14px;background:var(--panel);display:flex;flex-wrap:wrap;align-items:center;gap:16px 36px}
+.homeadopt .adtext{flex:1 1 32rem;min-width:0}
+.homeadopt h2{margin:0 0 6px;font:700 1.6rem/1.2 var(--f-title)}
+.homeadopt p{margin:0;font-size:1.25rem;color:var(--ink2)}
 .homeadopt a.btn{text-decoration:none}/* the front page: the hero in two halves (text, live radar), then one row of three columns */
 /* the whole hero -- promise and radar -- fits the window under the header at 100% zoom (author, 2026-11-09): its
    height is the window's, the radar takes what its pane has left, and the type steps with the window's height */
@@ -166,8 +168,9 @@ ul.points{margin:0 0 12px;padding-left:22px;display:flex;flex-direction:column;g
 .hero .cta{margin:clamp(14px,2.8vh,28px) 0 0;display:flex;flex-wrap:wrap;align-items:center;gap:12px 28px}
 .hero .cta a{text-decoration:none;display:inline-block}   /* the border marks it as the way in; no underline on top (one emphasis) */
 .hero .cta a.out{color:var(--deep);font-size:1.1875rem;text-decoration:underline}
-.hero .herofact{text-wrap:balance;margin:clamp(14px,2.6vh,26px) 0 0;font:600 1.125rem var(--f-mono);letter-spacing:.04em;text-transform:uppercase;color:var(--deep)}
-.hero .herofacts{margin-top:8px;max-width:40rem}
+.hero .herofact{text-wrap:balance;margin:clamp(22px,4.4vh,44px) 0 0;font:600 1.125rem var(--f-mono);letter-spacing:.04em;text-transform:uppercase;color:var(--deep)}
+/* the week's figures in a softly outlined box, set a little lower, so they read as one group of facts */
+.hero .herofacts{margin-top:10px;max-width:40rem;border:1px solid var(--line);border-radius:12px;padding:12px 18px;background:color-mix(in srgb,var(--panel) 55%,transparent)}
 .heroradar h2{font:700 1.4rem/1.2 var(--f-title);margin:0 0 6px}
 .heroradar .radarstage{position:relative;flex:1 1 0;min-height:14rem}
 .homecols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:48px;padding-block:40px 28px}
@@ -744,8 +747,11 @@ function viewHome(){
   col("What it answers", list(H.need));
   col("What it gives", list(H.value));
   /* a way in for a project that wants its own radar (author, 2026-11-09: adopting must be a clear message) */
-  const ad = el("div","homeadopt"), go2 = el("a","btn big","See what you get →"); go2.href = "#/yours";
-  ad.append(el("h2",null,"A radar for your own project"), el("p",null,"The same weekly watch, signed feed and bar, for your team, your apps and your users, from one file."), go2);
+  /* the offer said plainly, and a button that says what it does (author, 2026-11-09) */
+  const ad = el("div","homeadopt"), adt = el("div","adtext"), go2 = el("a","btn big","Make your own radar →"); go2.href = "#/yours";
+  adt.append(el("h2",null,"Run this radar for your own project"),
+    el("p",null,"Lookout, the open tool behind " + RADAR() + ", reads your field every week and tells your team, your apps and your users what it means for them, in your project's name and from one file."));
+  ad.append(adt, go2);
   outer.append(ad);
   frag.append(outer);
   return frag;
