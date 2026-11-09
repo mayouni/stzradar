@@ -20,7 +20,7 @@
   "domains": ["agents", "security"],
   "concerns": ["trust", "correctness"],
   "actions": [
-    { "area": "stzlib.security", "do": "study whether Softanza's agent governance can check the provenance of a side effect's target, not only the tool's name, and report what it would take", "state": "routed" }
+    { "area": "stzlib.security", "do": "study whether Softanza's agent governance can check the provenance of a side effect's target, not only the tool's name, and report what it would take", "state": "routed", "dates": { "proposed": "2026-11-08", "routed": "2026-11-08" } }
   ],
   "status": "routed",
   "confidence": "read",
@@ -77,3 +77,4 @@ but **where its target came from**. The answer is a set lookup and costs nothing
 
 - 2026-11-09: the paragraph on Softanza now says what holds and what is proposed, in affirmative sentences; the facts are unchanged.
 - 2026-11-09: placed on the estate map, with the domains and concerns it touches; the facts are unchanged.
+- 2026-11-09: each proposal now carries the day it reached each stage, read from this repository's history; the facts are unchanged.

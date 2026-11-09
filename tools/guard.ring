@@ -37,6 +37,7 @@ class Guard
         Patterns()
         Affirm()
         Map()
+        Dates()
 
     func Pass cName
         nPass++
@@ -217,6 +218,7 @@ class Guard
         c = substr(cGood, q + "2026-11-08-lookout-opens" + q, q + cId + q)
         c = substr(c, q + "date" + q + ": " + q + "2026-11-08" + q, q + "date" + q + ": " + q + cDate + q)
         c = substr(c, q + "updated" + q + ": " + q + "2026-11-08" + q, q + "updated" + q + ": " + q + cUpdated + q)
+        c = substr(c, q + "proposed" + q + ": " + q + "2026-11-08" + q, q + "proposed" + q + ": " + q + cDate + q)
         return c
 
     func Writing
@@ -355,6 +357,21 @@ class Guard
         cText = Broken(cAct, '"domains": ["agents", "security"], "concerns": ["trust"], ' + cAct)
         cText = substr(cText, '"areas": [', '"areas": ["stzlib", "stzlib.security", "haro", ')
         MapCase("an alias and a dotted sub-area pass, with known domains and concerns", cText, "")
+
+    # ------------------------------------------------------------ every proposal dates its stages
+    # The fixture's actions are proposed on 2026-11-08 (dated on 2026-11-09, when the rule came in).
+    func Dates
+        cP = '"dates": { "proposed": "2026-11-08" }'
+        RefusesOne("an action with no dates is refused", ", " + cP, "", "has no dates")
+        RefusesOne("a stage dated before the entry is refused", cP, '"dates": { "proposed": "2026-11-07" }', "before the entry's date")
+        RefusesOne("a stage dated after the entry was last written is refused", cP, '"dates": { "proposed": "2026-11-12" }', "after the entry was last written")
+        RefusesOne("the current state without its date is refused", '"state": "proposed", ' + cP, '"state": "routed", ' + cP, "is routed and does not date that stage")
+        RefusesOne("a later stage than the current one is refused", cP, '"dates": { "proposed": "2026-11-08", "done": "2026-11-08" }', "dates a later stage, done")
+        RefusesOne("a stage the contract does not know is refused", cP, '"dates": { "proposed": "2026-11-08", "shipped": "2026-11-08" }', "")
+        cOrder = Broken('"state": "proposed", ' + cP, '"state": "routed", "dates": { "proposed": "2026-11-08", "routed": "2026-11-08" }')
+        cOrder = substr(cOrder, '"updated": "2026-11-08"', '"updated": "2026-11-10"')
+        cOrder = substr(cOrder, '"proposed": "2026-11-08", "routed": "2026-11-08"', '"proposed": "2026-11-10", "routed": "2026-11-09"')
+        Refuses("stages out of order are refused", cOrder, "2026", cFile, "before an earlier stage")
 
     func MapCase cName, cText, cReason
         if cText = ""

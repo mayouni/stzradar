@@ -34,7 +34,12 @@
         "properties": {
           "area": { "type": "string" },
           "do": { "type": "string", "minLength": 1 },
-          "state": { "enum": ["proposed", "routed", "in-progress", "done", "declined"] }
+          "state": { "enum": ["proposed", "routed", "in-progress", "done", "declined"] },
+          "dates": {
+            "type": "object", "minProperties": 1,
+            "propertyNames": { "enum": ["proposed", "routed", "in-progress", "done", "declined"] },
+            "additionalProperties": { "type": "string", "format": "date" }
+          }
         }
       }
     },

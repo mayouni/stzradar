@@ -21,7 +21,7 @@
   "domains": ["code", "models"],
   "concerns": ["correctness"],
   "actions": [
-    { "area": "stzlib", "do": "for code moved from Ring++ to Haro by an agent, gate each change on at least one input that exercises the documented difference, with the expected output read off the old runtime", "state": "routed" }
+    { "area": "stzlib", "do": "for code moved from Ring++ to Haro by an agent, gate each change on at least one input that exercises the documented difference, with the expected output read off the old runtime", "state": "routed", "dates": { "proposed": "2026-11-08", "routed": "2026-11-08" } }
   ],
   "status": "routed",
   "confidence": "read",
@@ -69,3 +69,4 @@ work.
 ## Corrections
 
 - 2026-11-09: placed on the estate map, with the domains and concerns it touches; the facts are unchanged.
+- 2026-11-09: each proposal now carries the day it reached each stage, read from this repository's history; the facts are unchanged.

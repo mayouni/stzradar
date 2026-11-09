@@ -99,7 +99,7 @@ own `tags`. Notices, actions and sources are in the index only.
 | `areas` | no | the projects of the estate it touches, by the id or an alias listed in [`map/estate.json`](../map/estate.json) (`softanza`, `haro`, `harobanda`, `zane`, `haroserv`, `haroscript`...), or a dotted sub-area of one such as `stzlib.security` |
 | `domains` | no | what the news is about, from the map's domains: `models`, `agents`, `security`, `code`, `interfaces`, `data`, `web`, `devices`, `learning`, `society` |
 | `concerns` | no | what is at stake, from the map's concerns: `trust`, `correctness`, `sovereignty`, `speed`, `clarity`, `cost` |
-| `actions` | no | proposals to Softanza's maintainers; `state` is `proposed`, `routed`, `in-progress`, `done` or `declined` |
+| `actions` | no | proposals to Softanza's maintainers; `state` is `proposed`, `routed`, `in-progress`, `done` or `declined`; `dates` gives the day each stage was reached, for example `{ "proposed": "2026-11-08", "routed": "2026-11-08" }` |
 | `status` | yes | `new`, `analysed`, `routed`, `done`, `declined`, `superseded` |
 | `supersedes` | no | the `id` of an entry this one replaces |
 | `confidence` | yes | `read` (read at the source), `reported` (known only through someone else's account), `claimed` (a figure the vendor gives for itself, written as the vendor's claim) |
@@ -110,6 +110,12 @@ own `tags`. Notices, actions and sources are in the index only.
 
 A reader that knows version 1 **ignores any field it does not know**, and **refuses a feed whose major `version` it
 does not know**. That lets the feed grow without breaking anyone.
+
+**The dates of a proposal.** Since 2026-11-09 every action carries `dates`, the day it reached each stage, so a
+reader can measure how fast Softanza answers. The feed tool refuses a stage dated before the entry or after the
+entry was last written (`updated`), stages out of order, a current `state` without its date, and a date for a stage
+the action has not reached. When a proposal moves, its `state` changes, its new stage gets its day, and the entry's
+`updated` moves with it.
 
 **The estate map.** [`map/estate.json`](../map/estate.json) lists the layers of the Softanza stack (machine, language,
 foundation, data, web and server, intelligence, interfaces and applications, and the harness beside them), the

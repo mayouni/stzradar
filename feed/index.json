@@ -39,22 +39,38 @@
         {
           "area": "stzlib",
           "do": "add .claude/settings.local.json to the repository's own .gitignore, so the protection travels with the repository and not with one machine",
-          "state": "routed"
+          "state": "routed",
+          "dates": {
+            "proposed": "2026-11-08",
+            "routed": "2026-11-08"
+          }
         },
         {
           "area": "haro",
           "do": "add .claude/settings.local.json to the repository's own .gitignore, for the same reason",
-          "state": "routed"
+          "state": "routed",
+          "dates": {
+            "proposed": "2026-11-08",
+            "routed": "2026-11-08"
+          }
         },
         {
           "area": "stzlib.security",
           "do": "add a check for passwords written inside commands (PGPASSWORD=, sshpass -p, mysql -p, bearer headers) over agent settings, transcripts, memory files and handoff notes",
-          "state": "routed"
+          "state": "routed",
+          "dates": {
+            "proposed": "2026-11-08",
+            "routed": "2026-11-08"
+          }
         },
         {
           "area": "softanza",
           "do": "write the house rule: a secret is referenced as an environment variable in a command, never typed into it",
-          "state": "routed"
+          "state": "routed",
+          "dates": {
+            "proposed": "2026-11-08",
+            "routed": "2026-11-08"
+          }
         }
       ],
       "status": "routed",
@@ -109,7 +125,10 @@
         {
           "area": "stzlib",
           "do": "add the signature check to the reader proposed in docs/READER.md, with the key's fingerprint pinned in the library",
-          "state": "proposed"
+          "state": "proposed",
+          "dates": {
+            "proposed": "2026-11-08"
+          }
         }
       ],
       "status": "done",
@@ -211,7 +230,11 @@
         {
           "area": "stzlib",
           "do": "for code moved from Ring++ to Haro by an agent, gate each change on at least one input that exercises the documented difference, with the expected output read off the old runtime",
-          "state": "routed"
+          "state": "routed",
+          "dates": {
+            "proposed": "2026-11-08",
+            "routed": "2026-11-08"
+          }
         }
       ],
       "status": "routed",
@@ -275,12 +298,18 @@
         {
           "area": "softanza",
           "do": "run the first weekly survey and publish its digest",
-          "state": "proposed"
+          "state": "proposed",
+          "dates": {
+            "proposed": "2026-11-08"
+          }
         },
         {
           "area": "stzlib",
           "do": "propose a command that reads this feed for its user's audience and level",
-          "state": "proposed"
+          "state": "proposed",
+          "dates": {
+            "proposed": "2026-11-08"
+          }
         }
       ],
       "status": "done",
@@ -340,7 +369,11 @@
         {
           "area": "stzlib",
           "do": "record as a requirement for any MCP client Softanza builds: the declared resource is checked against the configured server URL before a token is requested, with a guard that a mismatching server is refused",
-          "state": "routed"
+          "state": "routed",
+          "dates": {
+            "proposed": "2026-11-08",
+            "routed": "2026-11-08"
+          }
         }
       ],
       "status": "routed",
@@ -408,7 +441,11 @@
         {
           "area": "stzlib.security",
           "do": "study whether Softanza's agent governance can check the provenance of a side effect's target, not only the tool's name, and report what it would take",
-          "state": "routed"
+          "state": "routed",
+          "dates": {
+            "proposed": "2026-11-08",
+            "routed": "2026-11-08"
+          }
         }
       ],
       "status": "routed",
@@ -470,7 +507,11 @@
         {
           "area": "stzlib.intelligence",
           "do": "check that declarative agents resolve their tools only against tools registered in code, and add a guard that a tool named only in the agent's text is refused",
-          "state": "routed"
+          "state": "routed",
+          "dates": {
+            "proposed": "2026-11-08",
+            "routed": "2026-11-08"
+          }
         }
       ],
       "status": "routed",
@@ -529,12 +570,20 @@
         {
           "area": "stzlib",
           "do": "measure what building the engine on Zig 0.17.1 breaks, on a branch, as one capped build, and report the count before planning the move",
-          "state": "routed"
+          "state": "routed",
+          "dates": {
+            "proposed": "2026-11-08",
+            "routed": "2026-11-08"
+          }
         },
         {
           "area": "haro",
           "do": "measure the same for Haro's VM, after stzlib's measurement and never at the same time",
-          "state": "routed"
+          "state": "routed",
+          "dates": {
+            "proposed": "2026-11-08",
+            "routed": "2026-11-08"
+          }
         }
       ],
       "status": "routed",

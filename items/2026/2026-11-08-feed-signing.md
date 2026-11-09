@@ -20,7 +20,7 @@
   "domains": ["security"],
   "concerns": ["trust"],
   "actions": [
-    { "area": "stzlib", "do": "add the signature check to the reader proposed in docs/READER.md, with the key's fingerprint pinned in the library", "state": "proposed" }
+    { "area": "stzlib", "do": "add the signature check to the reader proposed in docs/READER.md, with the key's fingerprint pinned in the library", "state": "proposed", "dates": { "proposed": "2026-11-08" } }
   ],
   "status": "done",
   "confidence": "read",
@@ -68,3 +68,4 @@ Lookout signature from being mistaken for a signature on anything else.
   none, kept on their machine and used only at publish, so that no secret has to be remembered. The text above says
   so.
 - 2026-11-09: placed on the estate map, with the domains and concerns it touches and Lookout among its areas; the facts are unchanged.
+- 2026-11-09: each proposal now carries the day it reached each stage, read from this repository's history; the facts are unchanged.

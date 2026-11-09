@@ -24,7 +24,8 @@ when the author says "run the week".
 5. Write each entry as `items/<year>/<id>.md`, following `docs/METHOD.md`, and place it on the estate map
    (`map/estate.json`): `areas` names the projects it touches (Harobanda, Haro, Softanza, HaroBase, HaroServ,
    HaroScript, Aïcha, Zane, and the others the map lists), `domains` what it is about, `concerns` what is at stake.
-   `haro tools/feed.ring` refuses a name the map does not list.
+   `haro tools/feed.ring` refuses a name the map does not list. Each action carries `dates`, the day it reached each
+   stage; when Central reports that a proposal moved, set its new `state`, date that stage, and move `updated`.
 6. Mark each line of `inbox/LINKS.md` you handled with the entry's id, or with `declined: <reason>`.
 
 ## The outputs

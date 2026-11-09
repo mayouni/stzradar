@@ -20,10 +20,10 @@
   "domains": ["agents", "security"],
   "concerns": ["trust"],
   "actions": [
-    { "area": "stzlib", "do": "add .claude/settings.local.json to the repository's own .gitignore, so the protection travels with the repository and not with one machine", "state": "routed" },
-    { "area": "haro", "do": "add .claude/settings.local.json to the repository's own .gitignore, for the same reason", "state": "routed" },
-    { "area": "stzlib.security", "do": "add a check for passwords written inside commands (PGPASSWORD=, sshpass -p, mysql -p, bearer headers) over agent settings, transcripts, memory files and handoff notes", "state": "routed" },
-    { "area": "softanza", "do": "write the house rule: a secret is referenced as an environment variable in a command, never typed into it", "state": "routed" }
+    { "area": "stzlib", "do": "add .claude/settings.local.json to the repository's own .gitignore, so the protection travels with the repository and not with one machine", "state": "routed", "dates": { "proposed": "2026-11-08", "routed": "2026-11-08" } },
+    { "area": "haro", "do": "add .claude/settings.local.json to the repository's own .gitignore, for the same reason", "state": "routed", "dates": { "proposed": "2026-11-08", "routed": "2026-11-08" } },
+    { "area": "stzlib.security", "do": "add a check for passwords written inside commands (PGPASSWORD=, sshpass -p, mysql -p, bearer headers) over agent settings, transcripts, memory files and handoff notes", "state": "routed", "dates": { "proposed": "2026-11-08", "routed": "2026-11-08" } },
+    { "area": "softanza", "do": "write the house rule: a secret is referenced as an environment variable in a command, never typed into it", "state": "routed", "dates": { "proposed": "2026-11-08", "routed": "2026-11-08" } }
   ],
   "status": "routed",
   "confidence": "read",
@@ -85,3 +85,4 @@ typed into a command is recorded wherever an agent records what it ran.
 
 - 2026-11-09: the paragraph on Softanza now says what holds and what is proposed, in affirmative sentences; the facts are unchanged.
 - 2026-11-09: placed on the estate map, with the domains and concerns it touches; the facts are unchanged.
+- 2026-11-09: each proposal now carries the day it reached each stage, read from this repository's history; the facts are unchanged.

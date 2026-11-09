@@ -710,6 +710,73 @@ class FeedRun
                 Problem(cRel, "audiences lists " + aAud[i] + ", and notice has no sentence for it")
             ok
         next
+        ActionDates(cRel, oData)
+
+    # Every action carries the day it reached each stage, so Lookout Radar can say how fast Softanza
+    # reacts. A stage is dated between the entry's date and the day the entry was last written, the
+    # stages run in order, the current state has its date, and no stage beyond it is dated.
+    func ActionDates cRel, oData
+        if not JHas(oData, "actions") return ok
+        aStages = ["proposed", "routed", "in-progress", "done"]
+        cDate = JGet(oData, "date")
+        cLast = cDate
+        if JHas(oData, "updated") cLast = JGet(oData, "updated") ok
+        aAct = JItems(JGet(oData, "actions"))
+        nAct = len(aAct)
+        for i = 1 to nAct
+            oA = aAct[i]
+            cWhere = "action " + i + " (" + JGet(oA, "area") + ")"
+            cState = JGet(oA, "state")
+            if not JHas(oA, "dates")
+                Problem(cRel, cWhere + " has no dates: give the day it reached each stage, at least proposed")
+                loop
+            ok
+            oD = JGet(oA, "dates")
+            if JKind(oD) != "object"
+                Problem(cRel, cWhere + " dates is an object of stage: day")
+                loop
+            ok
+            aK = JKeys(oD)
+            nK = len(aK)
+            for j = 1 to nK
+                cK = aK[j]
+                if find(aStages, cK) = 0 and cK != "declined"
+                    Problem(cRel, cWhere + " dates a stage named " + cK + ", and the stages are proposed, routed, in-progress, done, declined")
+                    loop
+                ok
+                cD = JGet(oD, cK)
+                if not isstring(cD) or not IsDate(cD)
+                    Problem(cRel, cWhere + " dates " + cK + " with something that is not a YYYY-MM-DD day")
+                    loop
+                ok
+                if Before(cD, cDate)
+                    Problem(cRel, cWhere + " reached " + cK + " on " + cD + ", before the entry's date " + cDate)
+                ok
+                if Before(cLast, cD)
+                    Problem(cRel, cWhere + " reached " + cK + " on " + cD + ", after the entry was last written (" + cLast + "): set updated")
+                ok
+            next
+            if not JHas(oD, "proposed")
+                Problem(cRel, cWhere + " dates the day it was proposed")
+            ok
+            if not JHas(oD, cState)
+                Problem(cRel, cWhere + " is " + cState + " and does not date that stage")
+            ok
+            nNow = find(aStages, cState)
+            cPrev = ""
+            nS = len(aStages)
+            for j = 1 to nS
+                if not JHas(oD, aStages[j]) loop ok
+                if nNow > 0 and j > nNow
+                    Problem(cRel, cWhere + " is " + cState + " and dates a later stage, " + aStages[j])
+                ok
+                cD = JGet(oD, aStages[j])
+                if cPrev != "" and Before(cD, cPrev)
+                    Problem(cRel, cWhere + " reached " + aStages[j] + " on " + cD + ", before an earlier stage (" + cPrev + ")")
+                ok
+                cPrev = cD
+            next
+        next
 
     func CrossChecks
         n = len(aEntries)

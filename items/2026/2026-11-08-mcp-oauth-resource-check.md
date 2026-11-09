@@ -20,7 +20,7 @@
   "domains": ["agents", "security"],
   "concerns": ["trust"],
   "actions": [
-    { "area": "stzlib", "do": "record as a requirement for any MCP client Softanza builds: the declared resource is checked against the configured server URL before a token is requested, with a guard that a mismatching server is refused", "state": "routed" }
+    { "area": "stzlib", "do": "record as a requirement for any MCP client Softanza builds: the declared resource is checked against the configured server URL before a token is requested, with a guard that a mismatching server is refused", "state": "routed", "dates": { "proposed": "2026-11-08", "routed": "2026-11-08" } }
   ],
   "status": "routed",
   "confidence": "read",
@@ -70,3 +70,4 @@ configured server URL, with a guard that proves a mismatching server is refused.
 
 - 2026-11-09: the paragraph on Softanza now says what holds and what is proposed, in affirmative sentences; the facts are unchanged.
 - 2026-11-09: placed on the estate map, with the domains and concerns it touches; the facts are unchanged.
+- 2026-11-09: each proposal now carries the day it reached each stage, read from this repository's history; the facts are unchanged.

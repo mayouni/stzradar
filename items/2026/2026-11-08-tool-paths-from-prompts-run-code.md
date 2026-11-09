@@ -20,7 +20,7 @@
   "domains": ["agents", "security"],
   "concerns": ["trust"],
   "actions": [
-    { "area": "stzlib.intelligence", "do": "check that declarative agents resolve their tools only against tools registered in code, and add a guard that a tool named only in the agent's text is refused", "state": "routed" }
+    { "area": "stzlib.intelligence", "do": "check that declarative agents resolve their tools only against tools registered in code, and add a guard that a tool named only in the agent's text is refused", "state": "routed", "dates": { "proposed": "2026-11-08", "routed": "2026-11-08" } }
   ],
   "status": "routed",
   "confidence": "read",
@@ -70,3 +70,4 @@ that proves a tool named only in text is refused.
 
 - 2026-11-09: the paragraph on Softanza now says what holds and what is proposed, in affirmative sentences; the facts are unchanged.
 - 2026-11-09: placed on the estate map, with the domains and concerns it touches; the facts are unchanged.
+- 2026-11-09: each proposal now carries the day it reached each stage, read from this repository's history; the facts are unchanged.

@@ -28,12 +28,12 @@
     {
       "area": "softanza",
       "do": "run the first weekly survey and publish its digest",
-      "state": "proposed"
+      "state": "proposed", "dates": { "proposed": "2026-11-08" }
     },
     {
       "area": "stzlib",
       "do": "propose a command that reads this feed for its user's audience and level",
-      "state": "proposed"
+      "state": "proposed", "dates": { "proposed": "2026-11-08" }
     }
   ],
   "status": "done",

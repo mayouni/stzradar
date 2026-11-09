@@ -192,8 +192,9 @@ a.hrow:hover .hbar{filter:brightness(.88)}
 .hsub{color:var(--ink2)}
 .htrack{height:14px;background:transparent;border-bottom:1px solid var(--line);display:flex;align-items:center}
 .hbar{display:block;height:12px;min-width:4px;background:var(--accent);border-radius:0 4px 4px 0}
-.hval{font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
-@media (max-width:640px){.hrow{grid-template-columns:minmax(0,1fr) 2.5rem;grid-template-areas:"l v" "t t"}.hlab{grid-area:l}.hval{grid-area:v}.htrack{grid-area:t}}
+.hval{font-weight:700;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.hrow.wideval{grid-template-columns:minmax(0,15rem) minmax(0,1fr) 6.5rem}
+@media (max-width:640px){.hrow.wideval{grid-template-columns:minmax(0,1fr) auto}.hrow{grid-template-columns:minmax(0,1fr) 2.5rem;grid-template-areas:"l v" "t t"}.hlab{grid-area:l}.hval{grid-area:v}.htrack{grid-area:t}}
 .cols .plot{display:flex;align-items:flex-end;gap:10px;height:220px;border-bottom:1px solid var(--line);padding-top:24px;margin-top:10px}
 .col{flex:1 1 0;max-width:72px;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:stretch;text-decoration:none;color:inherit;position:relative}
 .col .stack{display:flex;flex-direction:column;gap:2px;min-height:4px}
@@ -601,6 +602,9 @@ function viewSignal(id){
 const STANCE = {adopt:"take it into Softanza", learn:"it changes how we think", correct:"Softanza can do it better",
                 defend:"protect Softanza and its users", watch:"look again later", decline:"considered and refused"};
 const ASTATE = ["proposed","routed","in-progress","done"];
+const days = (a, b) => Math.round((new Date(b + "T00:00:00Z") - new Date(a + "T00:00:00Z")) / 864e5);
+const median = xs => { if (!xs.length) return 0; const s = [...xs].sort((a,b) => a - b), m = s.length >> 1; return s.length % 2 ? s[m] : Math.round((s[m-1] + s[m]) / 2); };
+const dayWords = n => n === 0 ? "same day" : plural(n, "day");
 function figure(title, lead, chart, head, rows){
   const f = el("figure","fig"); f.append(el("h3",null,title)); if (lead) f.append(el("p","figlead",lead)); f.append(chart);
   const d = el("details","tv"); d.append(el("summary",null,"Show as a table"));
@@ -616,7 +620,7 @@ function hbars(rows, opt = {}){
     const lab = el("span","hlab"); lab.append(el("b",null,r.label)); if (r.sub) lab.append(el("span","hsub"," " + r.sub));
     const track = el("span","htrack"), bar = el("span","hbar"); bar.style.width = (r.value / max * 100) + "%";
     if (r.color) bar.style.background = r.color; bar.title = r.label + ": " + r.value + (opt.unit ? " " + opt.unit : "");
-    track.append(bar); row.append(lab, track, el("span","hval",String(r.value))); box.append(row);
+    track.append(bar); row.append(lab, track, el("span","hval",r.text ?? String(r.value))); if (r.text) row.classList.add("wideval"); box.append(row);
   }
   return box;
 }
@@ -670,6 +674,8 @@ function viewTrends(q){
   tile(items.length, "signals read", (items.length / Math.max(1,weeks.length)).toFixed(1).replace(".0","") + " a week");
   tile(Math.round(100 * items.filter(i => i.confidence === "read").length / Math.max(1,items.length)) + "%", "read at the source", items.flatMap(i => i.sources).length + " sources");
   tile(acts.length, "proposals to Softanza", acts.filter(a => a.state !== "proposed").length + " routed or further");
+  const toRoute = acts.filter(a => a.dates?.routed && a.dates?.proposed).map(a => days(a.dates.proposed, a.dates.routed));
+  if (toRoute.length) tile(dayWords(median(toRoute)), "to route a proposal", "median over " + plural(toRoute.length, "proposal"));
   tile(new Set(items.flatMap(projectsOf)).size, "projects reached", "of " + MAP.projects.length + " in Softanza");
   tile(lessons.length, "lessons written", lessons.reduce((n,i) => n + (LESSONS[i.id].quiz||[]).length, 0) + " questions to test yourself");
   s.append(tiles);
@@ -699,6 +705,21 @@ function viewTrends(q){
     plural(acts.length, "proposal") + " written for Softanza's own projects, and how far each has gone: every proposal is counted at every stage it has reached.",
     hbars(ASTATE.map(k => ({label:k.replace("-"," "), value:reached(k)}))),
     ["Stage reached","proposals","now at this stage"], ASTATE.map(k => [k, reached(k), ast.find(x => x.k === k).n])));
+
+  /* 3b. speed: days from the proposal to each later stage, from the dates every action carries */
+  const speed = ASTATE.slice(1).map(k => { const ds = acts.filter(a => a.dates?.[k] && a.dates?.proposed).map(a => days(a.dates.proposed, a.dates[k])); return {k, n: ds.length, med: median(ds), max: ds.length ? Math.max(...ds) : 0}; }).filter(x => x.n);
+  if (speed.length >= 2) grid.append(figure("How fast Softanza reacted",      /* one stage is the headline tile, never a one-bar chart */
+    "The median number of days from a proposal to each later stage; same day means within the day it was written.",
+    hbars(speed.map(x => ({label:x.k.replace("-"," "), sub:"(" + plural(x.n,"proposal") + ")", value:x.med, text:dayWords(x.med)}))),
+    ["Stage","proposals","median","slowest"], speed.map(x => [x.k, x.n, dayWords(x.med), dayWords(x.max)])));
+  if (many){
+    const shade = k => "color-mix(in srgb, var(--accent) " + [50,66,83,100][ASTATE.indexOf(k)]   /* ordinal: the lightest step still clears 2:1 on the card */ + "%, var(--panel))";
+    const pc = (w,k) => acts.filter(a => weekOf(a.dates?.proposed || "1970-01-01") === w && a.state === k).length;
+    grid.append(figure("Proposals by week, by how far they went",
+      "Each week's proposals, by the stage they stand at now. Click a week to read it.",
+      columns(weeks, ASTATE, shade, k => k.replace("-"," "), pc),
+      ["Week", ...ASTATE, "total"], weeks.map(w => [w, ...ASTATE.map(k => pc(w,k)), ASTATE.reduce((s,k) => s + pc(w,k), 0)])));
+  }
 
   /* 4. reach: where the news lands, over time or ranked */
   const lcount = (lid, w) => items.filter(i => (w ? weekOf(i.date) === w : 1) && layersOf(i).includes(lid)).length;

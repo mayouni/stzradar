@@ -30,12 +30,12 @@
     {
       "area": "softanza",
       "do": "run the first weekly survey and publish its digest",
-      "state": "proposed"
+      "state": "proposed", "dates": { "proposed": "2026-11-08" }
     },
     {
       "area": "stzlib",
       "do": "propose a command that reads this feed for its user's audience and level",
-      "state": "proposed"
+      "state": "proposed", "dates": { "proposed": "2026-11-08" }
     }
   ],
   "status": "done",
@@ -96,3 +96,4 @@ first form of that feature. Because it is open, any program can do the same toda
   plain English like the rest of Softanza's internal names. This entry's id and addresses changed with it.
 - 2026-11-09: the paragraph on Softanza now says what holds and what is proposed, in affirmative sentences; the facts are unchanged.
 - 2026-11-09: placed on the estate map, with the domains and concerns it touches and Lookout among its areas; the facts are unchanged.
+- 2026-11-09: each proposal now carries the day it reached each stage, read from this repository's history; the facts are unchanged.
