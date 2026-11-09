@@ -101,9 +101,7 @@ section.block{padding-block:28px 8px}
 .meta{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:1rem;color:var(--ink2)}
 .pill{border:1px solid var(--line);border-radius:999px;padding:0 10px;white-space:nowrap;background:var(--panel)}
 .pill.lv{color:#fff;border-color:transparent;font-weight:700}
-.pill.proj{border-color:var(--accent);color:var(--deep);font-weight:600}
-:root[data-theme="dark"] .pill.proj{color:var(--accent)}
-@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .pill.proj{color:var(--accent)} }
+.kindline{color:var(--ink2);font-weight:600}
 .new{color:var(--accent);font-weight:700}
 .card h3{font-size:1.2rem}
 .card p{margin:0}
@@ -303,9 +301,11 @@ function card(it){
   const c = el("a","card"); c.href = "#/signal/" + it.id;
   const stripe = el("span","stripe"); stripe.style.background = css("--lv-"+it.level);
   const b = el("span","body"), m = el("span","meta");
+  /* labels, not controls: the whole card is the one link; the line reads "security · touches Softanza and Haro" */
   m.append(levelPill(it.level));
-  for (const p of projectsOf(it)) m.append(el("span","pill proj",PROJ[p].name));
-  m.append(el("span",null,it.kind));
+  const names = projectsOf(it).map(p => PROJ[p].name);
+  const touch = names.length ? " · touches " + (names.length > 1 ? names.slice(0,-1).join(", ") + " and " + names.at(-1) : names[0]) : "";
+  m.append(el("span","kindline", it.kind + touch));
   if (!seen.has(it.id)) m.append(el("span","new","new"));
   b.append(m, el("h3",null,clean(it.title)));
   const note = it.notice?.[reader];
@@ -516,7 +516,7 @@ function viewSignal(id){
       for (const c of (it.concerns||[])) chip(CONCERN[c]?.name || c, "#/signals?c=" + c);
       const kv = el("dl","kv");
       for (const [k,v] of [["stance",it.stance],["relevance",it.relevance],["confidence",it.confidence],["look again by",it.review_by]]) kv.append(el("dt",null,k), el("dd",null,clean(v)));
-      return part("Where it sits on the estate", chips, kv);
+      return part("Where it sits on the estate", el("p",null,"Each name opens every live signal that touches the same project, domain or concern."), chips, kv);
     },
     actions: () => it.actions?.length ? part("Proposed to Softanza's maintainers", (() => { const ul = el("ul","plain"); for (const a of it.actions){ const p = projOf(a.area); ul.append(el("li",null,clean((p ? PROJ[p].name : a.area) + ": " + a.do + " (" + a.state + ")"))); } return ul; })()) : null,
     sources: () => { const ul = el("ul","plain"); for (const so of it.sources) ul.append(el("li",null,clean(so.title + " — " + (so.by || "") + ", read " + so.read)));
