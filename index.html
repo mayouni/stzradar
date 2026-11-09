@@ -109,7 +109,7 @@ section.block{padding-block:28px 8px}
 .card .body{padding:14px 18px 16px;display:flex;flex-direction:column;gap:8px;min-width:0}
 .meta{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:1rem;color:var(--ink2)}
 .pill{border:1px solid var(--line);border-radius:999px;padding:0 10px;white-space:nowrap;background:var(--panel)}
-.pill.lv{color:#fff;border-color:transparent;font-weight:700}
+.pill.lv{background:color-mix(in srgb,var(--c) 13%,var(--panel));color:color-mix(in srgb,var(--c) 40%,var(--ink));border:1.5px solid var(--c);font-weight:700}   /* text at 7:1 or more, light and dark */
 .kindline{color:var(--ink2);font-weight:600}
 .new{color:var(--accent);font-weight:700}
 .card h3{font-size:1.2rem}
@@ -384,7 +384,8 @@ function indexMap(){
 const projOf = a => ALIAS[a] || ALIAS[a.split(".")[0]] || null;
 const projectsOf = it => [...new Set((it.areas||[]).map(projOf).filter(Boolean))];
 const layersOf = it => [...new Set(projectsOf(it).map(p => PROJ[p].layer))];
-const levelPill = lv => { const p = el("span","pill lv",WORD[lv]); p.style.background = css("--lv-"+lv); p.style.color = css("--lv-"+lv+"-on"); return p; };
+/* a level reads as dark text in its own hue on a pale tint of it, with a border in the full colour: no text on a mid-tone fill */
+const levelPill = lv => { const p = el("span","pill lv",WORD[lv]); p.style.setProperty("--c", "var(--lv-" + lv + ")"); return p; };
 function weekOf(dateStr){
   const d = new Date(dateStr + "T00:00:00Z"); const day = d.getUTCDay() || 7; d.setUTCDate(d.getUTCDate() + 4 - day);
   const y0 = new Date(Date.UTC(d.getUTCFullYear(),0,1)); return d.getUTCFullYear() + "-W" + String(Math.ceil(((d - y0) / 864e5 + 1) / 7)).padStart(2,"0");
