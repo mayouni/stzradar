@@ -81,6 +81,10 @@ nav.views a[aria-current="page"]{border-bottom-color:var(--accent);color:var(--d
 :root[data-theme="dark"] .eyebrow{color:var(--accent)}
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .eyebrow{color:var(--accent)} }
 h1{font:700 clamp(1.75rem,3.2vw,2.5rem)/1.15 var(--f-title);margin:0 0 12px;max-width:30ch;text-wrap:balance}
+/* lines in equilibrium (Zane amendment docket F-1, the author's recurring remark): a title balances its lines, and no
+   paragraph, list item or label leaves one short word alone on its last line */
+h1,h2,h3,h4,.card h3,.ititle,.fnode b,
+p,li,dd,dt,figcaption,summary,.lede,.finding,.notice,.kindline,.ihint,.fnode span,.hint,.q{text-wrap:balance}
 .lede{max-width:62ch;margin:0;color:var(--ink);font-size:1.375rem;line-height:1.5}
 .lede+.lede{margin-top:10px}
 h2{font:700 1.5rem/1.2 var(--f-title);margin:0 0 12px}
@@ -1188,7 +1192,7 @@ function viewDoc(name){
   const d = DOCS[name], holder = el("div");
   holder.append(head(d.eyebrow, " ", []));
   fetch(d.file, {cache:"no-cache"}).then(r => r.ok ? r.text() : Promise.reject(r.status))
-    .then(md => holder.replaceChildren(...renderDoc(md, d.eyebrow)))
+    .then(md => { holder.replaceChildren(...renderDoc(md, d.eyebrow)); evenSoon(holder); })
     .catch(() => holder.replaceChildren(head(d.eyebrow, "This page could not be loaded", ["Reload the page to try again."])));
   return holder;
 }
@@ -1278,6 +1282,37 @@ function flowDiagram(src){
   return fig;
 }
 
+/* ------------------------------------------------------------ lines in equilibrium beyond six lines
+   The browser balances a block of up to six lines (text-wrap: balance). A longer block, most often a paragraph on a
+   phone, is narrowed here to the smallest width that keeps its number of lines, so its last line comes out full rather
+   than holding a word or two alone (Zane amendment docket F-1). */
+function linesOf(e){
+  const r = document.createRange(); r.selectNodeContents(e);
+  const tops = new Set(); let lastL = Infinity, lastR = -Infinity, maxW = 0, lastTop = -1;
+  const rows = {};
+  for (const x of r.getClientRects()){ if (!x.width) continue; const k = Math.round(x.top / 4); rows[k] = rows[k] || [x.left, x.right]; rows[k][0] = Math.min(rows[k][0], x.left); rows[k][1] = Math.max(rows[k][1], x.right); }
+  const keys = Object.keys(rows).map(Number).sort((a,b) => a - b);
+  if (!keys.length) return {n:0, ratio:1};
+  const widths = keys.map(k => rows[k][1] - rows[k][0]);
+  return {n: keys.length, ratio: widths.at(-1) / Math.max(...widths)};
+}
+function evenLast(root = document){
+  for (const e of root.querySelectorAll("main p, main li, main dd, .lede, .finding")){
+    if (!e.offsetParent || e.closest("pre, .code") || e.querySelector(".code, pre, ul, ol")) continue;
+    e.style.maxWidth = "";
+    const m = linesOf(e);
+    if (m.n <= 6 || m.ratio >= 0.4) continue;
+    const W = e.getBoundingClientRect().width;
+    let lo = W * 0.7, hi = W, best = W;
+    for (let k = 0; k < 12; k++){ const mid = (lo + hi) / 2; e.style.maxWidth = mid + "px"; if (linesOf(e).n === m.n){ best = mid; hi = mid; } else lo = mid; }
+    e.style.maxWidth = Math.ceil(best) + "px";
+  }
+}
+let evenTimer = 0;
+/* after the page is laid out, and again once the web fonts are in (they change where lines break) */
+const evenSoon = root => { setTimeout(() => evenLast(root), 30); document.fonts?.ready.then(() => evenLast(root)); };
+addEventListener("resize", () => { clearTimeout(evenTimer); evenTimer = setTimeout(() => evenLast(), 150); });
+
 /* ------------------------------------------------------------ the router */
 function readerRow(){
   const box = $("#readers"); box.replaceChildren();
@@ -1319,6 +1354,7 @@ function route(keepScroll){
   document.querySelectorAll("nav.views a").forEach(a => a.toggleAttribute("aria-current", a.dataset.view === navv));
   document.querySelectorAll("nav.views a[aria-current]").forEach(a => a.setAttribute("aria-current","page"));
   if (!keepScroll) window.scrollTo(0, 0);
+  evenSoon();
 }
 
 async function start(){
