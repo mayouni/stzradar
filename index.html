@@ -229,7 +229,9 @@ details.tv summary{font-size:1rem;color:var(--accent)}
 /* help, and the foot */
 dialog.helpbox{border:1px solid var(--line);border-radius:14px;background:var(--panel);color:var(--ink);padding:20px 22px;width:min(560px,calc(100% - 32px))}
 dialog.helpbox::backdrop{background:rgba(16,38,42,.45)}
-.helpbox h2{margin-bottom:10px}
+.helphead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px}
+.helphead h2{margin:0}
+.helphead form{margin:0}
 .helpbox dl{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;margin:0 0 16px;font-size:1.0625rem}
 .helpbox dt{font-weight:700}
 .helpbox dd{margin:0;color:var(--ink2)}
@@ -238,6 +240,10 @@ dialog.helpbox::backdrop{background:rgba(16,38,42,.45)}
 footer{border-top:1px solid var(--line);margin-top:36px}
 footer .wrap{padding-block:20px 32px;display:flex;flex-direction:column;gap:8px;font-size:1.0625rem;color:var(--ink2)}
 footer .made{color:var(--ink);font-weight:600}
+/* the technical lines: the site's smallest size (16 px, its floor), on the author's word "should be smaller" */
+footer .tech{display:flex;flex-direction:column;gap:4px;font-size:1rem;line-height:1.45}
+footer .tech .ok{font-weight:600}
+footer .tech code{font-size:1rem}
 footer code{font-family:var(--f-mono);overflow-wrap:anywhere}
 .ok{color:var(--deep);font-weight:700}
 :root[data-theme="dark"] .ok{color:var(--accent)}
@@ -270,13 +276,15 @@ footer code{font-family:var(--f-mono);overflow-wrap:anywhere}
 
 <footer><div class="wrap">
   <span class="made">Lookout is a <a href="https://mayouni.github.io/stzsite/" target="_blank" rel="noopener">Softanza</a> project. © 2026 Mansour Ayouni. Released under the <a href="https://github.com/mayouni/lookout/blob/main/LICENSE" target="_blank" rel="noopener">MIT licence</a>.</span>
-  <span id="checked">Checking the feed's signature in this browser...</span>
-  <span>Data: Lookout's public feed and its map of Softanza, <a href="https://github.com/mayouni/lookout" target="_blank" rel="noopener">github.com/mayouni/lookout</a>. A signal's full entry opens there.</span>
-  <span>Check it yourself: <code>ssh-keygen -Y verify -f allowed_signers -I feed@lookout -n lookout-feed -s index.json.sig &lt; index.json</code></span>
+  <div class="tech">
+    <span id="checked">Checking the feed's signature in this browser...</span>
+    <span>Data: Lookout's public feed and its map of Softanza, <a href="https://github.com/mayouni/lookout" target="_blank" rel="noopener">github.com/mayouni/lookout</a>. A signal's full entry opens there.</span>
+    <span>Check it yourself: <code>ssh-keygen -Y verify -f allowed_signers -I feed@lookout -n lookout-feed -s index.json.sig &lt; index.json</code></span>
+  </div>
 </div></footer>
 
 <dialog class="helpbox" id="help" aria-labelledby="helpTitle">
-  <h2 id="helpTitle">How to read it</h2>
+  <div class="helphead"><h2 id="helpTitle">How to read it</h2><form method="dialog"><button class="help" type="submit">Close</button></form></div>
   <dl>
     <dt>What it is</dt><dd>AI news read at its source, and where it lands in Softanza.</dd>
     <dt>Reading as</dt><dd>Who you are: each signal speaks to you and opens on what you need first.</dd>
@@ -287,7 +295,6 @@ footer code{font-family:var(--f-mono);overflow-wrap:anywhere}
     <dt>Lookout bar</dt><dd>These notices on your own site.</dd>
     <dt>Levels</dt><dd><b>to know</b>, <b>to consider</b>, <b>to do</b>, <b>to do now</b>.</dd>
   </dl>
-  <form method="dialog"><button class="btn" type="submit">Got it</button></form>
 </dialog>
 
 <script src="bar/lookout-bar.js" data-no-bar></script>
@@ -831,9 +838,10 @@ function route(keepScroll){
 
 async function start(){
   const help = $("#help");
-  const openHelp = () => { help.showModal(); document.documentElement.classList.add("locked"); };
+  /* the page is frozen exactly while the help is open, however it is closed (Close, Esc, a click outside) */
+  const openHelp = () => help.showModal();
+  new MutationObserver(() => document.documentElement.classList.toggle("locked", help.open)).observe(help, {attributes:true, attributeFilter:["open"]});
   $("#helpOpen").addEventListener("click", openHelp);
-  help.addEventListener("close", () => document.documentElement.classList.remove("locked"));
   help.addEventListener("click", e => { if (e.target === help) help.close(); });
   readerRow();
   try {
