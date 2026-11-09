@@ -83,15 +83,16 @@ h1{font:700 clamp(1.75rem,3.2vw,2.5rem)/1.15 var(--f-title);margin:0 0 12px;max-
 h2{font:700 1.5rem/1.2 var(--f-title);margin:0 0 12px}
 h3{font:700 1.25rem/1.25 var(--f-title);margin:0}
 section.block{padding-block:28px 8px}
-.facts{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px}
-.fact{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 16px;min-width:9rem}
+/* Zane Rule 8 across the site: one primary axis, read top to bottom; figures in one aligned row, no boxes */
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(9rem,1fr));gap:12px;margin-top:18px;padding:12px 0;border-block:1px solid var(--line);max-width:52rem}
+.fact{min-width:0}
 .fact b{display:block;font:700 1.75rem/1.1 var(--f-title);color:var(--deep)}
 :root[data-theme="dark"] .fact b{color:var(--accent)}
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .fact b{color:var(--accent)} }
 
 /* this week */
-.week{display:grid;grid-template-columns:minmax(0,440px) minmax(0,1fr);gap:28px;align-items:start}
-@media (max-width:900px){.week{grid-template-columns:minmax(0,1fr)}}
+.week{display:flex;flex-direction:column;gap:28px;max-width:52rem}
+.week .scope{max-width:32rem;width:100%}
 .scope{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:0 1px 3px rgba(16,38,42,.06)}
 .scope svg{width:100%;height:auto;display:block}
 .scope .lbl{font:700 22px var(--f-body);fill:var(--ink2)}
@@ -116,21 +117,21 @@ section.block{padding-block:28px 8px}
 .card p.plain{color:var(--ink2)}
 
 /* the estate */
-.estate{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,19rem);gap:20px;align-items:start}
-@media (max-width:900px){.estate{grid-template-columns:minmax(0,1fr)}}
+.estate{display:flex;flex-direction:column;gap:20px;max-width:60rem}
 .stack{display:flex;flex-direction:column;gap:10px}
-.layer{display:grid;grid-template-columns:minmax(0,15rem) minmax(0,1fr);gap:12px 18px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;box-shadow:0 1px 3px rgba(16,38,42,.06)}
-@media (max-width:700px){.layer{grid-template-columns:minmax(0,1fr)}}
+.layer{padding:14px 0 6px;border-top:2px solid var(--line)}
+.layer:first-child{border-top:0;padding-top:0}
 .layer .name p{margin:4px 0 0;color:var(--ink2);font-size:1rem}
-.projects{display:flex;flex-wrap:wrap;gap:10px}
-.proj{flex:1 1 15rem;border:1px solid var(--line);border-radius:12px;padding:10px 14px;color:inherit;text-decoration:none;background:var(--bg)}
-a.proj:hover{border-color:var(--accent)}
+.projects{display:flex;flex-direction:column;margin-top:6px}
+.proj{display:block;padding:8px 0 8px 16px;border-left:3px solid var(--line);color:inherit;text-decoration:none}
+.proj + .proj{margin-top:6px}
+a.proj:hover{border-left-color:var(--accent)}
 .proj b{font-family:var(--f-title);font-size:1.15rem}
 .proj p{margin:4px 0 0;color:var(--ink2);font-size:1rem}
-.proj .n{display:inline-block;margin-top:6px;font-weight:700;color:var(--deep)}
+.proj .n{display:inline-block;margin-top:4px;font-weight:700;color:var(--deep)}
 :root[data-theme="dark"] .proj .n{color:var(--accent)}
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .proj .n{color:var(--accent)} }
-.beside{background:var(--tint);border:1px dashed var(--accent);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.beside{padding:14px 0 6px;border-top:2px dashed var(--line);display:flex;flex-direction:column;gap:6px}
 .beside .proj{flex:none}
 table.grid{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;font-size:1rem}
 table.grid th,table.grid td{border:1px solid var(--line);padding:8px 10px;text-align:center;vertical-align:middle}
@@ -144,13 +145,14 @@ table.grid td a{display:inline-block;min-width:2.2rem;padding:2px 8px;border-rad
 .chip{border:1px solid var(--accent);border-radius:999px;padding:2px 12px;text-decoration:none;font-weight:600;font-size:1rem;color:var(--deep);background:var(--panel)}
 :root[data-theme="dark"] .chip{color:var(--accent)}
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .chip{color:var(--accent)} }
-.concerns{display:grid;grid-template-columns:repeat(auto-fill,minmax(15rem,1fr));gap:12px}
-.concern{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 16px;color:inherit;text-decoration:none}
-a.concern:hover{border-color:var(--accent)}
+.concerns{display:flex;flex-direction:column;max-width:52rem}
+.concern{display:block;padding:12px 0;border-top:1px solid var(--line);color:inherit;text-decoration:none}
+.concern:first-child{border-top:0}
+a.concern:hover h3{color:var(--accent)}
 .concern p{margin:4px 0 0;color:var(--ink2);font-size:1rem}
 
 /* all signals */
-.filters{display:grid;grid-template-columns:repeat(auto-fill,minmax(12rem,1fr));gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:18px}
+.filters{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:end;padding:0 0 16px;margin-bottom:18px;border-bottom:1px solid var(--line)}
 .filters label{display:flex;flex-direction:column;gap:4px;font-weight:600;font-size:1rem}
 select{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-size:1rem;max-width:100%}
 .count{font-weight:700;margin:0 0 12px}
@@ -232,8 +234,10 @@ details.tv summary{font-size:1rem;color:var(--accent)}
 .tbl td{font-variant-numeric:tabular-nums}
 
 /* make your own */
-ol.steps{list-style:none;counter-reset:st;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,24rem),1fr));gap:14px}
-ol.steps li{counter-increment:st;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 18px;min-width:0}
+/* Zane Rule 8: the steps, the form and the bar's settings read in one column, top to bottom */
+ol.steps{list-style:none;counter-reset:st;padding:0;margin:0;max-width:52rem}
+ol.steps li{counter-increment:st;padding:14px 0 10px;border-top:1px solid var(--line);min-width:0}
+ol.steps li:first-child{border-top:0;padding-top:4px}
 ol.steps li h3::before{content:"Step " counter(st) ": ";color:var(--deep)}
 :root[data-theme="dark"] ol.steps li h3::before{color:var(--accent)}
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) ol.steps li h3::before{color:var(--accent)} }
@@ -243,21 +247,26 @@ ol.steps .code pre{padding-right:16px}
 .tbl.learn th{white-space:nowrap;font-family:var(--f-mono);font-size:1rem}
 .tbl.learn thead th{font-family:var(--f-body)}
 @media (max-width:700px){.tbl.learn thead{display:none}.tbl.learn tr{display:block;padding:8px 0;border-bottom:1px solid var(--line)}.tbl.learn th,.tbl.learn td{display:block;border:0;padding:2px 0}}
-.builder{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,22rem),1fr));gap:14px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px}
-.builder label{display:flex;flex-direction:column;gap:4px;font-weight:600;font-size:1rem}
-.builder input,.builder textarea{font:400 1.0625rem/1.4 var(--f-body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 10px;max-width:100%}
+.builder{display:flex;flex-direction:column;gap:16px;max-width:44rem;margin-bottom:18px}
+.builder h3.bq{font:700 1.25rem/1.25 var(--f-title);margin:18px 0 0;padding-top:14px;border-top:1px solid var(--line)}
+.builder h3.bq:first-child{margin-top:0;padding-top:0;border-top:0}
+.builder label{display:flex;flex-direction:column;gap:6px}
+.builder .q{font-weight:600;font-size:1.125rem}
+.builder input,.builder textarea{width:100%;font:400 1.125rem/1.45 var(--f-body);color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
 .builder textarea{resize:vertical}
 .builder .hint{font-weight:400;color:var(--ink2)}
-.builder fieldset.rd{border:1px solid var(--line);border-radius:10px;padding:8px 14px;display:flex;flex-wrap:wrap;gap:6px 16px;margin:0}
-.builder fieldset.rd legend{font-weight:600;font-size:1rem;padding:0 4px}
-.builder fieldset.rd label{flex-direction:row;align-items:center;font-weight:400;gap:6px}
+.builder .rd{display:flex;flex-direction:column;gap:8px}
+.builder .rrow{display:flex;flex-wrap:wrap;gap:6px 22px}
+.builder .rrow label{flex-direction:row;align-items:center;gap:8px;font-size:1.125rem}
+.builder .rrow input{width:auto}
 
 /* the bar page */
 .preview{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--panel);margin-bottom:16px}
 .preview .fake{padding:14px 16px;color:var(--ink2)}
-.cfg{display:grid;grid-template-columns:repeat(auto-fill,minmax(13rem,1fr));gap:12px;margin-bottom:16px}
-.cfg label{display:flex;flex-direction:column;gap:4px;font-weight:600;font-size:1rem}
-.cfg .picks{grid-column:1/-1;display:flex;flex-direction:column;gap:8px}
+.cfg{display:flex;flex-direction:column;gap:14px;max-width:44rem;margin-bottom:16px}
+.cfg label{display:flex;flex-direction:column;gap:6px;font-weight:600;font-size:1.0625rem}
+.cfg label select{max-width:22rem}
+.cfg .picks{display:flex;flex-direction:column;gap:8px}
 .cfg .plab{font-weight:600;font-size:1rem}
 .cfg .hint{color:var(--ink2);font-size:1rem}
 .toggles{display:flex;flex-wrap:wrap;gap:8px}
@@ -906,28 +915,35 @@ function viewYours(){
   /* the builder: a first lookout.yaml, written as the reader fills it */
   const s3 = el("section","block wrap");
   s3.append(el("h2",null,"Write your first lookout.yaml"), el("p",null,"Fill in what you know; the file updates as you type. Copy it or save it, put it at the root of your copy, and run the check: it names anything left to complete."));
+  /* Zane Rules 8 and 28: one column read top to bottom, a conversation of questions in order, never a grid */
   const form = el("div","builder"), fields = {};
+  const group = title => form.append(el("h3","bq",title));
   const field = (key, label, value, kind = "input", hint = "") => {
-    const l = el("label"); l.append(document.createTextNode(label));
-    const i = el(kind); if (kind === "input") i.type = "text"; i.value = value; i.dataset.key = key; if (kind === "textarea") i.rows = 4;
-    l.append(i); if (hint) l.append(el("span","hint",hint)); form.append(l); fields[key] = i; return i;
+    const l = el("label"); l.append(el("span","q",label));
+    if (hint) l.append(el("span","hint",hint));
+    const i = el(kind); if (kind === "input") i.type = "text"; i.value = value; i.dataset.key = key; if (kind === "textarea") i.rows = 3;
+    l.append(i); form.append(l); fields[key] = i; return i;
   };
-  field("name", "Your project's name", "");
-  field("site", "Your project's site", "https://");
-  field("owner", "Who owns it (the copyright line)", "");
-  field("licence", "Its licence", "MIT");
-  field("watch", "The watch's name", "");
-  field("topic", "What it watches", "AI");
-  field("repo", "The watch's repository", "https://github.com/you/your-watch", "input", "Its site will be https://you.github.io/your-watch/.");
-  field("goal", "The agent's goal, in one or two sentences", "", "textarea");
-  field("scope", "What counts as news for you, one per line", "new tools and libraries in our field\nsecurity findings that reach our users\npapers that change how we build", "textarea");
-  field("out", "What never goes in, one per line", "a private person's name, or anything about a client\na key, a token or a password", "textarea");
-  field("sources", "Where to look, one per line: name | address", "GitHub Security Advisories | https://github.com/advisories\narXiv cs.SE | https://arxiv.org/list/cs.SE/recent", "textarea");
-  field("to", "Who receives the work it proposes", "the project's maintainers");
-  const rl = el("fieldset","rd"); rl.append(el("legend",null,"Who reads it"));
-  const rboxes = [];
-  for (const [id, label] of [["developer","Developers"],["maintainer","Maintainers"],["learner","Learners"],["user","Users"]]){ const lb = el("label"); const cb = el("input"); cb.type = "checkbox"; cb.value = id; cb.checked = id !== "learner"; rboxes.push(cb); lb.append(cb, document.createTextNode(" " + label)); rl.append(lb); }
-  form.append(rl);
+  group("Your project");
+  field("name", "What is your project called?", "");
+  field("site", "Where does it live on the web?", "https://");
+  field("owner", "Who owns it? This goes on the copyright line.", "");
+  field("licence", "Under which licence is it released?", "MIT");
+  group("Your watch");
+  field("watch", "What will you call the watch?", "");
+  field("topic", "What does it watch?", "AI");
+  field("repo", "Which repository holds it?", "https://github.com/you/your-watch", "input", "Its site will be at https://you.github.io/your-watch/.");
+  group("What the agent learns");
+  field("goal", "Why should the agent watch at all? One or two sentences.", "", "textarea");
+  field("scope", "What counts as news for you?", "new tools and libraries in our field\nsecurity findings that reach our users\npapers that change how we build", "textarea", "One kind per line.");
+  field("out", "What must never go into the watch?", "a private person's name, or anything about a client\na key, a token or a password", "textarea", "One per line.");
+  field("sources", "Where should it look?", "GitHub Security Advisories | https://github.com/advisories\narXiv cs.SE | https://arxiv.org/list/cs.SE/recent", "textarea", "One source per line: its name, a bar, and its address.");
+  group("Who reads it, and who acts");
+  const rl = el("div","rd"); rl.append(el("span","q","Who are the notices written for?"));
+  const rrow = el("div","rrow"), rboxes = [];
+  for (const [id, label] of [["developer","developers"],["maintainer","maintainers"],["learner","learners"],["user","users"]]){ const lb = el("label"); const cb = el("input"); cb.type = "checkbox"; cb.value = id; cb.checked = id !== "learner"; rboxes.push(cb); lb.append(cb, document.createTextNode(" " + label)); rrow.append(lb); }
+  rl.append(rrow); form.append(rl);
+  field("to", "Who receives the work the agent proposes?", "the project's maintainers");
   s3.append(form);
   const out = el("div","code withcopy"), pre = el("pre"); out.append(pre);
   const cp = el("button","copy","Copy"); cp.type = "button"; out.append(cp);
