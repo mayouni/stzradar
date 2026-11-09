@@ -104,6 +104,7 @@ main :is(p,li,dd,figcaption,summary,.lede){max-width:78ch}
 /* reading pages: a steering column on the left, the text at a reading measure beside it, both from the header's edge */
 .railpage{display:grid;grid-template-columns:minmax(0,54rem) 17rem;gap:56px;align-items:start}
 .railpage > .railmain{grid-column:1;grid-row:1;min-width:0}
+.railpage.wide{grid-template-columns:minmax(0,1fr) 17rem}
 .rail{grid-column:2;grid-row:1;position:sticky;top:calc(var(--head,150px) + 24px);display:flex;flex-direction:column;gap:28px}
 /* Zane's outline (stzzui site/stz.css, nav.list3.sections): the label grey and plain, outside the line; entries in ink,
    no underline, one line each; the pointer turns an entry to the link colour; the section being read is bold */
@@ -647,7 +648,7 @@ function points(rows){ const ul = el("ul","points"); for (const [k, v] of rows){
    label, a thin line, one entry per section in the body ink, the section being read in bold (the author, 2026-11-09:
    "use the same 'On this page' submenu we used in the Zane website"). */
 function railPage(main, opt = {}){
-  const s = el("section","block wrap railpage"), aside = el("aside","rail");
+  const s = el("section","block wrap railpage" + (opt.wide ? " wide" : "")), aside = el("aside","rail");
   if (opt.tools){ const t = el("div","railtools"); if (opt.label) t.append(el("p","outline-title",opt.label)); t.append(...opt.tools); aside.append(t); }
   if (opt.outline && opt.outline.querySelector("li")){
     const nav = el("nav","outline"); nav.setAttribute("aria-label","Sections of this page");
@@ -655,6 +656,14 @@ function railPage(main, opt = {}){
     spyOn(opt.outline);
   }
   s.append(main, aside); return s;
+}
+/* a page of several sections gets "On this page" (author, 2026-11-09): its sections go into the reading column and
+   the outline lists their headings. A page whose drawing needs the width keeps a flexible column (wide). */
+function outlined(frag, wide){
+  const kids = [...frag.childNodes], top = kids.shift(), main = el("div","railmain");
+  for (const k of kids){ k.classList?.remove("wrap"); main.append(k); }
+  const out = document.createDocumentFragment(); out.append(top, railPage(main, {outline: contentsOf(main, "h2"), wide}));
+  return out;
 }
 /* the page's own sections: one entry per heading, each scrolling to it (the hash belongs to the router) */
 function contentsOf(main, sel){
@@ -951,7 +960,7 @@ function viewEstate(){
     cs.append(b);
   }
   s3.append(cs); frag.append(s3);
-  return frag;
+  return outlined(frag, true);
 }
 
 /* ------------------------------------------------------------ view: all signals */
@@ -1433,7 +1442,7 @@ function viewYours(){
   cp.addEventListener("click", async () => { try { await navigator.clipboard.writeText(fileText); cp.textContent = "Copied"; } catch(e){ cp.textContent = "Select it"; } setTimeout(() => cp.textContent = "Copy", 1600); });
   save.addEventListener("click", () => { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([fileText], {type:"text/yaml"})); a.download = "lookout.yaml"; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000); });
   for (const n of barSections()) frag.append(n);
-  return frag;
+  return outlined(frag);
 }
 
 /* the words of the page that belong to the project: from app/config.json, once it is read */
