@@ -45,5 +45,4 @@ beside it. A source the desk could not read is kept, with the reason, until a la
 ## Softanza's own ground
 
 - [Zig](https://ziglang.org/) releases and news: Softanza's engine is written in Zig
-- The Ring language community: Haro and Softanza grew from it ([releases](https://github.com/ring-lang/ring/releases))
 - [Hacker News](https://news.ycombinator.com/), read for leads only: an entry is never written from a thread

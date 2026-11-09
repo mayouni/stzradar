@@ -30,8 +30,8 @@ carry natively: an assistant telling its people that something changed in the wo
 ## The rungs
 
 - **L0, the generator and its check.** Write the tool that regenerates `feed/index.json` and `feed/feed.json` from
-  the entries in `items/`, and checks every entry and both feeds against `schema/`. Run it on Haro first: `haro`
-  runs a Ring-syntax file (`%HARO%\vm\zig-out\bin\haro.exe`). If Haro cannot do it yet, say what stopped it, route
+  the entries in `items/`, and checks every entry and both feeds against `schema/`. Run it on Haro first
+  (`%HARO%\vm\zig-out\bin\haro.exe`). If Haro cannot do it yet, say what stopped it, route
   that to the Haro desk through Central, and name the runtime you used instead. Acceptance: a regenerated feed that
   is byte-identical to the one committed at the bootstrap, and a deliberately broken entry that the check refuses.
 - **L1, the first survey.** Run `docs/WEEKLY.md` attended, for the current ISO week. Confirm every address in

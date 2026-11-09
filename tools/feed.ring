@@ -8,7 +8,7 @@
 # every entry passed, both feeds match their schema, and (in check mode) the committed feeds are
 # exactly what the entries generate. The rules are docs/FEED.md; the shapes are schema/.
 #
-# It is written in Ring syntax and runs on Haro. The work is in tools/feedlib.ring, which needs no
+# It runs on Haro. The work is in tools/feedlib.ring, which needs no
 # other library; tools/guard.ring proves that the check refuses broken entries.
 
 load "feedlib.ring"

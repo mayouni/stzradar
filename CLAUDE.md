@@ -438,7 +438,7 @@ project it concerns, and publishes a feed that programs read. Start with `README
    break a reader bumps the major version and is announced as an entry before it lands.
 6. **Actions are proposals.** The desk routes each one through Central's mailbox to the project it concerns, and
    never edits a sibling repository.
-7. **Haro first** for any tool this repository grows. `haro` runs a Ring-syntax file. If you fall back to another
+7. **Haro first** for any tool this repository grows. `haro` runs the tools in `tools/`. If you fall back to another
    runtime, say which one and why in the memo, and route what stopped Haro to the Haro desk.
 8. **Perception.** A digest reaches the author as prose. Record who read it and what they said. A digest that
    nobody has read is reported as unread, not as done.
@@ -451,6 +451,6 @@ guard after changing `tools/` or `schema/`. Before any push, `haro tools/feed.ri
 session signs at publish, after the author approves the digest, with the key kept in the author's `.ssh` folder. The
 key has no passphrase, by the author's ruling of 2026-11-08: no secret for them to keep. A survey is the slow path and runs once a week.
 
-**Haro traps met here.** Ring's names are case-insensitive, so a local named `oR` is the keyword `or` and fails to
+**Haro traps met here.** Haro's names are case-insensitive, so a local named `oR` is the keyword `or` and fails to
 parse; Haro has no `systemcmd()`, so the guard tests in one process rather than through child runs; a stored object
 is a copy, so the schema check hands its problems back to the run instead of calling into it.

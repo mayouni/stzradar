@@ -114,8 +114,6 @@ agent:                            # what the watching agent learns before it rea
       url: https://simonwillison.net/
     - name: Zig releases and news
       url: https://ziglang.org/
-    - name: Ring language releases
-      url: https://github.com/ring-lang/ring/releases
   stances:                        # what each stance means for this project
     adopt: take it into Softanza
     learn: it changes how we think, before it changes what we ship

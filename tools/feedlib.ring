@@ -2,11 +2,11 @@
 # turns items/ into feed/index.json and feed/feed.json. tools/feed.ring is its command and
 # tools/guard.ring its guard; both load this file. The rules are docs/FEED.md.
 #
-# It is written in Ring syntax, runs on Haro, and needs no other library.
+# It runs on Haro and needs no other library.
 
 # ---------------------------------------------------------------- JSON values
 #
-# A string is a Ring string. Everything else is a list whose first item says what it is:
+# A string is a Haro string. Everything else is a list whose first item says what it is:
 #   ["{", [[key, value], ...]]   an object, keys in the order they were written
 #   ["[", [value, ...]]          an array
 #   ["#", "12.5"]                a number, kept as the text it was written as
@@ -224,7 +224,7 @@ func IsDateTime s
     if not (IsDigits(substr(cRest, 2, 2)) and IsDigits(substr(cRest, 5, 2))) return 0 ok
     return 1
 
-# Ring compares strings with strcmp; dates written YYYY-MM-DD compare as text.
+# Haro compares strings with strcmp; dates written YYYY-MM-DD compare as text.
 func Before a, b
     return strcmp(a, b) < 0
 
@@ -261,7 +261,7 @@ class FeedRun
         aProblems + (cWhere + ": " + cMsg)
         Say("REFUSED " + cWhere + ": " + cMsg)
 
-    # Ring stores a COPY of an object, so the schema check cannot call back into this run:
+    # Haro stores a COPY of an object, so the schema check cannot call back into this run:
     # it keeps what it found, and the run takes it here.
     func Drain
         aSaid = oSchema.aSaid

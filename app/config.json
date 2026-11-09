@@ -144,10 +144,6 @@
       {
         "name": "Zig releases and news",
         "url": "https://ziglang.org/"
-      },
-      {
-        "name": "Ring language releases",
-        "url": "https://github.com/ring-lang/ring/releases"
       }
     ],
     "stances": {
