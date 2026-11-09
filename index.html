@@ -303,7 +303,9 @@ nav.weeks .goto{display:flex;flex-direction:column;gap:4px;font-weight:600;font-
 .report{max-width:64rem}
 .report .period{margin:0 0 6px;font-size:1.1875rem}
 .report .period select{margin:0 4px}
-h2.chap{font:700 1.6rem/1.2 var(--f-title);margin:40px 0 10px;padding-top:22px;border-top:2px solid var(--line)}
+/* Trends in two clear levels (author, 2026-11-09: "separate clearly between sections"): a chapter opens under a strong
+   teal rule with wide space above it; each figure inside, with its table, is one block under a thin rule */
+h2.chap{font:700 1.75rem/1.2 var(--f-title);margin:72px 0 12px;padding-top:28px;border-top:3px solid var(--accent)}
 h2.chap:first-of-type{margin-top:18px}
 p.finding{font-size:1.3125rem;line-height:1.55;margin:0 0 18px;max-width:80ch}
 .keyfigs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0 0 8px;padding:12px 0;border-block:1px solid var(--line)}
@@ -313,7 +315,9 @@ p.finding{font-size:1.3125rem;line-height:1.55;margin:0 0 18px;max-width:80ch}
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .keyfigs b{color:var(--accent)} }
 .keyfigs span{color:var(--ink2);font-size:1.1875rem}
 @media (max-width:640px){.keyfigs{grid-template-columns:repeat(2,minmax(0,1fr))}}
-.fig{margin:26px 0 0;padding:0;min-width:0}
+.fig{margin:36px 0 0;padding:28px 0 0;min-width:0;border-top:1px solid var(--line)}
+.keyfigs + .fig,.finding + .fig{border-top:0;padding-top:4px}
+.fig .tv{margin-top:12px}
 .fig h3{margin-bottom:4px;font-size:1.2rem}
 .figlead{margin:0 0 12px;color:var(--ink2);font-size:1.1875rem}
 .fsub{display:block;color:var(--ink2);font-size:1.125rem}
