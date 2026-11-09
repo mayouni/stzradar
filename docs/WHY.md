@@ -1,5 +1,9 @@
 # Why Lookout exists
 
+Softanza Radar exists so that what changes in AI each week reaches the part of Softanza it concerns, as
+work someone can act on, and so that what was learned is kept where every reader finds it again. This page says
+what it answers, what the author asked of it, what it grew into, and what it gives Softanza.
+
 ## What it answers
 
 AI changes every week. New projects appear, papers change how programs are written and checked, labs ship

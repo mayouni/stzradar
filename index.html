@@ -984,7 +984,10 @@ function viewSignal(id){
   const x = LESSONS[it.id] || {};
   const frag = document.createDocumentFragment();
   const m = el("div","meta"); m.append(levelPill(it.level), el("span","pill",it.kind), el("span","pill",it.stance), el("span",null,it.date));
-  frag.append(head("", clean(it.title), [m]));
+  /* a sentence under the title says what the page holds, as every page of the site opens (author, 2026-11-09) */
+  const KIND = {paper:"A paper", release:"A release", security:"A security finding", practice:"A practice", regulation:"A regulation", feature:"A feature", market:"A market move", idea:"An idea"};
+  const intro = (KIND[it.kind] || "A development") + ", read at its source on " + it.date + ". Below: what it means for you as a " + reader + ", what happened, and where it lands in " + NAME() + ".";
+  frag.append(head("", clean(it.title), [m, el("p","lede",intro)]));
   const s = el("div","railmain sig");
   const back = el("a","back","All signals"); back.href = "#/signals"; s.append(back);
   const part = (title, ...nodes) => { const p = el("div","part"); if (title) p.append(el("h2",null,title)); p.append(...nodes); return p; };
@@ -1490,7 +1493,9 @@ function renderDoc(md, eyebrow){
   let title = "", i = 0;
   const body = el("div","railmain doc"), nodes = [];
   let para = [], list = null, item = null;
-  const flushPara = () => { if (para.length){ const p = el("p"); p.append(inlineMd(para.join(" "), base)); body.append(p); para = []; } };
+  /* the paragraphs between the title and the first section are the page's introduction, set under the title */
+  const intro = []; let inIntro = true;
+  const flushPara = () => { if (para.length){ const p = el("p", inIntro ? "lede" : null); p.append(inlineMd(para.join(" "), base)); if (inIntro) intro.push(p); else body.append(p); para = []; } };
   const flushList = () => { list = null; item = null; };
   while (i < lines.length){
     const L = lines[i];
@@ -1507,7 +1512,7 @@ function renderDoc(md, eyebrow){
     }
     let m;
     if ((m = L.match(/^# (.*)$/))){ flushPara(); flushList(); title = title || m[1].replace(/\s+--\s+/, ": "); i++; continue; }
-    if ((m = L.match(/^(#{2,3}) (.*)$/))){ flushPara(); flushList(); const hh = el(m[1].length === 2 ? "h2" : "h3"); hh.append(inlineMd(m[2], base)); body.append(hh); i++; continue; }
+    if ((m = L.match(/^(#{2,3}) (.*)$/))){ flushPara(); flushList(); inIntro = false; const hh = el(m[1].length === 2 ? "h2" : "h3"); hh.append(inlineMd(m[2], base)); body.append(hh); i++; continue; }
     if ((m = L.match(/^(\s*)(-|\d+\.) (.*)$/))){
       flushPara();
       const ordered = m[2] !== "-";
@@ -1521,7 +1526,7 @@ function renderDoc(md, eyebrow){
     flushList(); para.push(L.trim()); i++;
   }
   flushPara();
-  nodes.push(head(eyebrow, title, []), railPage(body, {outline: contentsOf(body, "h2")}));
+  nodes.push(head(eyebrow, title, intro), railPage(body, {outline: contentsOf(body, "h2")}));
   return nodes;
 }
 /* a mermaid flowchart, drawn as boxes in layers from its first node down: the same diagram GitHub shows, at the

@@ -1,5 +1,9 @@
 # Method -- how an entry is made
 
+Every signal on this site is made the same way: read at its source, judged from Softanza's point of view,
+written once for people and for programs, then signed and published. This page follows that path step by step,
+and says why the radar highlights only a few signals each week.
+
 ## How it flows
 
 ```mermaid
