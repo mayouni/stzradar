@@ -91,8 +91,13 @@ section.block{padding-block:28px 8px}
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .fact b{color:var(--accent)} }
 
 /* this week */
-.week{display:flex;flex-direction:column;gap:28px;max-width:52rem}
-.week .scope{max-width:32rem;width:100%}
+/* the radar page, on the author's ruling (2026-11-09): the radar holds the left half, enlarged and fixed in view,
+   the list fills the right half and is what moves. The page keeps ONE scroll bar: the radar is sticky, so the page's
+   own scroll moves only the list. On a narrow screen the radar sits above the list. */
+.week{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:32px;align-items:start}
+.week .scope{position:sticky;top:calc(var(--head,150px) + 16px);display:flex;flex-direction:column;max-height:calc(100vh - var(--head,150px) - 32px)}
+.week .scope svg{flex:1 1 auto;min-height:0;max-height:calc(100vh - var(--head,150px) - 190px);width:100%}
+@media (max-width:900px){.week{grid-template-columns:minmax(0,1fr)}.week .scope{position:static;max-height:none}.week .scope svg{max-height:none}}
 .scope{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:0 1px 3px rgba(16,38,42,.06)}
 .scope svg{width:100%;height:auto;display:block}
 .scope .lbl{font:700 22px var(--f-body);fill:var(--ink2)}
@@ -478,13 +483,39 @@ function radar(items){
     const m = ((i + .5) * step) * Math.PI / 180, t = mk("text",{class:"lbl",x:C + 204*Math.sin(m),y:C - 204*Math.cos(m) + 8,"text-anchor":"middle"});
     t.textContent = String(i + 1); svg.append(t);
   });
-  const slot = {};
-  for (const it of items){
+  /* the dots of one slice and one ring are spread evenly across the slice's width, alternating in depth, so none hides another */
+  const keyOf = it => (layersOf(it)[0] || "foundation") + "|" + it.relevance;
+  const groups = {}; for (const it of items) (groups[keyOf(it)] = groups[keyOf(it)] || []).push(it);
+  /* each dot stays inside its slice and its ring band (high near the centre, low at the rim); touching dots are pushed
+     apart a few times within those bounds */
+  const BAND = {high:[30, 96], medium:[100, 144], low:[148, 180]};
+  const dots = items.map(it => {
     const lid = layersOf(it)[0] || "foundation", li = layers.findIndex(l => l.id === lid);
-    const key = lid + it.relevance; slot[key] = (slot[key] || 0) + 1;
-    const k = slot[key], ang = ((li + .5) * step + ((k % 2 ? 1 : -1) * Math.ceil((k - 1) / 2) * 14)) * Math.PI / 180;
-    const r = R[it.relevance] - 16 + ((k - 1) % 2) * 14;
-    const x = C + r * Math.sin(ang), y = C - r * Math.cos(ang), size = {info:7,advice:9,action:11,urgent:13}[it.level];
+    const grp = groups[keyOf(it)], k = grp.indexOf(it), m = grp.length, [lo, hi] = BAND[it.relevance] || BAND.medium;
+    const margin = 6, a0 = li * step + margin, a1 = (li + 1) * step - margin;
+    return { it, a0, a1, lo, hi, size: {info:7,advice:9,action:11,urgent:13}[it.level],
+             ang: a0 + (a1 - a0) * (k + 1) / (m + 1), r: lo + (hi - lo) * (m > 1 ? (k % 3 + 1) / 4 : .5) };
+  });
+  const xy = d => [C + d.r * Math.sin(d.ang * Math.PI / 180), C - d.r * Math.cos(d.ang * Math.PI / 180)];
+  for (let pass = 0; pass < 60; pass++){
+    let moved = false;
+    for (let i = 0; i < dots.length; i++) for (let j = i + 1; j < dots.length; j++){
+      const a = dots[i], b = dots[j], [ax, ay] = xy(a), [bx, by] = xy(b);
+      const need = a.size + b.size + 10, dist = Math.hypot(ax - bx, ay - by) || .01;
+      if (dist >= need) continue;
+      moved = true;
+      const push = (need - dist) / 2, ux = (ax - bx) / dist, uy = (ay - by) / dist;
+      for (const [d, s] of [[a, 1], [b, -1]]){
+        const [x, y] = xy(d), nx = x + s * ux * push - C, ny = C - (y + s * uy * push);
+        d.r = Math.min(d.hi, Math.max(d.lo, Math.hypot(nx, ny)));
+        let ang = Math.atan2(nx, ny) * 180 / Math.PI; if (ang < 0) ang += 360;
+        d.ang = Math.min(d.a1, Math.max(d.a0, ang));
+      }
+    }
+    if (!moved) break;
+  }
+  for (const d of dots){
+    const it = d.it, [x, y] = xy(d), size = d.size;
     const g = mk("a",{class:"blip",href:"#/signal/" + it.id,"aria-label":clean(it.title)});
     g.append(mk("circle",{class:"halo",cx:x,cy:y,r:size+4,fill:"none",stroke:css("--lv-"+it.level),"stroke-width":"2"}));
     g.append(mk("circle",{cx:x,cy:y,r:size,fill:css("--lv-"+it.level)}));
@@ -1081,6 +1112,9 @@ async function start(){
   dress();
   live = FEED.items.filter(it => !["declined","superseded"].includes(it.status) && it.review_by >= today);
   const ok = el("span","ok","Signature checked in this browser"); $("#checked").replaceChildren(ok, document.createTextNode(": the feed was signed by " + poss(WATCH()) + " key " + CONFIG.feed.fingerprint.slice(0, 13) + "…" + CONFIG.feed.fingerprint.slice(-4) + " and is unchanged since. " + FEED.items.length + " entries, updated " + FEED.updated.slice(0,10) + "."));
+  /* the pinned header's height, so the fixed radar sits just under it */
+  const headH = () => document.documentElement.style.setProperty("--head", document.querySelector("header.top").offsetHeight + "px");
+  headH(); addEventListener("resize", headH);
   addEventListener("hashchange", () => route(false));
   matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => route(true));
   route(true);
