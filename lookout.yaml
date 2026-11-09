@@ -17,17 +17,21 @@ project:                          # the project the watch serves
     The governed software platform of the AI age: a library and its Zig engine, a declared machine
     (Harobanda), a language of languages (Haro), and the projects built on them.
 
+# A text below may say {project}, {topic}, {watch} or {title}: it is published with this file's values in their
+# place, so the watch speaks in its own project's voice. {week} names the week on an earlier week's page.
+
 watch:                            # the watch itself
   name: Lookout                   # the tool's name: the repository, the feed format, the bar's script
-  title: Softanza AI Radar        # what readers see: the site's title, the feed's title, the bar's link
+  title: "{project} {topic} Radar"  # what readers see: the site's title, the feed's title, the bar's link
   topic: AI
   repository: https://github.com/mayouni/lookout
   pages: https://mayouni.github.io/lookout/
   language: en
-  tagline: What changed in AI this week, and what it means for what you build
+  tagline: What changed in {topic} this week, and what it means for what we build in {project}
+  tagline_past: What changed in {topic} in week {week}, and what it meant for what we build in {project}
   intro: >
     Each week the radar reads the papers, releases, security findings and practices at their source, and shows
-    where each one lands in Softanza: the machine (Harobanda), the language (Haro), the foundation
+    where each one lands in {project}: the machine (Harobanda), the language (Haro), the foundation
     (Softanza), and the projects built on them.
   schedule:
     every: monday

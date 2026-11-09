@@ -15,7 +15,8 @@
     "repository": "https://github.com/mayouni/lookout",
     "pages": "https://mayouni.github.io/lookout/",
     "language": "en",
-    "tagline": "What changed in AI this week, and what it means for what you build",
+    "tagline": "What changed in AI this week, and what it means for what we build in Softanza",
+    "tagline_past": "What changed in AI in week {week}, and what it meant for what we build in Softanza",
     "intro": "Each week the radar reads the papers, releases, security findings and practices at their source, and shows where each one lands in Softanza: the machine (Harobanda), the language (Haro), the foundation (Softanza), and the projects built on them.",
     "schedule": {
       "every": "monday",

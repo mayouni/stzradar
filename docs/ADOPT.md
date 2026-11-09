@@ -29,7 +29,7 @@ The site walks through it with a form that writes your first file: [Make your ow
 | `project.name`, `site`, `owner`, `licence`, `licence_url`, `pitch` | the project the watch serves | the site's titles, the In view, the footer credit, the feed's description |
 | `watch.name`, `topic`, `repository`, `pages`, `language` | the watch itself: `name` is the tool's name | every URL the feed writes |
 | `watch.title` | the name readers see, such as "Softanza AI Radar" | the site's title, the feed's title, the bar's link |
-| `watch.tagline`, `watch.intro` | the first words a visitor reads | the This week view |
+| `watch.tagline`, `watch.tagline_past`, `watch.intro` | the first words a visitor reads; `tagline_past` titles an earlier week | the This week view |
 | `watch.schedule` | the day, the hour, the timezone and the week surveyed | the agent, and the task that wakes it |
 | `watch.publish` | `after-reading` (the owner reads, then signs and pushes) or `at-once` | the agent |
 | `watch.radar_limit` | how many signals the radar highlights each week, 3 to 12 (7 when absent); the list keeps every one | the site |
@@ -47,6 +47,16 @@ The site walks through it with a form that writes your first file: [Make your ow
 
 The file is read with a small, strict part of YAML: maps, lists, `"quoted"` or plain text, `[a, b]` lists, and `|` or
 `>` blocks for long text, indented with spaces. The check names the line of anything else.
+
+**Your project's voice.** Any text of the file may say `{project}`, `{topic}`, `{watch}` or `{title}`. The check publishes
+it with the file's own values in their place, so the site, the feed and the bar speak for your project, and a file
+copied from another watch speaks for yours once its names change. `{week}` names the week in `tagline_past`. Any
+other name in braces is refused by the check, so a typo never reaches a reader. Softanza's file says:
+
+```yaml
+  title: "{project} {topic} Radar"
+  tagline: What changed in {topic} this week, and what it means for what we build in {project}
+```
 
 ## The map
 

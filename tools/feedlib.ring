@@ -250,6 +250,7 @@ class FeedRun
     oItemSchema = NULL
     oConfig = NULL      # lookout.yaml, read and checked by LoadConfig
     cConfig = ""        # the same, as the bytes of app/config.json
+    aVoice = []         # the names a text of lookout.yaml may use, with their values (Voice)
     aEntries = []       # [ [cFile, oData], ... ]
     bQuiet = 0          # the guard sets it: problems are kept and not printed
     oIndex = NULL       # what the last Finish built, for the guard to read
@@ -563,8 +564,56 @@ class FeedRun
         oSchema.Check(oConfig, oConfigSchema, "lookout.yaml", "")
         Drain()
         if len(aProblems) > nBefore return 0 ok
+        Voice()
+        if len(aProblems) > nBefore return 0 ok
         cConfig = JWrite(oConfig, 0) + char(10)
         return 1
+
+    # The project's own voice: a text of lookout.yaml may say {project}, {topic}, {watch} or {title},
+    # and is published with the configuration's values in their place, so a file copied to another
+    # project speaks for that project once its names change. {week} is left for the site, which
+    # fills it on the page of an earlier week. Any other {name} is refused, so a typo never reaches a reader.
+    func Voice
+        aVoice = [["{project}", Conf("project.name")], ["{topic}", Conf("watch.topic")], ["{watch}", Conf("watch.name")]]
+        aVoice + ["{title}", VoiceText(Conf("watch.title"), ".watch.title")]
+        oConfig = VoiceWalk(oConfig, "")
+
+    func VoiceWalk v, cWhere
+        if isstring(v) return VoiceText(v, cWhere) ok
+        if not islist(v) return v ok
+        if len(v) = 2 and isstring(v[1]) and v[1] = "{"
+            aP = v[2]
+            nP = len(aP)
+            for i = 1 to nP
+                aP[i][2] = VoiceWalk(aP[i][2], cWhere + "." + aP[i][1])
+            next
+            return ["{", aP]
+        ok
+        if len(v) = 2 and isstring(v[1]) and v[1] = "["
+            aI = v[2]
+            nI = len(aI)
+            for i = 1 to nI
+                aI[i] = VoiceWalk(aI[i], cWhere + "[" + i + "]")
+            next
+            return ["[", aI]
+        ok
+        return v
+
+    func VoiceText c, cWhere
+        if substr(c, "{") = 0 return c ok
+        nV = len(aVoice)
+        for k = 1 to nV
+            c = substr(c, aVoice[k][1], aVoice[k][2])
+        next
+        cRest = substr(c, "{week}", "")
+        nOpen = substr(cRest, "{")
+        if nOpen > 0
+            nClose = substr(cRest, "}")
+            if nClose > nOpen
+                Problem("lookout.yaml", substr(cWhere, 2, len(cWhere) - 1) + " names " + substr(cRest, nOpen, nClose - nOpen + 1) + "; a text may name {project}, {topic}, {watch}, {title} or {week}")
+            ok
+        ok
+        return c
 
     # One value of the configuration by its dotted path, "watch.repository".
     func Conf cPath

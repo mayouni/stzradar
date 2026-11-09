@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Softanza AI Radar</title>
-<meta name="description" content="Softanza AI Radar: what changed in AI this week, placed on the Softanza platform -- Harobanda, Haro, Softanza, HaroBase, HaroServ, HaroScript, Aïcha, Zane -- and what each reader can do with it.">
+<meta name="description" content="Softanza AI Radar: what changed in AI this week, and what it means for what we build in Softanza.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Source+Sans+3:wght@400;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
@@ -471,7 +471,7 @@ const GROUP = {urgent:"To do now", action:"To do", advice:"To consider", info:"T
 const READERS = {
   developer: {label:"Developer",  why:"checks and code to run in your own project come first",
               order:["notice","build","happened","learn","estate","actions","sources"]},
-  maintainer:{label:"Maintainer", why:"what happened and the work proposed to Softanza's projects come first",
+  maintainer:{label:"Maintainer", why:"what happened and the work proposed to the project's parts come first",
               order:["notice","happened","actions","estate","build","learn","sources"]},
   learner:   {label:"Learner",    why:"each signal opens on a lesson in plain words",
               order:["notice","learn","happened","estate","build","sources"]},
@@ -563,7 +563,7 @@ function viewWeek(wkArg){
   const items = FEED.items.filter(i => weekOf(i.date) === wk && i.status !== "superseded").sort(byLevel);
   const frag = document.createDocumentFragment();
   const h = head("Week " + wk + " · " + weekSpan(wk),
-    latest ? CONFIG.watch.tagline : "What changed in " + TOPIC() + " in week " + wk,
+    wk >= surveyed ? CONFIG.watch.tagline : (CONFIG.watch.tagline_past || "What changed in {topic} in week {week}").replace("{topic}", TOPIC()).replace("{week}", wk),
     [CONFIG.watch.intro]);
   /* the week stepper: the weeks that hold signals, one step at a time, or any of them from the list */
   const nav = el("nav","weeks"); nav.setAttribute("aria-label","Weeks");
@@ -1183,22 +1183,24 @@ function viewYours(){
     P("# lookout.yaml -- everything about this watch that belongs to its project (docs/ADOPT.md)."); P("lookout: 1"); P("");
     P("project:"); P("  name: " + yq(name), "name"); P("  site: " + yq(v("site")), "site"); P("  owner: " + yq(v("owner") || "you"), "owner");
     P("  licence: " + yq(v("licence") || "MIT"), "licence"); P("  pitch: " + yq(name + " in one sentence: what it is and what it does."), "name"); P("");
-    P("watch:"); P("  name: " + yq(watch), "watch"); P("  title: " + yq(name + " " + topic + " Radar"), "name", "topic"); P("  topic: " + yq(topic), "topic"); P("  repository: " + yq(repoU), "repo"); P("  pages: " + yq(pages), "repo");
-    P("  language: en"); P("  tagline: " + yq("What changed in " + topic + " this week, and what it means for " + name), "topic", "name");
-    P("  intro: " + yq(watch + " reads the week's news at its source and shows where each piece lands in " + name + "."), "watch", "name");
+    P("watch:"); P("  name: " + yq(watch), "watch"); P("  topic: " + yq(topic), "topic"); P("  repository: " + yq(repoU), "repo"); P("  pages: " + yq(pages), "repo");
+    P("  language: en"); P("  title: " + yq("{project} {topic} Radar"), "name", "topic");
+    P("  tagline: " + yq("What changed in {topic} this week, and what it means for what we build in {project}"), "topic", "name");
+    P("  tagline_past: " + yq("What changed in {topic} in week {week}, and what it meant for what we build in {project}"), "topic", "name");
+    P("  intro: " + yq("{watch} reads the week's news at its source and shows where each piece lands in {project}."), "watch", "name");
     P("  schedule:"); P("    every: monday"); P('    at: "07:00"'); P("    timezone: UTC"); P("  publish: after-reading"); P("");
     P("feed:"); P("  signer: " + yq("feed@" + slug), "watch"); P("  namespace: " + slug + "-feed", "watch");
     P("  fingerprint: SHA256:the-43-characters-ssh-keygen-prints   # step 3"); P("  key: the-base64-after-ssh-ed25519                       # step 3"); P("");
     P("map: map/estate.json"); P(""); P("readers:", "readers");
     for (const cb of rboxes.filter(c => c.checked)){ P("  - id: " + cb.value, "readers"); P("    label: " + LABEL[cb.value], "readers"); P("    first: " + yq(FIRST[cb.value]), "readers"); }
-    P(""); P("agent:"); P("  goal: " + yq(v("goal") || ("Keep " + name + " and its people ahead of what changes in " + topic + ".")), "goal", "name", "topic");
+    P(""); P("agent:"); P("  goal: " + yq(v("goal") || "Keep {project} and its people ahead of what changes in {topic}."), "goal", "name", "topic");
     P("  learn:"); P("    - map/estate.json"); P("    - docs/METHOD.md");
     P("  in_scope:", "scope"); for (const l of lines(fields.scope.value)) P("    - " + yq(l), "scope");
     P("  out_of_scope:", "out"); for (const l of lines(fields.out.value)) P("    - " + yq(l), "out");
     P("  sources:", "sources");
     for (const l of lines(fields.sources.value)){ const [n, u] = l.split("|").map(x => (x || "").trim()); P("    - name: " + yq(n || u), "sources"); P("      url: " + yq(u || n), "sources"); }
-    P("  stances:"); P("    adopt: " + yq("take it into " + name), "name"); P("    learn: " + yq("it changes how we think")); P("    correct: " + yq(name + " can do it better"), "name");
-    P("    defend: " + yq("a risk " + name + " and its users must be protected from"), "name"); P("    watch: " + yq("too early; look again by the review date")); P("    decline: " + yq("considered and refused, with the reason"));
+    P("  stances:"); P("    adopt: " + yq("take it into {project}"), "name"); P("    learn: " + yq("it changes how we think")); P("    correct: " + yq("{project} can do it better"), "name");
+    P("    defend: " + yq("a risk {project} and its users must be protected from"), "name"); P("    watch: " + yq("too early; look again by the review date")); P("    decline: " + yq("considered and refused, with the reason"));
     P("  rules:"); P("    - read every development at its source before writing about it"); P("    - write one plain sentence for each reader the entry concerns");
     P("  proposals:"); P("    to: " + yq(v("to") || "the project's maintainers"), "to"); P(""); P("checks:"); P("  affirm: false");
     fileText = y.map(r => r[0]).join("\n") + "\n";
@@ -1230,6 +1232,7 @@ function dress(){
   { const t = RADAR().split(" "), last = t.pop(); $("#brandName").textContent = t.join(" "); $("#brandName").nextElementSibling.textContent = last; }
   $("#ghLink").href = CONFIG.watch.repository;                    /* each watch links its own repository */
   $("#navIn").textContent = "In " + NAME();
+  document.querySelector('meta[name="description"]').content = RADAR() + ": " + CONFIG.watch.tagline.charAt(0).toLowerCase() + CONFIG.watch.tagline.slice(1) + ".";   /* the project's own words, for a share or a search */
   const year = Math.min(...FEED.items.map(i => +i.date.slice(0,4)));
   $("#made").replaceChildren(document.createTextNode(RADAR() + " is a "), link(NAME(), CONFIG.project.site),
     document.createTextNode(" project, built with " + WATCH() + ". © " + year + " " + CONFIG.project.owner + ". Released under the "),
@@ -1241,7 +1244,7 @@ function dress(){
     ["What it is", TOPIC() + " news read at its source, and where it lands in " + NAME() + "."],
     ["Reading as", "Who you are: each signal speaks to you and opens on what you need first."],
     ["This week", "The week on a radar (slices are layers, the centre matters most); arrows reach earlier weeks."],
-    ["In " + NAME(), "The platform layer by layer; every number opens its signals."],
+    ["In " + NAME(), NAME() + " layer by layer; every number opens its signals."],
     ["All signals", "Filter by project, layer, domain, concern, level or week."],
     ["Trends", "The weeks together, each chart with its table."],
     ["About", "Why this watch exists, its method, and how to make your own."]
