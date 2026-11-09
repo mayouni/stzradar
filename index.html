@@ -185,9 +185,22 @@ nav.weeks .step{font-weight:700}
 nav.weeks .goto{display:flex;flex-direction:column;gap:4px;font-weight:600;font-size:1rem}
 
 /* trends: figures in two columns on a wide screen, one on a phone */
-.figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,34rem),1fr));gap:18px;align-items:start}
-.fig{margin:0;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:0 1px 3px rgba(16,38,42,.06);min-width:0}
-.fig h3{margin-bottom:4px}
+/* trends reads as one column: chapters, each opening on its finding, the figures under it at one width */
+.report{max-width:52rem}
+.report .period{margin:0 0 6px;font-size:1.0625rem}
+.report .period select{margin:0 4px}
+h2.chap{font:700 1.6rem/1.2 var(--f-title);margin:40px 0 10px;padding-top:22px;border-top:2px solid var(--line)}
+h2.chap:first-of-type{margin-top:18px}
+p.finding{font-size:1.3125rem;line-height:1.55;margin:0 0 18px;max-width:62ch}
+.keyfigs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0 0 8px;padding:12px 0;border-block:1px solid var(--line)}
+.keyfigs div{display:flex;flex-direction:column}
+.keyfigs b{font:700 1.75rem/1.15 var(--f-title);color:var(--deep)}
+:root[data-theme="dark"] .keyfigs b{color:var(--accent)}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .keyfigs b{color:var(--accent)} }
+.keyfigs span{color:var(--ink2);font-size:1.0625rem}
+@media (max-width:640px){.keyfigs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.fig{margin:26px 0 0;padding:0;min-width:0}
+.fig h3{margin-bottom:4px;font-size:1.2rem}
 .figlead{margin:0 0 12px;color:var(--ink2);font-size:1.0625rem}
 .fsub{display:block;color:var(--ink2);font-size:1rem}
 .hbars{display:flex;flex-direction:column;gap:10px}
@@ -211,7 +224,7 @@ a.hrow:hover .hbar{filter:brightness(.88)}
 .heat{display:grid;gap:3px;font-size:1rem}
 .heat .hh{text-align:center;font-weight:700;color:var(--ink2);text-decoration:none}
 .heat .hr{font-weight:600;padding-right:8px}
-.heat .hc{min-height:2rem;display:flex;align-items:center;justify-content:center;border-radius:4px;background:var(--bg);font-weight:700}
+.heat .hc{min-height:2rem;display:flex;align-items:center;justify-content:center;border-radius:4px;background:var(--panel);border:1px solid var(--line);font-weight:700}
 details.tv{margin-top:14px;border:0;padding:0;background:transparent}
 details.tv summary{font-size:1rem;color:var(--accent)}
 .tbl{border-collapse:collapse;margin-top:8px;font-size:1rem;width:100%}
@@ -688,90 +701,103 @@ function viewTrends(q){
   const frag = document.createDocumentFragment();
   frag.append(head("Trends", "How " + NAME() + " reads " + TOPIC() + ", and how it answers",
     ["Over the weeks " + WATCH() + " has kept: how much was read and how carefully, where " + NAME() + " stands on each development, what it proposed to its own projects, and what it wrote down to learn from. Every number opens the signals behind it."]));
-  const s = el("section","block wrap");
-  /* the one filter row: the period */
-  const fr = el("div","filters"); const lab = el("label"); lab.append(document.createTextNode("Period"));
-  const sl = el("select"); for (const [v,t] of [["all","every week kept"],["4","last 4 weeks"],["12","last 12 weeks"]]) sl.append(new Option(t,v));
+  /* One reading column, four chapters. Each chapter opens on what the numbers say, in a sentence, and the
+     figures under it show the same thing; nothing sits beside anything else. */
+  const rep = el("section","block wrap report");
+  /* the period, as a line of the report */
+  const fr = el("p","period"); fr.append(el("b",null,"Period: "));
+  const sl = el("select"); sl.setAttribute("aria-label","Period"); for (const [v,t] of [["all","every week kept"],["4","the last 4 weeks"],["12","the last 12 weeks"]]) sl.append(new Option(t,v));
   sl.value = span; sl.addEventListener("change", () => { location.hash = "#/trends" + (sl.value === "all" ? "" : "?n=" + sl.value); });
-  lab.append(sl); fr.append(lab, el("p","figlead", plural(weeks.length,"week") + ": " + (weeks.length ? weekSpan(weeks[0]).split(" to ")[0] + " to " + weekSpan(weeks.at(-1)).split(" to ")[1] : ""))); s.append(fr);
+  fr.append(sl, document.createTextNode(" · " + plural(weeks.length,"week") + (weeks.length ? ", " + weekSpan(weeks[0]).split(" to ")[0] + " to " + weekSpan(weeks.at(-1)).split(" to ")[1] : "") + "."));
+  rep.append(fr);
 
-  /* the headline numbers */
   const acts = items.flatMap(i => (i.actions||[]).map(a => Object.assign({entry:i.id}, a)));
-  const lessons = items.filter(i => LESSONS[i.id]);
-  const tiles = el("div","facts");
-  const tile = (n, w, sub) => { const f = el("div","fact"); f.append(el("b",null,String(n)), document.createTextNode(w)); if (sub) f.append(el("span","fsub",sub)); tiles.append(f); };
-  tile(items.length, "signals read", (items.length / Math.max(1,weeks.length)).toFixed(1).replace(".0","") + " a week");
-  tile(Math.round(100 * items.filter(i => i.confidence === "read").length / Math.max(1,items.length)) + "%", "read at the source", items.flatMap(i => i.sources).length + " sources");
-  tile(acts.length, "proposals to " + NAME(), acts.filter(a => a.state !== "proposed").length + " routed or further");
-  const toRoute = acts.filter(a => a.dates?.routed && a.dates?.proposed).map(a => days(a.dates.proposed, a.dates.routed));
-  if (toRoute.length) tile(dayWords(median(toRoute)), "to route a proposal", "median over " + plural(toRoute.length, "proposal"));
-  tile(new Set(items.flatMap(projectsOf)).size, "projects reached", "of " + MAP.projects.length + " in " + NAME());
-  tile(lessons.length, "lessons written", lessons.reduce((n,i) => n + (LESSONS[i.id].quiz||[]).length, 0) + " questions to test yourself");
-  s.append(tiles);
-  frag.append(s);
+  const n = items.length, many = weeks.length >= 2;
+  const pct = x => Math.round(100 * x / Math.max(1, n)) + "%";
+  const chapter = (num, title, finding) => { rep.append(el("h2","chap",num + ". " + title)); const p = el("p","finding"); p.textContent = finding; rep.append(p); };
+  const keyfigs = list => { const k = el("div","keyfigs"); for (const [v, w] of list){ const f = el("div"); f.append(el("b",null,String(v)), el("span",null,w)); k.append(f); } rep.append(k); };
+  const list2 = xs => xs.length < 2 ? (xs[0] || "") : xs.slice(0,-1).join(", ") + " and " + xs.at(-1);
 
-  const grid = el("section","block wrap figs");
-  const many = weeks.length >= 2;
-  /* 1. pressure: what the weeks asked of Softanza */
+  /* ---- 1. what was read */
   const lv = ["info","advice","action","urgent"], cnt = (w,k) => items.filter(i => weekOf(i.date) === w && i.level === k).length;
-  grid.append(figure("What each week asked of " + NAME(),
-    many ? "Signals per week, by what they ask: from to know up to to do now. Click a week to read it." : "Signals by what they ask, from to know up to to do now.",
+  const byLv = lv.map(k => ({k, n: items.filter(i => i.level === k).length})).sort((a,b) => b.n - a.n);
+  const dom = MAP.domains.map(d => ({label:d.name, value:items.filter(i => (i.domains||[]).includes(d.id)).length, href:"#/signals?d=" + d.id})).filter(r => r.value).sort((a,b) => b.value - a.value);
+  const con = MAP.concerns.map(c => ({label:c.name, sub:c.line, value:items.filter(i => (i.concerns||[]).includes(c.id)).length, href:"#/signals?c=" + c.id})).filter(r => r.value).sort((a,b) => b.value - a.value);
+  const read = items.filter(i => i.confidence === "read").length, srcs = items.flatMap(i => i.sources).length;
+  chapter(1, "What was read",
+    plural(n, "signal") + " in " + plural(weeks.length, "week") + ", " + pct(read) + " of them read at their source, from " + plural(srcs, "source") + ". " +
+    (byLv[0]?.n ? "Most ask " + NAME() + " " + WORD[byLv[0].k] + " (" + byLv[0].n + " of " + n + "). " : "") +
+    (dom.length ? "The news was mostly about " + list2(dom.slice(0,2).map(d => d.label.toLowerCase() + " (" + d.value + ")")) + ", " : "") +
+    (con.length ? "and what it put most at stake was " + con[0].label.toLowerCase() + " (" + con[0].value + ")." : ""));
+  keyfigs([[n, "signals read"], [pct(read), "read at the source"], [srcs, "sources"], [(n / Math.max(1,weeks.length)).toFixed(1).replace(".0",""), "signals a week"]]);
+  rep.append(figure("What each week asked of " + NAME(),
+    many ? "Signals per week, by what they ask. Click a week to read it." : "Signals by what they ask.",
     many ? columns(weeks, lv, k => css("--lv-"+k), k => WORD[k], cnt)
          : hbars([...lv].reverse().map(k => ({label:WORD[k], value:items.filter(i => i.level === k).length, color:css("--lv-"+k), href:"#/signals?v=" + k}))),
     ["Week", ...lv.map(k => WORD[k]), "total"], weeks.map(w => [w, ...lv.map(k => cnt(w,k)), lv.reduce((s,k) => s + cnt(w,k), 0)])));
+  rep.append(figure("What the news was about", "Signals in each domain; one signal can belong to several.", hbars(dom), ["Domain","signals"], dom.map(r => [r.label, r.value])));
+  rep.append(figure("What was at stake", "The concern each signal puts in play.", hbars(con), ["Concern","signals"], con.map(r => [r.label, r.value])));
 
-  /* 2. position: the stance Softanza took */
+  /* ---- 2. where Softanza stands */
   const st = Object.keys(STANCE).map(k => ({k, n: items.filter(i => i.stance === k).length})).filter(x => x.n).sort((a,b) => b.n - a.n);
-  grid.append(figure("Where " + NAME() + " stands",
-    "The position " + NAME() + " took on each development it read.",
-    hbars(st.map(x => ({label:x.k, sub:STANCE[x.k], value:x.n}))),
-    ["Stance","meaning","signals"], st.map(x => [x.k, STANCE[x.k], x.n])));
-
-  /* 3. reaction: what Softanza did with them */
-  const ast = ASTATE.map(k => ({k, n: acts.filter(a => a.state === k).length}));
-  const reached = k => acts.filter(a => ASTATE.indexOf(a.state) >= ASTATE.indexOf(k)).length;
-  grid.append(figure("How " + NAME() + " reacted",
-    plural(acts.length, "proposal") + " written for " + poss(NAME()) + " own projects, and how far each has gone: every proposal is counted at every stage it has reached.",
-    hbars(ASTATE.map(k => ({label:k.replace("-"," "), value:reached(k)}))),
-    ["Stage reached","proposals","now at this stage"], ASTATE.map(k => [k, reached(k), ast.find(x => x.k === k).n])));
-
-  /* 3b. speed: days from the proposal to each later stage, from the dates every action carries */
-  const speed = ASTATE.slice(1).map(k => { const ds = acts.filter(a => a.dates?.[k] && a.dates?.proposed).map(a => days(a.dates.proposed, a.dates[k])); return {k, n: ds.length, med: median(ds), max: ds.length ? Math.max(...ds) : 0}; }).filter(x => x.n);
-  if (speed.length >= 2) grid.append(figure("How fast " + NAME() + " reacted",      /* one stage is the headline tile, never a one-bar chart */
-    "The median number of days from a proposal to each later stage; same day means within the day it was written.",
-    hbars(speed.map(x => ({label:x.k.replace("-"," "), sub:"(" + plural(x.n,"proposal") + ")", value:x.med, text:dayWords(x.med)}))),
-    ["Stage","proposals","median","slowest"], speed.map(x => [x.k, x.n, dayWords(x.med), dayWords(x.max)])));
-  if (many){
-    const shade = k => "color-mix(in srgb, var(--accent) " + [50,66,83,100][ASTATE.indexOf(k)]   /* ordinal: the lightest step still clears 2:1 on the card */ + "%, var(--panel))";
-    const pc = (w,k) => acts.filter(a => weekOf(a.dates?.proposed || "1970-01-01") === w && a.state === k).length;
-    grid.append(figure("Proposals by week, by how far they went",
-      "Each week's proposals, by the stage they stand at now. Click a week to read it.",
-      columns(weeks, ASTATE, shade, k => k.replace("-"," "), pc),
-      ["Week", ...ASTATE, "total"], weeks.map(w => [w, ...ASTATE.map(k => pc(w,k)), ASTATE.reduce((s,k) => s + pc(w,k), 0)])));
-  }
-
-  /* 4. reach: where the news lands, over time or ranked */
   const lcount = (lid, w) => items.filter(i => (w ? weekOf(i.date) === w : 1) && layersOf(i).includes(lid)).length;
   const layers = MAP.layers.filter(l => lcount(l.id));
-  grid.append(figure("Where it lands in " + NAME(),
-    many ? "Signals touching each layer, week by week; darker is more." : "Signals touching each layer of " + NAME() + ".",
+  const topLayer = [...layers].sort((a,b) => lcount(b.id) - lcount(a.id))[0];
+  const reachedParts = new Set(items.flatMap(projectsOf)).size;
+  const DID = {adopt:"adopted", learn:"learned from", correct:"set out to correct", defend:"defended against", watch:"is watching", decline:"declined"};
+  chapter(2, "Where " + NAME() + " stands",
+    (st.length ? NAME() + " " + DID[st[0].k] + " " + st[0].n + " of the " + plural(n, "development") + " it read" +
+      (st[1] ? ", " + DID[st[1].k] + " " + st[1].n : "") + (st[2] ? " and " + DID[st[2].k] + " " + st[2].n : "") + ". " : "") +
+    "The news reached " + reachedParts + " of its " + MAP.projects.length + " parts" + (topLayer ? ", most often its " + topLayer.name.toLowerCase() + " layer (" + plural(lcount(topLayer.id), "signal") + ")." : "."));
+  rep.append(figure("The position " + NAME() + " took", "One stance for each development it read.",
+    hbars(st.map(x => ({label:x.k, sub:STANCE[x.k], value:x.n}))),
+    ["Stance","meaning","signals"], st.map(x => [x.k, STANCE[x.k], x.n])));
+  rep.append(figure("Where it lands in " + NAME(),
+    many ? "Signals touching each layer, week by week; darker is more." : "Signals touching each layer.",
     many ? heat(layers.map(l => ({id:l.id, name:l.name})), weeks, lcount)
          : hbars(layers.map(l => ({label:l.name, value:lcount(l.id), href:"#/signals?l=" + l.id})).sort((a,b) => b.value - a.value)),
     ["Layer", ...weeks, "total"], layers.map(l => [l.name, ...weeks.map(w => lcount(l.id,w)), lcount(l.id)])));
 
-  /* 5. subjects and stakes */
-  const dom = MAP.domains.map(d => ({label:d.name, value:items.filter(i => (i.domains||[]).includes(d.id)).length, href:"#/signals?d=" + d.id})).filter(r => r.value).sort((a,b) => b.value - a.value);
-  grid.append(figure("What the news was about", "Signals in each domain; one signal can belong to several.", hbars(dom), ["Domain","signals"], dom.map(r => [r.label, r.value])));
-  const con = MAP.concerns.map(c => ({label:c.name, sub:c.line, value:items.filter(i => (i.concerns||[]).includes(c.id)).length, href:"#/signals?c=" + c.id})).filter(r => r.value).sort((a,b) => b.value - a.value);
-  grid.append(figure("What was at stake", "The concern each signal puts in play.", hbars(con), ["Concern","signals"], con.map(r => [r.label, r.value])));
+  /* ---- 3. how Softanza reacted */
+  const ast = ASTATE.map(k => ({k, n: acts.filter(a => a.state === k).length}));
+  const reached = k => acts.filter(a => ASTATE.indexOf(a.state) >= ASTATE.indexOf(k)).length;
+  const toRoute = acts.filter(a => a.dates?.routed && a.dates?.proposed).map(a => days(a.dates.proposed, a.dates.routed));
+  const speed = ASTATE.slice(1).map(k => { const ds = acts.filter(a => a.dates?.[k] && a.dates?.proposed).map(a => days(a.dates.proposed, a.dates[k])); return {k, n: ds.length, med: median(ds), max: ds.length ? Math.max(...ds) : 0}; }).filter(x => x.n);
+  chapter(3, "How " + NAME() + " reacted",
+    NAME() + " wrote " + plural(acts.length, "proposal") + " for its own projects. " +
+    (reached("routed") ? reached("routed") + " of them reached the project they concern" +
+      (toRoute.length ? (median(toRoute) === 0 ? ", most on the day they were written" : ", in a median of " + dayWords(median(toRoute))) : "") + "; " : "") +
+    (reached("done") ? reached("done") + " are done." : reached("in-progress") ? reached("in-progress") + " are under way." : (reached("routed") ? "each is now with the project that received it." : "")));
+  const partsWorked = new Set(acts.map(a => projOf(a.area)).filter(Boolean)).size;
+  keyfigs([[acts.length, "proposals"], [reached("routed"), "routed or further"], [toRoute.length ? dayWords(median(toRoute)) : "–", "to route one, median"],
+           reached("done") ? [reached("done"), "done"] : [partsWorked, partsWorked === 1 ? "part received work" : "parts received work"]]);
+  rep.append(figure("How far each proposal went", "Every proposal is counted at every stage it has reached.",
+    hbars(ASTATE.map(k => ({label:k.replace("-"," "), value:reached(k)}))),
+    ["Stage reached","proposals","now at this stage"], ASTATE.map(k => [k, reached(k), ast.find(x => x.k === k).n])));
+  if (speed.length >= 2) rep.append(figure("How fast " + NAME() + " reacted",      /* one stage is the key figure, never a one-bar chart */
+    "The median number of days from a proposal to each later stage.",
+    hbars(speed.map(x => ({label:x.k.replace("-"," "), sub:"(" + plural(x.n,"proposal") + ")", value:x.med, text:dayWords(x.med)}))),
+    ["Stage","proposals","median","slowest"], speed.map(x => [x.k, x.n, dayWords(x.med), dayWords(x.max)])));
+  if (many){
+    const shade = k => "color-mix(in srgb, var(--accent) " + [50,66,83,100][ASTATE.indexOf(k)] + "%, var(--bg))";   /* ordinal; the lightest still clears 2:1 */
+    const pc = (w,k) => acts.filter(a => weekOf(a.dates?.proposed || "1970-01-01") === w && a.state === k).length;
+    rep.append(figure("Proposals by week, by how far they went", "Each week's proposals, by the stage they stand at now. Click a week to read it.",
+      columns(weeks, ASTATE, shade, k => k.replace("-"," "), pc),
+      ["Week", ...ASTATE, "total"], weeks.map(w => [w, ...ASTATE.map(k => pc(w,k)), ASTATE.reduce((s,k) => s + pc(w,k), 0)])));
+  }
 
-  /* 6. learning, and the next look */
-  const lr = items.filter(i => LESSONS[i.id]).map(i => ({label:clean(i.title), value:(LESSONS[i.id].terms||[]).length + (LESSONS[i.id].quiz||[]).length + (LESSONS[i.id].build||[]).length, href:"#/signal/" + i.id})).sort((a,b) => b.value - a.value).slice(0, 8);
-  grid.append(figure("What " + NAME() + " wrote down to learn", "For each signal: the checks, terms and questions written beside it (the eight richest).", hbars(lr, {unit:"items"}), ["Signal","checks, terms and questions"], lr.map(r => [r.label, r.value])));
+  /* ---- 4. what Softanza learned */
+  const lessons = items.filter(i => LESSONS[i.id]);
+  const nTerms = lessons.reduce((s,i) => s + (LESSONS[i.id].terms||[]).length, 0), nQuiz = lessons.reduce((s,i) => s + (LESSONS[i.id].quiz||[]).length, 0), nBuild = lessons.reduce((s,i) => s + (LESSONS[i.id].build||[]).length, 0);
   const soon = FEED.items.filter(i => i.status !== "superseded" && i.review_by >= today).sort((a,b) => a.review_by < b.review_by ? -1 : 1).slice(0, 6);
+  chapter(4, "What " + NAME() + " learned",
+    plural(lessons.length, "lesson") + " written beside the signals, with " + plural(nBuild, "check") + " to run, " + plural(nTerms, "term") + " explained and " + plural(nQuiz, "question") + " to test yourself." +
+    (soon[0] ? " The first signal " + NAME() + " looks at again is due on " + soon[0].review_by + "." : ""));
+  const lr = lessons.map(i => ({label:clean(i.title), value:(LESSONS[i.id].terms||[]).length + (LESSONS[i.id].quiz||[]).length + (LESSONS[i.id].build||[]).length, href:"#/signal/" + i.id})).sort((a,b) => b.value - a.value).slice(0, 8);
+  rep.append(figure("The richest lessons", "For each signal: the checks, terms and questions written beside it.", hbars(lr, {unit:"items"}), ["Signal","checks, terms and questions"], lr.map(r => [r.label, r.value])));
   const ul = el("ul","plain"); for (const i of soon){ const li = el("li"); const a = el("a",null,clean(i.title)); a.href = "#/signal/" + i.id; li.append(el("b",null,i.review_by + " "), a); ul.append(li); }
-  grid.append(figure("Looked at again next", "Each signal carries the day " + NAME() + " reviews it; these come first.", ul, ["Review by","signal"], soon.map(i => [i.review_by, clean(i.title)])));
-  frag.append(grid);
+  rep.append(figure("Looked at again next", "Each signal carries the day " + NAME() + " reviews it; these come first.", ul, ["Review by","signal"], soon.map(i => [i.review_by, clean(i.title)])));
+  frag.append(rep);
   return frag;
 }
 
