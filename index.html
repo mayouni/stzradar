@@ -140,21 +140,23 @@ section.block{padding-block:28px 8px}
 .card p.plain{color:var(--ink2)}
 
 /* the estate */
-.estate{display:flex;flex-direction:column;gap:20px;max-width:60rem}
+/* the stack is an architecture drawing, not prose: its layers stack as layers, their parts stand side by side, and the
+   harness stands beside the stack (the author's ruling, 2026-11-09: the one-column rule is for text, not for this) */
+.estate{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,19rem);gap:20px;align-items:start}
+@media (max-width:900px){.estate{grid-template-columns:minmax(0,1fr)}}
 .stack{display:flex;flex-direction:column;gap:10px}
-.layer{padding:14px 0 6px;border-top:2px solid var(--line)}
-.layer:first-child{border-top:0;padding-top:0}
+.layer{display:grid;grid-template-columns:minmax(0,15rem) minmax(0,1fr);gap:12px 18px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;box-shadow:0 1px 3px rgba(16,38,42,.06)}
+@media (max-width:700px){.layer{grid-template-columns:minmax(0,1fr)}}
 .layer .name p{margin:4px 0 0;color:var(--ink2);font-size:1rem}
-.projects{display:flex;flex-direction:column;margin-top:6px}
-.proj{display:block;padding:8px 0 8px 16px;border-left:3px solid var(--line);color:inherit;text-decoration:none}
-.proj + .proj{margin-top:6px}
-a.proj:hover{border-left-color:var(--accent)}
+.projects{display:flex;flex-wrap:wrap;gap:10px}
+.proj{flex:1 1 15rem;border:1px solid var(--line);border-radius:12px;padding:10px 14px;color:inherit;text-decoration:none;background:var(--bg)}
+a.proj:hover{border-color:var(--accent)}
 .proj b{font-family:var(--f-title);font-size:1.15rem}
 .proj p{margin:4px 0 0;color:var(--ink2);font-size:1rem}
-.proj .n{display:inline-block;margin-top:4px;font-weight:700;color:var(--deep)}
+.proj .n{display:inline-block;margin-top:6px;font-weight:700;color:var(--deep)}
 :root[data-theme="dark"] .proj .n{color:var(--accent)}
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .proj .n{color:var(--accent)} }
-.beside{padding:14px 0 6px;border-top:2px dashed var(--line);display:flex;flex-direction:column;gap:6px}
+.beside{background:var(--tint);border:1px dashed var(--accent);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
 .beside .proj{flex:none}
 table.grid{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;font-size:1rem}
 table.grid th,table.grid td{border:1px solid var(--line);padding:8px 10px;text-align:center;vertical-align:middle}
