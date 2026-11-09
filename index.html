@@ -157,7 +157,7 @@ section.block{padding-block:28px 8px}
 a.proj:hover{border-color:var(--accent)}
 .proj b{font-family:var(--f-title);font-size:1.15rem}
 .proj p{margin:4px 0 0;color:var(--ink2);font-size:1rem}
-.proj.has{border:2px solid var(--accent);background:var(--panel);cursor:pointer}
+.proj.has{cursor:pointer}   /* the button marks a part with signals; the tile keeps its quiet border */
 .concern .n{display:inline-block;margin-top:8px;padding:5px 14px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:1rem}
 .proj .n{display:inline-block;align-self:flex-start;margin-top:10px;padding:5px 14px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:1rem}
 a.proj.has:hover .n{filter:brightness(1.12)}
@@ -643,7 +643,7 @@ function viewEstate(){
     const n = count(p.id), t = n ? el("a","proj") : el("div","proj");
     if (n) t.href = "#/signals?p=" + p.id;
     t.append(el("b",null,p.name), el("p",null,p.line));
-    /* a part with signals is a link, and says so: a teal border on the tile and a button-like call at its foot */
+    /* a part with signals is a link, and says so with a button-like call at its foot */
     if (n){ t.classList.add("has"); t.setAttribute("aria-label", p.name + ": read its " + plural(n, "signal")); t.append(el("span","n","Read " + plural(n,"signal") + " →")); }
     return t;
   };
