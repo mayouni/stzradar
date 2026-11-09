@@ -73,11 +73,11 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) #brand.haslogo .rest{color:var(--accent)} }
 @media (max-width:520px){#brand .logo{height:16px}#brand.haslogo .rest{font-size:1rem}}
 nav.views{display:flex;flex-wrap:wrap;gap:4px 20px}
-/* the menu reads as separate entries, not as one sentence (author, 2026-11-09): a thin rule between entries, and a
-   taller one between the brand and the menu */
+/* the menu reads as separate entries, not as one sentence (author, 2026-11-09): a visible rule between entries,
+   and white space alone between the brand and the menu */
 nav.views a{position:relative}
-nav.views a + a::before{content:"";position:absolute;left:-10px;top:50%;height:1.05em;margin-top:-.62em;border-left:1px solid var(--line)}
-@media (min-width:821px){.row1 nav.views{border-left:1px solid var(--line);padding-left:24px;min-height:2.2em;align-items:center}}
+nav.views a + a::before{content:"";position:absolute;left:-11px;top:50%;height:1.1em;margin-top:-.64em;border-left:2px solid color-mix(in srgb,var(--ink2) 45%,transparent)}
+@media (min-width:821px){.row1 nav.views{margin-left:28px}}   /* the brand and the menu: white space, no rule (author, 2026-11-09) */
 nav.views a{font-weight:600;color:var(--ink);text-decoration:none;padding:4px 0;border-bottom:3px solid transparent;font-size:1.1875rem}
 nav.views a[aria-current="page"]{border-bottom-color:var(--accent);color:var(--deep)}
 :root[data-theme="dark"] nav.views a[aria-current="page"]{color:var(--accent)}
