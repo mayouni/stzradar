@@ -73,6 +73,11 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) #brand.haslogo .rest{color:var(--accent)} }
 @media (max-width:520px){#brand .logo{height:16px}#brand.haslogo .rest{font-size:1rem}}
 nav.views{display:flex;flex-wrap:wrap;gap:4px 20px}
+/* the menu reads as separate entries, not as one sentence (author, 2026-11-09): a thin rule between entries, and a
+   taller one between the brand and the menu */
+nav.views a{position:relative}
+nav.views a + a::before{content:"";position:absolute;left:-10px;top:50%;height:1.05em;margin-top:-.62em;border-left:1px solid var(--line)}
+@media (min-width:821px){.row1 nav.views{border-left:1px solid var(--line);padding-left:24px;min-height:2.2em;align-items:center}}
 nav.views a{font-weight:600;color:var(--ink);text-decoration:none;padding:4px 0;border-bottom:3px solid transparent;font-size:1.1875rem}
 nav.views a[aria-current="page"]{border-bottom-color:var(--accent);color:var(--deep)}
 :root[data-theme="dark"] nav.views a[aria-current="page"]{color:var(--accent)}
@@ -88,6 +93,7 @@ nav.views a[aria-current="page"]{border-bottom-color:var(--accent);color:var(--d
 /* on a phone the pinned header and the help keep their compact size, so the reading text has the screen */
 @media (max-width:520px){nav.views a,.help,.row2,.row2 .lab,#readerSel,.seg a,.seg button{font-size:1rem}
   nav.views{display:grid;grid-template-columns:repeat(3,auto);justify-content:start;gap:2px 18px}   /* five entries as 3 + 2, never one alone */
+  nav.views a:nth-child(3n+1)::before{display:none}   /* no rule before the first entry of a row */
   .helpbox dl{font-size:1rem}.helpbox dd{font-size:1rem}
   #aboutLab{display:none}.seg a{padding:5px 11px}}
 @media (max-width:520px){#readers{display:none}#readerSel{display:inline-block}.row2{flex-wrap:nowrap}
