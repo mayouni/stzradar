@@ -4,10 +4,22 @@ The Lookout bar puts Lookout's newest notice for a site's readers at the top of 
 is the same reader Lookout Radar uses, so a site and the Radar show the same checked feed.
 
 ```html
-<script src="https://mayouni.github.io/lookout/bar/lookout-bar-1.0.0.js"
-        integrity="sha384-G9y4SkVgX4Tv9gtIOvZUKRgSci1cEqckGO/CHjIj91V0zrNpldPRt0vB2tkgxYeL" crossorigin="anonymous"
+<script src="https://mayouni.github.io/lookout/bar/lookout-bar-1.1.0.js"
+        integrity="sha384-7/R5PqRB2LH7f40qq531NaFAmP6YxNc9K8WgJT0h9n6Z7KvuzkMxVLsBEwSMuAYv" crossorigin="anonymous"
         data-audience="developer" data-level="advice" data-projects="haro,zane" defer></script>
 ```
+
+**Another watch.** A project running its own Lookout ([docs/ADOPT.md](ADOPT.md)) uses this same script and names its
+own feed and key, so the page pins the key it trusts:
+
+```html
+<script src="https://mayouni.github.io/lookout/bar/lookout-bar-1.1.0.js"
+        integrity="sha384-7/R5PqRB2LH7f40qq531NaFAmP6YxNc9K8WgJT0h9n6Z7KvuzkMxVLsBEwSMuAYv" crossorigin="anonymous"
+        data-feed="https://you.github.io/your-watch/" data-namespace="your-watch-feed"
+        data-key="AAAAC3NzaC1lZDI1NTE5AAAAI..." data-audience="developer" defer></script>
+```
+
+Version 1.0.0 stays where it was, with its own integrity value, for the pages that already carry it.
 
 Lookout Radar builds this line for you, with a live preview: [Lookout bar](https://mayouni.github.io/lookout/#/bar).
 
@@ -17,7 +29,10 @@ Lookout Radar builds this line for you, with a live preview: [Lookout bar](https
 |---|---|---|
 | `data-audience` | `developer`, `user`, `learner`, `maintainer`: whose notice is shown | `developer` |
 | `data-level` | `info`, `advice`, `action`, `urgent`: the lowest level shown | `advice` |
-| `data-projects` | project ids or aliases from [`map/estate.json`](../map/estate.json), comma-separated: only signals touching one of them | every project |
+| `data-projects` | project ids or aliases from the watch's map, comma-separated: only signals touching one of them | every project |
+| `data-feed` | another watch's site, ending in `/` | Lookout's |
+| `data-key` | that watch's public key: the base64 after `ssh-ed25519` | Lookout's key |
+| `data-namespace` | that watch's signing namespace | `lookout-feed` |
 
 The attributes go on the script tag, or on an element carrying `data-lookout-bar`, which also says where the bar
 goes. With that element absent, the bar goes at the top of `<body>`, in the page's flow.
@@ -42,7 +57,7 @@ page and the bar never restyle each other.
 
 ## Versions
 
-A published version never changes: `lookout-bar-1.0.0.js` is the same bytes for as long as it exists, and the
+A published version never changes: `lookout-bar-1.1.0.js` is the same bytes for as long as it exists, and the
 `integrity` value above holds the browser to that. A new version is a new file, announced as an entry.
 `bar/lookout-bar.js` is the newest version, for a site that prefers to follow it without a pin.
 

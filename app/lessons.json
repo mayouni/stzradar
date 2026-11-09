@@ -265,6 +265,51 @@
           "Relevance says how much it touches Softanza; level says how much it asks of the reader."
         ]
       ]
+    },
+    "2026-11-09-lookout-for-any-project": {
+      "build": [
+        {
+          "why": "Copy the watch to start your own. This one writes: it creates a folder.",
+          "cmd": "git clone https://github.com/mayouni/lookout your-watch"
+        },
+        {
+          "why": "See everything that belongs to a project: one file.",
+          "cmd": "cat your-watch/lookout.yaml"
+        },
+        {
+          "why": "After editing it, let the check name anything missing or wrong, line by line.",
+          "cmd": "cd your-watch && haro tools/feed.ring check"
+        },
+        {
+          "why": "Make the key that signs your feed, outside the repository. This one writes: it creates the key pair.",
+          "cmd": "ssh-keygen -t ed25519 -f ~/.ssh/watch_feed -C feed@your-watch"
+        }
+      ],
+      "lesson": "A tool built for one project usually hides that project everywhere in its code: names, addresses, texts. Lookout gathered all of it into one file, lookout.yaml, and the tools read that file instead. Changing the file changes the whole watch: what its agent studies, what it reads, who it writes for, and what the site and the bar show. The parts every watch shares, like the feed's fields and its signature, stay the same, so one reader works for all of them.",
+      "terms": [
+        [
+          "configuration file",
+          "a file that says how a tool should behave for one project, read by the tool instead of written into its code"
+        ],
+        [
+          "YAML",
+          "a plain-text format for configuration: keys, values and lists, laid out by indentation"
+        ],
+        [
+          "pin a key",
+          "write into your page the one key you trust, so a feed signed by any other key is refused"
+        ]
+      ],
+      "quiz": [
+        [
+          "Why keep the project's names in one file rather than in the tools?",
+          "So that another project changes one file, and the tools, the feed, the site and the bar follow without any edit to their code."
+        ],
+        [
+          "Why does the bar take the key from the page that includes it?",
+          "The page's owner decides which watch they trust. If the key came with the feed, anyone serving a feed could also serve a matching key."
+        ]
+      ]
     }
   }
 }

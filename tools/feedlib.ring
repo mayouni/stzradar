@@ -248,6 +248,8 @@ class FeedRun
     nEntries = 0
     oSchema = NULL
     oItemSchema = NULL
+    oConfig = NULL      # lookout.yaml, read and checked by LoadConfig
+    cConfig = ""        # the same, as the bytes of app/config.json
     aEntries = []       # [ [cFile, oData], ... ]
     bQuiet = 0          # the guard sets it: problems are kept and not printed
     oIndex = NULL       # what the last Finish built, for the guard to read
@@ -273,7 +275,8 @@ class FeedRun
     # The whole run over this repository: generate writes the feeds, check only compares them.
     func Go cMode
         if not Prepare() return ok
-        AffirmScan()
+        KeyCheck()
+        if ConfOn("checks.affirm") AffirmScan() ok
         ReadEntries()
         LessonsCheck()
         MapCheck()
@@ -283,14 +286,16 @@ class FeedRun
     # entry's areas must name a project of the map (by id or alias, or a dotted sub-area of one), and
     # its domains and concerns must be ids of the map, so the site never places a signal nowhere.
     func MapCheck
-        cPath = cRoot + "/map/estate.json"
+        cMapRel = Conf("map")
+        if cMapRel = "" cMapRel = "map/estate.json" ok
+        cPath = cRoot + "/" + cMapRel
         if not fexists(cPath)
-            Problem("map/estate.json", "is the estate map every entry is placed on, and this run reads it")
+            Problem(cMapRel, "is the map every entry is placed on (lookout.yaml, map), and this run reads it")
             return
         ok
         oReader = new JsonReader
         try
-            oM = oReader.Parse(StripCR(read(cPath)), "map/estate.json")
+            oM = oReader.Parse(StripCR(read(cPath)), cMapRel)
         catch e
             Problem("map/estate.json", "is not valid JSON: " + e.Message())
             return
@@ -528,7 +533,89 @@ class FeedRun
         ok
         oItemSchema = oSchema.SchemaFile("item.schema.json")
         Drain()
-        return islist(oItemSchema)
+        if not islist(oItemSchema) return 0 ok
+        return LoadConfig()
+
+    # lookout.yaml: everything that belongs to the project this watch serves (docs/ADOPT.md). It is
+    # read with the YAML reader below and checked against schema/config.schema.json; the run does not
+    # start without it, because every URL and name the feed carries comes from it.
+    func LoadConfig
+        cPath = cRoot + "/lookout.yaml"
+        if not fexists(cPath)
+            Problem("lookout.yaml", "is this watch's configuration, and the run reads it first (docs/ADOPT.md)")
+            return 0
+        ok
+        return LoadConfigText(read(cPath))
+
+    # The same, from a text: the guard hands it configurations broken on purpose.
+    func LoadConfigText cText
+        oY = new YamlReader
+        try
+            oConfig = oY.Parse(cText, "lookout.yaml")
+        catch e
+            Problem("lookout.yaml", e.Message())
+            return 0
+        done
+        oConfigSchema = oSchema.SchemaFile("config.schema.json")
+        Drain()
+        if not islist(oConfigSchema) return 0 ok
+        nBefore = len(aProblems)
+        oSchema.Check(oConfig, oConfigSchema, "lookout.yaml", "")
+        Drain()
+        if len(aProblems) > nBefore return 0 ok
+        cConfig = JWrite(oConfig, 0) + char(10)
+        return 1
+
+    # One value of the configuration by its dotted path, "watch.repository".
+    func Conf cPath
+        v = oConfig
+        cPart = ""
+        cP = cPath + "."
+        nP = len(cP)
+        for i = 1 to nP
+            if cP[i] = "."
+                if JKind(v) != "object" or not JHas(v, cPart) return "" ok
+                v = JGet(v, cPart)
+                cPart = ""
+            else
+                cPart += cP[i]
+            ok
+        next
+        return v
+
+    # The key lookout.yaml publishes for the site and the bar must be the key the feed is checked
+    # against, keys/allowed_signers, for the signer it names.
+    func KeyCheck
+        cPath = cRoot + "/keys/allowed_signers"
+        if not fexists(cPath)
+            Problem("keys/allowed_signers", "holds the public key the feed is signed with (docs/ADOPT.md, step 4)")
+            return
+        ok
+        cWant = Conf("feed.signer") + " " + 'namespaces="' + Conf("feed.namespace") + '" ssh-ed25519 ' + Conf("feed.key")
+        aLines = str2list(StripCR(read(cPath)))
+        nL1 = len(aLines)
+        for i = 1 to nL1
+            if trim(aLines[i]) = cWant return ok
+        next
+        Problem("lookout.yaml", "feed.key, feed.signer and feed.namespace must match a line of keys/allowed_signers: " + cWant)
+
+    # digests/<YYYY-Www>.md, as a sorted JSON list of weeks: the weeks a survey has closed.
+    func DigestWeeks
+        aW = []
+        aIn = dir(cRoot + "/digests")
+        nIn = len(aIn)
+        for i = 1 to nIn
+            cN = aIn[i][1]
+            if aIn[i][2] = 0 and len(cN) = 11 and right(cN, 3) = ".md" and cN[5] = "-" and cN[6] = "W"
+                aW + left(cN, 8)
+            ok
+        next
+        aW = sort(aW)
+        return JWrite(["[", aW], 0) + char(10)
+
+    func ConfOn cPath
+        v = Conf(cPath)
+        return islist(v) and len(v) = 1 and v[1] = "t"
 
     # Cross-checks the entries read so far, builds both feeds and checks them. cMode "generate"
     # writes changed files, "check" compares them with what is committed, "none" touches no file.
@@ -564,6 +651,8 @@ class FeedRun
         if cMode = "none" return ok
         Settle(cMode, "feed/index.json", cIndex)
         Settle(cMode, "feed/feed.json", cFeed)
+        Settle(cMode, "app/config.json", cConfig)      # the site and the bar read the configuration here
+        Settle(cMode, "app/digests.json", DigestWeeks())  # the weeks surveyed: the site opens on the newest
 
     func Say cLine
         if not bQuiet see cLine + char(10) ok
@@ -823,7 +912,7 @@ class FeedRun
 
     func EntryUrl oData
         cId = JGet(oData, "id")
-        return "https://github.com/mayouni/lookout/blob/main/items/" + left(cId, 4) + "/" + cId + ".md"
+        return Conf("watch.repository") + "/blob/main/items/" + left(cId, 4) + "/" + cId + ".md"
 
     # The newest date or updated among the entries, at midnight UTC: an unchanged feed
     # regenerates to the same bytes.
@@ -854,7 +943,7 @@ class FeedRun
             ["feed", "lookout"],
             ["version", ["#", "1"]],
             ["updated", NewestDay()],
-            ["home", "https://github.com/mayouni/lookout"],
+            ["home", Conf("watch.repository")],
             ["items", ["[", aItems]]
         ]]
 
@@ -892,11 +981,11 @@ class FeedRun
         next
         return ["{", [
             ["version", "https://jsonfeed.org/version/1.1"],
-            ["title", "Lookout"],
-            ["home_page_url", "https://github.com/mayouni/lookout"],
-            ["feed_url", "https://raw.githubusercontent.com/mayouni/lookout/main/feed/feed.json"],
-            ["description", "A public watch on what is changing in AI, read from Softanza's point of view."],
-            ["language", "en"],
+            ["title", Conf("watch.name")],
+            ["home_page_url", Conf("watch.repository")],
+            ["feed_url", substr(Conf("watch.repository"), "https://github.com/", "https://raw.githubusercontent.com/") + "/main/feed/feed.json"],
+            ["description", "A public watch on what is changing in " + Conf("watch.topic") + ", read from " + Conf("project.name") + "'s point of view."],
+            ["language", Conf("watch.language")],
             ["items", ["[", aItems]]
         ]]
 
@@ -1380,7 +1469,7 @@ class Pattern
                 aNode = ["set", ParseClass(), 1, 1]
             but c = "."
                 nAt++
-                aNode = ["set", [1, [[0, 9], [11, 255]]], 1, 1]
+                aNode = ["set", [0, [[0, 9], [11, 255]]], 1, 1]     # any byte but a line feed
             but c = "\"
                 nAt++
                 aNode = ["set", EscapeSet(), 1, 1]
@@ -1550,3 +1639,284 @@ class Pattern
             if find(aOut, b[i]) = 0 aOut + b[i] ok
         next
         return aOut
+
+
+# ---------------------------------------------------------------- the YAML reader
+#
+# lookout.yaml is read with a small, strict subset of YAML, enough for a configuration a person
+# writes by hand (docs/ADOPT.md, "The file"):
+#   key: value              a map; keys are letters, digits, _ and -
+#   key:                    a deeper block follows, indented by spaces (a tab is refused)
+#   - value / - key: value  a list of values, or of maps
+#   "text", 'text', text    a string; true, false and null are themselves; # starts a comment
+#   [a, b, "c d"]           a short list on one line
+#   key: |  or  key: >      a block of text on the lines below (| keeps the line breaks, > joins them)
+# Anything else is refused with its line number, never guessed. The result has the JSON reader's
+# shape, so every check that reads JSON reads this too.
+class YamlReader
+    aSrc = []
+    nAt = 1
+    cDoc = ""
+
+    func Parse cText, cWhere
+        cDoc = cWhere
+        aSrc = YamlLines(StripCR(cText))
+        nAt = 1
+        SkipEmpty()
+        if nAt > len(aSrc) return ["{", []] ok
+        v = Block(Indent(aSrc[nAt]))
+        SkipEmpty()
+        if nAt <= len(aSrc) Fail("this line is indented less than its block and more than its parent") ok
+        return v
+
+    func Fail cMsg
+        raise(cDoc + ", line " + nAt + ": " + cMsg)
+
+    func Indent cL
+        n = 0
+        nL = len(cL)
+        while n < nL and cL[n + 1] = " " n++ end
+        if n < nL and ascii(cL[n + 1]) = 9 Fail("a tab indents this line; indent with spaces") ok
+        return n
+
+    func IsEmpty cL
+        c = Uncomment(cL)
+        return trim(c) = ""
+
+    func SkipEmpty
+        while nAt <= len(aSrc) and IsEmpty(aSrc[nAt]) nAt++ end
+
+    # The text of a line with its comment removed: # starts a comment at the line's start or after a
+    # space, outside quotes.
+    func Uncomment cL
+        cQ = ""
+        nL = len(cL)
+        for i = 1 to nL
+            c = cL[i]
+            if cQ != ""
+                if c = cQ cQ = "" ok
+            but c = '"' or c = "'"
+                cQ = c
+            but c = "#" and (i = 1 or cL[i - 1] = " ")
+                return left(cL, i - 1)
+            ok
+        next
+        return cL
+
+    # A block: every line at this indent is one key of a map, or one item of a list.
+    func Block nInd
+        cFirst = trim(Uncomment(aSrc[nAt]))
+        if cFirst = "-" or left(cFirst, 2) = "- " return Seq(nInd) ok
+        return Mapping(nInd)
+
+    func Mapping nInd
+        aPairs = []
+        aKeys = []
+        while true
+            SkipEmpty()
+            if nAt > len(aSrc) exit ok
+            n = Indent(aSrc[nAt])
+            if n < nInd exit ok
+            if n > nInd Fail("this line is indented more than the keys above it") ok
+            cL = trim(Uncomment(aSrc[nAt]))
+            if left(cL, 2) = "- " or cL = "-" Fail("a list item where a key of the map is expected") ok
+            aKV = SplitKey(cL)
+            cK = aKV[1]
+            if find(aKeys, cK) > 0 Fail("the key " + cK + " is written twice") ok
+            aKeys + cK
+            aPairs + [cK, Value(aKV[2], nInd)]
+        end
+        return ["{", aPairs]
+
+    func Seq nInd
+        aItems = []
+        while true
+            SkipEmpty()
+            if nAt > len(aSrc) exit ok
+            n = Indent(aSrc[nAt])
+            if n < nInd exit ok
+            if n > nInd Fail("this line is indented more than the list items above it") ok
+            cL = trim(Uncomment(aSrc[nAt]))
+            if not (left(cL, 2) = "- " or cL = "-") Fail("a key where a list item is expected") ok
+            cRest = trim(substr(cL, 2, len(cL)))
+            if cRest = ""
+                nAt++
+                SkipEmpty()
+                if nAt > len(aSrc) or Indent(aSrc[nAt]) <= nInd Fail("an empty list item") ok
+                aItems + Block(Indent(aSrc[nAt]))
+            but IsKeyLine(cRest)
+                # "- key: value": a map whose keys sit where the text after "- " starts
+                nKeyInd = nInd + 2
+                aSrc[nAt] = copy(" ", nKeyInd) + cRest
+                aItems + Mapping(nKeyInd)
+            else
+                aItems + Scalar(cRest)
+                nAt++
+            ok
+        end
+        return ["[", aItems]
+
+    func IsKeyLine cL
+        if left(cL, 1) = '"' or left(cL, 1) = "'" or left(cL, 1) = "[" return 0 ok
+        nC = substr(cL, ":")
+        if nC < 2 return 0 ok
+        if nC < len(cL) and cL[nC + 1] != " " return 0 ok
+        return KeyName(left(cL, nC - 1))
+
+    func KeyName cK
+        nK = len(cK)
+        if nK = 0 return 0 ok
+        for i = 1 to nK
+            c = cK[i]
+            if not (isalnum(c) or c = "_" or c = "-") return 0 ok
+        next
+        return 1
+
+    func SplitKey cL
+        nC = substr(cL, ":")
+        if nC < 2 Fail("a line of a map is key: value, and this one has no key") ok
+        cK = left(cL, nC - 1)
+        if not KeyName(cK) Fail("the key " + cK + " uses a character other than letters, digits, _ and -") ok
+        if nC < len(cL) and cL[nC + 1] != " " Fail("a key is followed by a colon and a space") ok
+        return [cK, trim(substr(cL, nC + 1, len(cL)))]
+
+    # The value after "key:", which may be on the following lines.
+    func Value cRest, nInd
+        if cRest = "|" or cRest = ">"
+            nAt++
+            return TextBlock(nInd, cRest = ">")
+        ok
+        nAt++
+        if cRest != "" return Scalar(cRest) ok
+        SkipEmpty()
+        if nAt > len(aSrc) return ["n"] ok
+        n = Indent(aSrc[nAt])
+        if n <= nInd
+            # a list may sit at the key's own indent
+            cL = trim(Uncomment(aSrc[nAt]))
+            if n = nInd and (left(cL, 2) = "- " or cL = "-") return Seq(nInd) ok
+            return ["n"]
+        ok
+        return Block(n)
+
+    func TextBlock nInd, bFold
+        aOut = []
+        nBody = -1
+        while nAt <= len(aSrc)
+            cL = aSrc[nAt]
+            if trim(cL) = ""
+                aOut + ""
+                nAt++
+                loop
+            ok
+            n = Indent(cL)
+            if n <= nInd exit ok
+            if nBody < 0 nBody = n ok
+            if n < nBody Fail("a line of this text block is indented less than its first line") ok
+            aOut + substr(cL, nBody + 1, len(cL))
+            nAt++
+        end
+        while len(aOut) > 0 and aOut[len(aOut)] = "" del(aOut, len(aOut)) end
+        cText = ""
+        nO = len(aOut)
+        for i = 1 to nO
+            if i > 1
+                if bFold and aOut[i] != "" and aOut[i - 1] != ""
+                    cText += " "
+                else
+                    cText += char(10)
+                ok
+            ok
+            cText += aOut[i]
+        next
+        return cText
+
+    func Scalar cS
+        cS = trim(cS)
+        if left(cS, 1) = "[" return FlowList(cS) ok
+        if left(cS, 1) = '"' or left(cS, 1) = "'"
+            aQ = Quoted(cS, 1)
+            if trim(substr(cS, aQ[2], len(cS))) != "" Fail("text follows the closing quote") ok
+            return aQ[1]
+        ok
+        if cS = "true" return ["t"] ok
+        if cS = "false" return ["f"] ok
+        if cS = "null" or cS = "~" return ["n"] ok
+        if left(cS, 1) = "{" or left(cS, 1) = "&" or left(cS, 1) = "*" or left(cS, 1) = "!" or left(cS, 1) = "|" or left(cS, 1) = ">"
+            Fail("this file uses a YAML feature Lookout does not read here (" + left(cS, 1) + "); write the value in quotes")
+        ok
+        return cS
+
+    # A quoted string starting at nFrom; returns [text, the position after the closing quote].
+    func Quoted cS, nFrom
+        cQ = cS[nFrom]
+        cOut = ""
+        i = nFrom + 1
+        nS = len(cS)
+        while i <= nS
+            c = cS[i]
+            if c = cQ
+                if cQ = "'" and i < nS and cS[i + 1] = "'"
+                    cOut += "'"
+                    i += 2
+                    loop
+                ok
+                return [cOut, i + 1]
+            ok
+            if cQ = '"' and c = "\" and i < nS
+                d = cS[i + 1]
+                if d = "n" cOut += char(10)
+                but d = "t" cOut += char(9)
+                but d = '"' or d = "\" or d = "/" cOut += d
+                else Fail("an escape this reader does not know: \" + d) ok
+                i += 2
+                loop
+            ok
+            cOut += c
+            i++
+        end
+        Fail("a quoted string is not closed on its line")
+
+    func FlowList cS
+        if right(cS, 1) != "]" Fail("a [ list is closed with ] on the same line") ok
+        cIn = trim(substr(cS, 2, len(cS) - 2))
+        aItems = []
+        if cIn = "" return ["[", aItems] ok
+        i = 1
+        nS = len(cIn)
+        while i <= nS
+            while i <= nS and cIn[i] = " " i++ end
+            if cIn[i] = '"' or cIn[i] = "'"
+                aQ = Quoted(cIn, i)
+                aItems + aQ[1]
+                i = aQ[2]
+                while i <= nS and cIn[i] = " " i++ end
+                if i <= nS and cIn[i] != "," Fail("items of a [ list are separated by commas") ok
+                i++
+            else
+                nComma = i
+                while nComma <= nS and cIn[nComma] != "," nComma++ end
+                cItem = trim(substr(cIn, i, nComma - i))
+                if cItem = "" Fail("an empty item in a [ list") ok
+                aItems + Scalar(cItem)
+                i = nComma + 1
+            ok
+        end
+        return ["[", aItems]
+
+# The lines of a text, split on line feeds.
+func YamlLines cText
+    aOut = []
+    cCur = ""
+    nT = len(cText)
+    for i = 1 to nT
+        c = cText[i]
+        if ascii(c) = 10
+            aOut + cCur
+            cCur = ""
+        else
+            cCur += c
+        ok
+    next
+    if cCur != "" aOut + cCur ok
+    return aOut

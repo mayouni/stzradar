@@ -1,9 +1,12 @@
-/*! Lookout info bar 1.0.0 -- https://github.com/mayouni/lookout -- MIT
+/*! Lookout info bar 1.1.0 -- https://github.com/mayouni/lookout -- MIT
  *
  * One line on any page: the newest Lookout notice written for your readers, checked before it is shown.
  *
- *   <script src="https://mayouni.github.io/lookout/bar/lookout-bar-1.0.0.js"
+ *   <script src="https://mayouni.github.io/lookout/bar/lookout-bar-1.1.0.js"
  *           data-audience="developer" data-projects="haro,zane" data-level="advice" defer></script>
+ *
+ * Any watch built with Lookout (docs/ADOPT.md) uses this same script: data-feed names that watch's site and
+ * data-key the public key it signs with, so the page that includes the bar pins the key it trusts.
  *
  * Where it goes: inside the first element carrying `data-lookout-bar`, or else at the top of <body>, in the
  * page's flow (it never floats over the page). What it does, in the order docs/FEED.md sets:
@@ -16,7 +19,7 @@
  */
 (function () {
   "use strict";
-  var VERSION = "1.0.0";
+  var VERSION = "1.1.0";
   var BASE = "https://mayouni.github.io/lookout/";
   /* the feed key, pinned: keys/allowed_signers, fingerprint SHA256:ZUij0xoxJIIEwH3AV5xrDXkJLuEklao7pUVhTxCs49I */
   var KEY = "AAAAC3NzaC1lZDI1NTE5AAAAIJoTrtZQEdrhJQFEybJGDuZs9DxF/9X/vPE3q2WfEgDK";
@@ -40,19 +43,20 @@
   var enc = function (s) { return new TextEncoder().encode(s); };
 
   /* ------------------------------------------------------------ the SSH signature (PROTOCOL.sshsig) */
-  async function verify(data, armored) {
+  async function verify(data, armored, keyB64, namespace) {
+    keyB64 = keyB64 || KEY; namespace = namespace || NAMESPACE;
     if (!(window.crypto && crypto.subtle)) throw new Error("this browser has no Web Crypto");
     var body = armored.replace(/-----(BEGIN|END) SSH SIGNATURE-----/g, "");
     var r = reader(b64(body));
     if (text(r.raw(6)) !== "SSHSIG" || r.u32() !== 1) throw new Error("not an SSH signature");
     var pub = r.str(), ns = r.str(); r.str(); var hashAlg = text(r.str()), sig = r.str();
-    if (!same(pub, b64(KEY))) throw new Error("signed by another key");
-    if (text(ns) !== NAMESPACE) throw new Error("signed for another namespace");
+    if (!same(pub, b64(keyB64))) throw new Error("signed by another key");
+    if (text(ns) !== namespace) throw new Error("signed for another namespace");
     if (hashAlg !== "sha512" && hashAlg !== "sha256") throw new Error("unknown hash");
     var pk = reader(pub); if (text(pk.str()) !== "ssh-ed25519") throw new Error("not an Ed25519 key"); var raw = pk.str();
     var sr = reader(sig); if (text(sr.str()) !== "ssh-ed25519") throw new Error("not an Ed25519 signature"); var s = sr.str();
     var h = new Uint8Array(await crypto.subtle.digest(hashAlg === "sha512" ? "SHA-512" : "SHA-256", data));
-    var signed = cat([enc("SSHSIG"), sshString(enc(NAMESPACE)), sshString(new Uint8Array(0)), sshString(enc(hashAlg)), sshString(h)]);
+    var signed = cat([enc("SSHSIG"), sshString(enc(namespace)), sshString(new Uint8Array(0)), sshString(enc(hashAlg)), sshString(h)]);
     var key = await crypto.subtle.importKey("raw", raw, { name: "Ed25519" }, false, ["verify"]);
     if (!(await crypto.subtle.verify({ name: "Ed25519" }, key, s, signed))) throw new Error("the signature does not match the feed");
     return true;
@@ -75,7 +79,7 @@
       var s = ""; for (var i = 0; i < pair.bytes.length; i += 8192) s += String.fromCharCode.apply(null, pair.bytes.subarray(i, i + 8192));
       store("feed", { base: base, at: now, bytes: btoa(s), sig: pair.sig });
     }
-    await verify(pair.bytes, pair.sig);                       /* every read is checked, the cached copy too */
+    await verify(pair.bytes, pair.sig, opts.key, opts.namespace);   /* every read is checked, the cached copy too */
     var feed = JSON.parse(text(pair.bytes));
     if (feed.feed !== "lookout" || feed.version !== 1) throw new Error("this reader knows feed version 1");
     return feed;
@@ -127,7 +131,10 @@
     return {
       audience: AUDIENCES.indexOf(a.audience || b.audience) >= 0 ? (a.audience || b.audience) : "developer",
       level: LEVELS.indexOf(a.level || b.level) >= 0 ? (a.level || b.level) : "advice",
-      projects: String(a.projects || b.projects || "").split(",").map(function (s) { return s.trim().toLowerCase(); }).filter(Boolean)
+      projects: String(a.projects || b.projects || "").split(",").map(function (s) { return s.trim().toLowerCase(); }).filter(Boolean),
+      feed: a.feed || b.feed || "",                  /* another watch's site, ending in / */
+      key: a.key || b.key || "",                     /* its public key: the base64 after ssh-ed25519 */
+      namespace: a.namespace || b.namespace || ""
     };
   }
 
@@ -135,7 +142,7 @@
     var host = document.querySelector("[data-lookout-bar]");
     var cfg = config(host && host.dataset, script && script.dataset);
     if (!host) { host = document.createElement("div"); host.setAttribute("data-lookout-bar", ""); host.hidden = true; document.body.insertBefore(host, document.body.firstChild); }
-    return mountInto(host, cfg, {});
+    return mountInto(host, cfg, { base: cfg.feed || undefined, key: cfg.key || undefined, namespace: cfg.namespace || undefined });
   }
 
   /* opts.base reads another copy of the feed (Lookout Radar reads its own); opts.keepDismissed shows
@@ -144,7 +151,7 @@
     cfg = config(cfg);
     var turn = (host.__lookoutTurn = (host.__lookoutTurn || 0) + 1);   /* only the newest mount of a host draws */
     var feed;
-    try { feed = await load({ base: opts.base }); } catch (e) { if (window.console) console.info("Lookout bar: nothing shown, " + e.message); host.hidden = true; return; }
+    try { feed = await load({ base: opts.base, key: opts.key, namespace: opts.namespace }); } catch (e) { if (window.console) console.info("Lookout bar: nothing shown, " + e.message); host.hidden = true; return; }
     var alias = await aliasFn(cfg.projects, opts.base);
     if (turn !== host.__lookoutTurn) return;
     var root = host.shadowRoot || host.attachShadow({ mode: "open" });
@@ -160,10 +167,10 @@
       var who = document.createElement("span"); who.className = "who"; var wb = document.createElement("b"); wb.textContent = "Lookout"; who.appendChild(wb); bar.appendChild(who);
       var lv = document.createElement("span"); lv.className = "lv " + it.level; lv.textContent = WORD[it.level]; bar.appendChild(lv);
       var say = document.createElement("span"); say.className = "say"; say.textContent = String(it.notice[cfg.audience]).replace(/[\u0000-\u001f\u007f]/g, " "); bar.appendChild(say);
-      if (/^https:\/\/github\.com\/mayouni\/lookout\//.test(it.url)) {
+      if (/^https:\/\/github\.com\/[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+\/blob\//.test(it.url)) {
         var a = document.createElement("a"); a.href = it.url; a.target = "_blank"; a.rel = "noopener"; a.textContent = "Read it"; bar.appendChild(a);
       }
-      if (list.length > 1) { var m = document.createElement("a"); m.href = BASE + "#/week"; m.target = "_blank"; m.rel = "noopener"; m.textContent = (list.length - 1) + " more on Lookout Radar"; bar.appendChild(m); }
+      if (list.length > 1) { var m = document.createElement("a"); m.href = (opts.base || BASE) + "#/week"; m.target = "_blank"; m.rel = "noopener"; m.textContent = (list.length - 1) + " more on Lookout Radar"; bar.appendChild(m); }
       var x = document.createElement("button"); x.type = "button"; x.textContent = "Dismiss"; x.setAttribute("aria-label", "Dismiss this notice");
       x.addEventListener("click", function () { var ds = store("dismissed") || []; ds.push(it.id); store("dismissed", ds); draw(); });
       bar.appendChild(x);

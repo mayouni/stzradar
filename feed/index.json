@@ -5,6 +5,58 @@
   "home": "https://github.com/mayouni/lookout",
   "items": [
     {
+      "id": "2026-11-09-lookout-for-any-project",
+      "date": "2026-11-09",
+      "title": "Lookout runs for any project: one file says what its agent learns and watches",
+      "kind": "feature",
+      "summary": "Lookout now reads everything that belongs to its project from one file, lookout.yaml: the project, the watch, its readers, its map, and what the watching agent learns before each survey. The feed, the site with its trends, and the bar take their names and texts from it, and version 1.1.0 of the bar reads any watch's feed with the key the page gives it.",
+      "stance": "adopt",
+      "relevance": "medium",
+      "level": "info",
+      "audiences": [
+        "developer",
+        "maintainer"
+      ],
+      "notice": {
+        "developer": "Any project can run its own Lookout: copy the repository, write lookout.yaml, and point the bar at your feed with data-feed and data-key.",
+        "maintainer": "Lookout's project-specific values now live in lookout.yaml, checked before every run; bar 1.1.0 is the version to pin, and 1.0.0 keeps working."
+      },
+      "areas": [
+        "lookout"
+      ],
+      "domains": [
+        "agents",
+        "security"
+      ],
+      "concerns": [
+        "sovereignty",
+        "clarity"
+      ],
+      "status": "done",
+      "confidence": "read",
+      "sources": [
+        {
+          "title": "Your own Lookout (docs/ADOPT.md)",
+          "url": "https://github.com/mayouni/lookout/blob/main/docs/ADOPT.md",
+          "by": "Lookout",
+          "read": "2026-11-09"
+        },
+        {
+          "title": "The agent's brief (docs/AGENT.md)",
+          "url": "https://github.com/mayouni/lookout/blob/main/docs/AGENT.md",
+          "by": "Lookout",
+          "read": "2026-11-09"
+        }
+      ],
+      "review_by": "2027-05-09",
+      "tags": [
+        "watch",
+        "configuration",
+        "bar"
+      ],
+      "url": "https://github.com/mayouni/lookout/blob/main/items/2026/2026-11-09-lookout-for-any-project.md"
+    },
+    {
       "id": "2026-11-08-agent-approvals-leak-secrets",
       "date": "2026-11-08",
       "updated": "2026-11-09",

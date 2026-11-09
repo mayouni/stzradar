@@ -24,7 +24,10 @@ func main
         shutdown(1)
     ok
     if cMode = "verify"
-        shutdown(Verify())
+        oConf = new FeedRun
+        oConf.cRoot = currentdir()
+        if not oConf.Prepare() shutdown(1) ok
+        shutdown(Verify(oConf.Conf("feed.signer"), oConf.Conf("feed.namespace")))
     ok
 
     oRun = new FeedRun
@@ -37,9 +40,9 @@ func main
 
 
 # Both feed files must carry a good SSH signature by the key in keys/allowed_signers, for the
-# principal feed@lookout and the namespace lookout-feed. ssh-keygen does the cryptography; this
-# only asks it, file by file, and counts what it refuses. Returns the number of problems.
-func Verify
+# signer and namespace lookout.yaml names (feed.signer, feed.namespace). ssh-keygen does the
+# cryptography; this only asks it, file by file, and counts what it refuses. Returns the number of problems.
+func Verify cSigner, cNamespace
     aFiles = ["feed/index.json", "feed/feed.json"]
     nBad = 0
     if not fexists("keys/allowed_signers")
@@ -54,7 +57,7 @@ func Verify
             nBad++
             loop
         ok
-        cCmd = "ssh-keygen -Y verify -f keys/allowed_signers -I feed@lookout -n lookout-feed -s " +
+        cCmd = "ssh-keygen -Y verify -f keys/allowed_signers -I " + cSigner + " -n " + cNamespace + " -s " +
                cF + ".sig < " + cF
         if system(cCmd) != 0
             see "REFUSED " + cF + ": its signature does not verify; sign it again after any change" + char(10)

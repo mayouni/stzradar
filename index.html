@@ -50,6 +50,7 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background
 @media (max-width:900px){.row2 .why{display:none}}
 .brand{font:700 1.5rem/1 var(--f-title);color:var(--ink);text-decoration:none;white-space:nowrap}
 .brand span{color:var(--accent)}
+.brand .bn{color:var(--ink)}
 nav.views{display:flex;flex-wrap:wrap;gap:4px 20px}
 nav.views a{font-weight:600;color:var(--ink);text-decoration:none;padding:4px 0;border-bottom:3px solid transparent;font-size:1.0625rem}
 nav.views a[aria-current="page"]{border-bottom-color:var(--accent);color:var(--deep)}
@@ -213,6 +214,27 @@ details.tv summary{font-size:1rem;color:var(--accent)}
 .tbl th,.tbl td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:left;vertical-align:top}
 .tbl td{font-variant-numeric:tabular-nums}
 
+/* make your own */
+ol.steps{list-style:none;counter-reset:st;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,24rem),1fr));gap:14px}
+ol.steps li{counter-increment:st;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 18px;min-width:0}
+ol.steps li h3::before{content:"Step " counter(st) ": ";color:var(--deep)}
+:root[data-theme="dark"] ol.steps li h3::before{color:var(--accent)}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) ol.steps li h3::before{color:var(--accent)} }
+ol.steps li p{margin:8px 0}
+ol.steps .code pre{padding-right:16px}
+.tbl.learn{background:var(--panel);font-size:1.0625rem}
+.tbl.learn th{white-space:nowrap;font-family:var(--f-mono);font-size:1rem}
+.tbl.learn thead th{font-family:var(--f-body)}
+@media (max-width:700px){.tbl.learn thead{display:none}.tbl.learn tr{display:block;padding:8px 0;border-bottom:1px solid var(--line)}.tbl.learn th,.tbl.learn td{display:block;border:0;padding:2px 0}}
+.builder{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,22rem),1fr));gap:14px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px}
+.builder label{display:flex;flex-direction:column;gap:4px;font-weight:600;font-size:1rem}
+.builder input,.builder textarea{font:400 1.0625rem/1.4 var(--f-body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 10px;max-width:100%}
+.builder textarea{resize:vertical}
+.builder .hint{font-weight:400;color:var(--ink2)}
+.builder fieldset.rd{border:1px solid var(--line);border-radius:10px;padding:8px 14px;display:flex;flex-wrap:wrap;gap:6px 16px;margin:0}
+.builder fieldset.rd legend{font-weight:600;font-size:1rem;padding:0 4px}
+.builder fieldset.rd label{flex-direction:row;align-items:center;font-weight:400;gap:6px}
+
 /* the bar page */
 .preview{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--panel);margin-bottom:16px}
 .preview .fake{padding:14px 16px;color:var(--ink2)}
@@ -254,13 +276,13 @@ footer code{font-family:var(--f-mono);overflow-wrap:anywhere}
 
 <header class="top"><div class="wrap">
   <div class="row1">
-    <a class="brand" href="#/week">Lookout <span>Radar</span></a>
+    <a class="brand" href="#/week"><span class="bn" id="brandName">Lookout</span> <span>Radar</span></a>
     <nav class="views" aria-label="Views">
       <a href="#/week" data-view="week">This week</a>
-      <a href="#/softanza" data-view="softanza">In Softanza</a>
+      <a href="#/softanza" data-view="softanza" id="navIn">In Softanza</a>
       <a href="#/signals" data-view="signals">All signals</a>
       <a href="#/trends" data-view="trends">Trends</a>
-      <a href="#/bar" data-view="bar">Lookout bar</a>
+      <a href="#/yours" data-view="yours">Make your own</a>
     </nav>
     <button class="help" type="button" id="helpOpen" aria-haspopup="dialog">How to read it</button>
   </div>
@@ -275,32 +297,27 @@ footer code{font-family:var(--f-mono);overflow-wrap:anywhere}
 <main id="view"></main>
 
 <footer><div class="wrap">
-  <span class="made">Lookout is a <a href="https://mayouni.github.io/stzsite/" target="_blank" rel="noopener">Softanza</a> project. © 2026 Mansour Ayouni. Released under the <a href="https://github.com/mayouni/lookout/blob/main/LICENSE" target="_blank" rel="noopener">MIT licence</a>.</span>
+  <span class="made" id="made"></span>
   <div class="tech">
     <span id="checked">Checking the feed's signature in this browser...</span>
-    <span>Data: Lookout's public feed and its map of Softanza, <a href="https://github.com/mayouni/lookout" target="_blank" rel="noopener">github.com/mayouni/lookout</a>. A signal's full entry opens there.</span>
+    <span id="dataLine"></span>
     <span>Check it yourself: <code>ssh-keygen -Y verify -f allowed_signers -I feed@lookout -n lookout-feed -s index.json.sig &lt; index.json</code></span>
   </div>
 </div></footer>
 
 <dialog class="helpbox" id="help" aria-labelledby="helpTitle">
   <div class="helphead"><h2 id="helpTitle">How to read it</h2><form method="dialog"><button class="help" type="submit">Close</button></form></div>
-  <dl>
-    <dt>What it is</dt><dd>AI news read at its source, and where it lands in Softanza.</dd>
-    <dt>Reading as</dt><dd>Who you are: each signal speaks to you and opens on what you need first.</dd>
-    <dt>This week</dt><dd>The week on a radar (slices are layers, the centre matters most); arrows reach earlier weeks.</dd>
-    <dt>In Softanza</dt><dd>The platform layer by layer; every number opens its signals.</dd>
-    <dt>All signals</dt><dd>Filter by project, layer, domain, concern, level or week.</dd>
-    <dt>Trends</dt><dd>The weeks together, each chart with its table.</dd>
-    <dt>Lookout bar</dt><dd>These notices on your own site.</dd>
-    <dt>Levels</dt><dd><b>to know</b>, <b>to consider</b>, <b>to do</b>, <b>to do now</b>.</dd>
-  </dl>
+  <dl id="helpList"></dl>
 </dialog>
 
 <script src="bar/lookout-bar.js" data-no-bar></script>
 <script>
 "use strict";
-let FEED = null, MAP = null, LESSONS = {};
+let FEED = null, MAP = null, LESSONS = {}, CONFIG = null, DIGESTS = [];
+/* the project this watch serves, from app/config.json (lookout.yaml) */
+const NAME = () => CONFIG.project.name, WATCH = () => CONFIG.watch.name, TOPIC = () => CONFIG.watch.topic;
+const RADAR = () => WATCH() + " Radar";
+const poss = s => s + (/s$/.test(s) ? "'" : "'s");
 let live = [];
 const LEVELS = ["info","advice","action","urgent"];
 const WORD = {info:"to know", advice:"to consider", action:"to do", urgent:"to do now"};
@@ -385,13 +402,15 @@ function weekSpan(wk){
 }
 function viewWeek(wkArg){
   const weeks = weeksAll();
-  const wk = weeks.includes(wkArg) ? wkArg : weeks[0];
-  const latest = wk === weeks[0];
+  /* with no week asked for, the newest week a survey has closed (it has a digest); a newer week stays one step ahead */
+  const surveyed = weeks.find(w => DIGESTS.includes(w)) || weeks[0];
+  const wk = weeks.includes(wkArg) ? wkArg : surveyed;
+  const latest = wk === surveyed;
   const items = FEED.items.filter(i => weekOf(i.date) === wk && i.status !== "superseded").sort(byLevel);
   const frag = document.createDocumentFragment();
   const h = head("Week " + wk + " · " + weekSpan(wk),
-    latest ? "What changed in AI this week, and what it means for what you build" : "What changed in AI in week " + wk,
-    ["Lookout reads the week's papers, releases, security findings and practices at their source, and shows where each one lands in Softanza: the machine (Harobanda), the language (Haro), the foundation (Softanza), and the projects built on them."]);
+    latest ? CONFIG.watch.tagline : "What changed in " + TOPIC() + " in week " + wk,
+    [CONFIG.watch.intro]);
   /* the week stepper: the weeks that hold signals, one step at a time, or any of them from the list */
   const nav = el("nav","weeks"); nav.setAttribute("aria-label","Weeks");
   const i = weeks.indexOf(wk);
@@ -409,7 +428,7 @@ function viewWeek(wkArg){
   h.querySelector(".wrap").append(facts, nav);
   frag.append(h);
   const s = el("section","block wrap week");
-  const scope = el("div","scope"); scope.append(el("h2",null,"The week across Softanza"), radar(items));
+  const scope = el("div","scope"); scope.append(el("h2",null,"The week across " + NAME()), radar(items));
   const list = el("div");
   for (const lv of ["urgent","action","advice","info"]){
     const g = items.filter(i => i.level === lv); if (!g.length) continue;
@@ -422,7 +441,7 @@ function viewWeek(wkArg){
 
 function radar(items){
   const NS = "http://www.w3.org/2000/svg", mk = (t, a) => { const e = document.createElementNS(NS,t); for (const k in a) e.setAttribute(k,a[k]); return e; };
-  const svg = mk("svg",{viewBox:"0 0 440 440",role:"img","aria-label":"Radar: each slice is a layer of Softanza; the closer to the centre, the more relevant"});
+  const svg = mk("svg",{viewBox:"0 0 440 440",role:"img","aria-label":"Radar: each slice is a layer of " + NAME() + "; the closer to the centre, the more relevant"});
   const C = 220, R = {high:72, medium:122, low:168}, layers = MAP.layers, n = layers.length, step = 360 / n;
   svg.append(mk("circle",{cx:C,cy:C,r:186,fill:css("--tint"),stroke:css("--line")}));
   for (const r of Object.values(R)) svg.append(mk("circle",{cx:C,cy:C,r,fill:"none",stroke:css("--line"),"stroke-dasharray":"4 6"}));
@@ -457,8 +476,8 @@ function radar(items){
 /* ------------------------------------------------------------ view: the estate */
 function viewEstate(){
   const frag = document.createDocumentFragment();
-  frag.append(head("In Softanza", "Softanza and its family, layer by layer",
-    ["Softanza is the foundation of a family of projects: a machine beneath it, a language that runs on it, a store, a server and a browser runtime, an intelligence layer, and the interfaces and applications people use. Lookout places every signal on this map, so each project sees what touches it."]));
+  frag.append(head("In " + NAME(), NAME() + ", layer by layer",
+    [CONFIG.project.pitch, WATCH() + " places every signal on this map, so each part sees what touches it."]));
   const count = pid => live.filter(it => projectsOf(it).includes(pid)).length;
   const projTile = p => {
     const n = count(p.id), t = n ? el("a","proj") : el("div","proj");
@@ -591,11 +610,11 @@ function viewSignal(id){
       for (const c of (it.concerns||[])) chip(CONCERN[c]?.name || c, "#/signals?c=" + c);
       const kv = el("dl","kv");
       for (const [k,v] of [["stance",it.stance],["relevance",it.relevance],["confidence",it.confidence],["look again by",it.review_by]]) kv.append(el("dt",null,k), el("dd",null,clean(v)));
-      return part("Where it lands in Softanza", el("p",null,"Each name opens every live signal that touches the same project, domain or concern."), chips, kv);
+      return part("Where it lands in " + NAME(), el("p",null,"Each name opens every live signal that touches the same project, domain or concern."), chips, kv);
     },
-    actions: () => it.actions?.length ? part("Proposed to Softanza's maintainers", (() => { const ul = el("ul","plain"); for (const a of it.actions){ const p = projOf(a.area); ul.append(el("li",null,clean((p ? PROJ[p].name : a.area) + ": " + a.do + " (" + a.state + ")"))); } return ul; })()) : null,
+    actions: () => it.actions?.length ? part("Proposed to " + CONFIG.agent.proposals.to, (() => { const ul = el("ul","plain"); for (const a of it.actions){ const p = projOf(a.area); ul.append(el("li",null,clean((p ? PROJ[p].name : a.area) + ": " + a.do + " (" + a.state + ")"))); } return ul; })()) : null,
     sources: () => { const ul = el("ul","plain"); for (const so of it.sources) ul.append(el("li",null,clean(so.title + " — " + (so.by || "") + ", read " + so.read)));
-      const p = el("p"); const a = el("a",null,"Read the full entry on Lookout"); a.href = it.url; a.target = "_blank"; a.rel = "noopener"; p.append(a);
+      const p = el("p"); const a = el("a",null,"Read the full entry on " + WATCH()); a.href = it.url; a.target = "_blank"; a.rel = "noopener"; p.append(a);
       return part("Sources", ul, p); }
   };
   for (const k of READERS[reader].order){ const n = P[k](); if (n) s.append(n); }
@@ -606,8 +625,7 @@ function viewSignal(id){
    Four questions over a chosen period: how much was read and how carefully, how Softanza positioned itself,
    how it reacted, and what it learned. Charts are HTML (their text keeps the reading size), each with its table.
    A chart over time appears from two weeks on; one week is shown as ranked bars, never as a one-bar chart. */
-const STANCE = {adopt:"take it into Softanza", learn:"it changes how we think", correct:"Softanza can do it better",
-                defend:"protect Softanza and its users", watch:"look again later", decline:"considered and refused"};
+let STANCE = {};                                  /* filled from lookout.yaml, agent.stances */
 const ASTATE = ["proposed","routed","in-progress","done"];
 const days = (a, b) => Math.round((new Date(b + "T00:00:00Z") - new Date(a + "T00:00:00Z")) / 864e5);
 const median = xs => { if (!xs.length) return 0; const s = [...xs].sort((a,b) => a - b), m = s.length >> 1; return s.length % 2 ? s[m] : Math.round((s[m-1] + s[m]) / 2); };
@@ -664,8 +682,8 @@ function viewTrends(q){
   const weeks = span === "all" ? all : all.slice(-Number(span));
   const items = FEED.items.filter(i => weeks.includes(weekOf(i.date)) && i.status !== "superseded");
   const frag = document.createDocumentFragment();
-  frag.append(head("Trends", "How Softanza reads AI, and how it answers",
-    ["Over the weeks Lookout has kept: how much was read and how carefully, where Softanza stands on each development, what it proposed to its own projects, and what it wrote down to learn from. Every number opens the signals behind it."]));
+  frag.append(head("Trends", "How " + NAME() + " reads " + TOPIC() + ", and how it answers",
+    ["Over the weeks " + WATCH() + " has kept: how much was read and how carefully, where " + NAME() + " stands on each development, what it proposed to its own projects, and what it wrote down to learn from. Every number opens the signals behind it."]));
   const s = el("section","block wrap");
   /* the one filter row: the period */
   const fr = el("div","filters"); const lab = el("label"); lab.append(document.createTextNode("Period"));
@@ -680,10 +698,10 @@ function viewTrends(q){
   const tile = (n, w, sub) => { const f = el("div","fact"); f.append(el("b",null,String(n)), document.createTextNode(w)); if (sub) f.append(el("span","fsub",sub)); tiles.append(f); };
   tile(items.length, "signals read", (items.length / Math.max(1,weeks.length)).toFixed(1).replace(".0","") + " a week");
   tile(Math.round(100 * items.filter(i => i.confidence === "read").length / Math.max(1,items.length)) + "%", "read at the source", items.flatMap(i => i.sources).length + " sources");
-  tile(acts.length, "proposals to Softanza", acts.filter(a => a.state !== "proposed").length + " routed or further");
+  tile(acts.length, "proposals to " + NAME(), acts.filter(a => a.state !== "proposed").length + " routed or further");
   const toRoute = acts.filter(a => a.dates?.routed && a.dates?.proposed).map(a => days(a.dates.proposed, a.dates.routed));
   if (toRoute.length) tile(dayWords(median(toRoute)), "to route a proposal", "median over " + plural(toRoute.length, "proposal"));
-  tile(new Set(items.flatMap(projectsOf)).size, "projects reached", "of " + MAP.projects.length + " in Softanza");
+  tile(new Set(items.flatMap(projectsOf)).size, "projects reached", "of " + MAP.projects.length + " in " + NAME());
   tile(lessons.length, "lessons written", lessons.reduce((n,i) => n + (LESSONS[i.id].quiz||[]).length, 0) + " questions to test yourself");
   s.append(tiles);
   frag.append(s);
@@ -692,7 +710,7 @@ function viewTrends(q){
   const many = weeks.length >= 2;
   /* 1. pressure: what the weeks asked of Softanza */
   const lv = ["info","advice","action","urgent"], cnt = (w,k) => items.filter(i => weekOf(i.date) === w && i.level === k).length;
-  grid.append(figure("What each week asked of Softanza",
+  grid.append(figure("What each week asked of " + NAME(),
     many ? "Signals per week, by what they ask: from to know up to to do now. Click a week to read it." : "Signals by what they ask, from to know up to to do now.",
     many ? columns(weeks, lv, k => css("--lv-"+k), k => WORD[k], cnt)
          : hbars([...lv].reverse().map(k => ({label:WORD[k], value:items.filter(i => i.level === k).length, color:css("--lv-"+k), href:"#/signals?v=" + k}))),
@@ -700,22 +718,22 @@ function viewTrends(q){
 
   /* 2. position: the stance Softanza took */
   const st = Object.keys(STANCE).map(k => ({k, n: items.filter(i => i.stance === k).length})).filter(x => x.n).sort((a,b) => b.n - a.n);
-  grid.append(figure("Where Softanza stands",
-    "The position Softanza took on each development it read.",
+  grid.append(figure("Where " + NAME() + " stands",
+    "The position " + NAME() + " took on each development it read.",
     hbars(st.map(x => ({label:x.k, sub:STANCE[x.k], value:x.n}))),
     ["Stance","meaning","signals"], st.map(x => [x.k, STANCE[x.k], x.n])));
 
   /* 3. reaction: what Softanza did with them */
   const ast = ASTATE.map(k => ({k, n: acts.filter(a => a.state === k).length}));
   const reached = k => acts.filter(a => ASTATE.indexOf(a.state) >= ASTATE.indexOf(k)).length;
-  grid.append(figure("How Softanza reacted",
-    plural(acts.length, "proposal") + " written for Softanza's own projects, and how far each has gone: every proposal is counted at every stage it has reached.",
+  grid.append(figure("How " + NAME() + " reacted",
+    plural(acts.length, "proposal") + " written for " + poss(NAME()) + " own projects, and how far each has gone: every proposal is counted at every stage it has reached.",
     hbars(ASTATE.map(k => ({label:k.replace("-"," "), value:reached(k)}))),
     ["Stage reached","proposals","now at this stage"], ASTATE.map(k => [k, reached(k), ast.find(x => x.k === k).n])));
 
   /* 3b. speed: days from the proposal to each later stage, from the dates every action carries */
   const speed = ASTATE.slice(1).map(k => { const ds = acts.filter(a => a.dates?.[k] && a.dates?.proposed).map(a => days(a.dates.proposed, a.dates[k])); return {k, n: ds.length, med: median(ds), max: ds.length ? Math.max(...ds) : 0}; }).filter(x => x.n);
-  if (speed.length >= 2) grid.append(figure("How fast Softanza reacted",      /* one stage is the headline tile, never a one-bar chart */
+  if (speed.length >= 2) grid.append(figure("How fast " + NAME() + " reacted",      /* one stage is the headline tile, never a one-bar chart */
     "The median number of days from a proposal to each later stage; same day means within the day it was written.",
     hbars(speed.map(x => ({label:x.k.replace("-"," "), sub:"(" + plural(x.n,"proposal") + ")", value:x.med, text:dayWords(x.med)}))),
     ["Stage","proposals","median","slowest"], speed.map(x => [x.k, x.n, dayWords(x.med), dayWords(x.max)])));
@@ -731,8 +749,8 @@ function viewTrends(q){
   /* 4. reach: where the news lands, over time or ranked */
   const lcount = (lid, w) => items.filter(i => (w ? weekOf(i.date) === w : 1) && layersOf(i).includes(lid)).length;
   const layers = MAP.layers.filter(l => lcount(l.id));
-  grid.append(figure("Where it lands in Softanza",
-    many ? "Signals touching each layer, week by week; darker is more." : "Signals touching each layer of Softanza.",
+  grid.append(figure("Where it lands in " + NAME(),
+    many ? "Signals touching each layer, week by week; darker is more." : "Signals touching each layer of " + NAME() + ".",
     many ? heat(layers.map(l => ({id:l.id, name:l.name})), weeks, lcount)
          : hbars(layers.map(l => ({label:l.name, value:lcount(l.id), href:"#/signals?l=" + l.id})).sort((a,b) => b.value - a.value)),
     ["Layer", ...weeks, "total"], layers.map(l => [l.name, ...weeks.map(w => lcount(l.id,w)), lcount(l.id)])));
@@ -745,22 +763,21 @@ function viewTrends(q){
 
   /* 6. learning, and the next look */
   const lr = items.filter(i => LESSONS[i.id]).map(i => ({label:clean(i.title), value:(LESSONS[i.id].terms||[]).length + (LESSONS[i.id].quiz||[]).length + (LESSONS[i.id].build||[]).length, href:"#/signal/" + i.id})).sort((a,b) => b.value - a.value).slice(0, 8);
-  grid.append(figure("What Softanza wrote down to learn", "For each signal: the checks, terms and questions written beside it (the eight richest).", hbars(lr, {unit:"items"}), ["Signal","checks, terms and questions"], lr.map(r => [r.label, r.value])));
+  grid.append(figure("What " + NAME() + " wrote down to learn", "For each signal: the checks, terms and questions written beside it (the eight richest).", hbars(lr, {unit:"items"}), ["Signal","checks, terms and questions"], lr.map(r => [r.label, r.value])));
   const soon = FEED.items.filter(i => i.status !== "superseded" && i.review_by >= today).sort((a,b) => a.review_by < b.review_by ? -1 : 1).slice(0, 6);
   const ul = el("ul","plain"); for (const i of soon){ const li = el("li"); const a = el("a",null,clean(i.title)); a.href = "#/signal/" + i.id; li.append(el("b",null,i.review_by + " "), a); ul.append(li); }
-  grid.append(figure("Looked at again next", "Each signal carries the day Softanza reviews it; these come first.", ul, ["Review by","signal"], soon.map(i => [i.review_by, clean(i.title)])));
+  grid.append(figure("Looked at again next", "Each signal carries the day " + NAME() + " reviews it; these come first.", ul, ["Review by","signal"], soon.map(i => [i.review_by, clean(i.title)])));
   frag.append(grid);
   return frag;
 }
 
 /* ------------------------------------------------------------ view: the Lookout bar */
-const BAR_VERSION = "1.0.0", BAR_SRI = "sha384-G9y4SkVgX4Tv9gtIOvZUKRgSci1cEqckGO/CHjIj91V0zrNpldPRt0vB2tkgxYeL";
-function viewBar(){
-  const frag = document.createDocumentFragment();
-  frag.append(head("Lookout bar", "Lookout's notices on your own site, from one line",
-    ["The Lookout bar shows, at the top of any page, the newest notice written for that site's readers: one sentence, its level, and a link to the full entry. It checks the feed's signature in the browser before it shows a word, keeps to plain text, and sits in the page's flow, so it never covers content."]));
+const BAR_VERSION = "1.1.0", BAR_SRI = "sha384-7/R5PqRB2LH7f40qq531NaFAmP6YxNc9K8WgJT0h9n6Z7KvuzkMxVLsBEwSMuAYv", BAR_HOME = "https://mayouni.github.io/lookout/";
+/* the bar, as two sections of the Make your own view */
+function barSections(){
   const s = el("section","block wrap");
-  s.append(el("h2",null,"Try it"));
+  s.append(el("h2",null,"Step 5: put the notices on your sites"),
+    el("p",null,"The Lookout bar shows, at the top of any page, the newest notice written for that site's readers: one sentence, its level, and a link to the full entry. It checks the feed's signature in the browser before it shows a word, keeps to plain text, and sits in the page's flow, so it never covers content. Try it on this watch's feed:"));
   const cfg = el("div","cfg");
   const mkSel = (label, opts, val) => { const l = el("label"); l.append(document.createTextNode(label)); const sl = el("select"); for (const [v,t] of opts) sl.append(new Option(t,v)); sl.value = val; l.append(sl); cfg.append(l); return sl; };
   const aud = mkSel("Your readers are", Object.keys(READERS).map(r => [r, READERS[r].label + "s"]), reader === "user" ? "user" : reader);
@@ -784,37 +801,191 @@ function viewBar(){
   cp.addEventListener("click", async () => { try { await navigator.clipboard.writeText(pre.textContent); cp.textContent = "Copied"; } catch(e){ cp.textContent = "Select it"; } setTimeout(() => cp.textContent = "Copy", 1600); });
   const update = () => {
     const projects = picks.filter(c => c.getAttribute("aria-pressed") === "true").map(c => c.value).join(",");
-    pre.textContent = '<script src="https://mayouni.github.io/lookout/bar/lookout-bar-' + BAR_VERSION + '.js"\n        integrity="' + BAR_SRI + '" crossorigin="anonymous"\n        data-audience="' + aud.value + '" data-level="' + lev.value + '"' + (projects ? ' data-projects="' + projects + '"' : '') + ' defer></' + 'script>';
-    if (window.LookoutBar) LookoutBar.mount(host, {audience:aud.value, level:lev.value, projects}, {base:new URL(".", location.href).href, keepDismissed:true});
+    /* another watch than Lookout's own names its site and its key, so the page pins the key it trusts */
+    const other = CONFIG.watch.pages !== BAR_HOME;
+    pre.textContent = '<script src="' + BAR_HOME + 'bar/lookout-bar-' + BAR_VERSION + '.js"\n        integrity="' + BAR_SRI + '" crossorigin="anonymous"\n' +
+      (other ? '        data-feed="' + CONFIG.watch.pages + '" data-namespace="' + CONFIG.feed.namespace + '"\n        data-key="' + CONFIG.feed.key + '"\n' : '') +
+      '        data-audience="' + aud.value + '" data-level="' + lev.value + '"' + (projects ? ' data-projects="' + projects + '"' : '') + ' defer></' + 'script>';
+    if (window.LookoutBar) LookoutBar.mount(host, {audience:aud.value, level:lev.value, projects}, {base:new URL(".", location.href).href, key:CONFIG.feed.key, namespace:CONFIG.feed.namespace, keepDismissed:true});
   };
   [aud, lev].forEach(c => c.addEventListener("change", update));
   update();
-  const s2 = el("section","block wrap"); s2.append(el("h2",null,"How it behaves"));
+  const s2 = el("section","block wrap"); s2.append(el("h3",null,"How the bar behaves"));
   const ul = el("ul","plain");
   for (const t of [
-    "It reads feed/index.json and its signature at most once a day per browser, and checks the signature against the key written into the script; a feed that fails the check shows nothing.",
-    "It shows the notice written for the audience you choose, as plain text, with one link: the entry's own page on Lookout.",
+    "It reads feed/index.json and its signature at most once a day per browser, and checks the signature against the key the page gives it (Lookout's own when none is given); a feed that fails the check shows nothing.",
+    "It shows the notice written for the audience you choose, as plain text, with one link: the entry's own page in the watch's repository.",
     "A reader who dismisses a notice does not see it again on that browser.",
     "It goes inside the first element carrying data-lookout-bar, or else at the top of the body, in the page's flow.",
     "Its styles live in a shadow root, so your page's styles and its own never mix. Set --lookout-accent, --lookout-bg and --lookout-ink on that element to match your colours.",
     "A published version never changes. A new version gets a new file name, and the line above keeps working."
   ]) ul.append(el("li",null,t));
   s2.append(ul);
-  frag.append(s, s2); return frag;
+  return [s, s2];
+}
+
+/* ------------------------------------------------------------ view: make your own
+   The same tool for any project: one file (lookout.yaml) says which project, what to watch and what the agent
+   learns first. This view explains the steps and writes a first lookout.yaml with the reader. */
+const link = (t, h) => { const a = el("a",null,t); a.href = h; a.target = "_blank"; a.rel = "noopener"; return a; };
+const yq = s => '"' + String(s).replace(/\\/g,"\\\\").replace(/"/g,'\\"') + '"';    /* a YAML string the reader takes */
+function viewYours(){
+  const frag = document.createDocumentFragment();
+  const repo = CONFIG.watch.repository;
+  frag.append(head("Make your own", "A watch like this one, for your own project",
+    [WATCH() + " is built so that any project can run its own. Each week an agent reads the news of your field at its source, places every piece on your project's map, writes one sentence for each of your readers, and proposes the work it calls for. You get the same signed feed, this site with its trends, and the bar for your pages, from one file you write: lookout.yaml."]));
+
+  const s = el("section","block wrap");
+  s.append(el("h2",null,"How it works"));
+  const steps = el("ol","steps");
+  const step = (title, ...nodes) => { const li = el("li"); li.append(el("h3",null,title), ...nodes); steps.append(li); };
+  const code1 = c => { const w = el("div","code"); const p = el("pre"); p.textContent = c; w.append(p); return w; };
+  step("Copy the repository",
+    (() => { const p = el("p"); p.append(document.createTextNode("Fork or copy "), link(repo.replace("https://",""), repo), document.createTextNode(". Keep tools/, schema/, bar/ and index.html. Empty items/ and digests/, and start app/lessons.json with an empty \"entries\" object.")); return p; })());
+  step("Describe your project in lookout.yaml",
+    el("p",null,"Who the project is, what the watch reads, who reads it, and what the agent must learn before it reads anything. Write a first one with the form below, then draw your map in the file lookout.yaml names (map/estate.json here): your layers, the parts on each, the domains news can touch, and what is at stake."));
+  step("Make the key that signs the feed",
+    el("p",null,"One key, kept outside the repository, used for this and nothing else. Put the public key in keys/allowed_signers and in lookout.yaml (feed.key)."),
+    code1("ssh-keygen -t ed25519 -f ~/.ssh/watch_feed -C feed@your-watch"));
+  step("Give the agent its brief, and run it each week",
+    (() => { const p = el("p"); p.append(document.createTextNode("Any coding agent can run the survey: "), link("docs/AGENT.md", repo + "/blob/main/docs/AGENT.md"), document.createTextNode(" tells it to read lookout.yaml first and follow it. Schedule it on the day lookout.yaml names. The check runs on Haro; GitHub Pages serves the site from the repository's main branch.")); return p; })(),
+    code1("haro tools/feed.ring          # check every entry and the configuration, then write the feed\nharo tools/feed.ring verify   # after signing: both feed files carry a good signature"));
+  s.append(steps);
+  frag.append(s);
+
+  /* what the agent takes from each part of the file, with this watch's own values */
+  const s2 = el("section","block wrap");
+  s2.append(el("h2",null,"What the agent learns from your file"), (() => { const p = el("p"); p.append(document.createTextNode("Each part of lookout.yaml teaches the agent one thing. Here is "), link(poss(WATCH()) + " own file", repo + "/blob/main/lookout.yaml"), document.createTextNode(", read part by part.")); return p; })());
+  const rows = [
+    ["agent.goal", "why it watches at all", CONFIG.agent.goal],
+    ["agent.learn", "what it reads about your project first, every run", CONFIG.agent.learn.join(", ")],
+    ["agent.in_scope", "what counts as news for you", CONFIG.agent.in_scope.length + " kinds, starting with: " + CONFIG.agent.in_scope[0]],
+    ["agent.out_of_scope", "what never goes into the watch", CONFIG.agent.out_of_scope[0]],
+    ["agent.sources", "where it looks", plural(CONFIG.agent.sources.length, "source") + ", from " + CONFIG.agent.sources[0].name + " to " + CONFIG.agent.sources.at(-1).name],
+    ["agent.stances", "what adopt, learn, correct, defend, watch and decline mean for you", "adopt: " + CONFIG.agent.stances.adopt],
+    ["readers", "who each notice is written for", CONFIG.readers.map(r => r.label).join(", ")],
+    ["map", "where each piece of news lands", MAP.layers.length + " layers, " + MAP.projects.length + " parts, " + MAP.domains.length + " domains, " + MAP.concerns.length + " concerns"],
+    ["agent.proposals", "where the work it proposes goes", CONFIG.agent.proposals.to + (CONFIG.agent.proposals.through ? ", through " + CONFIG.agent.proposals.through : "")]
+  ];
+  const t = el("table","tbl learn"), tb = el("tbody");
+  const thr = el("tr"); for (const h of ["Part of the file","What it teaches the agent","Here"]) thr.append(el("th",null,h)); const th = el("thead"); th.append(thr); t.append(th);
+  for (const [k, what, here] of rows){ const tr = el("tr"); tr.append(el("th",null,k), el("td",null,what), el("td",null,clean(here))); tb.append(tr); }
+  t.append(tb); s2.append(t);
+  frag.append(s2);
+
+  /* the builder: a first lookout.yaml, written as the reader fills it */
+  const s3 = el("section","block wrap");
+  s3.append(el("h2",null,"Write your first lookout.yaml"), el("p",null,"Fill in what you know; the file updates as you type. Copy it or save it, put it at the root of your copy, and run the check: it names anything left to complete."));
+  const form = el("div","builder"), fields = {};
+  const field = (key, label, value, kind = "input", hint = "") => {
+    const l = el("label"); l.append(document.createTextNode(label));
+    const i = el(kind); if (kind === "input") i.type = "text"; i.value = value; i.dataset.key = key; if (kind === "textarea") i.rows = 4;
+    l.append(i); if (hint) l.append(el("span","hint",hint)); form.append(l); fields[key] = i; return i;
+  };
+  field("name", "Your project's name", "");
+  field("site", "Your project's site", "https://");
+  field("owner", "Who owns it (the copyright line)", "");
+  field("licence", "Its licence", "MIT");
+  field("watch", "The watch's name", "");
+  field("topic", "What it watches", "AI");
+  field("repo", "The watch's repository", "https://github.com/you/your-watch", "input", "Its site will be https://you.github.io/your-watch/.");
+  field("goal", "The agent's goal, in one or two sentences", "", "textarea");
+  field("scope", "What counts as news for you, one per line", "new tools and libraries in our field\nsecurity findings that reach our users\npapers that change how we build", "textarea");
+  field("out", "What never goes in, one per line", "a private person's name, or anything about a client\na key, a token or a password", "textarea");
+  field("sources", "Where to look, one per line: name | address", "GitHub Security Advisories | https://github.com/advisories\narXiv cs.SE | https://arxiv.org/list/cs.SE/recent", "textarea");
+  field("to", "Who receives the work it proposes", "the project's maintainers");
+  const rl = el("fieldset","rd"); rl.append(el("legend",null,"Who reads it"));
+  const rboxes = [];
+  for (const [id, label] of [["developer","Developers"],["maintainer","Maintainers"],["learner","Learners"],["user","Users"]]){ const lb = el("label"); const cb = el("input"); cb.type = "checkbox"; cb.value = id; cb.checked = id !== "learner"; rboxes.push(cb); lb.append(cb, document.createTextNode(" " + label)); rl.append(lb); }
+  form.append(rl);
+  s3.append(form);
+  const out = el("div","code withcopy"), pre = el("pre"); out.append(pre);
+  const cp = el("button","copy","Copy"); cp.type = "button"; out.append(cp);
+  const save = el("button","help","Save lookout.yaml"); save.type = "button";
+  s3.append(out, save);
+  const lines = v => v.split("\n").map(x => x.trim()).filter(Boolean);
+  const FIRST = {developer:"checks and code to run in your own project come first", maintainer:"what happened and the work proposed come first",
+                 learner:"each signal opens on a lesson in plain words", user:"what happened, and what it means for the software you use"};
+  const LABEL = {developer:"Developer", maintainer:"Maintainer", learner:"Learner", user:"User"};
+  const build = () => {
+    const v = k => fields[k].value.trim();
+    const name = v("name") || "Your project", watch = v("watch") || "Your watch", repoU = v("repo").replace(/\/+$/,"");
+    const m = repoU.match(/^https:\/\/github\.com\/([^/]+)\/([^/]+)$/);
+    const pages = m ? "https://" + m[1].toLowerCase() + ".github.io/" + m[2] + "/" : "https://you.github.io/your-watch/";
+    const slug = (watch.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"") || "watch");
+    const y = [];
+    y.push("# lookout.yaml -- everything about this watch that belongs to its project (docs/ADOPT.md).", "lookout: 1", "",
+      "project:", "  name: " + yq(name), "  site: " + yq(v("site")), "  owner: " + yq(v("owner") || "you"), "  licence: " + yq(v("licence") || "MIT"),
+      "  pitch: " + yq(name + " in one sentence: what it is and what it does."), "",
+      "watch:", "  name: " + yq(watch), "  topic: " + yq(v("topic") || "AI"), "  repository: " + yq(repoU), "  pages: " + yq(pages), "  language: en",
+      "  tagline: " + yq("What changed in " + (v("topic") || "AI") + " this week, and what it means for " + name),
+      "  intro: " + yq(watch + " reads the week's news at its source and shows where each piece lands in " + name + "."),
+      "  schedule:", "    every: monday", '    at: "07:00"', "    timezone: UTC", "  publish: after-reading", "",
+      "feed:", "  signer: " + yq("feed@" + slug), "  namespace: " + slug + "-feed",
+      "  fingerprint: SHA256:the-43-characters-ssh-keygen-prints   # step 3", "  key: the-base64-after-ssh-ed25519                       # step 3", "",
+      "map: map/estate.json", "", "readers:");
+    for (const cb of rboxes.filter(c => c.checked)) y.push("  - id: " + cb.value, "    label: " + LABEL[cb.value], "    first: " + yq(FIRST[cb.value]));
+    y.push("", "agent:", "  goal: " + yq(v("goal") || ("Keep " + name + " and its people ahead of what changes in " + (v("topic") || "AI") + ".")),
+      "  learn:", "    - map/estate.json", "    - docs/METHOD.md", "  in_scope:");
+    for (const l of lines(fields.scope.value)) y.push("    - " + yq(l));
+    y.push("  out_of_scope:"); for (const l of lines(fields.out.value)) y.push("    - " + yq(l));
+    y.push("  sources:");
+    for (const l of lines(fields.sources.value)){ const [n, u] = l.split("|").map(x => (x || "").trim()); y.push("    - name: " + yq(n || u), "      url: " + yq(u || n)); }
+    y.push("  stances:", "    adopt: " + yq("take it into " + name), "    learn: " + yq("it changes how we think"), "    correct: " + yq(name + " can do it better"),
+      "    defend: " + yq("a risk " + name + " and its users must be protected from"), "    watch: " + yq("too early; look again by the review date"), "    decline: " + yq("considered and refused, with the reason"),
+      "  rules:", "    - read every development at its source before writing about it", "    - write one plain sentence for each reader the entry concerns",
+      "  proposals:", "    to: " + yq(v("to") || "the project's maintainers"), "", "checks:", "  affirm: false");
+    pre.textContent = y.join("\n") + "\n";
+  };
+  form.addEventListener("input", build); build();
+  cp.addEventListener("click", async () => { try { await navigator.clipboard.writeText(pre.textContent); cp.textContent = "Copied"; } catch(e){ cp.textContent = "Select it"; } setTimeout(() => cp.textContent = "Copy", 1600); });
+  save.addEventListener("click", () => { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([pre.textContent], {type:"text/yaml"})); a.download = "lookout.yaml"; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000); });
+  frag.append(s3);
+  for (const n of barSections()) frag.append(n);
+  return frag;
+}
+
+/* the words of the page that belong to the project: from app/config.json, once it is read */
+function dress(){
+  STANCE = CONFIG.agent.stances;
+  for (const id of Object.keys(READERS)) if (!CONFIG.readers.some(r => r.id === id)) delete READERS[id];
+  for (const r of CONFIG.readers){ READERS[r.id].label = r.label; READERS[r.id].why = r.first; }
+  if (!READERS[reader]) reader = CONFIG.readers[0].id;
+  readerRow();
+  $("#brandName").textContent = WATCH();
+  $("#navIn").textContent = "In " + NAME();
+  const year = Math.min(...FEED.items.map(i => +i.date.slice(0,4)));
+  $("#made").replaceChildren(document.createTextNode(WATCH() + " is a "), link(NAME(), CONFIG.project.site),
+    document.createTextNode(" project. © " + year + " " + CONFIG.project.owner + ". Released under the "),
+    link(CONFIG.project.licence + " licence", CONFIG.project.licence_url || CONFIG.watch.repository), document.createTextNode("."));
+  $("#dataLine").replaceChildren(document.createTextNode("Data: " + poss(WATCH()) + " public feed and its map of " + NAME() + ", "),
+    link(CONFIG.watch.repository.replace("https://",""), CONFIG.watch.repository), document.createTextNode(". A signal's full entry opens there."));
+  const dl = $("#helpList"); dl.replaceChildren();
+  for (const [t, d] of [
+    ["What it is", TOPIC() + " news read at its source, and where it lands in " + NAME() + "."],
+    ["Reading as", "Who you are: each signal speaks to you and opens on what you need first."],
+    ["This week", "The week on a radar (slices are layers, the centre matters most); arrows reach earlier weeks."],
+    ["In " + NAME(), "The platform layer by layer; every number opens its signals."],
+    ["All signals", "Filter by project, layer, domain, concern, level or week."],
+    ["Trends", "The weeks together, each chart with its table."],
+    ["Make your own", "The same watch for your project, and the bar for your pages."]
+  ]) dl.append(el("dt",null,t), el("dd",null,d));
+  dl.append(el("dt",null,"Levels")); const lv = el("dd"); LEVELS.forEach((k, i) => { if (i) lv.append(document.createTextNode(", ")); lv.append(el("b",null,WORD[k])); }); lv.append(document.createTextNode(".")); dl.append(lv);
 }
 
 /* ------------------------------------------------------------ the router */
 function readerRow(){
   const box = $("#readers"); box.replaceChildren();
-  for (const r of Object.keys(READERS)){
+  const ids = CONFIG ? CONFIG.readers.map(r => r.id) : Object.keys(READERS);   /* the configuration's order */
+  for (const r of ids){
     const b = el("button",null,READERS[r].label); b.type = "button"; b.setAttribute("aria-pressed", String(r === reader));
     b.addEventListener("click", () => { reader = r; store.set("reader", r); readerRow(); route(true); });
     box.append(b);
   }
   $("#readerWhy").textContent = READERS[reader].why + ".";
   const rs = $("#readerSel");                                     /* the same choice, as one control on a phone */
-  if (!rs.options.length){ for (const r of Object.keys(READERS)) rs.append(new Option(READERS[r].label, r));
-    rs.addEventListener("change", () => { reader = rs.value; store.set("reader", reader); readerRow(); route(true); }); }
+  if (!rs.dataset.wired){ rs.dataset.wired = "1"; rs.addEventListener("change", () => { reader = rs.value; store.set("reader", reader); readerRow(); route(true); }); }
+  rs.replaceChildren(...ids.map(r => new Option(READERS[r].label, r)));
   rs.value = reader;
 }
 function route(keepScroll){
@@ -823,13 +994,13 @@ function route(keepScroll){
   const parts = path.split("/").filter(Boolean);
   const v = parts[0] || "week";
   const main = $("#view"); main.replaceChildren();
-  let node, title = "Lookout Radar";
-  if (v === "softanza" || v === "estate"){ node = viewEstate(); title = "In Softanza · Lookout Radar"; }
-  else if (v === "signals"){ node = viewSignals(new URLSearchParams(qs || "")); title = "All signals · Lookout Radar"; }
-  else if (v === "signal"){ node = viewSignal(decodeURIComponent(parts[1] || "")); title = (FEED.items.find(i => i.id === parts[1])?.title || "Signal") + " · Lookout Radar"; }
-  else if (v === "bar"){ node = viewBar(); title = "Lookout bar · Lookout Radar"; }
-  else if (v === "trends"){ node = viewTrends(new URLSearchParams(qs || "")); title = "Trends · Lookout Radar"; }
-  else { node = viewWeek(parts[1]); if (parts[1]) title = "Week " + parts[1] + " · Lookout Radar"; }
+  let node, title = RADAR();
+  if (v === "softanza" || v === "estate"){ node = viewEstate(); title = "In " + NAME() + " · " + RADAR(); }
+  else if (v === "signals"){ node = viewSignals(new URLSearchParams(qs || "")); title = "All signals · " + RADAR(); }
+  else if (v === "signal"){ node = viewSignal(decodeURIComponent(parts[1] || "")); title = (FEED.items.find(i => i.id === parts[1])?.title || "Signal") + " · " + RADAR(); }
+  else if (v === "yours" || v === "bar"){ node = viewYours(); title = "Make your own · " + RADAR(); }
+  else if (v === "trends"){ node = viewTrends(new URLSearchParams(qs || "")); title = "Trends · " + RADAR(); }
+  else { node = viewWeek(parts[1]); if (parts[1]) title = "Week " + parts[1] + " · " + RADAR(); }
   main.append(node); document.title = title;
   document.querySelectorAll("nav.views a").forEach(a => a.toggleAttribute("aria-current", a.dataset.view === (v === "signal" ? "signals" : v === "estate" ? "softanza" : v)));
   document.querySelectorAll("nav.views a[aria-current]").forEach(a => a.setAttribute("aria-current","page"));
@@ -846,11 +1017,13 @@ async function start(){
   readerRow();
   try {
     const here = new URL(".", location.href).href;
+    CONFIG = await fetch("app/config.json", {cache:"no-cache"}).then(r => { if (!r.ok) throw new Error("configuration " + r.status); return r.json(); });
     const [f, m, l] = await Promise.all([
-      window.LookoutFeed.load({ base: here, fresh: true }),
-      fetch("map/estate.json", {cache:"no-cache"}).then(r => { if (!r.ok) throw new Error("estate map " + r.status); return r.json(); }),
-      fetch("app/lessons.json", {cache:"no-cache"}).then(r => r.ok ? r.json() : {entries:{}}).catch(() => ({entries:{}}))
-    ]);
+      window.LookoutFeed.load({ base: here, fresh: true, key: CONFIG.feed.key, namespace: CONFIG.feed.namespace }),
+      fetch(CONFIG.map, {cache:"no-cache"}).then(r => { if (!r.ok) throw new Error("estate map " + r.status); return r.json(); }),
+      fetch("app/lessons.json", {cache:"no-cache"}).then(r => r.ok ? r.json() : {entries:{}}).catch(() => ({entries:{}})),
+      fetch("app/digests.json", {cache:"no-cache"}).then(r => r.ok ? r.json() : []).catch(() => [])
+    ]).then(([f, m, l, d]) => { DIGESTS = Array.isArray(d) ? d : []; return [f, m, l]; });
     FEED = f; MAP = m; LESSONS = l.entries || {};
   } catch (e) {
     $("#checked").textContent = "";
@@ -858,8 +1031,9 @@ async function start(){
     return;
   }
   indexMap();
+  dress();
   live = FEED.items.filter(it => !["declined","superseded"].includes(it.status) && it.review_by >= today);
-  const ok = el("span","ok","Signature checked in this browser"); $("#checked").replaceChildren(ok, document.createTextNode(": the feed was signed by Lookout's key SHA256:ZUij0x…s49I and is unchanged since. " + FEED.items.length + " entries, updated " + FEED.updated.slice(0,10) + "."));
+  const ok = el("span","ok","Signature checked in this browser"); $("#checked").replaceChildren(ok, document.createTextNode(": the feed was signed by " + poss(WATCH()) + " key " + CONFIG.feed.fingerprint.slice(0, 13) + "…" + CONFIG.feed.fingerprint.slice(-4) + " and is unchanged since. " + FEED.items.length + " entries, updated " + FEED.updated.slice(0,10) + "."));
   addEventListener("hashchange", () => route(false));
   matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => route(true));
   route(true);

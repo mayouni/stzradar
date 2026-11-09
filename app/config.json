@@ -1,0 +1,177 @@
+{
+  "lookout": "1",
+  "project": {
+    "name": "Softanza",
+    "site": "https://mayouni.github.io/stzsite/",
+    "owner": "Mansour Ayouni",
+    "licence": "MIT",
+    "licence_url": "https://github.com/mayouni/lookout/blob/main/LICENSE",
+    "pitch": "The governed software platform of the AI age: a library and its Zig engine, a declared machine (Harobanda), a language of languages (Haro), and the projects built on them."
+  },
+  "watch": {
+    "name": "Lookout",
+    "topic": "AI",
+    "repository": "https://github.com/mayouni/lookout",
+    "pages": "https://mayouni.github.io/lookout/",
+    "language": "en",
+    "tagline": "What changed in AI this week, and what it means for what you build",
+    "intro": "Lookout reads the week's papers, releases, security findings and practices at their source, and shows where each one lands in Softanza: the machine (Harobanda), the language (Haro), the foundation (Softanza), and the projects built on them.",
+    "schedule": {
+      "every": "monday",
+      "at": "07:00",
+      "timezone": "Africa/Niamey",
+      "week": "the latest ISO week that has ended"
+    },
+    "publish": "after-reading"
+  },
+  "feed": {
+    "signer": "feed@lookout",
+    "namespace": "lookout-feed",
+    "fingerprint": "SHA256:ZUij0xoxJIIEwH3AV5xrDXkJLuEklao7pUVhTxCs49I",
+    "key": "AAAAC3NzaC1lZDI1NTE5AAAAIJoTrtZQEdrhJQFEybJGDuZs9DxF/9X/vPE3q2WfEgDK"
+  },
+  "map": "map/estate.json",
+  "readers": [
+    {
+      "id": "developer",
+      "label": "Developer",
+      "first": "checks and code to run in your own project come first"
+    },
+    {
+      "id": "maintainer",
+      "label": "Maintainer",
+      "first": "what happened and the work proposed to Softanza's projects come first"
+    },
+    {
+      "id": "learner",
+      "label": "Learner",
+      "first": "each signal opens on a lesson in plain words"
+    },
+    {
+      "id": "user",
+      "label": "User",
+      "first": "what happened, and what it means for the software you use"
+    }
+  ],
+  "agent": {
+    "goal": "Keep Softanza, and the people who build, learn and work with it, ahead of what changes in AI: read each development at its source, say what it means for each part of Softanza, and propose the work it calls for.",
+    "learn": [
+      "map/estate.json",
+      "docs/METHOD.md",
+      "docs/FEED.md",
+      "https://mayouni.github.io/stzsite/"
+    ],
+    "in_scope": [
+      "new projects, libraries, languages, runtimes, agents and tools",
+      "papers that change how we think about programming, learning, models or safety",
+      "features the labs and tool makers ship",
+      "practices of teams and companies with AI",
+      "security findings and fixes in models, agents, tool protocols and supply chains",
+      "regulation and standards that reach software like Softanza",
+      "ideas the owner brings, as a link or a sentence"
+    ],
+    "out_of_scope": [
+      "a private person's name, a client, or anything about either",
+      "anything said in a private conversation, unless its author asked for it to be published",
+      "a key, a token, a password, or a path on the machine that runs the watch",
+      "a source that was not read, or a vendor's figure presented as the project's own measurement"
+    ],
+    "sources": [
+      {
+        "name": "arXiv cs.AI, cs.CL, cs.SE, cs.CR, cs.PL",
+        "url": "https://arxiv.org/list/cs.AI/recent"
+      },
+      {
+        "name": "Hugging Face daily papers",
+        "url": "https://huggingface.co/papers"
+      },
+      {
+        "name": "Anthropic news",
+        "url": "https://www.anthropic.com/news"
+      },
+      {
+        "name": "OpenAI news",
+        "url": "https://openai.com/news"
+      },
+      {
+        "name": "Google DeepMind blog",
+        "url": "https://deepmind.google/blog/"
+      },
+      {
+        "name": "Meta AI blog",
+        "url": "https://ai.meta.com/blog/"
+      },
+      {
+        "name": "Mistral AI news",
+        "url": "https://mistral.ai/news"
+      },
+      {
+        "name": "Claude Code changelog",
+        "url": "https://raw.githubusercontent.com/anthropics/claude-code/refs/heads/main/CHANGELOG.md"
+      },
+      {
+        "name": "OpenAI Codex releases",
+        "url": "https://github.com/openai/codex/releases"
+      },
+      {
+        "name": "GitHub changelog",
+        "url": "https://github.blog/changelog/"
+      },
+      {
+        "name": "GitHub Security Advisories",
+        "url": "https://github.com/advisories"
+      },
+      {
+        "name": "OWASP GenAI Security Project",
+        "url": "https://genai.owasp.org/"
+      },
+      {
+        "name": "MCP TypeScript SDK advisories",
+        "url": "https://github.com/modelcontextprotocol/typescript-sdk/security/advisories"
+      },
+      {
+        "name": "NIST AI Risk Management Framework",
+        "url": "https://www.nist.gov/itl/ai-risk-management-framework"
+      },
+      {
+        "name": "EU AI Act",
+        "url": "https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai"
+      },
+      {
+        "name": "Simon Willison's weblog",
+        "url": "https://simonwillison.net/"
+      },
+      {
+        "name": "Zig releases and news",
+        "url": "https://ziglang.org/"
+      },
+      {
+        "name": "Ring language releases",
+        "url": "https://github.com/ring-lang/ring/releases"
+      }
+    ],
+    "stances": {
+      "adopt": "take it into Softanza",
+      "learn": "it changes how we think, before it changes what we ship",
+      "correct": "the idea is right, and Softanza can do it better",
+      "defend": "a risk Softanza and its users must be protected from",
+      "watch": "too early; look again by the review date",
+      "decline": "considered and refused, with the reason"
+    },
+    "rules": [
+      "read every development at its source before writing about it",
+      "write one plain sentence for each reader the entry concerns",
+      "place every entry on the map; the feed tool refuses a name the map does not list",
+      "date every proposal at each stage it reaches",
+      "public pages say what the project is and does, never what it lacks"
+    ],
+    "proposals": {
+      "to": "Softanza's maintainers",
+      "through": "Central, the session that coordinates Softanza's projects, one message per project",
+      "never": "an edit in another project's repository"
+    }
+  },
+  "checks": {
+    "affirm": true
+  }
+}

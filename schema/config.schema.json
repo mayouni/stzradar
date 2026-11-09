@@ -1,0 +1,124 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mayouni/lookout/schema/config.schema.json",
+  "title": "lookout.yaml, version 1",
+  "type": "object",
+  "required": ["lookout", "project", "watch", "feed", "map", "readers", "agent", "checks"],
+  "additionalProperties": false,
+  "properties": {
+    "lookout": { "const": "1" },
+    "project": {
+      "type": "object",
+      "required": ["name", "site", "owner", "licence", "pitch"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "site": { "type": "string", "pattern": "^https://" },
+        "owner": { "type": "string", "minLength": 1 },
+        "licence": { "type": "string", "minLength": 1 },
+        "licence_url": { "type": "string", "pattern": "^https://" },
+        "pitch": { "type": "string", "minLength": 1 }
+      }
+    },
+    "watch": {
+      "type": "object",
+      "required": ["name", "topic", "repository", "pages", "language", "tagline", "intro", "schedule", "publish"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "topic": { "type": "string", "minLength": 1 },
+        "repository": { "type": "string", "pattern": "^https://github\\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$" },
+        "pages": { "type": "string", "pattern": "^https://.*/$" },
+        "language": { "type": "string", "pattern": "^[a-z][a-z]$" },
+        "tagline": { "type": "string", "minLength": 1 },
+        "intro": { "type": "string", "minLength": 1 },
+        "schedule": {
+          "type": "object",
+          "required": ["every", "at", "timezone"],
+          "properties": {
+            "every": { "enum": ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday", "day"] },
+            "at": { "type": "string", "pattern": "^[0-2][0-9]:[0-5][0-9]$" },
+            "timezone": { "type": "string", "minLength": 1 },
+            "week": { "type": "string" }
+          }
+        },
+        "publish": { "enum": ["after-reading", "at-once"] }
+      }
+    },
+    "feed": {
+      "type": "object",
+      "required": ["signer", "namespace", "fingerprint", "key"],
+      "additionalProperties": false,
+      "properties": {
+        "key": { "type": "string", "pattern": "^AAAAC3NzaC1lZDI1NTE5AAAAI[A-Za-z0-9+/]{43}$" },
+        "signer": { "type": "string", "pattern": "^[^ ]+@[^ ]+$" },
+        "namespace": { "type": "string", "pattern": "^[a-z0-9-]+$" },
+        "fingerprint": { "type": "string", "pattern": "^SHA256:[A-Za-z0-9+/]{43}$" }
+      }
+    },
+    "map": { "type": "string", "pattern": "^[a-z0-9_/.-]+\\.json$" },
+    "readers": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "first"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "enum": ["developer", "user", "learner", "maintainer"] },
+          "label": { "type": "string", "minLength": 1 },
+          "first": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "agent": {
+      "type": "object",
+      "required": ["goal", "learn", "in_scope", "out_of_scope", "sources", "stances", "rules", "proposals"],
+      "additionalProperties": false,
+      "properties": {
+        "goal": { "type": "string", "minLength": 1 },
+        "learn": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "in_scope": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+        "out_of_scope": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "sources": {
+          "type": "array", "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["name", "url"],
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string", "minLength": 1 },
+              "url": { "type": "string", "pattern": "^https?://" },
+              "why": { "type": "string" }
+            }
+          }
+        },
+        "stances": {
+          "type": "object",
+          "required": ["adopt", "learn", "correct", "defend", "watch", "decline"],
+          "additionalProperties": false,
+          "properties": {
+            "adopt": { "type": "string", "minLength": 1 }, "learn": { "type": "string", "minLength": 1 },
+            "correct": { "type": "string", "minLength": 1 }, "defend": { "type": "string", "minLength": 1 },
+            "watch": { "type": "string", "minLength": 1 }, "decline": { "type": "string", "minLength": 1 }
+          }
+        },
+        "rules": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "proposals": {
+          "type": "object",
+          "required": ["to"],
+          "properties": {
+            "to": { "type": "string", "minLength": 1 },
+            "through": { "type": "string" },
+            "never": { "type": "string" }
+          }
+        }
+      }
+    },
+    "checks": {
+      "type": "object",
+      "required": ["affirm"],
+      "additionalProperties": false,
+      "properties": { "affirm": { "type": "boolean" } }
+    }
+  }
+}

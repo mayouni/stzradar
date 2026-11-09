@@ -61,6 +61,6 @@
     },
     "review_by": { "type": "string", "format": "date" },
     "tags": { "type": "array", "items": { "type": "string", "pattern": "^[a-z0-9-]+$" } },
-    "url": { "type": "string", "pattern": "^https://github\\.com/mayouni/lookout/" }
+    "url": { "type": "string", "pattern": "^https://github\\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+/blob/" }
   }
 }

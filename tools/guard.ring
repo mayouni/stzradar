@@ -38,6 +38,8 @@ class Guard
         Affirm()
         Map()
         Dates()
+        Yaml()
+        Config()
 
     func Pass cName
         nPass++
@@ -186,7 +188,7 @@ class Guard
             "the id starts with the entry's date")
         RefusesOne("an entry that writes its own url",
             q + "review_by" + q + ": " + q + "2027-05-08" + q + ",",
-            q + "review_by" + q + ": " + q + "2027-05-08" + q + "," + NL1 + "  " + q + "url" + q + ": " + q + "https://github.com/mayouni/lookout/x" + q + ",",
+            q + "review_by" + q + ": " + q + "2027-05-08" + q + "," + NL1 + "  " + q + "url" + q + ": " + q + "https://github.com/mayouni/lookout/blob/main/x" + q + ",",
             "an entry does not write its url")
         RefusesOne("review_by before the entry's date",
             q + "review_by" + q + ": " + q + "2027-05-08" + q, q + "review_by" + q + ": " + q + "2026-11-01" + q,
@@ -297,6 +299,11 @@ class Guard
             ["^https://github\.com/mayouni/lookout/", "https://github.com/mayouni/lookout/blob/x", 1],
             ["^https://github\.com/mayouni/lookout/", "https://githubXcom/mayouni/lookout/", 0],
             ["^https://", "see https://x", 0],
+            ["^a.*b$", "axxb", 1],
+            ["^a.b$", "axb", 1],
+            ["^a.b$", "ab", 0],
+            ["^https://.*/$", "https://mayouni.github.io/lookout/", 1],
+            ["^https://.*/$", "https://mayouni.github.io/lookout", 0],
             ["https://", "see https://x", 1],
             ["^[a-z0-9-]+$", "", 0]
         ]
@@ -372,6 +379,80 @@ class Guard
         cOrder = substr(cOrder, '"updated": "2026-11-08"', '"updated": "2026-11-10"')
         cOrder = substr(cOrder, '"proposed": "2026-11-08", "routed": "2026-11-08"', '"proposed": "2026-11-10", "routed": "2026-11-09"')
         Refuses("stages out of order are refused", cOrder, "2026", cFile, "before an earlier stage")
+
+    # ------------------------------------------------------------ the YAML reader
+    func Yaml
+        NL1 = char(10)
+        cDoc = "# a comment" + NL1 + "name: Lookout  # after a value" + NL1 + "list:" + NL1 + "  - a" + NL1 + '  - "b: c"' + NL1 +
+               "people:" + NL1 + "  - id: x" + NL1 + "    n: '1'" + NL1 + "  - id: y" + NL1 + "flow: [one, " + '"two, three"' + "]" + NL1 +
+               "on: true" + NL1 + "text: >" + NL1 + "  folded" + NL1 + "  lines" + NL1 + "block: |" + NL1 + "  kept" + NL1 + "  lines" + NL1
+        cWant = '{"name":"Lookout","list":["a","b: c"],"people":[{"id":"x","n":"1"},{"id":"y"}],"flow":["one","two, three"],"on":true,"text":"folded lines","block":"kept' + "\n" + 'lines"}'
+        oY = new YamlReader
+        try
+            v = oY.Parse(cDoc, "t.yaml")
+            cGot = Compact(JWrite(v, 0))
+            if cGot = cWant Pass("YAML: maps, lists, lists of maps, quotes, [lists], booleans, > and | text")
+            else Fail("YAML: the sample reads as expected", cGot) ok
+        catch e
+            Fail("YAML: the sample reads as expected", e.Message())
+        done
+        YamlRefuses("YAML: a tab in the indent is refused", "a:" + NL1 + char(9) + "b: 1" + NL1, "a tab indents")
+        YamlRefuses("YAML: a key written twice is refused", "a: 1" + NL1 + "a: 2" + NL1, "written twice")
+        YamlRefuses("YAML: a feature this reader does not take is refused", "a: &anchor 1" + NL1, "does not read here")
+        YamlRefuses("YAML: an unclosed quote is refused", 'a: "open' + NL1, "not closed")
+        YamlRefuses("YAML: a key indented deeper than its siblings is refused", "a: 1" + NL1 + "   b: 2" + NL1, "indented more")
+
+    func YamlRefuses cName, cDoc, cReason
+        oY = new YamlReader
+        try
+            oY.Parse(cDoc, "t.yaml")
+            Fail(cName, "it was accepted")
+        catch e
+            if substr(e.Message(), cReason) > 0 Pass(cName) else Fail(cName, "refused for another reason: " + e.Message()) ok
+        done
+
+    # JSON written by JWrite, with the layout spaces outside strings removed, to compare with a literal.
+    func Compact c
+        cOut = ""
+        bIn = 0
+        n = len(c)
+        for i = 1 to n
+            ch = c[i]
+            if ch = '"' and (i = 1 or c[i - 1] != "\") bIn = not bIn ok
+            if not bIn and (ch = " " or ascii(ch) = 10) loop ok
+            cOut += ch
+        next
+        return cOut
+
+    # ------------------------------------------------------------ lookout.yaml is checked before anything runs
+    func Config
+        cReal = read(cRoot + "/lookout.yaml")
+        ConfigCase("the real lookout.yaml passes", cReal, "")
+        ConfigCase("a configuration with no project name is refused", substr(cReal, "  name: Softanza" + char(10), ""), "name")
+        ConfigCase("a fingerprint that is not a SHA256 one is refused", substr(cReal, "SHA256:ZUij0xoxJIIEwH3AV5xrDXkJLuEklao7pUVhTxCs49I", "MD5:abc"), "fingerprint")
+        ConfigCase("a reader the feed does not know is refused", substr(cReal, "  - id: user", "  - id: investor"), "investor")
+        ConfigCase("a key the configuration does not define is refused", cReal + "colour: teal" + char(10), "colour")
+        ConfigCase("a pages address without its closing slash is refused", substr(cReal, "https://mayouni.github.io/lookout/" + char(10), "https://mayouni.github.io/lookout" + char(10)), "pages")
+
+    func ConfigCase cName, cText, cReason
+        oRun = new FeedRun
+        oRun.cRoot = cRoot
+        oRun.bQuiet = 1
+        oRun.oSchema = new SchemaCheck
+        oRun.oSchema.cDir = cRoot + "/schema"
+        b = oRun.LoadConfigText(cText)
+        cSaid = Joined(oRun.aProblems)
+        if cReason = ""
+            if b and cSaid = "" Pass(cName) else Fail(cName, cSaid) ok
+            return
+        ok
+        if b
+            Fail(cName, "it was accepted")
+        but substr(cSaid, cReason) > 0
+            Pass(cName)
+        else
+            Fail(cName, "refused for another reason: " + cSaid)
+        ok
 
     func MapCase cName, cText, cReason
         if cText = ""

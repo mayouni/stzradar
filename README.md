@@ -12,6 +12,11 @@ in your browser before it shows anything.
 **Put it on your own site: [the Lookout bar](docs/BAR.md)**, one script line that shows the newest notice for your
 readers, checked the same way.
 
+**Run your own Lookout, for your own project: [docs/ADOPT.md](docs/ADOPT.md).** One file, `lookout.yaml`, says
+which project the watch serves, what it watches, who reads it, and what the agent learns before it reads anything.
+The tools, the feed, this site with its trends, and the bar take everything from it. [`lookout.yaml`](lookout.yaml) is
+Softanza's own, and the site's [Make your own](https://mayouni.github.io/lookout/#/yours) view writes a first one with you.
+
 A lookout is the one who keeps watch and calls out what is coming, in time for the others to act.
 
 AI moves every week. New projects appear, papers change how we think, labs ship features, companies change their

@@ -7,6 +7,22 @@
   "language": "en",
   "items": [
     {
+      "id": "2026-11-09-lookout-for-any-project",
+      "url": "https://github.com/mayouni/lookout/blob/main/items/2026/2026-11-09-lookout-for-any-project.md",
+      "title": "Lookout runs for any project: one file says what its agent learns and watches",
+      "summary": "Lookout now reads everything that belongs to its project from one file, lookout.yaml: the project, the watch, its readers, its map, and what the watching agent learns before each survey. The feed, the site with its trends, and the bar take their names and texts from it, and version 1.1.0 of the bar reads any watch's feed with the key the page gives it.",
+      "content_text": "Lookout now reads everything that belongs to its project from one file, lookout.yaml: the project, the watch, its readers, its map, and what the watching agent learns before each survey. The feed, the site with its trends, and the bar take their names and texts from it, and version 1.1.0 of the bar reads any watch's feed with the key the page gives it.",
+      "date_published": "2026-11-09T00:00:00Z",
+      "tags": [
+        "feature",
+        "adopt",
+        "info",
+        "watch",
+        "configuration",
+        "bar"
+      ]
+    },
+    {
       "id": "2026-11-08-agent-approvals-leak-secrets",
       "url": "https://github.com/mayouni/lookout/blob/main/items/2026/2026-11-08-agent-approvals-leak-secrets.md",
       "title": "A coding agent's \"don't ask again\" writes secrets into a file that gets published",
