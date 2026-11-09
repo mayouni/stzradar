@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap">
 <style>
-/* Layout: a sticky console bar (role + level + lens), then a radar scope beside a signal list; the detail opens as a sheet. */
+/* Layout: a sticky console bar (role + level + help), then a radar scope beside a signal list; the detail opens as a sheet. */
 :root{
   --bg:#f3f5f8; --panel:#ffffff; --ink:#15202c; --muted:#5a6878; --line:#d9dfe7;
   --accent:#2950c8; --accent-ink:#ffffff; --scope:#e8edf5; --scope-line:#c5cfdd;
@@ -45,7 +45,19 @@ header.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background
 select{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:5px 8px}
 
 .intro{padding-block:22px 6px;display:flex;flex-wrap:wrap;gap:12px 32px;align-items:end}
-.intro p{margin:0;max-width:62ch;color:var(--muted)}
+.intro p{margin:0;max-width:66ch;color:var(--muted)}
+.lead{display:flex;flex-direction:column;gap:8px}
+.intro p.what{color:var(--ink);font-size:1.08rem}
+.intro p.what strong{font-family:var(--f-display)}
+.help{background:transparent;border:1px solid var(--line);border-radius:8px;padding:5px 11px;cursor:pointer;font-size:.9rem}
+.help:hover{border-color:var(--accent)}
+.helpbox{border:1px solid var(--line);border-radius:14px;background:var(--panel);color:var(--ink);padding:20px 22px;width:min(520px,calc(100% - 32px))}
+.helpbox::backdrop{background:color-mix(in srgb,var(--ink) 35%,transparent)}
+.helpbox h2{font:700 1.2rem/1.2 var(--f-display);margin:0 0 12px}
+.helpbox dl{display:grid;grid-template-columns:auto 1fr;gap:8px 14px;margin:0 0 16px;font-size:.93rem}
+.helpbox dt{font-weight:700}
+.helpbox dd{margin:0;color:var(--muted)}
+@media (max-width:480px){.helpbox{padding:16px 18px}.helpbox dl{grid-template-columns:1fr;gap:2px;font-size:.9rem;line-height:1.4;margin-bottom:12px}.helpbox dd{margin-bottom:8px}}
 .intro strong{color:var(--ink)}
 .stamp{font:400 .8rem var(--f-mono);color:var(--muted);display:flex;flex-direction:column;gap:2px}
 .stamp b{color:var(--ink);font-weight:600}
@@ -129,25 +141,24 @@ details p{margin-top:8px}
       <option value="user">user</option>
     </select>
   </label>
-  <label class="ctl" for="level">showing
+  <label class="ctl" for="level">show
     <select id="level">
-      <option value="info">everything</option>
+      <option value="info">every signal</option>
       <option value="advice">advice and above</option>
-      <option value="action">action and above</option>
+      <option value="action">actions to take</option>
       <option value="urgent">urgent only</option>
     </select>
   </label>
-  <div class="ctl"><span>lens</span>
-    <div class="seg" role="group" aria-label="Lens">
-      <button type="button" data-lens="watch" aria-pressed="true">Watch</button>
-      <button type="button" data-lens="build" aria-pressed="false">Build</button>
-      <button type="button" data-lens="learn" aria-pressed="false">Learn</button>
-    </div>
-  </div>
+  <button class="help" type="button" id="helpOpen" aria-haspopup="dialog">How to read it</button>
 </div></header>
 
 <div class="wrap intro">
-  <p id="lensIntro"></p>
+  <div class="lead">
+    <p class="what"><strong>What changed in AI this week, and what it means for you.</strong> Every Monday, Lookout reads the
+      week's papers, releases, security findings and practices at their source, and judges each one against what
+      <a href="https://github.com/mayouni/stzlib" target="_blank" rel="noopener">Softanza</a> builds.</p>
+    <p id="roleIntro"></p>
+  </div>
   <div class="stamp"><span>feed <b id="feedStamp"></b></span><span>signed · <b>SHA256:ZUij0x…s49I</b></span></div>
 </div>
 
@@ -167,6 +178,19 @@ details p{margin-top:8px}
   <span>Data: Lookout's public feed, <a href="https://github.com/mayouni/lookout" target="_blank" rel="noopener">github.com/mayouni/lookout</a>. Every link opens the entry's page there.</span>
   <span>Check the feed yourself: <code>ssh-keygen -Y verify -f allowed_signers -I feed@lookout -n lookout-feed -s index.json.sig &lt; index.json</code></span>
 </div>
+
+<dialog class="helpbox" id="help" aria-labelledby="helpTitle">
+  <h2 id="helpTitle">How to read Lookout Radar</h2>
+  <dl>
+    <dt>I am a</dt><dd>Pick who you are. Each signal then speaks to you in one sentence, and opens where it is most useful to you.</dd>
+    <dt>Show</dt><dd>How much a signal asks of you: <b>info</b> to know, <b>advice</b> to consider, <b>action</b> to do, <b>urgent</b> to do now.</dd>
+    <dt>The radar</dt><dd>The closer a dot sits to the centre, the more it matters to Softanza. Its ring is its level, its colour the kind of news (security, paper, release...).</dd>
+    <dt>A signal</dt><dd>Click a dot or a card. <b>Watch</b> says what happened, <b>Build</b> gives checks to run in your own project, <b>Learn</b> explains it in plain words with a question to test yourself.</dd>
+    <dt>new</dt><dd>A signal you have not opened yet on this device.</dd>
+    <dt>signed</dt><dd>The feed carries a signature, so anyone can check it came from Lookout unchanged (the command is at the bottom of the page).</dd>
+  </dl>
+  <form method="dialog"><button class="close" type="submit">Got it</button></form>
+</dialog>
 
 <div class="sheet" id="sheet" hidden>
   <article class="panel" role="dialog" aria-modal="true" aria-labelledby="dTitle">
@@ -191,10 +215,12 @@ let EXTRA = {};
 const LEVELS = ["info","advice","action","urgent"];
 const KINDS = ["security","paper","release","practice","feature","idea","regulation","market"];
 const KIND_COLOR = {security:"--lv-urgent",paper:"--accent",release:"--lv-action",practice:"--muted",feature:"--lv-info",idea:"--lv-info",regulation:"--muted",market:"--muted"};
-const LENS_INTRO = {
-  watch:"<strong>Watch</strong> what changed in AI this week, judged against what Softanza builds. Pick who you are, and each signal speaks to you in one sentence.",
-  build:"<strong>Build</strong>: every signal turned into checks and code you can run in your own project today.",
-  learn:"<strong>Learn</strong>: every signal explained in plain words, with the terms it uses and a question to test yourself."
+/* who you are decides what a card says and which tab a signal opens on: one control, no second "lens" */
+const ROLE = {
+  developer: {tab:"build", intro:"As a <strong>developer</strong>, each signal opens on <strong>Build</strong>: checks and commands to run in your own project today."},
+  maintainer:{tab:"watch", intro:"As a <strong>maintainer</strong>, each signal opens on <strong>Watch</strong>: what happened, and the work proposed to Softanza's projects."},
+  learner:   {tab:"learn", intro:"As a <strong>learner</strong>, each signal opens on <strong>Learn</strong>: the news in plain words, its terms, and a question to test yourself."},
+  user:      {tab:"watch", intro:"As a <strong>user</strong>, each signal opens on <strong>Watch</strong>: what happened and what it means for the software you use."}
 };
 
 const $ = s => document.querySelector(s);
@@ -205,14 +231,15 @@ const store = { get(k,d){ try{ const v = localStorage.getItem(k); return v == nu
 const clean = s => String(s ?? "").replace(/[\u0000-\u001f\u007f]/g, " ");   /* plain text only, control characters out */
 const today = new Date().toISOString().slice(0,10);
 
-let state = { role: store.get("role","developer"), level: store.get("level","info"), lens: "watch" };
+let state = { role: store.get("role","developer"), level: store.get("level","info") };
+if (!ROLE[state.role]) state.role = "developer";
 const seen = new Set(store.get("seen", []));
 let live = [];
 
 function visible(){
   const min = LEVELS.indexOf(state.level);
   return live.filter(it => LEVELS.indexOf(it.level) >= min)
-             .filter(it => state.lens !== "watch" || (it.notice && it.notice[state.role]))
+             .sort((a,b) => (!!b.notice?.[state.role]) - (!!a.notice?.[state.role]))
              .sort((a,b) => LEVELS.indexOf(b.level) - LEVELS.indexOf(a.level) || (b.relevance === "high") - (a.relevance === "high"));
 }
 
@@ -221,13 +248,9 @@ function levelPill(lv){ const p = el("span","pill lv",lv); p.style.background = 
 function renderCards(){
   const box = $("#cards"); box.replaceChildren();
   const items = visible();
-  $("#listTitle").textContent = items.length + (items.length === 1 ? " signal" : " signals") + (state.lens === "watch" ? " for a " + state.role : "");
-  if (!items.length){
-    box.append(el("div","empty", state.lens === "watch"
-      ? "This week's signals speak to developers and maintainers. Switch the role, or open the Learn lens to read every one."
-      : "Lower the level to see more signals."));
-    return;
-  }
+  const mine = items.filter(it => it.notice?.[state.role]).length;
+  $("#listTitle").textContent = items.length + (items.length === 1 ? " signal" : " signals") + (mine ? " · " + mine + " written for a " + state.role : "");
+  if (!items.length){ box.append(el("div","empty","Choose \"every signal\" under Show to see the whole week.")); return; }
   for (const it of items){
     const c = el("button","card"); c.type = "button";
     const stripe = el("span","stripe"); stripe.style.background = css("--lv-"+it.level);
@@ -236,9 +259,9 @@ function renderCards(){
     m.append(levelPill(it.level), el("span","pill",it.kind), el("span","pill",it.stance), el("span",null,"relevance " + it.relevance));
     if (!seen.has(it.id)) m.append(el("span","new","new"));
     b.append(m, el("h3",null,clean(it.title)));
-    if (state.lens === "watch") b.append(el("p",null,clean(it.notice[state.role])));
-    else if (state.lens === "build") b.append(el("p","quiet",(EXTRA[it.id]?.build?.length || 0) + " check" + ((EXTRA[it.id]?.build?.length||0)===1?"":"s") + " to run · " + clean(EXTRA[it.id]?.build?.[0]?.why || "")));
-    else b.append(el("p","quiet",clean((EXTRA[it.id]?.lesson || it.summary).split(". ")[0] + ".")));
+    /* the notice written for this role when there is one (feed rule: own audience only); otherwise the plain-words line */
+    if (it.notice?.[state.role]) b.append(el("p",null,clean(it.notice[state.role])));
+    else b.append(el("p","quiet",clean((EXTRA[it.id]?.lesson || it.summary).split(". ")[0].replace(/\.$/,"") + ".")));
     c.append(stripe, b);
     c.addEventListener("click", () => openEntry(it.id));
     box.append(c);
@@ -300,7 +323,7 @@ function openEntry(id, tab){
   current = it; seen.add(id); store.set("seen",[...seen]);
   $("#dMeta").replaceChildren(levelPill(it.level), el("span","pill",it.kind), el("span","pill",it.stance), el("span",null,it.date));
   $("#dTitle").textContent = clean(it.title);
-  showTab(tab || state.lens);
+  showTab(tab || ROLE[state.role].tab);
   $("#sheet").hidden = false; document.documentElement.classList.add("sheet-open"); $("#dClose").focus();
   renderCards();
 }
@@ -336,10 +359,9 @@ function showTab(t){
 }
 function closeSheet(){ $("#sheet").hidden = true; document.documentElement.classList.remove("sheet-open"); current = null; }
 
-function setLens(l){
-  state.lens = l;
-  document.querySelectorAll("[data-lens]").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.lens === l)));
-  $("#lensIntro").innerHTML = LENS_INTRO[l];
+function setRole(r){
+  state.role = r; store.set("role",r);
+  $("#roleIntro").innerHTML = ROLE[r].intro;
   renderCards(); renderRadar();
 }
 
@@ -357,9 +379,13 @@ async function start(){
   }
   live = FEED.items.filter(it => !["declined","superseded"].includes(it.status) && it.review_by >= today);
   $("#role").value = state.role; $("#level").value = state.level;
-  $("#role").addEventListener("change", e => { state.role = e.target.value; store.set("role",state.role); renderCards(); renderRadar(); });
+  $("#role").addEventListener("change", e => setRole(e.target.value));
   $("#level").addEventListener("change", e => { state.level = e.target.value; store.set("level",state.level); renderCards(); renderRadar(); });
-  document.querySelectorAll("[data-lens]").forEach(b => b.addEventListener("click", () => setLens(b.dataset.lens)));
+  const help = $("#help");
+  $("#helpOpen").addEventListener("click", () => { help.showModal(); document.documentElement.classList.add("sheet-open"); });
+  help.addEventListener("close", () => document.documentElement.classList.remove("sheet-open"));
+  help.addEventListener("click", e => { if (e.target === help) help.close(); });
+  if (!store.get("helped", false)) { store.set("helped", true); help.showModal(); document.documentElement.classList.add("sheet-open"); }
   document.querySelectorAll(".tabs button").forEach(b => b.addEventListener("click", () => showTab(b.dataset.tab)));
   $("#dClose").addEventListener("click", closeSheet);
   $("#sheet").addEventListener("click", e => { if (e.target.id === "sheet") closeSheet(); });
@@ -370,7 +396,7 @@ async function start(){
   const d = new Date(FEED.items.map(i => i.date).sort().pop() + "T00:00:00Z"); const wk = (() => { const t = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate())); const day = t.getUTCDay() || 7; t.setUTCDate(t.getUTCDate() + 4 - day); const y0 = new Date(Date.UTC(t.getUTCFullYear(),0,1)); return t.getUTCFullYear() + "-W" + String(Math.ceil(((t - y0) / 864e5 + 1) / 7)).padStart(2,"0"); })();
   $("#weekTag").textContent = "week " + wk;
   $("#feedStamp").textContent = FEED.items.length + " entries · " + FEED.updated.slice(0,10);
-  setLens("watch");
+  setRole(state.role);
 
 }
 start();
