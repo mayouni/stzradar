@@ -1,6 +1,6 @@
 # Softanza Radar: every signal, in full
 
-> What changed in AI this week, and what it means for what we build in Softanza. Generated from the signed feed (https://mayouni.github.io/lookout/feed/index.json); the feed is the reference.
+> What changed in AI and the tech field this week, and what it means for what we build in Softanza. Generated from the signed feed (https://mayouni.github.io/lookout/feed/index.json); the feed is the reference.
 
 ## Lookout runs for any project: one file says what its agent learns and watches
 

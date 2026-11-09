@@ -1,6 +1,6 @@
 # Lookout
 
-**A public watch on what is changing in AI, read from Softanza's point of view, with a feed that any program can read.**
+**A public watch on what is changing in AI and the tech field, read from Softanza's point of view, with a feed that any program can read.**
 
 **Open it: [Softanza Radar](https://mayouni.github.io/lookout/)**, the site Lookout builds for Softanza. It shows the week on a radar whose slices are the
 layers of Softanza, and, under In Softanza, the whole platform as a stack of layers and a grid of domains. Every earlier week
@@ -19,7 +19,7 @@ Softanza's own, and the site's [Make your own](https://mayouni.github.io/lookout
 
 A lookout is the one who keeps watch and calls out what is coming, in time for the others to act.
 
-AI moves every week. New projects appear, papers change how we think, labs ship features, companies change their
+AI and the tech field move every week. New projects appear, papers change how we think, labs ship features, companies change their
 practices, and security researchers find holes and fixes. Lookout keeps one place where each of these is read at its
 source, judged against what [Softanza](https://github.com/mayouni/stzlib) builds, and turned into something useful:
 

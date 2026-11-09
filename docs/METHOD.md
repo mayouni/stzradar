@@ -22,7 +22,7 @@ flowchart TD
 
 ## What is watched
 
-Anything in AI that can change what Softanza builds, how it builds it, or how it protects the people who use it:
+Anything in AI and the tech field that can change what Softanza builds, how it builds it, or how it protects the people who use it:
 
 - **projects**: new libraries, languages, runtimes, agents, tools;
 - **papers**: results that change how we think about programming, learning, models or safety;

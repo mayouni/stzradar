@@ -1,6 +1,6 @@
 # Your own Lookout
 
-Lookout is Softanza's watch on AI, and it is built so that any project can run its own. An agent reads the news
+Lookout is Softanza's watch on AI and the tech field, and it is built so that any project can run its own. An agent reads the news
 of your field each week at its source, places every piece on your project's map, writes one sentence for each of
 your readers, and proposes the work it calls for. You get the same signed feed, the same site with its trends
 dashboard, and the same bar for your pages. One file says everything about your project: `lookout.yaml`.

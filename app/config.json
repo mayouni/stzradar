@@ -14,12 +14,12 @@
   "watch": {
     "name": "Lookout",
     "title": "Softanza Radar",
-    "topic": "AI",
+    "topic": "AI and the tech field",
     "repository": "https://github.com/mayouni/lookout",
     "pages": "https://mayouni.github.io/lookout/",
     "language": "en",
-    "tagline": "What changed in AI this week, and what it means for what we build in Softanza",
-    "tagline_past": "What changed in AI in week {week}, and what it meant for what we build in Softanza",
+    "tagline": "What changed in AI and the tech field this week, and what it means for what we build in Softanza",
+    "tagline_past": "What changed in AI and the tech field in week {week}, and what it meant for what we build in Softanza",
     "intro": "Each week the radar reads the papers, releases, security findings and practices at their source, and shows where each one lands in Softanza: the machine (Harobanda), the language (Haro), the foundation (Softanza), and the projects built on them.",
     "schedule": {
       "every": "monday",
@@ -31,10 +31,10 @@
     "radar_limit": "7"
   },
   "home": {
-    "headline": "AI changes every week. Softanza hears what concerns it the same week.",
+    "headline": "AI and the tech field change every week. Softanza hears what concerns it the same week.",
     "promise": "Softanza Radar reads the week's papers, releases, security findings and practices at their source, judges each one from Softanza's point of view, and tells us, the Softanza team, what it means for us and what we should do about it: a check to run, a lesson to learn, or work proposed to the part it concerns.",
     "why": [
-      "Almost every development in AI touches something Softanza builds, from its engine to its intelligence layer",
+      "Almost every development in AI and the tech field touches something Softanza builds, from its engine to its intelligence layer",
       "A finding that matters reaches the part it concerns within days, as work someone can act on",
       "What was learned is written down once, with its sources, where every session and reader finds it again"
     ],
@@ -80,7 +80,7 @@
     }
   ],
   "agent": {
-    "goal": "Keep Softanza, and the people who build, learn and work with it, ahead of what changes in AI: read each development at its source, say what it means for each part of Softanza, and propose the work it calls for.",
+    "goal": "Keep Softanza, and the people who build, learn and work with it, ahead of what changes in AI and the tech field: read each development at its source, say what it means for each part of Softanza, and propose the work it calls for.",
     "learn": [
       "map/estate.json",
       "docs/METHOD.md",
@@ -91,7 +91,7 @@
       "new projects, libraries, languages, runtimes, agents and tools",
       "papers that change how we think about programming, learning, models or safety",
       "features the labs and tool makers ship",
-      "practices of teams and companies with AI",
+      "practices of teams and companies with AI and software",
       "security findings and fixes in models, agents, tool protocols and supply chains",
       "regulation and standards that reach software like Softanza",
       "ideas the owner brings, as a link or a sentence"

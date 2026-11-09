@@ -26,7 +26,7 @@ project:                          # the project the watch serves
 watch:                            # the watch itself
   name: Lookout                   # the tool's name: the repository, the feed format, the bar's script
   title: "{project} Radar"          # what readers see: the site's title, the feed's title, the bar's link
-  topic: AI
+  topic: AI and the tech field
   repository: https://github.com/mayouni/lookout
   pages: https://mayouni.github.io/lookout/
   language: en
@@ -46,7 +46,7 @@ watch:                            # the watch itself
 
 home:                             # the front page: what the watch is for, before any week is shown
   headline: >
-    {topic} changes every week. {project} hears what concerns it the same week.
+    {topic} change every week. {project} hears what concerns it the same week.
   promise: >
     {title} reads the week's papers, releases, security findings and practices at their source, judges each
     one from {project}'s point of view, and tells us, the {project} team, what it means for us and what we
@@ -89,7 +89,7 @@ readers:                          # who the notices are written for, and what ea
 
 agent:                            # what the watching agent learns before it reads the week
   goal: >
-    Keep Softanza, and the people who build, learn and work with it, ahead of what changes in AI: read each
+    Keep Softanza, and the people who build, learn and work with it, ahead of what changes in AI and the tech field: read each
     development at its source, say what it means for each part of Softanza, and propose the work it calls for.
   learn:                          # read these first, every run, to know the project
     - map/estate.json
@@ -100,7 +100,7 @@ agent:                            # what the watching agent learns before it rea
     - new projects, libraries, languages, runtimes, agents and tools
     - papers that change how we think about programming, learning, models or safety
     - features the labs and tool makers ship
-    - practices of teams and companies with AI
+    - practices of teams and companies with AI and software
     - security findings and fixes in models, agents, tool protocols and supply chains
     - regulation and standards that reach software like Softanza
     - ideas the owner brings, as a link or a sentence

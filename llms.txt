@@ -1,6 +1,6 @@
 # Softanza Radar
 
-> What changed in AI this week, and what it means for what we build in Softanza. Softanza Radar reads the week's papers, releases, security findings and practices at their source, judges each one from Softanza's point of view, and tells us, the Softanza team, what it means for us and what we should do about it: a check to run, a lesson to learn, or work proposed to the part it concerns.
+> What changed in AI and the tech field this week, and what it means for what we build in Softanza. Softanza Radar reads the week's papers, releases, security findings and practices at their source, judges each one from Softanza's point of view, and tells us, the Softanza team, what it means for us and what we should do about it: a check to run, a lesson to learn, or work proposed to the part it concerns.
 
 Every file below is plain data or plain text. The two feed files are signed with SSH (Ed25519, namespace lookout-feed, signer feed@lookout): check a signature before trusting a feed.
 
