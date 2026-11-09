@@ -133,8 +133,14 @@ section.block{padding-block:28px 8px}
 .infobar .ihint{color:var(--ink2);font-size:1.1875rem}
 .infobar .ititle{font:700 1.0625rem/1.35 var(--f-title);flex:1 1 14rem;min-width:0}
 .radarhint{margin:0 0 6px;font-size:1.1875rem;line-height:1.4;color:var(--ink2)}
-.scope .slices{margin:6px 2px 0;font-size:1.125rem;color:var(--ink2);line-height:1.5}
-.scope .slices a{white-space:nowrap}
+/* the slice names around the rim: number in ink, name as the slice's one link */
+.radarstage .sl{position:absolute;max-width:6.4em;font-size:1.125rem;line-height:1.3;color:var(--ink2);text-wrap:balance}
+.radarstage .sl b{color:var(--ink)}
+.radarstage .sl a{color:var(--deep);text-decoration:underline}
+.radarstage svg{display:block}
+/* on a phone the names go in a numbered list under the radar */
+.scope .slices{margin:10px 0 0;padding-left:1.6em;font-size:1.125rem;line-height:1.5;columns:2;column-gap:24px}
+.scope .slices a{color:var(--deep);text-decoration:underline}
 .group{margin-bottom:22px}
 .group>h3{font:700 1.125rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);margin:0 0 10px}
 .cards{display:flex;flex-direction:column;gap:12px}
@@ -596,8 +602,6 @@ function radar(items, total = items.length){
   layers.forEach((l, i) => {
     const a = (i * step) * Math.PI / 180;
     svg.append(mk("line",{x1:C,y1:C,x2:C + 186*Math.sin(a),y2:C - 186*Math.cos(a),stroke:css("--line")}));
-    const m = ((i + .5) * step) * Math.PI / 180, t = mk("text",{class:"lbl",x:C + 204*Math.sin(m),y:C - 204*Math.cos(m) + 8,"text-anchor":"middle"});
-    t.textContent = String(i + 1); svg.append(t);
   });
   /* the dots of one slice and one ring are spread evenly across the slice's width, alternating in depth, so none hides another */
   const keyOf = it => (layersOf(it)[0] || "foundation") + "|" + it.relevance;
@@ -647,14 +651,48 @@ function radar(items, total = items.length){
     g.addEventListener("mouseleave", hide); g.addEventListener("focusout", hide);
     svg.append(g);
   }
+  /* each slice's number and name stand outside the rim, beside the slice (author, 2026-11-09). They are HTML, so they
+     keep the page's reading size at any radar size; place() sizes the radar to leave them room. Where the card is too
+     narrow for names beside a radar worth reading (a phone), the names go in a short list under it instead. */
+  const labs = layers.map((l, i) => {
+    const s = el("span","sl"), a = el("a",null,l.name); a.href = "#/signals?l=" + l.id;
+    s.append(el("b",null,String(i + 1)), document.createTextNode(" "), a); stage.append(s);
+    const m = ((i + .5) * step) * Math.PI / 180;
+    s.style.maxWidth = Math.abs(Math.cos(m)) > .7 ? "11em" : "6.4em";   /* above and below the rim a name runs wide and low; beside it, narrow */
+    return { s, m };
+  });
+  const order = el("ol","slices"); layers.forEach(l => { const li = el("li"), a = el("a",null,l.name); a.href = "#/signals?l=" + l.id; li.append(a); order.append(li); });
+  const place = () => {
+    const W = stage.clientWidth, H0 = stage.clientHeight; let H = H0; if (!W || !H) return;
+    if (!order.hidden && getComputedStyle(stage).flexGrow === "1") H += order.offsetHeight + 10;   /* judge with the list gone, as it will be */
+    labs.forEach(o => o.s.hidden = false);
+    /* the largest rim at which every label, at its own width and height, stays inside the stage */
+    const gap = 10; let rim = Math.min(W, H) / 2;
+    for (const o of labs){
+      const w = o.s.offsetWidth + 4, h = o.s.offsetHeight + 4, sx = Math.abs(Math.sin(o.m)), cy = Math.abs(Math.cos(o.m));
+      if (sx >= .15) rim = Math.min(rim, (W / 2 - w) / sx - gap);
+      if (cy > .05) rim = Math.min(rim, (H / 2 - h * (.5 + .5 * cy)) / cy - gap);
+    }
+    const beside = rim >= 80;
+    order.hidden = beside; labs.forEach(o => o.s.hidden = !beside);
+    if (!beside) rim = Math.min(W, H0) / 2 * 186 / 220;
+    const D = rim * 2 * 220 / 186, cx = W / 2, cy = H / 2;
+    Object.assign(svg.style, { inset:"auto", position:"absolute", width: D + "px", height: D + "px", left: (cx - D / 2) + "px", top: (cy - D / 2) + "px" });
+    if (beside) for (const o of labs){
+      const sx = Math.sin(o.m), cyy = Math.cos(o.m), x = cx + (rim + gap) * sx, y = cy - (rim + gap) * cyy;
+      const tx = Math.abs(sx) < .15 ? -50 : sx > 0 ? 0 : -100, ty = -50 - 50 * cyy;
+      Object.assign(o.s.style, { left: x + "px", top: y + "px", transform: "translate(" + tx + "%," + ty + "%)", textAlign: tx === 0 ? "left" : tx === -100 ? "right" : "center" });
+    }
+  };
+  new ResizeObserver(place).observe(stage);
+  setTimeout(place, 0); setTimeout(place, 120); document.fonts?.ready.then(place);   /* no frame runs in a background tab */
+  window.placeRadar = place;                                                          /* the window's resize hook calls the current one */
   stage.append(svg);
   const box = el("div");
   box.append(el("p","radarhint","Click a signal to open its page." + (total > items.length ? " Showing the " + items.length + " that ask most, of " + total + "." : "")), stage);
   const key = el("div","key");
   for (const lv of ["urgent","action","advice","info"]){ const s = el("span"); const d = el("i"); d.style.background = css("--lv-"+lv); s.append(d, document.createTextNode(WORD[lv])); key.append(s); }
   key.append(el("span",null,"centre: most relevant"));
-  const order = el("p","slices"); order.append(el("b",null,"Slices, clockwise: "));
-  layers.forEach((l, i) => { if (i) order.append(document.createTextNode(" · ")); const a = el("a",null,(i + 1) + " " + l.name); a.href = "#/signals?l=" + l.id; order.append(a); });
   box.append(info, key, order); return box;
 }
 
@@ -1345,7 +1383,7 @@ function evenLast(root = document){
 let evenTimer = 0;
 /* after the page is laid out, and again once the web fonts are in (they change where lines break) */
 const evenSoon = root => { setTimeout(() => evenLast(root), 30); document.fonts?.ready.then(() => evenLast(root)); };
-addEventListener("resize", () => { clearTimeout(evenTimer); evenTimer = setTimeout(() => evenLast(), 150); });
+addEventListener("resize", () => { window.placeRadar?.(); setTimeout(() => window.placeRadar?.(), 160); clearTimeout(evenTimer); evenTimer = setTimeout(() => evenLast(), 150); });
 
 /* ------------------------------------------------------------ the router */
 function readerRow(){
