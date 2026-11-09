@@ -62,6 +62,9 @@ nav.views a[aria-current="page"]{border-bottom-color:var(--accent);color:var(--d
 .seg button+button{border-left:1px solid var(--line)}
 .seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
 .row2 .why{color:var(--ink2)}
+#readerSel{display:none}
+@media (max-width:520px){#readers{display:none}#readerSel{display:inline-block}.row2{flex-wrap:nowrap}
+  .facts{display:grid;grid-template-columns:1fr 1fr}.fact{min-width:0}}
 
 /* page heads */
 .head{background:var(--tint);border-bottom:1px solid var(--line)}
@@ -171,6 +174,44 @@ details p{margin-top:8px}
 .term b{font-family:var(--f-mono);font-size:1rem}
 .back{display:inline-block;margin-bottom:10px;font-weight:600}
 
+/* weeks */
+nav.weeks{display:flex;flex-wrap:wrap;align-items:end;gap:10px 18px;margin-top:18px}
+nav.weeks .step{font-weight:700}
+nav.weeks .goto{display:flex;flex-direction:column;gap:4px;font-weight:600;font-size:1rem}
+
+/* trends: figures in two columns on a wide screen, one on a phone */
+.figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,34rem),1fr));gap:18px;align-items:start}
+.fig{margin:0;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 18px;box-shadow:0 1px 3px rgba(16,38,42,.06);min-width:0}
+.fig h3{margin-bottom:4px}
+.figlead{margin:0 0 12px;color:var(--ink2);font-size:1.0625rem}
+.fsub{display:block;color:var(--ink2);font-size:1rem}
+.hbars{display:flex;flex-direction:column;gap:10px}
+.hrow{display:grid;grid-template-columns:minmax(0,15rem) minmax(0,1fr) 2.5rem;gap:4px 12px;align-items:center;color:inherit;text-decoration:none;font-size:1.0625rem}
+a.hrow:hover .hbar{filter:brightness(.88)}
+.hlab b{font-weight:700}
+.hsub{color:var(--ink2)}
+.htrack{height:14px;background:transparent;border-bottom:1px solid var(--line);display:flex;align-items:center}
+.hbar{display:block;height:12px;min-width:4px;background:var(--accent);border-radius:0 4px 4px 0}
+.hval{font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+@media (max-width:640px){.hrow{grid-template-columns:minmax(0,1fr) 2.5rem;grid-template-areas:"l v" "t t"}.hlab{grid-area:l}.hval{grid-area:v}.htrack{grid-area:t}}
+.cols .plot{display:flex;align-items:flex-end;gap:10px;height:220px;border-bottom:1px solid var(--line);padding-top:24px;margin-top:10px}
+.col{flex:1 1 0;max-width:72px;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:stretch;text-decoration:none;color:inherit;position:relative}
+.col .stack{display:flex;flex-direction:column;gap:2px;min-height:4px}
+.col .cseg{display:block;min-height:3px}
+.col .stack .cseg:first-child{border-radius:4px 4px 0 0}
+.ctot{text-align:center;font-weight:700;font-size:1rem}
+.cwk{position:absolute;bottom:-1.7rem;left:0;right:0;text-align:center;font-size:1rem;color:var(--ink2)}
+.cols{padding-bottom:1.9rem}
+.heat{display:grid;gap:3px;font-size:1rem}
+.heat .hh{text-align:center;font-weight:700;color:var(--ink2);text-decoration:none}
+.heat .hr{font-weight:600;padding-right:8px}
+.heat .hc{min-height:2rem;display:flex;align-items:center;justify-content:center;border-radius:4px;background:var(--bg);font-weight:700}
+details.tv{margin-top:14px;border:0;padding:0;background:transparent}
+details.tv summary{font-size:1rem;color:var(--accent)}
+.tbl{border-collapse:collapse;margin-top:8px;font-size:1rem;width:100%}
+.tbl th,.tbl td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:left;vertical-align:top}
+.tbl td{font-variant-numeric:tabular-nums}
+
 /* the bar page */
 .preview{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--panel);margin-bottom:16px}
 .preview .fake{padding:14px 16px;color:var(--ink2)}
@@ -211,6 +252,7 @@ footer code{font-family:var(--f-mono);overflow-wrap:anywhere}
       <a href="#/week" data-view="week">This week</a>
       <a href="#/softanza" data-view="softanza">In Softanza</a>
       <a href="#/signals" data-view="signals">All signals</a>
+      <a href="#/trends" data-view="trends">Trends</a>
       <a href="#/bar" data-view="bar">Lookout bar</a>
     </nav>
     <button class="help" type="button" id="helpOpen" aria-haspopup="dialog">How to read it</button>
@@ -218,6 +260,7 @@ footer code{font-family:var(--f-mono);overflow-wrap:anywhere}
   <div class="row2">
     <span class="lab" id="readerLab">Reading as</span>
     <div class="seg" role="group" aria-labelledby="readerLab" id="readers"></div>
+    <select id="readerSel" aria-labelledby="readerLab"></select>
     <span class="why" id="readerWhy"></span>
   </div>
 </div></header>
@@ -232,14 +275,15 @@ footer code{font-family:var(--f-mono);overflow-wrap:anywhere}
 </div></footer>
 
 <dialog class="helpbox" id="help" aria-labelledby="helpTitle">
-  <h2 id="helpTitle">How to read Lookout Radar</h2>
+  <h2 id="helpTitle">How to read it</h2>
   <dl>
-    <dt>What it is</dt><dd>Every week Lookout reads what changed in AI at its source, and places each piece of news where it lands in Softanza: the machine, the language, the foundation and every project built on them.</dd>
-    <dt>Reading as</dt><dd>Say who you are once. Each signal then speaks to you in one sentence, and its page opens with what you need first: checks to run for a developer, the work proposed for a maintainer, a lesson for a learner.</dd>
-    <dt>This week</dt><dd>The week's signals on a radar: each slice is a layer of Softanza, and the closer a dot sits to the centre, the more it matters.</dd>
-    <dt>In Softanza</dt><dd>The whole Softanza stack, layer by layer, and a grid of domains against layers: click any number to see those signals.</dd>
-    <dt>All signals</dt><dd>Every live signal, filtered by project, layer, domain, concern or level.</dd>
-    <dt>Lookout bar</dt><dd>One line of these notices on your own site, from one script tag.</dd>
+    <dt>What it is</dt><dd>AI news read at its source, and where it lands in Softanza.</dd>
+    <dt>Reading as</dt><dd>Who you are: each signal speaks to you and opens on what you need first.</dd>
+    <dt>This week</dt><dd>The week on a radar (slices are layers, the centre matters most); arrows reach earlier weeks.</dd>
+    <dt>In Softanza</dt><dd>The platform layer by layer; every number opens its signals.</dd>
+    <dt>All signals</dt><dd>Filter by project, layer, domain, concern, level or week.</dd>
+    <dt>Trends</dt><dd>The weeks together, each chart with its table.</dd>
+    <dt>Lookout bar</dt><dd>These notices on your own site.</dd>
     <dt>Levels</dt><dd><b>to know</b>, <b>to consider</b>, <b>to do</b>, <b>to do now</b>.</dd>
   </dl>
   <form method="dialog"><button class="btn" type="submit">Got it</button></form>
@@ -321,20 +365,40 @@ function head(eyebrow, title, ledes){
 }
 
 /* ------------------------------------------------------------ view: this week */
-function viewWeek(){
-  const newest = live.map(i => i.date).sort().pop() || today;
-  const wk = weekOf(newest);
-  const items = live.filter(i => weekOf(i.date) === wk).sort(byLevel);
+/* every week that holds an entry, newest first; a past week keeps its entries even after their review date */
+const weeksAll = () => [...new Set(FEED.items.map(i => weekOf(i.date)))].sort().reverse();
+function weekSpan(wk){
+  const [y, w] = wk.split("-W").map(Number);
+  const jan4 = new Date(Date.UTC(y,0,4)), mon = new Date(jan4); mon.setUTCDate(jan4.getUTCDate() - ((jan4.getUTCDay() || 7) - 1) + (w - 1) * 7);
+  const sun = new Date(mon); sun.setUTCDate(mon.getUTCDate() + 6);
+  const f = (d, o) => d.toLocaleDateString("en-GB", Object.assign({timeZone:"UTC"}, o));
+  return mon.getUTCMonth() === sun.getUTCMonth() ? f(mon,{day:"numeric"}) + " to " + f(sun,{day:"numeric",month:"long",year:"numeric"})
+                                                 : f(mon,{day:"numeric",month:"long"}) + " to " + f(sun,{day:"numeric",month:"long",year:"numeric"});
+}
+function viewWeek(wkArg){
+  const weeks = weeksAll();
+  const wk = weeks.includes(wkArg) ? wkArg : weeks[0];
+  const latest = wk === weeks[0];
+  const items = FEED.items.filter(i => weekOf(i.date) === wk && i.status !== "superseded").sort(byLevel);
   const frag = document.createDocumentFragment();
-  const h = head("Week " + wk, "What changed in AI this week, and what it means for what you build",
+  const h = head("Week " + wk + " · " + weekSpan(wk),
+    latest ? "What changed in AI this week, and what it means for what you build" : "What changed in AI in week " + wk,
     ["Lookout reads the week's papers, releases, security findings and practices at their source, and shows where each one lands in Softanza: the machine (Harobanda), the language (Haro), the foundation (Softanza), and the projects built on them."]);
+  /* the week stepper: the weeks that hold signals, one step at a time, or any of them from the list */
+  const nav = el("nav","weeks"); nav.setAttribute("aria-label","Weeks");
+  const i = weeks.indexOf(wk);
+  if (i < weeks.length - 1){ const a = el("a","step","← Week " + weeks[i + 1]); a.href = "#/week/" + weeks[i + 1]; nav.append(a); }
+  if (i > 0){ const a = el("a","step","Week " + weeks[i - 1] + " →"); a.href = "#/week/" + weeks[i - 1]; nav.append(a); }
+  const lab = el("label","goto"); lab.append(document.createTextNode("Go to week"));
+  const sl = el("select"); for (const w of weeks){ const n = FEED.items.filter(x => weekOf(x.date) === w).length; sl.append(new Option(w + " · " + plural(n,"signal"), w)); }
+  sl.value = wk; sl.addEventListener("change", () => { location.hash = "#/week/" + sl.value; }); lab.append(sl); nav.append(lab);
   const facts = el("div","facts");
   const fact = (n, w) => { if (n > 0){ const f = el("div","fact"); f.append(el("b",null,String(n)), document.createTextNode(w)); facts.append(f); } };
-  fact(items.length, items.length === 1 ? "signal this week" : "signals this week");
+  fact(items.length, items.length === 1 ? (latest ? "signal this week" : "signal that week") : (latest ? "signals this week" : "signals that week"));
   fact(items.filter(i => i.level === "action" || i.level === "urgent").length, "to do");
   fact(items.filter(i => i.notice?.[reader]).length, "written for a " + reader);
   fact(new Set(items.flatMap(projectsOf)).size, "projects touched");
-  h.querySelector(".wrap").append(facts);
+  h.querySelector(".wrap").append(facts, nav);
   frag.append(h);
   const s = el("section","block wrap week");
   const scope = el("div","scope"); scope.append(el("h2",null,"The week across Softanza"), radar(items));
@@ -443,7 +507,7 @@ function viewEstate(){
 /* ------------------------------------------------------------ view: all signals */
 function viewSignals(q){
   const frag = document.createDocumentFragment();
-  frag.append(head("All signals", "Every live signal, filtered your way",
+  frag.append(head("All signals", q.get("w") ? "Every signal of week " + q.get("w") + ", filtered your way" : "Every live signal, filtered your way",
     ["Choose a project, a layer, a domain, a concern or a level. Each choice is kept in the address, so a filtered list can be shared."]));
   const s = el("section","block wrap");
   const f = el("div","filters");
@@ -460,8 +524,11 @@ function viewSignals(q){
   sel("d","Domain", MAP.domains.map(d => [d.id, d.name]));
   sel("c","Concern", MAP.concerns.map(c => [c.id, c.name]));
   sel("v","Level at least", LEVELS.map(v => [v, WORD[v]]));
+  sel("w","Week", weeksAll().map(w => [w, w + " · " + weekSpan(w)]));
   s.append(f);
-  const items = live.filter(it =>
+  /* a chosen week reads the archive (every entry of that week); otherwise the live signals */
+  const pool = q.get("w") ? FEED.items.filter(it => weekOf(it.date) === q.get("w") && it.status !== "superseded") : live;
+  const items = pool.filter(it =>
        (!q.get("p") || projectsOf(it).includes(q.get("p")))
     && (!q.get("l") || layersOf(it).includes(q.get("l")))
     && (!q.get("d") || (it.domains||[]).includes(q.get("d")))
@@ -527,6 +594,137 @@ function viewSignal(id){
   frag.append(s); return frag;
 }
 
+/* ------------------------------------------------------------ view: trends
+   Four questions over a chosen period: how much was read and how carefully, how Softanza positioned itself,
+   how it reacted, and what it learned. Charts are HTML (their text keeps the reading size), each with its table.
+   A chart over time appears from two weeks on; one week is shown as ranked bars, never as a one-bar chart. */
+const STANCE = {adopt:"take it into Softanza", learn:"it changes how we think", correct:"Softanza can do it better",
+                defend:"protect Softanza and its users", watch:"look again later", decline:"considered and refused"};
+const ASTATE = ["proposed","routed","in-progress","done"];
+function figure(title, lead, chart, head, rows){
+  const f = el("figure","fig"); f.append(el("h3",null,title)); if (lead) f.append(el("p","figlead",lead)); f.append(chart);
+  const d = el("details","tv"); d.append(el("summary",null,"Show as a table"));
+  const t = el("table","tbl"), tr = el("tr"); for (const h of head) tr.append(el("th",null,h)); const th = el("thead"); th.append(tr); t.append(th);
+  const tb = el("tbody"); for (const r of rows){ const x = el("tr"); r.forEach((c, i) => x.append(el(i ? "td" : "th", null, String(c)))); tb.append(x); } t.append(tb);
+  d.append(t); f.append(d); return f;
+}
+/* ranked horizontal bars: one series, one colour, value written at the end of each bar */
+function hbars(rows, opt = {}){
+  const max = Math.max(1, ...rows.map(r => r.value)), box = el("div","hbars");
+  for (const r of rows){
+    const row = el(r.href ? "a" : "div","hrow"); if (r.href) row.href = r.href;
+    const lab = el("span","hlab"); lab.append(el("b",null,r.label)); if (r.sub) lab.append(el("span","hsub"," " + r.sub));
+    const track = el("span","htrack"), bar = el("span","hbar"); bar.style.width = (r.value / max * 100) + "%";
+    if (r.color) bar.style.background = r.color; bar.title = r.label + ": " + r.value + (opt.unit ? " " + opt.unit : "");
+    track.append(bar); row.append(lab, track, el("span","hval",String(r.value))); box.append(row);
+  }
+  return box;
+}
+/* columns by week, stacked by an ordered key; legend above, total on top of each column */
+function columns(weeks, keys, colorOf, labelOf, countOf){
+  const max = Math.max(1, ...weeks.map(w => keys.reduce((s,k) => s + countOf(w,k), 0)));
+  const box = el("div","cols"), leg = el("div","key");
+  for (const k of [...keys].reverse()){ const s = el("span"); const d = el("i"); d.style.background = colorOf(k); s.append(d, document.createTextNode(labelOf(k))); leg.append(s); }
+  const plot = el("div","plot");
+  for (const w of weeks){
+    const tot = keys.reduce((s,k) => s + countOf(w,k), 0), col = el("a","col"); col.href = "#/week/" + w;
+    col.append(el("span","ctot",String(tot)));
+    const stack = el("span","stack"); stack.style.height = (tot / max * 100) + "%";
+    for (const k of keys){ const n = countOf(w,k); if (!n) continue; const seg = el("span","cseg"); seg.style.flexGrow = n; seg.style.background = colorOf(k); seg.title = w + ", " + labelOf(k) + ": " + n; stack.prepend(seg); }
+    col.append(stack, el("span","cwk",w.slice(5))); plot.append(col);
+  }
+  box.append(leg, plot); return box;
+}
+function heat(rowsDef, weeks, countOf){
+  const max = Math.max(1, ...rowsDef.flatMap(r => weeks.map(w => countOf(r.id, w))));
+  const g = el("div","heat"); g.style.gridTemplateColumns = "minmax(6rem,14rem) repeat(" + weeks.length + ", minmax(0,1fr))";   /* never wider than its card */
+  g.append(el("span","hh","")); for (const w of weeks){ const a = el("a","hh",w.slice(5)); a.href = "#/week/" + w; g.append(a); }
+  for (const r of rowsDef){
+    g.append(el("span","hr",r.name));
+    for (const w of weeks){ const n = countOf(r.id, w), c = el("span","hc", n ? String(n) : "");
+      if (n){ const t = n / max; c.style.background = "color-mix(in srgb, var(--accent) " + Math.round(18 + t * 82) + "%, var(--panel))"; if (t > .45) c.style.color = "var(--accent-ink)"; }
+      c.title = r.name + ", " + w + ": " + n; g.append(c); }
+  }
+  return g;
+}
+function viewTrends(q){
+  const all = weeksAll().slice().reverse();                       /* oldest first */
+  const span = q.get("n") || "all";
+  const weeks = span === "all" ? all : all.slice(-Number(span));
+  const items = FEED.items.filter(i => weeks.includes(weekOf(i.date)) && i.status !== "superseded");
+  const frag = document.createDocumentFragment();
+  frag.append(head("Trends", "How Softanza reads AI, and how it answers",
+    ["Over the weeks Lookout has kept: how much was read and how carefully, where Softanza stands on each development, what it proposed to its own projects, and what it wrote down to learn from. Every number opens the signals behind it."]));
+  const s = el("section","block wrap");
+  /* the one filter row: the period */
+  const fr = el("div","filters"); const lab = el("label"); lab.append(document.createTextNode("Period"));
+  const sl = el("select"); for (const [v,t] of [["all","every week kept"],["4","last 4 weeks"],["12","last 12 weeks"]]) sl.append(new Option(t,v));
+  sl.value = span; sl.addEventListener("change", () => { location.hash = "#/trends" + (sl.value === "all" ? "" : "?n=" + sl.value); });
+  lab.append(sl); fr.append(lab, el("p","figlead", plural(weeks.length,"week") + ": " + (weeks.length ? weekSpan(weeks[0]).split(" to ")[0] + " to " + weekSpan(weeks.at(-1)).split(" to ")[1] : ""))); s.append(fr);
+
+  /* the headline numbers */
+  const acts = items.flatMap(i => (i.actions||[]).map(a => Object.assign({entry:i.id}, a)));
+  const lessons = items.filter(i => LESSONS[i.id]);
+  const tiles = el("div","facts");
+  const tile = (n, w, sub) => { const f = el("div","fact"); f.append(el("b",null,String(n)), document.createTextNode(w)); if (sub) f.append(el("span","fsub",sub)); tiles.append(f); };
+  tile(items.length, "signals read", (items.length / Math.max(1,weeks.length)).toFixed(1).replace(".0","") + " a week");
+  tile(Math.round(100 * items.filter(i => i.confidence === "read").length / Math.max(1,items.length)) + "%", "read at the source", items.flatMap(i => i.sources).length + " sources");
+  tile(acts.length, "proposals to Softanza", acts.filter(a => a.state !== "proposed").length + " routed or further");
+  tile(new Set(items.flatMap(projectsOf)).size, "projects reached", "of " + MAP.projects.length + " in Softanza");
+  tile(lessons.length, "lessons written", lessons.reduce((n,i) => n + (LESSONS[i.id].quiz||[]).length, 0) + " questions to test yourself");
+  s.append(tiles);
+  frag.append(s);
+
+  const grid = el("section","block wrap figs");
+  const many = weeks.length >= 2;
+  /* 1. pressure: what the weeks asked of Softanza */
+  const lv = ["info","advice","action","urgent"], cnt = (w,k) => items.filter(i => weekOf(i.date) === w && i.level === k).length;
+  grid.append(figure("What each week asked of Softanza",
+    many ? "Signals per week, by what they ask: from to know up to to do now. Click a week to read it." : "Signals by what they ask, from to know up to to do now.",
+    many ? columns(weeks, lv, k => css("--lv-"+k), k => WORD[k], cnt)
+         : hbars([...lv].reverse().map(k => ({label:WORD[k], value:items.filter(i => i.level === k).length, color:css("--lv-"+k), href:"#/signals?v=" + k}))),
+    ["Week", ...lv.map(k => WORD[k]), "total"], weeks.map(w => [w, ...lv.map(k => cnt(w,k)), lv.reduce((s,k) => s + cnt(w,k), 0)])));
+
+  /* 2. position: the stance Softanza took */
+  const st = Object.keys(STANCE).map(k => ({k, n: items.filter(i => i.stance === k).length})).filter(x => x.n).sort((a,b) => b.n - a.n);
+  grid.append(figure("Where Softanza stands",
+    "The position Softanza took on each development it read.",
+    hbars(st.map(x => ({label:x.k, sub:STANCE[x.k], value:x.n}))),
+    ["Stance","meaning","signals"], st.map(x => [x.k, STANCE[x.k], x.n])));
+
+  /* 3. reaction: what Softanza did with them */
+  const ast = ASTATE.map(k => ({k, n: acts.filter(a => a.state === k).length}));
+  const reached = k => acts.filter(a => ASTATE.indexOf(a.state) >= ASTATE.indexOf(k)).length;
+  grid.append(figure("How Softanza reacted",
+    plural(acts.length, "proposal") + " written for Softanza's own projects, and how far each has gone: every proposal is counted at every stage it has reached.",
+    hbars(ASTATE.map(k => ({label:k.replace("-"," "), value:reached(k)}))),
+    ["Stage reached","proposals","now at this stage"], ASTATE.map(k => [k, reached(k), ast.find(x => x.k === k).n])));
+
+  /* 4. reach: where the news lands, over time or ranked */
+  const lcount = (lid, w) => items.filter(i => (w ? weekOf(i.date) === w : 1) && layersOf(i).includes(lid)).length;
+  const layers = MAP.layers.filter(l => lcount(l.id));
+  grid.append(figure("Where it lands in Softanza",
+    many ? "Signals touching each layer, week by week; darker is more." : "Signals touching each layer of Softanza.",
+    many ? heat(layers.map(l => ({id:l.id, name:l.name})), weeks, lcount)
+         : hbars(layers.map(l => ({label:l.name, value:lcount(l.id), href:"#/signals?l=" + l.id})).sort((a,b) => b.value - a.value)),
+    ["Layer", ...weeks, "total"], layers.map(l => [l.name, ...weeks.map(w => lcount(l.id,w)), lcount(l.id)])));
+
+  /* 5. subjects and stakes */
+  const dom = MAP.domains.map(d => ({label:d.name, value:items.filter(i => (i.domains||[]).includes(d.id)).length, href:"#/signals?d=" + d.id})).filter(r => r.value).sort((a,b) => b.value - a.value);
+  grid.append(figure("What the news was about", "Signals in each domain; one signal can belong to several.", hbars(dom), ["Domain","signals"], dom.map(r => [r.label, r.value])));
+  const con = MAP.concerns.map(c => ({label:c.name, sub:c.line, value:items.filter(i => (i.concerns||[]).includes(c.id)).length, href:"#/signals?c=" + c.id})).filter(r => r.value).sort((a,b) => b.value - a.value);
+  grid.append(figure("What was at stake", "The concern each signal puts in play.", hbars(con), ["Concern","signals"], con.map(r => [r.label, r.value])));
+
+  /* 6. learning, and the next look */
+  const lr = items.filter(i => LESSONS[i.id]).map(i => ({label:clean(i.title), value:(LESSONS[i.id].terms||[]).length + (LESSONS[i.id].quiz||[]).length + (LESSONS[i.id].build||[]).length, href:"#/signal/" + i.id})).sort((a,b) => b.value - a.value).slice(0, 8);
+  grid.append(figure("What Softanza wrote down to learn", "For each signal: the checks, terms and questions written beside it (the eight richest).", hbars(lr, {unit:"items"}), ["Signal","checks, terms and questions"], lr.map(r => [r.label, r.value])));
+  const soon = FEED.items.filter(i => i.status !== "superseded" && i.review_by >= today).sort((a,b) => a.review_by < b.review_by ? -1 : 1).slice(0, 6);
+  const ul = el("ul","plain"); for (const i of soon){ const li = el("li"); const a = el("a",null,clean(i.title)); a.href = "#/signal/" + i.id; li.append(el("b",null,i.review_by + " "), a); ul.append(li); }
+  grid.append(figure("Looked at again next", "Each signal carries the day Softanza reviews it; these come first.", ul, ["Review by","signal"], soon.map(i => [i.review_by, clean(i.title)])));
+  frag.append(grid);
+  return frag;
+}
+
 /* ------------------------------------------------------------ view: the Lookout bar */
 const BAR_VERSION = "1.0.0", BAR_SRI = "sha384-G9y4SkVgX4Tv9gtIOvZUKRgSci1cEqckGO/CHjIj91V0zrNpldPRt0vB2tkgxYeL";
 function viewBar(){
@@ -586,6 +784,10 @@ function readerRow(){
     box.append(b);
   }
   $("#readerWhy").textContent = READERS[reader].why + ".";
+  const rs = $("#readerSel");                                     /* the same choice, as one control on a phone */
+  if (!rs.options.length){ for (const r of Object.keys(READERS)) rs.append(new Option(READERS[r].label, r));
+    rs.addEventListener("change", () => { reader = rs.value; store.set("reader", reader); readerRow(); route(true); }); }
+  rs.value = reader;
 }
 function route(keepScroll){
   const h = location.hash || "#/week";
@@ -598,7 +800,8 @@ function route(keepScroll){
   else if (v === "signals"){ node = viewSignals(new URLSearchParams(qs || "")); title = "All signals · Lookout Radar"; }
   else if (v === "signal"){ node = viewSignal(decodeURIComponent(parts[1] || "")); title = (FEED.items.find(i => i.id === parts[1])?.title || "Signal") + " · Lookout Radar"; }
   else if (v === "bar"){ node = viewBar(); title = "Lookout bar · Lookout Radar"; }
-  else { node = viewWeek(); }
+  else if (v === "trends"){ node = viewTrends(new URLSearchParams(qs || "")); title = "Trends · Lookout Radar"; }
+  else { node = viewWeek(parts[1]); if (parts[1]) title = "Week " + parts[1] + " · Lookout Radar"; }
   main.append(node); document.title = title;
   document.querySelectorAll("nav.views a").forEach(a => a.toggleAttribute("aria-current", a.dataset.view === (v === "signal" ? "signals" : v === "estate" ? "softanza" : v)));
   document.querySelectorAll("nav.views a[aria-current]").forEach(a => a.setAttribute("aria-current","page"));
