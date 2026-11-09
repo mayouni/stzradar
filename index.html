@@ -317,11 +317,15 @@ nav.weeks .goto{display:flex;flex-direction:column;gap:4px;font-weight:600;font-
 /* trends reads as one column: chapters, each opening on its finding, the figures under it at one width */
 .report{max-width:64rem}
 .report .period{margin:0 0 6px;font-size:1.1875rem}
-.report .period select{margin:0 4px}
+.report .period select{margin:0}
 /* Trends in two clear levels (author, 2026-11-09: "separate clearly between sections"): a chapter opens under a strong
    teal rule with wide space above it; each figure inside, with its table, is one block under a thin rule */
-h2.chap{font:700 1.75rem/1.2 var(--f-title);margin:72px 0 12px;padding-top:28px;border-top:3px solid var(--accent)}
-h2.chap:first-of-type{margin-top:18px}
+/* chapters part by space and a thin rule, the first by space alone (the author removed the strong rule, 2026-11-09) */
+h2.chap{font:700 1.75rem/1.2 var(--f-title);margin:64px 0 12px;padding-top:24px;border-top:1px solid var(--line)}
+h2.chap:first-of-type{margin-top:28px;padding-top:0;border-top:0}
+.report .period{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;margin:0}
+.report .period .plab{flex-basis:100%;font-size:1rem;color:var(--ink2)}
+.report .period .pspan{font-size:1.125rem;color:var(--ink2)}
 p.finding{font-size:1.3125rem;line-height:1.55;margin:0 0 18px;max-width:80ch}
 .keyfigs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0 0 8px;padding:12px 0;border-block:1px solid var(--line)}
 .keyfigs div{display:flex;flex-direction:column}
@@ -1070,10 +1074,12 @@ function viewTrends(q){
      figures under it show the same thing; nothing sits beside anything else. */
   const rep = el("div","railmain report");
   /* the period, as a line of the report */
-  const fr = el("p","period"); fr.append(el("b",null,"Period: "));
+  const fr = el("div","period"); fr.append(el("label","plab","The weeks these trends are counted over"));   /* the filter at the top left of the report, with a small label (author, 2026-11-09) */
   const sl = el("select"); sl.setAttribute("aria-label","Period"); for (const [v,t] of [["all","every week kept"],["4","the last 4 weeks"],["12","the last 12 weeks"]]) sl.append(new Option(t,v));
   sl.value = span; sl.addEventListener("change", () => { location.hash = "#/trends" + (sl.value === "all" ? "" : "?n=" + sl.value); });
-  fr.append(sl, document.createTextNode(plural(weeks.length,"week") + (weeks.length ? ", " + weekSpan(weeks[0]).split(" to ")[0] + " to " + weekSpan(weeks.at(-1)).split(" to ")[1] : "") + "."));
+  fr.querySelector("label").htmlFor = sl.id = "periodSel";
+  fr.append(sl, el("span","pspan", plural(weeks.length,"week") + (weeks.length ? ", " + weekSpan(weeks[0]).split(" to ")[0] + " to " + weekSpan(weeks.at(-1)).split(" to ")[1] : "") + "."));
+  rep.append(fr);
 
   const acts = items.flatMap(i => (i.actions||[]).map(a => Object.assign({entry:i.id}, a)));
   const n = items.length, many = weeks.length >= 2;
@@ -1161,7 +1167,7 @@ function viewTrends(q){
   rep.append(figure("The richest lessons", "For each signal: the checks, terms and questions written beside it.", hbars(lr, {unit:"items"}), ["Signal","checks, terms and questions"], lr.map(r => [r.label, r.value])));
   const ul = el("ul","plain"); for (const i of soon){ const li = el("li"); const a = el("a",null,clean(i.title)); a.href = "#/signal/" + i.id; li.append(el("b",null,i.review_by + " "), a); ul.append(li); }
   rep.append(figure("Looked at again next", "Each signal carries the day " + NAME() + " reviews it; these come first.", ul, ["Review by","signal"], soon.map(i => [i.review_by, clean(i.title)])));
-  frag.append(railPage(rep, {label:"Period", tools:[fr], outline: contentsOf(rep, "h2.chap")}));
+  frag.append(railPage(rep, {outline: contentsOf(rep, "h2.chap")}));
   return frag;
 }
 
