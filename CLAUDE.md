@@ -124,7 +124,7 @@ they were measured by the ringpp session on 2026-10-24 and by the desks named.
   Haro cannot run yet.
 - **The engine**: rnxc loads DLLs built for Ring++ (they export rpp_init), not the ones `zig build` makes. A
   worktree that has built its own engine hands rnxc the wrong DLLs and the run stops. A desk that changes
-  engine Zig builds a Ring++ copy: `python %RINGPPSRC%\bench\engine_copy.py --src=<worktree>\libraries\stzlib\engine --dst=%RINGPPSRC%\runtime\engine-lookout`.
+  engine Zig builds a Ring++ copy: `python %RINGPPSRC%\bench\engine_copy.py --src=<worktree>\libraries\stzlib\engine --dst=%RINGPPSRC%\runtime\engine-stzradar`.
 - **A Ring builtin rnxc lacks** raises R3 at its line, never a wrong answer. Say which one in your outbox,
   for HARO: the Haro desk adds it there (HAROFIRST (b)); ringpp does not add it to Ring++.
 

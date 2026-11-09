@@ -126,7 +126,7 @@ main :is(p,li,dd,figcaption,summary,.lede){max-width:78ch}
 .outline a[aria-current]{font-weight:700;color:var(--ink)}
 ul.points{margin:0 0 12px;padding-left:22px;display:flex;flex-direction:column;gap:8px}
 .filterbox{margin:0 0 6px}
-.filterbox .plab{margin:0 0 8px;font-size:1rem;color:var(--ink2)}
+.filterbox .plab{margin:0 0 8px;font-size:1.125rem;color:var(--ink2)}
 .filterbox .filters{grid-template-columns:repeat(3,minmax(0,1fr))}
 @media (max-width:560px){.filterbox .filters{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .railtools .filters{display:flex;flex-direction:column;align-items:stretch;gap:12px;border:0;padding:0;margin:0}
@@ -157,7 +157,7 @@ ul.points{margin:0 0 12px;padding-left:22px;display:flex;flex-direction:column;g
 .homeadopt{margin:28px 0 44px;padding:22px 26px;border:1px solid var(--line);border-radius:14px;background:var(--panel);display:flex;flex-wrap:wrap;align-items:center;gap:16px 36px;width:fit-content;max-width:100%}
 .homeadopt .adtext{flex:0 1 40rem;min-width:0}
 .homeadopt h2{margin:0 0 6px;font:700 1.6rem/1.2 var(--f-title)}
-.homeadopt p{margin:0;font-size:1.25rem;color:var(--ink2)}
+.homeadopt p{margin:0;font-size:var(--read);color:var(--ink2)}
 .homeadopt a.btn{text-decoration:none}/* the front page: the hero in two halves (text, live radar), then one row of three columns */
 /* the whole hero -- promise and radar -- fits the window under the header at 100% zoom (author, 2026-11-09): its
    height is the window's, the radar takes what its pane has left, and the type steps with the window's height */
@@ -181,8 +181,8 @@ ul.points{margin:0 0 12px;padding-left:22px;display:flex;flex-direction:column;g
 .homecols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:48px;padding-block:40px 28px}
 .homecol{padding-top:0}
 .homecol h2{font:700 1.6rem/1.2 var(--f-title);margin:0 0 14px}
-.homecol p{margin:0;font-size:1.25rem;line-height:1.55}
-.homecol ul{margin:0;padding-left:24px;display:flex;flex-direction:column;gap:12px;font-size:1.25rem;line-height:1.5}
+.homecol p{margin:0;font-size:var(--read);line-height:1.55}
+.homecol ul{margin:0;padding-left:24px;display:flex;flex-direction:column;gap:12px;font-size:var(--read);line-height:1.5}
 @media (max-width:1100px){.herogrid{grid-template-columns:minmax(0,1fr);gap:32px;height:auto;min-height:0}.hero h1{max-width:24ch}.heroradar{max-width:46rem}
   .heroradar .radarstage{flex:none;aspect-ratio:6/5;min-height:0}}
 @media (max-width:900px){.homecols{grid-template-columns:minmax(0,1fr);gap:32px}}/* page heads */
@@ -239,13 +239,13 @@ section.block{padding-block:28px 8px}
 /* the info bar under the radar: one height, information only; the level stands out as its tinted label */
 .infobar{min-height:4.4rem;margin-top:8px;padding:8px 12px;border-left:4px solid var(--line);background:var(--bg);border-radius:0 10px 10px 0;display:flex;align-items:center;gap:6px 12px;flex-wrap:wrap}
 .infobar.on{border-left-color:var(--accent)}
-.infobar .ihint{color:var(--ink2);font-size:1.1875rem}
+.infobar .ihint{color:var(--ink2);font-size:var(--read)}
 .blip.picked circle.halo{stroke-width:4}
 .infobar .iopen{color:var(--deep);text-decoration:underline;font-size:1.125rem;white-space:nowrap}
 .infobar .ititle{font:700 1.0625rem/1.35 var(--f-title);flex:1 1 14rem;min-width:0}
 /* the card's own words (title and hint) and the drawing's labels are two levels of reading: a clear gap between them,
    about twice the line height, so the slice names never read as part of the hint (author, 2026-11-09) */
-.radarhint{margin:0 0 clamp(18px,3.2vh,32px);font-size:1.1875rem;line-height:1.4;color:var(--ink2)}
+.radarhint{margin:0 0 clamp(18px,3.2vh,32px);font-size:var(--read);line-height:1.4;color:var(--ink2)}
 /* around the rim, each slice's number sits just outside it and its name runs outward from the number, as plain text
    (author, 2026-11-09: labels are not links) */
 .radarstage .sl{position:absolute;display:flex;align-items:center;gap:.4em;font-size:1.125rem;line-height:1.25;color:var(--lab)}
@@ -284,11 +284,11 @@ section.block{padding-block:28px 8px}
 .stack{display:flex;flex-direction:column;gap:10px}
 .layer{display:grid;grid-template-columns:minmax(0,15rem) minmax(0,1fr);gap:12px 18px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;box-shadow:0 1px 3px rgba(16,38,42,.06)}
 @media (max-width:700px){.layer{grid-template-columns:minmax(0,1fr)}}
-.layer .name p{margin:4px 0 0;color:var(--ink2);font-size:1.125rem}
+.layer .name p{margin:4px 0 0;color:var(--ink2);font-size:var(--read)}
 .projects{display:flex;flex-wrap:wrap;gap:10px}
 .proj{flex:1 1 15rem;border:1px solid var(--line);border-radius:12px;padding:10px 14px;color:inherit;text-decoration:none;background:var(--bg)}
 .proj b{font-family:var(--f-title);font-size:1.15rem}
-.proj p{margin:4px 0 0;color:var(--ink2);font-size:1.125rem}
+.proj p{margin:4px 0 0;color:var(--ink2);font-size:var(--read)}
 /* in-page links read as links: teal words, underlined, with their arrow; one emphasis, never bold as well. A filled teal pill is kept for one
    meaning only, the choice selected in the pinned bars, so nothing inside a page looks like one of them. */
 .concern .n,.proj .n,.card .n{display:inline-block;align-self:flex-start;margin-top:8px;color:var(--deep);font-weight:400;font-size:1.125rem;text-decoration:underline}
@@ -302,7 +302,7 @@ section.block{padding-block:28px 8px}
 
 .beside{background:var(--tint);border:1px dashed var(--accent);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
 .beside .proj{flex:none}
-table.grid{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;font-size:1.125rem}
+table.grid{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;font-size:var(--read)}
 table.grid th,table.grid td{border:1px solid var(--line);padding:8px 10px;text-align:center;vertical-align:middle}
 table.grid thead th{background:var(--tint);font-weight:700}
 table.grid tbody th{text-align:left;font-weight:700;white-space:normal}
@@ -319,7 +319,7 @@ table.grid td a{display:inline-block;min-width:2.2rem;padding:2px 8px;color:var(
 .concerns{display:flex;flex-direction:column;max-width:64rem}
 .concern{display:block;padding:14px 0;color:inherit;text-decoration:none}
 .concern:first-child{border-top:0}
-.concern p{margin:4px 0 0;color:var(--ink2);font-size:1.125rem}
+.concern p{margin:4px 0 0;color:var(--ink2);font-size:var(--read)}
 
 /* all signals */
 /* the six filters share the row in equal parts, in rows that always come out full: 6, then 3 + 3, then 2 + 2 + 2;
@@ -340,13 +340,13 @@ select{background:var(--panel);border:1px solid var(--line);border-radius:8px;pa
 .sig .part:first-of-type{border-top:0}
 .sig h2{font-size:1.35rem}
 .sig p{margin:0 0 10px;max-width:80ch}
-.notice{border-left:4px solid var(--accent);padding:6px 0 6px 16px;font-size:1.25rem}
+.notice{border-left:4px solid var(--accent);padding:6px 0 6px 16px;font-size:var(--read)}
 .kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;margin:0}
 .kv dt{color:var(--ink2);font-weight:600}
 .kv dd{margin:0}
 ul.plain{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:6px}
 .code{position:relative;background:var(--tint);border:1px solid var(--line);border-radius:12px;margin-bottom:12px}
-.code .why{padding:10px 16px 0;color:var(--ink2);font-size:1.125rem}
+.code .why{padding:10px 16px 0;color:var(--ink2);font-size:var(--read)}
 .code pre{margin:0;padding:12px 16px 14px;font:400 1.125rem/1.5 var(--f-mono);white-space:pre-wrap;overflow-wrap:anywhere}
 .copy{position:absolute;top:8px;right:8px;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:2px 10px;font-size:1.125rem;cursor:pointer}
 .code.withcopy pre{padding-right:5.5rem}
@@ -373,7 +373,7 @@ nav.weeks .goto{display:flex;flex-direction:column;gap:4px;font-weight:600;font-
 h2.chap{font:700 1.75rem/1.2 var(--f-title);margin:72px 0 12px;padding-top:0}
 h2.chap:first-of-type{margin-top:28px;padding-top:0;border-top:0}
 .report .period{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;margin:0}
-.report .period .plab{flex-basis:100%;font-size:1rem;color:var(--ink2)}
+.report .period .plab{flex-basis:100%;font-size:1.125rem;color:var(--ink2)}
 .report .period .pspan{font-size:1.125rem;color:var(--ink2)}
 p.finding{font-size:1.3125rem;line-height:1.55;margin:0 0 18px;max-width:80ch}
 .keyfigs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:8px 0 8px;padding:8px 0}
@@ -387,7 +387,7 @@ p.finding{font-size:1.3125rem;line-height:1.55;margin:0 0 18px;max-width:80ch}
 .keyfigs + .fig,.finding + .fig{border-top:0;padding-top:4px}
 .fig .tv{margin-top:12px}
 .fig h3{margin-bottom:4px;font-size:1.2rem}
-.figlead{margin:0 0 12px;color:var(--ink2);font-size:1.1875rem}
+.figlead{margin:0 0 12px;color:var(--ink2);font-size:var(--read)}
 .fsub{display:block;color:var(--ink2);font-size:1.125rem}
 .hbars{display:flex;flex-direction:column;gap:10px}
 .hrow{display:grid;grid-template-columns:minmax(0,15rem) minmax(0,1fr) 2.5rem;gap:4px 12px;align-items:center;color:inherit;text-decoration:none;font-size:1.1875rem}
@@ -412,7 +412,7 @@ p.finding{font-size:1.3125rem;line-height:1.55;margin:0 0 18px;max-width:80ch}
 .heat .hc{min-height:2rem;display:flex;align-items:center;justify-content:center;border-radius:4px;background:var(--panel);border:1px solid var(--line);font-weight:700}
 details.tv{margin-top:14px;border:0;padding:0;background:transparent}
 details.tv summary{font-size:1.125rem;color:var(--accent)}
-.tbl{border-collapse:collapse;margin-top:8px;font-size:1.125rem;width:100%}
+.tbl{border-collapse:collapse;margin-top:8px;font-size:var(--read);width:100%}
 .tbl th,.tbl td{border-bottom:1px solid var(--line);padding:4px 8px;text-align:left;vertical-align:top}
 .tbl td{font-variant-numeric:tabular-nums}
 
