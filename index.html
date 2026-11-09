@@ -142,6 +142,8 @@ ul.points{margin:0 0 12px;padding-left:22px;display:flex;flex-direction:column;g
 @media (max-width:900px){.vgroups{grid-template-columns:minmax(0,1fr);gap:24px}}
 /* the bar's preview drawn as another site: a browser frame at a site's width, a mock page under the bar */
 .pvlab{color:var(--ink2)}
+.colours{display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px}.colours .plab{flex-basis:100%;font-weight:600}
+.colours .col1{display:flex;align-items:center;gap:6px;font-weight:400}.colours input[type=color]{width:44px;height:32px;padding:0;border:1px solid var(--line);border-radius:6px;background:none}
 .browser{max-width:760px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 6px 24px rgba(16,38,42,.12);margin:6px 0 18px}
 .browser .bbar{display:flex;align-items:center;gap:6px;padding:8px 12px;background:#E9ECEC;border-bottom:1px solid #D5DADA}
 .browser .bbar i{width:10px;height:10px;border-radius:50%;background:#C5CCCC}
@@ -322,6 +324,7 @@ table.grid td a{display:inline-block;min-width:2.2rem;padding:2px 8px;color:var(
 .filters label{display:flex;flex-direction:column;gap:4px;font-weight:600;font-size:1.125rem;min-width:0}
 .filters select{width:100%}
 select{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-size:1.125rem;max-width:100%}
+.cfg input[type=text]{font:inherit;font-size:1.125rem;color:inherit;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;max-width:22rem}
 .count{font-weight:700;margin:0 0 12px}
 .empty{background:var(--panel);border:1px dashed var(--line);border-radius:14px;padding:20px}
 
@@ -1252,7 +1255,7 @@ function viewTrends(q){
 }
 
 /* ------------------------------------------------------------ view: the Lookout bar */
-const BAR_VERSION = "1.2.0", BAR_SRI = "sha384-41Km1SPZGI7Qg1kYW6NYIVash8x+kLEzSXCb9OX2JR7zRQ6eUnAZZn/ZlR+6hiIW", BAR_HOME = "https://mayouni.github.io/lookout/";
+const BAR_VERSION = "1.3.0", BAR_SRI = "sha384-NZkxKhrxUpTqqS25DrRh/6cSSr3u0SYKlukMdTUkEJRervNKvKkjc3uE6ad1jlxQ", BAR_HOME = "https://mayouni.github.io/lookout/";
 /* the bar, as two sections of the Make your own view */
 function barSections(){
   const s = el("section","block wrap");
@@ -1261,11 +1264,18 @@ function barSections(){
             ["Checked first.", "It checks your feed's signature in the browser before it shows a word."],
             ["Plain and in the flow.", "Plain text only, in the page's flow, so it never covers content."],
             ["Only some parts?", "Add data-projects with ids from your own map, and the bar keeps to the signals that touch them."]]),
-    el("p","pvlab","Preview: a page of your site with the bar at its top. It shows " + poss(RADAR()) + " feed as the example; yours shows your own notices."));
+    el("p","pvlab","Preview: a page of your site with the bar at its top, under your project's name and in your colours. The notices are this radar's, as an example; yours carries your own."));
   const cfg = el("div","cfg");
   const mkSel = (label, opts, val) => { const l = el("label"); l.append(document.createTextNode(label)); const sl = el("select"); for (const [v,t] of opts) sl.append(new Option(t,v)); sl.value = val; l.append(sl); cfg.append(l); return sl; };
   const aud = mkSel("Your readers are", Object.keys(READERS).map(r => [r, READERS[r].label + "s"]), reader === "user" ? "user" : reader);
   const lev = mkSel("Show from level", LEVELS.map(v => [v, WORD[v]]), "advice");
+  /* the bar speaks the adopter's words (author, 2026-11-09): its name is theirs, and so are its colours */
+  const mkIn = (label, type, val) => { const l = el("label"); l.append(document.createTextNode(label)); const i = el("input"); i.type = type; i.value = val; l.append(i); cfg.append(l); return i; };
+  const nameIn = mkIn("Your project's name", "text", "Your project");
+  const colours = el("div","colours"); colours.append(el("span","plab","Your colours"));
+  const mkCol = (label, v) => { const l = el("label","col1"); const i = el("input"); i.type = "color"; i.value = v; l.append(i, document.createTextNode(" " + label)); colours.append(l); return i; };
+  const cAcc = mkCol("accent", "#1b6b72"), cBg = mkCol("background", "#eaf4f4"), cInk = mkCol("text", "#10262a");
+  cfg.append(colours);
   /* no project picker here: a project's parts belong to its own map, and an adopter has its own (author, 2026-11-09) */
   const picks = [];
   s.append(cfg);
@@ -1278,18 +1288,21 @@ function barSections(){
   s.append(pv);
   const code = el("div","code withcopy"), pre = el("pre"); code.append(pre);
   const cp = el("button","copy","Copy"); cp.type = "button"; code.append(cp);
-  s.append(el("h2",null,"Add it to your page"), el("p",null,"Paste this line into your page's head. The integrity value pins this exact version: the browser refuses the script if one byte differs."), code);
+  s.append(el("h2",null,"Add it to your page"), el("p",null,"Paste these lines where the bar should stand. The integrity value pins this exact version: the browser refuses the script if one byte differs."), code);
   cp.addEventListener("click", async () => { try { await navigator.clipboard.writeText(pre.textContent); cp.textContent = "Copied"; } catch(e){ cp.textContent = "Select it"; } setTimeout(() => cp.textContent = "Copy", 1600); });
   const update = () => {
     const projects = picks.filter(c => c.getAttribute("aria-pressed") === "true").map(c => c.value).join(",");
+    const title = (nameIn.value.trim() || "Your project") + " Radar";
+    host.style.setProperty("--lookout-accent", cAcc.value); host.style.setProperty("--lookout-bg", cBg.value); host.style.setProperty("--lookout-ink", cInk.value);
     /* another watch than Lookout's own names its site and its key, so the page pins the key it trusts */
     const other = CONFIG.watch.pages !== BAR_HOME;
-    pre.textContent = '<script src="' + BAR_HOME + 'bar/lookout-bar-' + BAR_VERSION + '.js"\n        integrity="' + BAR_SRI + '" crossorigin="anonymous"\n' +
+    pre.textContent = '<div data-lookout-bar data-title="' + title.replace(/"/g, "&quot;") + '"\n     style="--lookout-accent:' + cAcc.value + ';--lookout-bg:' + cBg.value + ';--lookout-ink:' + cInk.value + '"></div>\n' + '<script src="' + BAR_HOME + 'bar/lookout-bar-' + BAR_VERSION + '.js"\n        integrity="' + BAR_SRI + '" crossorigin="anonymous"\n' +
       (other ? '        data-feed="' + CONFIG.watch.pages + '" data-namespace="' + CONFIG.feed.namespace + '"\n        data-key="' + CONFIG.feed.key + '"\n' : '') +
       '        data-audience="' + aud.value + '" data-level="' + lev.value + '"' + (projects ? ' data-projects="' + projects + '"' : '') + ' defer></' + 'script>';
-    if (window.LookoutBar) LookoutBar.mount(host, {audience:aud.value, level:lev.value, projects}, {base:new URL(".", location.href).href, key:CONFIG.feed.key, namespace:CONFIG.feed.namespace, keepDismissed:true});
+    if (window.LookoutBar) LookoutBar.mount(host, {audience:aud.value, level:lev.value, projects, title}, {base:new URL(".", location.href).href, key:CONFIG.feed.key, namespace:CONFIG.feed.namespace, keepDismissed:true});
   };
   [aud, lev].forEach(c => c.addEventListener("change", update));
+  [nameIn, cAcc, cBg, cInk].forEach(c => c.addEventListener("input", update));
   update();
   const s2 = el("section","block wrap"); s2.append(el("h3",null,"How the bar behaves"));
   const ul = el("ul","plain");
@@ -1302,6 +1315,16 @@ function barSections(){
     "A published version never changes. A new version gets a new file name, and the line above keeps working."
   ]) ul.append(el("li",null,t));
   s2.append(ul);
+  /* make it the adopter's own: its name, its colours, every piece restyled from their CSS */
+  s2.append(el("h3",null,"Style it your way"),
+    points([["Its name is yours.", "data-title names the bar; without it, the bar takes watch.title from your lookout.yaml, so it always speaks your project's words."],
+            ["Your colours.", "--lookout-accent, --lookout-bg and --lookout-ink on the element that holds the bar."],
+            ["Every piece, from your CSS.", "The bar's pieces carry part names: bar, name, level, text, link, more and dismiss."]]));
+  const cssBox = el("div","code withcopy"), cssPre = el("pre");
+  cssPre.textContent = "/* in your own stylesheet */\n[data-lookout-bar]::part(bar)     { border-radius: 12px; font-size: 15px; }\n[data-lookout-bar]::part(name)    { font-weight: 600; }\n[data-lookout-bar]::part(level)   { border-radius: 999px; }\n[data-lookout-bar]::part(urgent)  { background: crimson; }\n[data-lookout-bar]::part(link)    { color: inherit; }\n[data-lookout-bar]::part(dismiss) { border: 0; }";
+  const cssCp = el("button","copy","Copy"); cssCp.type = "button";
+  cssCp.addEventListener("click", async () => { try { await navigator.clipboard.writeText(cssPre.textContent); cssCp.textContent = "Copied"; } catch(e){ cssCp.textContent = "Select it"; } setTimeout(() => cssCp.textContent = "Copy", 1600); });
+  cssBox.append(cssPre, cssCp); s2.append(cssBox);
   return [s, s2];
 }
 

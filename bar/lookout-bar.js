@@ -1,8 +1,8 @@
-/*! Lookout info bar 1.2.0 -- https://github.com/mayouni/lookout -- MIT
+/*! Lookout info bar 1.3.0 -- https://github.com/mayouni/lookout -- MIT
  *
  * One line on any page: the newest Lookout notice written for your readers, checked before it is shown.
  *
- *   <script src="https://mayouni.github.io/lookout/bar/lookout-bar-1.2.0.js"
+ *   <script src="https://mayouni.github.io/lookout/bar/lookout-bar-1.3.0.js"
  *           data-audience="developer" data-projects="haro,zane" data-level="advice" defer></script>
  *
  * Any watch built with Lookout (docs/ADOPT.md) uses this same script: data-feed names that watch's site and
@@ -14,13 +14,15 @@
  *   2. checks the SSH signature against the key pinned below, and shows nothing if the check fails;
  *   3. keeps live entries for the chosen audience, level and projects, and drops the ones dismissed;
  *   4. shows one notice as plain text, with one link: the entry's own page.
- * The bar names the watch by the feed's "title" (Softanza AI Radar for this one), or "Lookout" when it has none.
+ * The bar names the watch by data-title when the page gives one, else by the feed's "title", else "Lookout".
+ * Every piece carries a part name -- bar, name, level, text, link, more, dismiss -- so a page restyles it from its own
+ * CSS with [data-lookout-bar]::part(name) { ... }; --lookout-accent, --lookout-bg and --lookout-ink set its colours.
  * It also exposes window.LookoutFeed.load(), which the radar site uses, so the site and the bar read the
  * feed through the same check.
  */
 (function () {
   "use strict";
-  var VERSION = "1.2.0";
+  var VERSION = "1.3.0";
   var BASE = "https://mayouni.github.io/lookout/";
   /* the feed key, pinned: keys/allowed_signers, fingerprint SHA256:ZUij0xoxJIIEwH3AV5xrDXkJLuEklao7pUVhTxCs49I */
   var KEY = "AAAAC3NzaC1lZDI1NTE5AAAAIJoTrtZQEdrhJQFEybJGDuZs9DxF/9X/vPE3q2WfEgDK";
@@ -135,7 +137,8 @@
       projects: String(a.projects || b.projects || "").split(",").map(function (s) { return s.trim().toLowerCase(); }).filter(Boolean),
       feed: a.feed || b.feed || "",                  /* another watch's site, ending in / */
       key: a.key || b.key || "",                     /* its public key: the base64 after ssh-ed25519 */
-      namespace: a.namespace || b.namespace || ""
+      namespace: a.namespace || b.namespace || "",
+      title: a.title || b.title || ""                /* the name the bar shows, in the page's own words */
     };
   }
 
@@ -155,7 +158,7 @@
     try { feed = await load({ base: opts.base, key: opts.key, namespace: opts.namespace }); } catch (e) { if (window.console) console.info("Lookout bar: nothing shown, " + e.message); host.hidden = true; return; }
     var alias = await aliasFn(cfg.projects, opts.base);
     if (turn !== host.__lookoutTurn) return;
-    var title = typeof feed.title === "string" && feed.title ? feed.title.replace(/[\u0000-\u001f\u007f]/g, " ") : "Lookout";
+    var title = (cfg.title || (typeof feed.title === "string" && feed.title) || "Lookout").replace(/[\u0000-\u001f\u007f]/g, " ");
     var root = host.shadowRoot || host.attachShadow({ mode: "open" });
     function draw() {
       var dismissed = opts.keepDismissed ? [] : (store("dismissed") || []);
@@ -165,15 +168,15 @@
       host.hidden = false;
       var it = list[0];
       var st = document.createElement("style"); st.textContent = CSS; root.appendChild(st);
-      var bar = document.createElement("div"); bar.className = "bar"; bar.setAttribute("role", "region"); bar.setAttribute("aria-label", title + ": news for this site's " + cfg.audience + "s");
-      var who = document.createElement("span"); who.className = "who"; var wb = document.createElement("b"); wb.textContent = title; who.appendChild(wb); bar.appendChild(who);
-      var lv = document.createElement("span"); lv.className = "lv " + it.level; lv.textContent = WORD[it.level]; bar.appendChild(lv);
-      var say = document.createElement("span"); say.className = "say"; say.textContent = String(it.notice[cfg.audience]).replace(/[\u0000-\u001f\u007f]/g, " "); bar.appendChild(say);
+      var bar = document.createElement("div"); bar.className = "bar"; bar.setAttribute("part", "bar"); bar.setAttribute("role", "region"); bar.setAttribute("aria-label", title + ": news for this site's " + cfg.audience + "s");
+      var who = document.createElement("span"); who.className = "who"; who.setAttribute("part", "name"); var wb = document.createElement("b"); wb.textContent = title; who.appendChild(wb); bar.appendChild(who);
+      var lv = document.createElement("span"); lv.className = "lv " + it.level; lv.setAttribute("part", "level " + it.level); lv.textContent = WORD[it.level]; bar.appendChild(lv);
+      var say = document.createElement("span"); say.className = "say"; say.setAttribute("part", "text"); say.textContent = String(it.notice[cfg.audience]).replace(/[\u0000-\u001f\u007f]/g, " "); bar.appendChild(say);
       if (/^https:\/\/github\.com\/[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+\/blob\//.test(it.url)) {
-        var a = document.createElement("a"); a.href = it.url; a.target = "_blank"; a.rel = "noopener"; a.textContent = "Read it"; bar.appendChild(a);
+        var a = document.createElement("a"); a.href = it.url; a.target = "_blank"; a.rel = "noopener"; a.textContent = "Read it"; a.setAttribute("part", "link"); bar.appendChild(a);
       }
-      if (list.length > 1) { var m = document.createElement("a"); m.href = (opts.base || BASE) + "#/week"; m.target = "_blank"; m.rel = "noopener"; m.textContent = (list.length - 1) + " more on " + title; bar.appendChild(m); }
-      var x = document.createElement("button"); x.type = "button"; x.textContent = "Dismiss"; x.setAttribute("aria-label", "Dismiss this notice");
+      if (list.length > 1) { var m = document.createElement("a"); m.href = (opts.base || BASE) + "#/week"; m.target = "_blank"; m.rel = "noopener"; m.textContent = (list.length - 1) + " more on " + title; m.setAttribute("part", "link more"); bar.appendChild(m); }
+      var x = document.createElement("button"); x.type = "button"; x.textContent = "Dismiss"; x.setAttribute("aria-label", "Dismiss this notice"); x.setAttribute("part", "dismiss");
       x.addEventListener("click", function () { var ds = store("dismissed") || []; ds.push(it.id); store("dismissed", ds); draw(); });
       bar.appendChild(x);
       root.appendChild(bar);

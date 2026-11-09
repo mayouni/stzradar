@@ -4,8 +4,8 @@ The Lookout bar puts the newest notice of Softanza Radar for a site's readers at
 script line. It is the same reader the radar site uses, so a site and the radar show the same checked feed.
 
 ```html
-<script src="https://mayouni.github.io/lookout/bar/lookout-bar-1.2.0.js"
-        integrity="sha384-41Km1SPZGI7Qg1kYW6NYIVash8x+kLEzSXCb9OX2JR7zRQ6eUnAZZn/ZlR+6hiIW" crossorigin="anonymous"
+<script src="https://mayouni.github.io/lookout/bar/lookout-bar-1.3.0.js"
+        integrity="sha384-NZkxKhrxUpTqqS25DrRh/6cSSr3u0SYKlukMdTUkEJRervNKvKkjc3uE6ad1jlxQ" crossorigin="anonymous"
         data-audience="developer" data-level="advice" data-projects="haro,zane" defer></script>
 ```
 
@@ -13,17 +13,32 @@ script line. It is the same reader the radar site uses, so a site and the radar 
 own feed and key, so the page pins the key it trusts:
 
 ```html
-<script src="https://mayouni.github.io/lookout/bar/lookout-bar-1.2.0.js"
-        integrity="sha384-41Km1SPZGI7Qg1kYW6NYIVash8x+kLEzSXCb9OX2JR7zRQ6eUnAZZn/ZlR+6hiIW" crossorigin="anonymous"
+<script src="https://mayouni.github.io/lookout/bar/lookout-bar-1.3.0.js"
+        integrity="sha384-NZkxKhrxUpTqqS25DrRh/6cSSr3u0SYKlukMdTUkEJRervNKvKkjc3uE6ad1jlxQ" crossorigin="anonymous"
         data-feed="https://you.github.io/your-watch/" data-namespace="your-watch-feed"
         data-key="AAAAC3NzaC1lZDI1NTE5AAAAI..." data-audience="developer" defer></script>
 ```
 
-Versions 1.0.0 and 1.1.0 stay where they were, with their own integrity values, for the pages that already carry
-them. Version 1.2.0 names the watch by its feed's `title` (here, Softanza Radar), and its links are underlined at
+Versions 1.0.0, 1.1.0 and 1.2.0 stay where they were, with their own integrity values, for the pages that already
+carry them. Version 1.3.0 takes its name from `data-title` and gives every piece a part name for your CSS. Version 1.2.0 names the watch by its feed's `title` (here, Softanza Radar), and its links are underlined at
 normal weight.
 
 The radar site builds this line for you, with a live preview: [Make your own](https://mayouni.github.io/lookout/#/yours).
+
+## Make it yours
+
+- **Its name.** `data-title="Acme Radar"` names the bar. Without it, the bar takes your feed's `title` (`watch.title` in
+  your `lookout.yaml`), so it speaks your project's words, never ours.
+- **Its colours.** Set `--lookout-accent`, `--lookout-bg` and `--lookout-ink` on the element that holds the bar.
+- **Every piece, from your own CSS.** The pieces carry part names -- `bar`, `name`, `level` (and the level itself:
+  `info`, `advice`, `action`, `urgent`), `text`, `link`, `more`, `dismiss`:
+
+```css
+[data-lookout-bar]::part(bar)     { border-radius: 12px; font-size: 15px; }
+[data-lookout-bar]::part(name)    { font-weight: 600; }
+[data-lookout-bar]::part(urgent)  { background: crimson; }
+[data-lookout-bar]::part(dismiss) { border: 0; }
+```
 
 ## The settings
 
@@ -35,6 +50,7 @@ The radar site builds this line for you, with a live preview: [Make your own](ht
 | `data-feed` | another watch's site, ending in `/` | Lookout's |
 | `data-key` | that watch's public key: the base64 after `ssh-ed25519` | Lookout's key |
 | `data-namespace` | that watch's signing namespace | `lookout-feed` |
+| `data-title` | the name the bar shows | the feed's `title` |
 
 The attributes go on the script tag, or on an element carrying `data-lookout-bar`, which also says where the bar
 goes. With that element absent, the bar goes at the top of `<body>`, in the page's flow.
@@ -59,7 +75,7 @@ page and the bar never restyle each other.
 
 ## Versions
 
-A published version never changes: `lookout-bar-1.2.0.js` is the same bytes for as long as it exists, and the
+A published version never changes: `lookout-bar-1.3.0.js` is the same bytes for as long as it exists, and the
 `integrity` value above holds the browser to that. A new version is a new file, announced as an entry.
 `bar/lookout-bar.js` is the newest version, for a site that prefers to follow it without a pin.
 
