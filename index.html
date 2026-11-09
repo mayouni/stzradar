@@ -326,14 +326,12 @@ pre.yfile .ln.hl{background:color-mix(in srgb,var(--accent) 20%,var(--panel));bo
 .fnode span{color:var(--ink2);font-size:1rem}
 .farrow{font-size:1.6rem;line-height:1;color:var(--accent)}
 .row2[hidden]{display:none}
-/* the About section's row names its parent and shares the section's tint, so it reads as About's own pages */
-/* the tint runs the full width of the page, edge to edge, while the links keep the page's left edge */
-.subnav{gap:6px 22px;background:var(--tint);box-shadow:0 0 0 100vmax var(--tint);clip-path:inset(0 -100vmax);padding-block:8px 10px}
-.subnav .parent{font-weight:700;font-size:1.0625rem;color:var(--deep)}
-:root[data-theme="dark"] .subnav .parent{color:var(--accent)}
-@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .subnav .parent{color:var(--accent)} }
-.subnav a{font-weight:600;font-size:1.0625rem;color:var(--ink);text-decoration:none;padding:4px 0;border-bottom:3px solid transparent}
-.subnav a[aria-current="page"]{border-bottom-color:var(--accent);color:var(--deep)}
+/* the About bar: the reader bar's buttons, as links to the section's pages */
+.seg a{display:inline-block;padding:5px 14px;font-size:1rem;font-weight:600;color:var(--ink);text-decoration:none}
+.seg a + a{border-left:1px solid var(--line)}
+.seg a[aria-current="page"]{background:var(--accent);color:var(--accent-ink)}
+
+
 
 /* the bar page */
 .preview{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--panel);margin-bottom:16px}
@@ -399,11 +397,13 @@ footer code{font-family:var(--f-mono);overflow-wrap:anywhere}
     <span class="why" id="readerWhy"></span>
   </div>
   <!-- the About section's pages, in the pinned second row (the site's navigation law: a section's path stays in view) -->
-  <nav class="row2 subnav" id="aboutNav" aria-label="About" hidden>
-    <span class="parent" aria-hidden="true">About ›</span>
-    <a href="#/about/why" data-sub="why">Why</a>
-    <a href="#/about/method" data-sub="method">Method</a>
-    <a href="#/yours" data-sub="yours">Make your own</a>
+  <!-- the same kind of row as "Reading as": a label, a button bar, and a line on the current choice -->
+  <nav class="row2" id="aboutNav" aria-labelledby="aboutLab" hidden>
+    <span class="lab" id="aboutLab">About</span>
+    <div class="seg">
+      <a href="#/about/why" data-sub="why">Why</a><a href="#/about/method" data-sub="method">Method</a><a href="#/yours" data-sub="yours">Make your own</a>
+    </div>
+    <span class="why" id="aboutWhy"></span>
   </nav>
 </div></header>
 
@@ -1313,6 +1313,7 @@ function route(keepScroll){
   const about = v === "about" || v === "yours" || v === "bar", sub = v === "about" ? (parts[1] === "method" ? "method" : "why") : "yours";
   $("#aboutNav").hidden = !about; $("#readerRow").hidden = about;
   document.querySelectorAll("#aboutNav a").forEach(a => { if (about && a.dataset.sub === sub) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
+  $("#aboutWhy").textContent = {why:"what this watch answers, and the requirements behind it.", method:"how a signal is read, judged, written and published.", yours:"the same watch for your own project, and the bar for your pages."}[sub];
   window.headH?.();
   const navv = v === "signal" ? "signals" : v === "estate" ? "softanza" : about ? "about" : v;
   document.querySelectorAll("nav.views a").forEach(a => a.toggleAttribute("aria-current", a.dataset.view === navv));
