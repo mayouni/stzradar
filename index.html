@@ -83,6 +83,19 @@ nav.views a[aria-current="page"]{border-bottom-color:var(--accent);color:var(--d
 @media (max-width:520px){#readers{display:none}#readerSel{display:inline-block}.row2{flex-wrap:nowrap}
   .facts{display:grid;grid-template-columns:1fr 1fr}.fact{min-width:0}}
 
+/* the reading measure, everywhere: a line of prose stops near 78 characters, whatever the width of its container */
+main :is(p,li,dd,figcaption,summary,.lede){max-width:78ch}
+/* reading pages: a steering column on the left, the text at a reading measure beside it, both from the header's edge */
+.railpage{display:grid;grid-template-columns:17rem minmax(0,54rem);gap:56px;align-items:start}
+.rail{position:sticky;top:calc(var(--head,150px) + 20px);display:flex;flex-direction:column;gap:12px}
+.rail .railh{font:600 1.125rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);margin:6px 0 0}
+.rail .toc{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;font-size:1.125rem;line-height:1.35}
+.rail .toc a,.rail .back{color:var(--deep);text-decoration:underline}
+.rail .filters{display:flex;flex-direction:column;align-items:stretch;gap:12px;border:0;padding:0;margin:0}
+.rail .period{margin:0;font-size:1.125rem}.rail .period b{display:none}.rail .period select{margin:0 0 6px;display:block}
+@media (max-width:1000px){.railpage{grid-template-columns:minmax(0,1fr);gap:20px}.rail{position:static}.rail .toc,.rail .railh:not(:first-child){display:none}
+  .rail .filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 18px}}
+@media (max-width:560px){.rail .filters{grid-template-columns:repeat(2,minmax(0,1fr))}}
 /* the front page: the hero in two halves (text, live radar), then one row of three columns */
 .hero .wrap{padding-block:48px 44px}
 .herogrid{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap:56px;align-items:center}
@@ -565,6 +578,27 @@ function head(eyebrow, title, ledes){
   h.append(w); return h;
 }
 
+/* ------------------------------------------------------------ the reading-page layout
+   A wide screen is used by giving a reading page a second column, never by stretching its text (author, 2026-11-09:
+   "making best use of the space does not mean creating divs as large as this"). The left column holds what steers
+   the page (filters, the period, the page's own contents) and stays in view; the right column keeps a reading measure
+   and starts at the same left edge as the header, so nothing floats in the middle of the screen. */
+function railPage(main, title, railNodes){
+  const s = el("section","block wrap railpage"), aside = el("aside","rail");
+  if (title) aside.append(el("h2","railh",title));
+  aside.append(...railNodes); s.append(aside, main); return s;
+}
+/* the page's own contents: one line per heading of the main column, each scrolling to it (the hash belongs to the router) */
+function contentsOf(main, sel){
+  const ul = el("ul","toc");
+  main.querySelectorAll(sel).forEach(h => {
+    const a = el("a",null,h.textContent.replace(/^\d+\.\s*/,"")); a.href = location.hash || "#/";
+    a.addEventListener("click", e => { e.preventDefault(); h.scrollIntoView({block:"start"}); });
+    const li = el("li"); li.append(a); ul.append(li);
+  });
+  return ul;
+}
+
 /* ------------------------------------------------------------ view: the front page
    What the watch is for, before any week. The hero holds two halves (author, 2026-11-09: "use the space"): on the
    left the promise, the two ways in and this week's key figures; on the right this week's radar itself, live, so a
@@ -826,7 +860,7 @@ function viewSignals(q){
   const frag = document.createDocumentFragment();
   frag.append(head("", q.get("w") ? "Every signal of week " + q.get("w") + ", filtered your way" : "Every live signal, filtered your way",
     ["Choose a project, a layer, a domain, a concern or a level. Each choice is kept in the address, so a filtered list can be shared."]));
-  const s = el("section","block wrap");
+  const s = el("div","railmain listcol");
   const f = el("div","filters");
   const sel = (key, label, opts) => {
     const l = el("label"); l.append(document.createTextNode(label));
@@ -842,7 +876,6 @@ function viewSignals(q){
   sel("c","Concern", MAP.concerns.map(c => [c.id, c.name]));
   sel("v","Level at least", LEVELS.map(v => [v, WORD[v]]));
   sel("w","Week", weeksAll().map(w => [w, w + " · " + weekSpan(w)]));
-  s.append(f);
   /* a chosen week reads the archive (every entry of that week); otherwise the live signals */
   const pool = q.get("w") ? FEED.items.filter(it => weekOf(it.date) === q.get("w") && it.status !== "superseded") : live;
   const items = pool.filter(it =>
@@ -854,7 +887,7 @@ function viewSignals(q){
   s.append(el("p","count", plural(items.length, "signal")));
   if (!items.length){ const e = el("div","empty"); e.append(document.createTextNode("Widen a filter to see more: ")); const a = el("a",null,"every signal"); a.href = "#/signals"; e.append(a, document.createTextNode(".")); s.append(e); }
   const cs = el("div","cards"); for (const it of items) cs.append(card(it)); s.append(cs);
-  frag.append(s); return frag;
+  frag.append(railPage(s, "Filter", [f])); return frag;
 }
 
 /* ------------------------------------------------------------ view: one signal */
@@ -878,8 +911,8 @@ function viewSignal(id){
   const frag = document.createDocumentFragment();
   const m = el("div","meta"); m.append(levelPill(it.level), el("span","pill",it.kind), el("span","pill",it.stance), el("span",null,it.date));
   frag.append(head("", clean(it.title), [m]));
-  const s = el("section","block wrap sig");
-  const back = el("a","back","All signals"); back.href = "#/signals"; s.append(back);
+  const s = el("div","railmain sig");
+  const back = el("a","back","All signals"); back.href = "#/signals";
   const part = (title, ...nodes) => { const p = el("div","part"); if (title) p.append(el("h2",null,title)); p.append(...nodes); return p; };
   const P = {
     notice: () => it.notice?.[reader] ? part("For a " + reader, el("p","notice",clean(it.notice[reader]))) : null,
@@ -908,7 +941,7 @@ function viewSignal(id){
       return part("Sources", ul, p); }
   };
   for (const k of READERS[reader].order){ const n = P[k](); if (n) s.append(n); }
-  frag.append(s); return frag;
+  frag.append(railPage(s, "In this signal", [contentsOf(s, ".part > h2"), back])); return frag;
 }
 
 /* ------------------------------------------------------------ view: trends
@@ -976,13 +1009,12 @@ function viewTrends(q){
     ["Over the weeks the radar has kept: how much was read and how carefully, where " + NAME() + " stands on each development, what it proposed to its own projects, and what it wrote down to learn from. Every number opens the signals behind it."]));
   /* One reading column, four chapters. Each chapter opens on what the numbers say, in a sentence, and the
      figures under it show the same thing; nothing sits beside anything else. */
-  const rep = el("section","block wrap report");
+  const rep = el("div","railmain report");
   /* the period, as a line of the report */
   const fr = el("p","period"); fr.append(el("b",null,"Period: "));
   const sl = el("select"); sl.setAttribute("aria-label","Period"); for (const [v,t] of [["all","every week kept"],["4","the last 4 weeks"],["12","the last 12 weeks"]]) sl.append(new Option(t,v));
   sl.value = span; sl.addEventListener("change", () => { location.hash = "#/trends" + (sl.value === "all" ? "" : "?n=" + sl.value); });
-  fr.append(sl, document.createTextNode(" · " + plural(weeks.length,"week") + (weeks.length ? ", " + weekSpan(weeks[0]).split(" to ")[0] + " to " + weekSpan(weeks.at(-1)).split(" to ")[1] : "") + "."));
-  rep.append(fr);
+  fr.append(sl, document.createTextNode(plural(weeks.length,"week") + (weeks.length ? ", " + weekSpan(weeks[0]).split(" to ")[0] + " to " + weekSpan(weeks.at(-1)).split(" to ")[1] : "") + "."));
 
   const acts = items.flatMap(i => (i.actions||[]).map(a => Object.assign({entry:i.id}, a)));
   const n = items.length, many = weeks.length >= 2;
@@ -1070,7 +1102,7 @@ function viewTrends(q){
   rep.append(figure("The richest lessons", "For each signal: the checks, terms and questions written beside it.", hbars(lr, {unit:"items"}), ["Signal","checks, terms and questions"], lr.map(r => [r.label, r.value])));
   const ul = el("ul","plain"); for (const i of soon){ const li = el("li"); const a = el("a",null,clean(i.title)); a.href = "#/signal/" + i.id; li.append(el("b",null,i.review_by + " "), a); ul.append(li); }
   rep.append(figure("Looked at again next", "Each signal carries the day " + NAME() + " reviews it; these come first.", ul, ["Review by","signal"], soon.map(i => [i.review_by, clean(i.title)])));
-  frag.append(rep);
+  frag.append(railPage(rep, "Period", [fr, el("h2","railh","Chapters"), contentsOf(rep, "h2.chap")]));
   return frag;
 }
 
@@ -1326,7 +1358,7 @@ function dress(){
    where the data lives, and the command that checks it outside this site. Every page reaches it only after the check
    below has passed, so it states the result rather than waiting for it. */
 function viewFeed(){
-  const frag = document.createDocumentFragment(), repo = CONFIG.watch.repository, doc = el("div","doc");
+  const frag = document.createDocumentFragment(), repo = CONFIG.watch.repository, doc = el("div","railmain doc");
   frag.append(head("", "The feed, and how to check it",
     ["Everything on this site comes from one public feed. It is signed, and this page shows only a feed whose signature checks."]));
   const p1 = el("p"); p1.append(el("span","feedok","Checked in this browser."), document.createTextNode(" The feed was signed with " + poss(RADAR()) + " key and is unchanged since. It holds " + FEED.items.length + (FEED.items.length === 1 ? " entry" : " entries") + ", updated " + FEED.updated.slice(0,10) + "."));
@@ -1340,7 +1372,7 @@ function viewFeed(){
   cb.append(pre);
   doc.append(el("h2",null,"What this browser checked"), p1, p2, el("h2",null,"Where the data lives"), p3, el("h2",null,"Check it yourself"), p4, cb,
     el("p",null,"It answers \"Good signature\" with the signer's name. Any change to the file, even one character, makes the check fail."));
-  frag.append(doc);
+  frag.append(railPage(doc, "On this page", [contentsOf(doc, "h2")]));
   return frag;
 }
 
@@ -1375,7 +1407,7 @@ function renderDoc(md, eyebrow){
   const base = CONFIG.watch.repository + "/blob/main/docs/";
   const lines = md.replace(/\r/g,"").split("\n");
   let title = "", i = 0;
-  const body = el("section","block wrap doc"), nodes = [];
+  const body = el("div","railmain doc"), nodes = [];
   let para = [], list = null, item = null;
   const flushPara = () => { if (para.length){ const p = el("p"); p.append(inlineMd(para.join(" "), base)); body.append(p); para = []; } };
   const flushList = () => { list = null; item = null; };
@@ -1408,7 +1440,7 @@ function renderDoc(md, eyebrow){
     flushList(); para.push(L.trim()); i++;
   }
   flushPara();
-  nodes.push(head(eyebrow, title, []), body);
+  nodes.push(head(eyebrow, title, []), railPage(body, "On this page", [contentsOf(body, "h2")]));
   return nodes;
 }
 /* a mermaid flowchart, drawn as boxes in layers from its first node down: the same diagram GitHub shows, at the
