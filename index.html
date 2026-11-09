@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Lookout Radar</title>
-<meta name="description" content="Lookout Radar: what changed in AI this week, placed on the Softanza platform -- Harobanda, Haro, Softanza, HaroBase, HaroServ, HaroScript, Aïcha, Zane -- and what each reader can do with it.">
+<title>Softanza AI Radar</title>
+<meta name="description" content="Softanza AI Radar: what changed in AI this week, placed on the Softanza platform -- Harobanda, Haro, Softanza, HaroBase, HaroServ, HaroScript, Aïcha, Zane -- and what each reader can do with it.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Source+Sans+3:wght@400;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
 <style>
-/* Lookout Radar. The reading laws of the estate's sites, applied:
+/* Softanza AI Radar, built with Lookout. The reading laws of the estate's sites, applied:
    - one reading size (19 px) and nothing below 16 px; secondary text is a readable tone, never small-and-grey;
    - one scroll bar on screen (Zane Rules 14 and 92), nothing scrolls sideways at 375 px;
    - no motion while navigating; a bar never covers content; no tabs that hide content (Rule 12).
@@ -54,6 +54,9 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background
 .gh{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:8px;color:var(--ink)}
 .gh:hover{color:var(--accent);background:var(--tint)}
 @media (max-width:820px){.row1{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"brand help" "nav nav"}}
+#helpOpen .short{display:none}
+/* the readers' name is longer than the tool's: on a phone the brand steps down and the help button says Help, so the two never meet */
+@media (max-width:520px){.brand{font-size:1.25rem}#helpOpen .long{display:none}#helpOpen .short{display:inline}}
 @media (max-width:900px){.row2 .why{display:none}}
 .brand{font:700 1.5rem/1 var(--f-title);color:var(--ink);text-decoration:none;white-space:nowrap}
 .brand span{color:var(--accent)}
@@ -396,7 +399,7 @@ footer code{font-family:var(--f-mono);overflow-wrap:anywhere}
 
 <header class="top"><div class="wrap">
   <div class="row1">
-    <a class="brand" href="#/week"><span class="bn" id="brandName">Lookout</span> <span>Radar</span></a>
+    <a class="brand" href="#/week"><span class="bn" id="brandName">Softanza AI</span> <span>Radar</span></a>
     <nav class="views" aria-label="Views">
       <a href="#/week" data-view="week">This week</a>
       <a href="#/softanza" data-view="softanza" id="navIn">In Softanza</a>
@@ -405,7 +408,7 @@ footer code{font-family:var(--f-mono);overflow-wrap:anywhere}
       <a href="#/about/why" data-view="about">About</a>
     </nav>
     <div class="tools">
-      <button class="help" type="button" id="helpOpen" aria-haspopup="dialog">How to read it</button>
+      <button class="help" type="button" id="helpOpen" aria-haspopup="dialog"><span class="long">How to read it</span><span class="short">Help</span></button>
       <a class="gh" id="ghLink" href="https://github.com/mayouni/lookout" target="_blank" rel="noopener" aria-label="This watch on GitHub" title="This watch on GitHub">
         <svg viewBox="0 0 16 16" width="26" height="26" aria-hidden="true"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
       </a>
@@ -450,7 +453,7 @@ footer code{font-family:var(--f-mono);overflow-wrap:anywhere}
 let FEED = null, MAP = null, LESSONS = {}, CONFIG = null, DIGESTS = [];
 /* the project this watch serves, from app/config.json (lookout.yaml) */
 const NAME = () => CONFIG.project.name, WATCH = () => CONFIG.watch.name, TOPIC = () => CONFIG.watch.topic;
-const RADAR = () => WATCH() + " Radar";
+const RADAR = () => CONFIG.watch.title || (NAME() + " " + TOPIC() + " Radar");   /* what readers see; WATCH() is the tool */
 const poss = s => s + (/s$/.test(s) ? "'" : "'s");
 let live = [];
 const LEVELS = ["info","advice","action","urgent"];
@@ -659,7 +662,7 @@ function radar(items, total = items.length){
 function viewEstate(){
   const frag = document.createDocumentFragment();
   frag.append(head("", NAME() + ", layer by layer",
-    [CONFIG.project.pitch, WATCH() + " places every signal on this map, so each part sees what touches it."]));
+    [CONFIG.project.pitch, "The radar places every signal on this map, so each part sees what touches it."]));
   const count = pid => live.filter(it => projectsOf(it).includes(pid)).length;
   const projTile = p => {
     const n = count(p.id), t = el("div","proj");
@@ -797,7 +800,7 @@ function viewSignal(id){
     },
     actions: () => it.actions?.length ? part("Proposed to " + CONFIG.agent.proposals.to, (() => { const ul = el("ul","plain"); for (const a of it.actions){ const p = projOf(a.area); ul.append(el("li",null,clean((p ? PROJ[p].name : a.area) + ": " + a.do + " (" + a.state + ")"))); } return ul; })()) : null,
     sources: () => { const ul = el("ul","plain"); for (const so of it.sources) ul.append(el("li",null,clean(so.title + " — " + (so.by || "") + ", read " + so.read)));
-      const p = el("p"); const a = el("a",null,"Read the full entry on " + WATCH()); a.href = it.url; a.target = "_blank"; a.rel = "noopener"; p.append(a);
+      const p = el("p"); const a = el("a",null,"Read the full entry"); a.href = it.url; a.target = "_blank"; a.rel = "noopener"; p.append(a);
       return part("Sources", ul, p); }
   };
   for (const k of READERS[reader].order){ const n = P[k](); if (n) s.append(n); }
@@ -866,7 +869,7 @@ function viewTrends(q){
   const items = FEED.items.filter(i => weeks.includes(weekOf(i.date)) && i.status !== "superseded");
   const frag = document.createDocumentFragment();
   frag.append(head("", "How " + NAME() + " reads " + TOPIC() + ", and how it answers",
-    ["Over the weeks " + WATCH() + " has kept: how much was read and how carefully, where " + NAME() + " stands on each development, what it proposed to its own projects, and what it wrote down to learn from. Every number opens the signals behind it."]));
+    ["Over the weeks the radar has kept: how much was read and how carefully, where " + NAME() + " stands on each development, what it proposed to its own projects, and what it wrote down to learn from. Every number opens the signals behind it."]));
   /* One reading column, four chapters. Each chapter opens on what the numbers say, in a sentence, and the
      figures under it show the same thing; nothing sits beside anything else. */
   const rep = el("section","block wrap report");
@@ -968,7 +971,7 @@ function viewTrends(q){
 }
 
 /* ------------------------------------------------------------ view: the Lookout bar */
-const BAR_VERSION = "1.1.0", BAR_SRI = "sha384-7/R5PqRB2LH7f40qq531NaFAmP6YxNc9K8WgJT0h9n6Z7KvuzkMxVLsBEwSMuAYv", BAR_HOME = "https://mayouni.github.io/lookout/";
+const BAR_VERSION = "1.2.0", BAR_SRI = "sha384-41Km1SPZGI7Qg1kYW6NYIVash8x+kLEzSXCb9OX2JR7zRQ6eUnAZZn/ZlR+6hiIW", BAR_HOME = "https://mayouni.github.io/lookout/";
 /* the bar, as two sections of the Make your own view */
 function barSections(){
   const s = el("section","block wrap");
@@ -1009,7 +1012,7 @@ function barSections(){
   const s2 = el("section","block wrap"); s2.append(el("h3",null,"How the bar behaves"));
   const ul = el("ul","plain");
   for (const t of [
-    "It reads feed/index.json and its signature at most once a day per browser, and checks the signature against the key the page gives it (Lookout's own when none is given); a feed that fails the check shows nothing.",
+    "It reads feed/index.json and its signature at most once a day per browser, and checks the signature against the key the page gives it (this radar's own when none is given); a feed that fails the check shows nothing.",
     "It shows the notice written for the audience you choose, as plain text, with one link: the entry's own page in the watch's repository.",
     "A reader who dismisses a notice does not see it again on that browser.",
     "It goes inside the first element carrying data-lookout-bar, or else at the top of the body, in the page's flow.",
@@ -1029,7 +1032,7 @@ function viewYours(){
   const frag = document.createDocumentFragment();
   const repo = CONFIG.watch.repository;
   frag.append(head("", "A watch like this one, for your own project",
-    [WATCH() + " is built so that any project can run its own. Each week an agent reads the news of your field at its source, places every piece on your project's map, writes one sentence for each of your readers, and proposes the work it calls for. You get the same signed feed, this site with its trends, and the bar for your pages, from one file you write: lookout.yaml."]));
+    [RADAR() + " is built with " + WATCH() + ", an open tool any project can run for its own. Each week an agent reads the news of your field at its source, places every piece on your project's map, writes one sentence for each of your readers, and proposes the work it calls for. You get the same signed feed, this site with its trends, and the bar for your pages, from one file you write: lookout.yaml."]));
 
   const s = el("section","block wrap");
   s.append(el("h2",null,"How it works"));
@@ -1051,7 +1054,7 @@ function viewYours(){
 
   /* what the agent takes from each part of the file, with this watch's own values */
   const s2 = el("section","block wrap");
-  s2.append(el("h2",null,"What the agent learns from your file"), (() => { const p = el("p"); p.append(document.createTextNode("Each part of lookout.yaml teaches the agent one thing. Here is "), link(poss(WATCH()) + " own file", repo + "/blob/main/lookout.yaml"), document.createTextNode(", read part by part.")); return p; })());
+  s2.append(el("h2",null,"What the agent learns from your file"), (() => { const p = el("p"); p.append(document.createTextNode("Each part of lookout.yaml teaches the agent one thing. Here is "), link(poss(RADAR()) + " own file", repo + "/blob/main/lookout.yaml"), document.createTextNode(", read part by part.")); return p; })());
   const rows = [
     ["agent.goal", "why it watches at all", CONFIG.agent.goal],
     ["agent.learn", "what it reads about your project first, every run", CONFIG.agent.learn.join(", ")],
@@ -1142,7 +1145,7 @@ function viewYours(){
     P("# lookout.yaml -- everything about this watch that belongs to its project (docs/ADOPT.md)."); P("lookout: 1"); P("");
     P("project:"); P("  name: " + yq(name), "name"); P("  site: " + yq(v("site")), "site"); P("  owner: " + yq(v("owner") || "you"), "owner");
     P("  licence: " + yq(v("licence") || "MIT"), "licence"); P("  pitch: " + yq(name + " in one sentence: what it is and what it does."), "name"); P("");
-    P("watch:"); P("  name: " + yq(watch), "watch"); P("  topic: " + yq(topic), "topic"); P("  repository: " + yq(repoU), "repo"); P("  pages: " + yq(pages), "repo");
+    P("watch:"); P("  name: " + yq(watch), "watch"); P("  title: " + yq(name + " " + topic + " Radar"), "name", "topic"); P("  topic: " + yq(topic), "topic"); P("  repository: " + yq(repoU), "repo"); P("  pages: " + yq(pages), "repo");
     P("  language: en"); P("  tagline: " + yq("What changed in " + topic + " this week, and what it means for " + name), "topic", "name");
     P("  intro: " + yq(watch + " reads the week's news at its source and shows where each piece lands in " + name + "."), "watch", "name");
     P("  schedule:"); P("    every: monday"); P('    at: "07:00"'); P("    timezone: UTC"); P("  publish: after-reading"); P("");
@@ -1186,14 +1189,14 @@ function dress(){
   for (const r of CONFIG.readers){ READERS[r.id].label = r.label; READERS[r.id].why = r.first; }
   if (!READERS[reader]) reader = CONFIG.readers[0].id;
   readerRow();
-  $("#brandName").textContent = WATCH();
+  { const t = RADAR().split(" "), last = t.pop(); $("#brandName").textContent = t.join(" "); $("#brandName").nextElementSibling.textContent = last; }
   $("#ghLink").href = CONFIG.watch.repository;                    /* each watch links its own repository */
   $("#navIn").textContent = "In " + NAME();
   const year = Math.min(...FEED.items.map(i => +i.date.slice(0,4)));
-  $("#made").replaceChildren(document.createTextNode(WATCH() + " is a "), link(NAME(), CONFIG.project.site),
-    document.createTextNode(" project. © " + year + " " + CONFIG.project.owner + ". Released under the "),
+  $("#made").replaceChildren(document.createTextNode(RADAR() + " is a "), link(NAME(), CONFIG.project.site),
+    document.createTextNode(" project, built with " + WATCH() + ". © " + year + " " + CONFIG.project.owner + ". Released under the "),
     link(CONFIG.project.licence + " licence", CONFIG.project.licence_url || CONFIG.watch.repository), document.createTextNode("."));
-  $("#dataLine").replaceChildren(document.createTextNode("Data: " + poss(WATCH()) + " public feed and its map of " + NAME() + ", "),
+  $("#dataLine").replaceChildren(document.createTextNode("Data: " + poss(RADAR()) + " public feed and its map of " + NAME() + ", "),
     link(CONFIG.watch.repository.replace("https://",""), CONFIG.watch.repository), document.createTextNode(". A signal's full entry opens there."));
   const dl = $("#helpList"); dl.replaceChildren();
   for (const [t, d] of [
@@ -1414,7 +1417,7 @@ async function start(){
   indexMap();
   dress();
   live = FEED.items.filter(it => !["declined","superseded"].includes(it.status) && it.review_by >= today);
-  const ok = el("span","ok","Signature checked in this browser"); $("#checked").replaceChildren(ok, document.createTextNode(": the feed was signed by " + poss(WATCH()) + " key " + CONFIG.feed.fingerprint.slice(0, 13) + "…" + CONFIG.feed.fingerprint.slice(-4) + " and is unchanged since. " + FEED.items.length + " entries, updated " + FEED.updated.slice(0,10) + "."));
+  const ok = el("span","ok","Signature checked in this browser"); $("#checked").replaceChildren(ok, document.createTextNode(": the feed was signed by " + poss(RADAR()) + " key " + CONFIG.feed.fingerprint.slice(0, 13) + "…" + CONFIG.feed.fingerprint.slice(-4) + " and is unchanged since. " + FEED.items.length + " entries, updated " + FEED.updated.slice(0,10) + "."));
   /* the pinned header's height, so the fixed radar sits just under it */
   const headH = window.headH = () => document.documentElement.style.setProperty("--head", document.querySelector("header.top").offsetHeight + "px");
   headH(); addEventListener("resize", headH);

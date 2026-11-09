@@ -1,11 +1,11 @@
 # The Lookout bar
 
-The Lookout bar puts Lookout's newest notice for a site's readers at the top of any page, from one script line. It
-is the same reader Lookout Radar uses, so a site and the Radar show the same checked feed.
+The Lookout bar puts the newest notice of Softanza AI Radar for a site's readers at the top of any page, from one
+script line. It is the same reader the radar site uses, so a site and the radar show the same checked feed.
 
 ```html
-<script src="https://mayouni.github.io/lookout/bar/lookout-bar-1.1.0.js"
-        integrity="sha384-7/R5PqRB2LH7f40qq531NaFAmP6YxNc9K8WgJT0h9n6Z7KvuzkMxVLsBEwSMuAYv" crossorigin="anonymous"
+<script src="https://mayouni.github.io/lookout/bar/lookout-bar-1.2.0.js"
+        integrity="sha384-41Km1SPZGI7Qg1kYW6NYIVash8x+kLEzSXCb9OX2JR7zRQ6eUnAZZn/ZlR+6hiIW" crossorigin="anonymous"
         data-audience="developer" data-level="advice" data-projects="haro,zane" defer></script>
 ```
 
@@ -13,15 +13,17 @@ is the same reader Lookout Radar uses, so a site and the Radar show the same che
 own feed and key, so the page pins the key it trusts:
 
 ```html
-<script src="https://mayouni.github.io/lookout/bar/lookout-bar-1.1.0.js"
-        integrity="sha384-7/R5PqRB2LH7f40qq531NaFAmP6YxNc9K8WgJT0h9n6Z7KvuzkMxVLsBEwSMuAYv" crossorigin="anonymous"
+<script src="https://mayouni.github.io/lookout/bar/lookout-bar-1.2.0.js"
+        integrity="sha384-41Km1SPZGI7Qg1kYW6NYIVash8x+kLEzSXCb9OX2JR7zRQ6eUnAZZn/ZlR+6hiIW" crossorigin="anonymous"
         data-feed="https://you.github.io/your-watch/" data-namespace="your-watch-feed"
         data-key="AAAAC3NzaC1lZDI1NTE5AAAAI..." data-audience="developer" defer></script>
 ```
 
-Version 1.0.0 stays where it was, with its own integrity value, for the pages that already carry it.
+Versions 1.0.0 and 1.1.0 stay where they were, with their own integrity values, for the pages that already carry
+them. Version 1.2.0 names the watch by its feed's `title` (here, Softanza AI Radar), and its links are underlined at
+normal weight.
 
-Lookout Radar builds this line for you, with a live preview: [Lookout bar](https://mayouni.github.io/lookout/#/bar).
+The radar site builds this line for you, with a live preview: [Make your own](https://mayouni.github.io/lookout/#/yours).
 
 ## The settings
 
@@ -49,15 +51,15 @@ the page's own font.
    that fails the check shows nothing, and the reason goes to the browser's console.
 3. It keeps live entries (within `review_by`, and neither declined nor superseded) that carry a notice for the
    audience, at or above the level, touching the projects asked for, and leaves out the ones the reader dismissed.
-4. It shows the most pressing one as plain text, with its level and one link: the entry's page on Lookout, plus a
-   link to Lookout Radar when there are more.
+4. It shows the most pressing one as plain text, with its level and one link: the entry's own page, plus a link
+   to the radar site when there are more. It names the watch by the feed's `title`, or `Lookout` when there is none.
 
 It follows every rule of [Showing a notice](FEED.md#showing-a-notice), and its styles live in a shadow root, so the
 page and the bar never restyle each other.
 
 ## Versions
 
-A published version never changes: `lookout-bar-1.1.0.js` is the same bytes for as long as it exists, and the
+A published version never changes: `lookout-bar-1.2.0.js` is the same bytes for as long as it exists, and the
 `integrity` value above holds the browser to that. A new version is a new file, announced as an entry.
 `bar/lookout-bar.js` is the newest version, for a site that prefers to follow it without a pin.
 

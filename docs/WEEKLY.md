@@ -34,7 +34,7 @@ project is in `lookout.yaml`, which the run reads first.
 ## The outputs
 
 1. Write `digests/<YYYY-Www>.md`: one paragraph per entry, most important first, each linking to its page.
-   Then add each new entry to `app/lessons.json`, which Lookout Radar shows beside it: under `build`, the checks a
+   Then add each new entry to `app/lessons.json`, which the radar site shows beside it: under `build`, the checks a
    programmer runs in their own project (each with `why` and `cmd`; say so in `why` when a command writes); under
    `lesson`, `terms` and `quiz`, the entry explained for a learner. `haro tools/feed.ring` accepts a lesson only under the id
    of an entry.

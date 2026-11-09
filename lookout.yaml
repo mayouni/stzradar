@@ -18,14 +18,15 @@ project:                          # the project the watch serves
     (Harobanda), a language of languages (Haro), and the projects built on them.
 
 watch:                            # the watch itself
-  name: Lookout
+  name: Lookout                   # the tool's name: the repository, the feed format, the bar's script
+  title: Softanza AI Radar        # what readers see: the site's title, the feed's title, the bar's link
   topic: AI
   repository: https://github.com/mayouni/lookout
   pages: https://mayouni.github.io/lookout/
   language: en
   tagline: What changed in AI this week, and what it means for what you build
   intro: >
-    Lookout reads the week's papers, releases, security findings and practices at their source, and shows
+    Each week the radar reads the papers, releases, security findings and practices at their source, and shows
     where each one lands in Softanza: the machine (Harobanda), the language (Haro), the foundation
     (Softanza), and the projects built on them.
   schedule:

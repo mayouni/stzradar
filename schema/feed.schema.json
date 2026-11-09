@@ -9,6 +9,7 @@
     "version": { "const": 1 },
     "updated": { "type": "string", "format": "date-time" },
     "home": { "type": "string", "pattern": "^https://github\\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$" },
+    "title": { "type": "string", "minLength": 1 },
     "items": {
       "type": "array",
       "items": {

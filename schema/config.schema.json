@@ -22,10 +22,11 @@
     },
     "watch": {
       "type": "object",
-      "required": ["name", "topic", "repository", "pages", "language", "tagline", "intro", "schedule", "publish"],
+      "required": ["name", "title", "topic", "repository", "pages", "language", "tagline", "intro", "schedule", "publish"],
       "additionalProperties": false,
       "properties": {
         "name": { "type": "string", "minLength": 1 },
+        "title": { "type": "string", "minLength": 1 },
         "topic": { "type": "string", "minLength": 1 },
         "repository": { "type": "string", "pattern": "^https://github\\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$" },
         "pages": { "type": "string", "pattern": "^https://.*/$" },

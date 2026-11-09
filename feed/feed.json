@@ -1,6 +1,6 @@
 {
   "version": "https://jsonfeed.org/version/1.1",
-  "title": "Lookout",
+  "title": "Softanza AI Radar",
   "home_page_url": "https://github.com/mayouni/lookout",
   "feed_url": "https://raw.githubusercontent.com/mayouni/lookout/main/feed/feed.json",
   "description": "A public watch on what is changing in AI, read from Softanza's point of view.",

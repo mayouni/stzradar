@@ -429,6 +429,7 @@ class Guard
         cReal = read(cRoot + "/lookout.yaml")
         ConfigCase("the real lookout.yaml passes", cReal, "")
         ConfigCase("a configuration with no project name is refused", substr(cReal, "  name: Softanza" + char(10), ""), "name")
+        ConfigCase("a watch with no title for its readers is refused", substr(cReal, "  title: Softanza AI Radar        # what readers see: the site's title, the feed's title, the bar's link" + char(10), ""), "title")
         ConfigCase("a fingerprint that is not a SHA256 one is refused", substr(cReal, "SHA256:ZUij0xoxJIIEwH3AV5xrDXkJLuEklao7pUVhTxCs49I", "MD5:abc"), "fingerprint")
         ConfigCase("a reader the feed does not know is refused", substr(cReal, "  - id: user", "  - id: investor"), "investor")
         ConfigCase("a key the configuration does not define is refused", cReal + "colour: teal" + char(10), "colour")

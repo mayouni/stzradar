@@ -1,8 +1,8 @@
-/*! Lookout info bar 1.1.0 -- https://github.com/mayouni/lookout -- MIT
+/*! Lookout info bar 1.2.0 -- https://github.com/mayouni/lookout -- MIT
  *
  * One line on any page: the newest Lookout notice written for your readers, checked before it is shown.
  *
- *   <script src="https://mayouni.github.io/lookout/bar/lookout-bar-1.1.0.js"
+ *   <script src="https://mayouni.github.io/lookout/bar/lookout-bar-1.2.0.js"
  *           data-audience="developer" data-projects="haro,zane" data-level="advice" defer></script>
  *
  * Any watch built with Lookout (docs/ADOPT.md) uses this same script: data-feed names that watch's site and
@@ -13,13 +13,14 @@
  *   1. fetches feed/index.json and its signature, at most once a day per browser;
  *   2. checks the SSH signature against the key pinned below, and shows nothing if the check fails;
  *   3. keeps live entries for the chosen audience, level and projects, and drops the ones dismissed;
- *   4. shows one notice as plain text, with one link: the entry's own page on Lookout.
- * It also exposes window.LookoutFeed.load(), which Lookout Radar uses, so the site and the bar read the
+ *   4. shows one notice as plain text, with one link: the entry's own page.
+ * The bar names the watch by the feed's "title" (Softanza AI Radar for this one), or "Lookout" when it has none.
+ * It also exposes window.LookoutFeed.load(), which the radar site uses, so the site and the bar read the
  * feed through the same check.
  */
 (function () {
   "use strict";
-  var VERSION = "1.1.0";
+  var VERSION = "1.2.0";
   var BASE = "https://mayouni.github.io/lookout/";
   /* the feed key, pinned: keys/allowed_signers, fingerprint SHA256:ZUij0xoxJIIEwH3AV5xrDXkJLuEklao7pUVhTxCs49I */
   var KEY = "AAAAC3NzaC1lZDI1NTE5AAAAIJoTrtZQEdrhJQFEybJGDuZs9DxF/9X/vPE3q2WfEgDK";
@@ -99,7 +100,7 @@
     ".lv{font-weight:700;border-radius:6px;padding:1px 8px;background:var(--lk-accent);color:var(--lk-bg);white-space:nowrap}" +
     ".lv.urgent{background:#B42318;color:#fff}.lv.action{background:#B54708;color:#fff}" +
     ".say{flex:1 1 22rem;min-width:0}" +
-    "a{color:var(--lk-accent);font-weight:700;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}" +
+    "a{color:var(--lk-accent);font-weight:400;text-decoration:underline;white-space:nowrap}" +
     "button{font:inherit;color:inherit;background:transparent;border:1px solid color-mix(in srgb,var(--lk-ink) 30%,transparent);border-radius:6px;padding:2px 10px;cursor:pointer}" +
     "a:focus-visible,button:focus-visible{outline:2px solid var(--lk-accent);outline-offset:2px}";
   var WORD = { info: "to know", advice: "to consider", action: "to do", urgent: "to do now" };
@@ -145,7 +146,7 @@
     return mountInto(host, cfg, { base: cfg.feed || undefined, key: cfg.key || undefined, namespace: cfg.namespace || undefined });
   }
 
-  /* opts.base reads another copy of the feed (Lookout Radar reads its own); opts.keepDismissed shows
+  /* opts.base reads another copy of the feed (the radar site reads its own); opts.keepDismissed shows
      dismissed notices again, for a preview */
   async function mountInto(host, cfg, opts) {
     cfg = config(cfg);
@@ -154,6 +155,7 @@
     try { feed = await load({ base: opts.base, key: opts.key, namespace: opts.namespace }); } catch (e) { if (window.console) console.info("Lookout bar: nothing shown, " + e.message); host.hidden = true; return; }
     var alias = await aliasFn(cfg.projects, opts.base);
     if (turn !== host.__lookoutTurn) return;
+    var title = typeof feed.title === "string" && feed.title ? feed.title.replace(/[\u0000-\u001f\u007f]/g, " ") : "Lookout";
     var root = host.shadowRoot || host.attachShadow({ mode: "open" });
     function draw() {
       var dismissed = opts.keepDismissed ? [] : (store("dismissed") || []);
@@ -163,14 +165,14 @@
       host.hidden = false;
       var it = list[0];
       var st = document.createElement("style"); st.textContent = CSS; root.appendChild(st);
-      var bar = document.createElement("div"); bar.className = "bar"; bar.setAttribute("role", "region"); bar.setAttribute("aria-label", "Lookout: news in AI for this site's " + cfg.audience + "s");
-      var who = document.createElement("span"); who.className = "who"; var wb = document.createElement("b"); wb.textContent = "Lookout"; who.appendChild(wb); bar.appendChild(who);
+      var bar = document.createElement("div"); bar.className = "bar"; bar.setAttribute("role", "region"); bar.setAttribute("aria-label", title + ": news for this site's " + cfg.audience + "s");
+      var who = document.createElement("span"); who.className = "who"; var wb = document.createElement("b"); wb.textContent = title; who.appendChild(wb); bar.appendChild(who);
       var lv = document.createElement("span"); lv.className = "lv " + it.level; lv.textContent = WORD[it.level]; bar.appendChild(lv);
       var say = document.createElement("span"); say.className = "say"; say.textContent = String(it.notice[cfg.audience]).replace(/[\u0000-\u001f\u007f]/g, " "); bar.appendChild(say);
       if (/^https:\/\/github\.com\/[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+\/blob\//.test(it.url)) {
         var a = document.createElement("a"); a.href = it.url; a.target = "_blank"; a.rel = "noopener"; a.textContent = "Read it"; bar.appendChild(a);
       }
-      if (list.length > 1) { var m = document.createElement("a"); m.href = (opts.base || BASE) + "#/week"; m.target = "_blank"; m.rel = "noopener"; m.textContent = (list.length - 1) + " more on Lookout Radar"; bar.appendChild(m); }
+      if (list.length > 1) { var m = document.createElement("a"); m.href = (opts.base || BASE) + "#/week"; m.target = "_blank"; m.rel = "noopener"; m.textContent = (list.length - 1) + " more on " + title; bar.appendChild(m); }
       var x = document.createElement("button"); x.type = "button"; x.textContent = "Dismiss"; x.setAttribute("aria-label", "Dismiss this notice");
       x.addEventListener("click", function () { var ds = store("dismissed") || []; ds.push(it.id); store("dismissed", ds); draw(); });
       bar.appendChild(x);
@@ -182,7 +184,7 @@
   window.LookoutFeed = { version: VERSION, load: load, verify: verify, live: live };
   window.LookoutBar = { version: VERSION, mount: mountInto };
   var me = document.currentScript;
-  if (me && me.hasAttribute("data-no-bar")) return;          /* Lookout Radar loads the checker without the bar */
+  if (me && me.hasAttribute("data-no-bar")) return;          /* the radar site loads the checker without the bar */
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { mount(me); });
   else mount(me);
 })();

@@ -27,9 +27,13 @@ those blocks, and nobody edits them by hand.
   "version": 1,
   "updated": "2026-11-08T11:30:00Z",
   "home": "https://github.com/mayouni/lookout",
+  "title": "Softanza AI Radar",
   "items": [ { "...": "one entry, as below, plus its url" } ]
 }
 ```
+
+`title` is the name readers see for this watch (`watch.title` in `lookout.yaml`), and a bar uses it in its link to the
+site. It was added after version 1 was published, so a reader treats it as optional.
 
 `updated` is the newest `date` or `updated` among the entries, at midnight UTC. It is not the moment of generation,
 so that regenerating an unchanged feed gives the same bytes, and a reader can trust a byte comparison.

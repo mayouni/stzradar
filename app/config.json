@@ -10,12 +10,13 @@
   },
   "watch": {
     "name": "Lookout",
+    "title": "Softanza AI Radar",
     "topic": "AI",
     "repository": "https://github.com/mayouni/lookout",
     "pages": "https://mayouni.github.io/lookout/",
     "language": "en",
     "tagline": "What changed in AI this week, and what it means for what you build",
-    "intro": "Lookout reads the week's papers, releases, security findings and practices at their source, and shows where each one lands in Softanza: the machine (Harobanda), the language (Haro), the foundation (Softanza), and the projects built on them.",
+    "intro": "Each week the radar reads the papers, releases, security findings and practices at their source, and shows where each one lands in Softanza: the machine (Harobanda), the language (Haro), the foundation (Softanza), and the projects built on them.",
     "schedule": {
       "every": "monday",
       "at": "07:00",

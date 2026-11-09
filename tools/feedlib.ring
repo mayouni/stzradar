@@ -395,7 +395,7 @@ class FeedRun
             ok
         next
 
-    # app/lessons.json is what Lookout Radar shows under Build and Learn. It must be valid JSON, and
+    # app/lessons.json is what the radar site shows under Build and Learn. It must be valid JSON, and
     # every key under "entries" must name an entry that exists, so the site never shows an orphan.
     func LessonsCheck
         cPath = cRoot + "/app/lessons.json"
@@ -801,7 +801,7 @@ class FeedRun
         next
         ActionDates(cRel, oData)
 
-    # Every action carries the day it reached each stage, so Lookout Radar can say how fast Softanza
+    # Every action carries the day it reached each stage, so the radar site can say how fast Softanza
     # reacts. A stage is dated between the entry's date and the day the entry was last written, the
     # stages run in order, the current state has its date, and no stage beyond it is dated.
     func ActionDates cRel, oData
@@ -944,6 +944,7 @@ class FeedRun
             ["version", ["#", "1"]],
             ["updated", NewestDay()],
             ["home", Conf("watch.repository")],
+            ["title", Conf("watch.title")],
             ["items", ["[", aItems]]
         ]]
 
@@ -981,7 +982,7 @@ class FeedRun
         next
         return ["{", [
             ["version", "https://jsonfeed.org/version/1.1"],
-            ["title", Conf("watch.name")],
+            ["title", Conf("watch.title")],
             ["home_page_url", Conf("watch.repository")],
             ["feed_url", substr(Conf("watch.repository"), "https://github.com/", "https://raw.githubusercontent.com/") + "/main/feed/feed.json"],
             ["description", "A public watch on what is changing in " + Conf("watch.topic") + ", read from " + Conf("project.name") + "'s point of view."],
