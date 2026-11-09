@@ -317,7 +317,11 @@ pre.yfile .ln.hl{background:color-mix(in srgb,var(--accent) 20%,var(--panel));bo
 .fnode span{color:var(--ink2);font-size:1rem}
 .farrow{font-size:1.6rem;line-height:1;color:var(--accent)}
 .row2[hidden]{display:none}
-.subnav{gap:6px 22px}
+/* the About section's row names its parent and shares the section's tint, so it reads as About's own pages */
+.subnav{gap:6px 22px;background:var(--tint);margin:0 calc(-1 * max(16px,env(safe-area-inset-left,0px)));padding:8px max(16px,env(safe-area-inset-left,0px)) 10px;border-top:1px solid var(--line)}
+.subnav .parent{font-weight:700;font-size:1.0625rem;color:var(--deep)}
+:root[data-theme="dark"] .subnav .parent{color:var(--accent)}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .subnav .parent{color:var(--accent)} }
 .subnav a{font-weight:600;font-size:1.0625rem;color:var(--ink);text-decoration:none;padding:4px 0;border-bottom:3px solid transparent}
 .subnav a[aria-current="page"]{border-bottom-color:var(--accent);color:var(--deep)}
 
@@ -386,6 +390,7 @@ footer code{font-family:var(--f-mono);overflow-wrap:anywhere}
   </div>
   <!-- the About section's pages, in the pinned second row (the site's navigation law: a section's path stays in view) -->
   <nav class="row2 subnav" id="aboutNav" aria-label="About" hidden>
+    <span class="parent" aria-hidden="true">About ›</span>
     <a href="#/about/why" data-sub="why">Why</a>
     <a href="#/about/method" data-sub="method">Method</a>
     <a href="#/yours" data-sub="yours">Make your own</a>
