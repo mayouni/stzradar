@@ -41,6 +41,29 @@ watch:                            # the watch itself
   publish: after-reading          # the owner reads the digest; only then is the feed signed and pushed
   radar_limit: 7                  # the radar highlights at most this many signals a week; the list keeps them all
 
+home:                             # the front page: what the watch is for, before any week is shown
+  headline: >
+    {topic} changes every week. {project} hears what concerns it the same week.
+  promise: >
+    {title} reads the week's papers, releases, security findings and practices at their source, judges each
+    one from {project}'s point of view, and tells every reader what it means for them: a check to run, a lesson
+    to learn, or work proposed to the part it concerns.
+  why: >
+    {project} is the governed software platform of the AI age, so almost every development in {topic} touches
+    something it builds: its library and engine, its language Haro, its declared machine Harobanda, its
+    interfaces, its intelligence layer. A finding that matters reaches the part it concerns within days, as work
+    someone can act on, and what was learned is written down once, with its sources, where every session,
+    project and reader finds it again.
+  need:
+    - Which of this week's developments touch {project}, and which part of it
+    - Where {project} stands on each one, to adopt, learn from, correct, defend against, watch or decline
+    - What each reader does next, whether developer, maintainer, learner or user
+  value:
+    - Each project of {project} hears what concerns it, as a dated proposal it decides on
+    - A record that lasts, every entry with its sources, its stance and its corrections
+    - A signed feed any program can read, and a bar any site can show
+    - The same watch for any project, from one file, lookout.yaml
+
 feed:                             # who signs the feed (docs/FEED.md, "The signature")
   signer: feed@lookout
   namespace: lookout-feed

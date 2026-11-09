@@ -82,6 +82,17 @@ nav.views a[aria-current="page"]{border-bottom-color:var(--accent);color:var(--d
 @media (max-width:520px){#readers{display:none}#readerSel{display:inline-block}.row2{flex-wrap:nowrap}
   .facts{display:grid;grid-template-columns:1fr 1fr}.fact{min-width:0}}
 
+/* the front page: a taller head with a larger title, then one reading column */
+.hero .wrap{padding-block:56px 48px}
+.hero h1{font-size:clamp(2.1rem,4.6vw,3.4rem);max-width:28ch;margin-bottom:18px}
+.hero .lede{max-width:72ch}
+.hero .cta{margin:26px 0 0}
+.hero .cta a{text-decoration:none;display:inline-block}   /* the border marks it as the way in; no underline on top (one emphasis) */
+.hero .herofact{margin:14px 0 0;font-size:1.125rem;color:var(--ink2)}
+.home{max-width:64rem;padding-block:8px 24px}   /* inside .wrap, so it keeps the hero's left edge */
+.home h2{font:700 1.6rem/1.2 var(--f-title);margin:34px 0 12px}
+.home p{margin:0;max-width:72ch;font-size:1.25rem;line-height:1.55}
+.home ul{margin:0;padding-left:26px;display:flex;flex-direction:column;gap:10px;max-width:72ch;font-size:1.25rem;line-height:1.5}
 /* page heads */
 .head{background:var(--tint);border-bottom:1px solid var(--line)}
 .head .wrap{padding-block:28px 26px}
@@ -411,7 +422,7 @@ footer .made{color:var(--ink);font-weight:600}
 
 <header class="top"><div class="wrap">
   <div class="row1">
-    <a class="brand" href="#/week"><span class="bn" id="brandName">Softanza AI</span> <span>Radar</span></a>
+    <a class="brand" href="#/"><span class="bn" id="brandName">Softanza AI</span> <span>Radar</span></a>
     <nav class="views" aria-label="Views">
       <a href="#/week" data-view="week">This week</a>
       <a href="#/softanza" data-view="softanza" id="navIn">In Softanza</a>
@@ -542,6 +553,28 @@ function head(eyebrow, title, ledes){
   w.append(el("h1",null,title));
   for (const l of ledes) w.append(typeof l === "string" ? el("p","lede",l) : l);
   h.append(w); return h;
+}
+
+/* ------------------------------------------------------------ view: the front page
+   What the watch is for, before any week: a hero with the promise and one way in (this week's radar), then why it
+   exists, what it answers and what it gives, read top to bottom in one column. Every word comes from lookout.yaml's
+   home section, so each project's front page speaks for that project. */
+function viewHome(){
+  const H = CONFIG.home, frag = document.createDocumentFragment();
+  const hero = el("div","head hero"), w = el("div","wrap");
+  const weeks = weeksAll(), wk = weeks.find(x => DIGESTS.includes(x)) || weeks[0];
+  const n = FEED.items.filter(i => weekOf(i.date) === wk && i.status !== "superseded").length;
+  const go = el("a","btn big","See this week on the radar →"); go.href = "#/week";
+  w.append(el("h1",null,H.headline), el("p","lede",H.promise), el("p","cta"), el("p","herofact","Week " + wk + ", " + weekSpan(wk) + ": " + plural(n, "signal") + " read and placed."));
+  w.querySelector(".cta").append(go);
+  hero.append(w); frag.append(hero);
+  const outer = el("div","wrap"), body = el("div","home"); outer.append(body);
+  const list = items => { const ul = el("ul"); for (const t of items) ul.append(el("li",null,t)); return ul; };
+  body.append(el("h2",null,"Why it exists"), el("p",null,H.why),
+              el("h2",null,"What it answers"), list(H.need),
+              el("h2",null,"What it gives"), list(H.value));
+  frag.append(outer);
+  return frag;
 }
 
 /* ------------------------------------------------------------ view: this week */
@@ -1198,6 +1231,11 @@ function viewYours(){
     P("  tagline_past: " + yq("What changed in {topic} in week {week}, and what it meant for what we build in {project}"), "topic", "name");
     P("  intro: " + yq("{watch} reads the week's news at its source and shows where each piece lands in {project}."), "watch", "name");
     P("  schedule:"); P("    every: monday"); P('    at: "07:00"'); P("    timezone: UTC"); P("  publish: after-reading"); P("");
+    P("home:"); P("  headline: " + yq("{topic} changes every week. {project} hears what concerns it the same week."), "topic", "name");
+    P("  promise: " + yq("{title} reads the week's news at its source, judges each piece from {project}'s point of view, and tells every reader what it means for them."), "name");
+    P("  why: " + yq("Almost every development in {topic} touches something {project} builds. A finding that matters reaches the part it concerns within days, as work someone can act on."), "name", "topic");
+    P("  need:"); P("    - " + yq("Which of this week's developments touch {project}, and which part of it"), "name"); P("    - " + yq("What each reader does next"));
+    P("  value:"); P("    - " + yq("Each part of {project} hears what concerns it, as a dated proposal"), "name"); P("    - " + yq("A record that lasts, every entry with its sources")); P("");
     P("feed:"); P("  signer: " + yq("feed@" + slug), "watch"); P("  namespace: " + slug + "-feed", "watch");
     P("  fingerprint: SHA256:the-43-characters-ssh-keygen-prints   # step 3"); P("  key: the-base64-after-ssh-ed25519                       # step 3"); P("");
     P("map: map/estate.json"); P(""); P("readers:", "readers");
@@ -1434,13 +1472,14 @@ function readerRow(){
   rs.value = reader;
 }
 function route(keepScroll){
-  const h = location.hash || "#/week";
+  const h = location.hash || "#/";
   const [path, qs] = h.slice(1).split("?");
   const parts = path.split("/").filter(Boolean);
-  const v = parts[0] || "week";
+  const v = parts[0] || (CONFIG?.home ? "home" : "week");
   const main = $("#view"); main.replaceChildren();
   let node, title = RADAR();
-  if (v === "softanza" || v === "estate"){ node = viewEstate(); title = "In " + NAME() + " · " + RADAR(); }
+  if (v === "home"){ node = viewHome(); }
+  else if (v === "softanza" || v === "estate"){ node = viewEstate(); title = "In " + NAME() + " · " + RADAR(); }
   else if (v === "signals"){ node = viewSignals(new URLSearchParams(qs || "")); title = "All signals · " + RADAR(); }
   else if (v === "signal"){ node = viewSignal(decodeURIComponent(parts[1] || "")); title = (FEED.items.find(i => i.id === parts[1])?.title || "Signal") + " · " + RADAR(); }
   else if (v === "yours" || v === "bar"){ node = viewYours(); title = "Make your own · " + RADAR(); }
@@ -1452,7 +1491,7 @@ function route(keepScroll){
   main.append(node); document.title = title;
   /* the About section: its three pages share the pinned second row, where the reader choice stands elsewhere */
   const about = v === "about" || v === "yours" || v === "bar", sub = v === "about" ? (["method","feed"].includes(parts[1]) ? parts[1] : "why") : "yours";
-  $("#aboutNav").hidden = !about; $("#readerRow").hidden = about;
+  $("#aboutNav").hidden = !about; $("#readerRow").hidden = about || v === "home";   /* the front page is read the same by every reader */
   document.querySelectorAll("#aboutNav a").forEach(a => { if (about && a.dataset.sub === sub) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
   $("#aboutWhy").textContent = {why:"what this watch answers, and the requirements behind it.", method:"how a signal is read, judged, written and published.", feed:"how the feed is signed, and how to check it yourself.", yours:"the same watch for your own project, and the bar for your pages."}[sub];
   window.headH?.();

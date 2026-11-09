@@ -27,6 +27,22 @@
     "publish": "after-reading",
     "radar_limit": "7"
   },
+  "home": {
+    "headline": "AI changes every week. Softanza hears what concerns it the same week.",
+    "promise": "Softanza AI Radar reads the week's papers, releases, security findings and practices at their source, judges each one from Softanza's point of view, and tells every reader what it means for them: a check to run, a lesson to learn, or work proposed to the part it concerns.",
+    "why": "Softanza is the governed software platform of the AI age, so almost every development in AI touches something it builds: its library and engine, its language Haro, its declared machine Harobanda, its interfaces, its intelligence layer. A finding that matters reaches the part it concerns within days, as work someone can act on, and what was learned is written down once, with its sources, where every session, project and reader finds it again.",
+    "need": [
+      "Which of this week's developments touch Softanza, and which part of it",
+      "Where Softanza stands on each one, to adopt, learn from, correct, defend against, watch or decline",
+      "What each reader does next, whether developer, maintainer, learner or user"
+    ],
+    "value": [
+      "Each project of Softanza hears what concerns it, as a dated proposal it decides on",
+      "A record that lasts, every entry with its sources, its stance and its corrections",
+      "A signed feed any program can read, and a bar any site can show",
+      "The same watch for any project, from one file, lookout.yaml"
+    ]
+  },
   "feed": {
     "signer": "feed@lookout",
     "namespace": "lookout-feed",

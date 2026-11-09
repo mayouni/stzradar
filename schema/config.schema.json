@@ -7,6 +7,18 @@
   "additionalProperties": false,
   "properties": {
     "lookout": { "const": "1" },
+    "home": {
+      "type": "object",
+      "required": ["headline", "promise", "why", "need", "value"],
+      "additionalProperties": false,
+      "properties": {
+        "headline": { "type": "string", "minLength": 1 },
+        "promise": { "type": "string", "minLength": 1 },
+        "why": { "type": "string", "minLength": 1 },
+        "need": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+        "value": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } }
+      }
+    },
     "project": {
       "type": "object",
       "required": ["name", "site", "owner", "licence", "pitch"],

@@ -29,6 +29,7 @@ The site walks through it with a form that writes your first file: [Make your ow
 | `project.name`, `site`, `owner`, `licence`, `licence_url`, `pitch` | the project the watch serves | the site's titles, the In view, the footer credit, the feed's description |
 | `watch.name`, `topic`, `repository`, `pages`, `language` | the watch itself: `name` is the tool's name | every URL the feed writes |
 | `watch.title` | the name readers see, such as "Softanza AI Radar" | the site's title, the feed's title, the bar's link |
+| `home.headline`, `home.promise`, `home.why`, `home.need`, `home.value` | the front page: the promise, why the watch exists, what it answers, what it gives | the front page |
 | `watch.tagline`, `watch.tagline_past`, `watch.intro` | the first words a visitor reads; `tagline_past` titles an earlier week | the This week view |
 | `watch.schedule` | the day, the hour, the timezone and the week surveyed | the agent, and the task that wakes it |
 | `watch.publish` | `after-reading` (the owner reads, then signs and pushes) or `at-once` | the agent |
