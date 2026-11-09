@@ -13,8 +13,8 @@
   ],
   "projects": [
     { "id": "zane",       "name": "Zane",               "layer": "experience",   "line": "The interface language and its constitution: rules a machine checks, so every screen reads well.", "link": "https://github.com/mayouni/zane", "aliases": ["stzzui"] },
-    { "id": "studio",     "name": "Softanza Studio",    "layer": "experience",   "line": "The visual environment over the same plain-text truth." },
-    { "id": "learning",   "name": "The Learning System","layer": "experience",   "line": "Courses, missions, projects and a tutor, built on Softanza." },
+    { "id": "atelier",    "name": "Atelier",            "layer": "experience",   "line": "The library's own examples, run live as checks, with a playground to try them." },
+    { "id": "zindara",    "name": "Zindara",            "layer": "experience",   "line": "Softanza's education offering: courses, missions, projects and a tutor, for schools and learning designers." },
     { "id": "aicha",      "name": "Aïcha",              "layer": "intelligence", "line": "Knowledge, models and agents on your own device: a model proposes, a governed actor commits.", "aliases": ["stzlib.intelligence"] },
     { "id": "haroserv",   "name": "HaroServ",           "layer": "web",          "line": "The server for Haro applications and web services.", "link": "https://mayouni.github.io/ringserv/" },
     { "id": "haroscript", "name": "HaroScript",         "layer": "web",          "line": "Haro in the browser.", "link": "https://mayouni.github.io/ringscript/" },
