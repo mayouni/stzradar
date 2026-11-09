@@ -31,6 +31,7 @@ The site walks through it with a form that writes your first file: [Make your ow
 | `watch.tagline`, `watch.intro` | the first words a visitor reads | the This week view |
 | `watch.schedule` | the day, the hour, the timezone and the week surveyed | the agent, and the task that wakes it |
 | `watch.publish` | `after-reading` (the owner reads, then signs and pushes) or `at-once` | the agent |
+| `watch.radar_limit` | how many signals the radar highlights each week, 3 to 12 (7 when absent); the list keeps every one | the site |
 | `feed.signer`, `namespace`, `fingerprint`, `key` | who signs the feed | the check, the site and the bar check the signature with them |
 | `map` | the path of the map file | the check, the site |
 | `readers` | who the notices are for (`developer`, `maintainer`, `learner`, `user`), with a label and what each reads first | the site's reader choice, the agent's notices |

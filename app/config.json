@@ -22,7 +22,8 @@
       "timezone": "Africa/Niamey",
       "week": "the latest ISO week that has ended"
     },
-    "publish": "after-reading"
+    "publish": "after-reading",
+    "radar_limit": "7"
   },
   "feed": {
     "signer": "feed@lookout",

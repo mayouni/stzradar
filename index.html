@@ -304,6 +304,28 @@ pre.yfile .ln.hl{background:color-mix(in srgb,var(--accent) 20%,var(--panel));bo
 @media (max-width:900px){dialog.yamlbox{width:100vw;height:100dvh;border-radius:0;border:0}
   .ybody{display:block;overflow-y:auto}.yleft,.yright{overflow:visible}.yright{border-left:0;border-top:1px solid var(--line)}}
 
+/* the About pages: the repository's documents at reading size, one column */
+.doc{max-width:52rem}
+.doc h2{font:700 1.6rem/1.2 var(--f-title);margin:34px 0 10px;padding-top:20px;border-top:2px solid var(--line)}
+.doc h2:first-child{margin-top:4px;padding-top:0;border-top:0}
+.doc h3{margin:22px 0 8px}
+.doc p{margin:0 0 14px;max-width:66ch}
+.doc ul,.doc ol{margin:0 0 16px;padding-left:26px;display:flex;flex-direction:column;gap:8px;max-width:66ch}
+.doc code{font-family:var(--f-mono);font-size:.92em;background:var(--tint);padding:0 4px;border-radius:4px}
+.doc .code{margin:0 0 16px}
+/* the flow diagram: boxes in layers, an arrow between layers */
+.flow{margin:6px 0 22px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.flayer{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;width:100%}
+.fnode{flex:0 1 15.5rem;min-width:0;background:var(--panel);border:1px solid var(--line);border-top:4px solid var(--line);border-radius:12px;padding:10px 14px;text-align:center;display:flex;flex-direction:column;gap:2px}
+.fnode.fkey{border-top-color:var(--accent)}
+.fnode b{font:700 1.15rem/1.25 var(--f-title)}
+.fnode span{color:var(--ink2);font-size:1rem}
+.farrow{font-size:1.6rem;line-height:1;color:var(--accent)}
+.row2[hidden]{display:none}
+.subnav{gap:6px 22px}
+.subnav a{font-weight:600;font-size:1.0625rem;color:var(--ink);text-decoration:none;padding:4px 0;border-bottom:3px solid transparent}
+.subnav a[aria-current="page"]{border-bottom-color:var(--accent);color:var(--deep)}
+
 /* the bar page */
 .preview{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--panel);margin-bottom:16px}
 .preview .fake{padding:14px 16px;color:var(--ink2)}
@@ -352,7 +374,7 @@ footer code{font-family:var(--f-mono);overflow-wrap:anywhere}
       <a href="#/softanza" data-view="softanza" id="navIn">In Softanza</a>
       <a href="#/signals" data-view="signals">All signals</a>
       <a href="#/trends" data-view="trends">Trends</a>
-      <a href="#/yours" data-view="yours">Make your own</a>
+      <a href="#/about/why" data-view="about">About</a>
     </nav>
     <div class="tools">
       <button class="help" type="button" id="helpOpen" aria-haspopup="dialog">How to read it</button>
@@ -361,12 +383,18 @@ footer code{font-family:var(--f-mono);overflow-wrap:anywhere}
       </a>
     </div>
   </div>
-  <div class="row2">
+  <div class="row2" id="readerRow">
     <span class="lab" id="readerLab">Reading as</span>
     <div class="seg" role="group" aria-labelledby="readerLab" id="readers"></div>
     <select id="readerSel" aria-labelledby="readerLab"></select>
     <span class="why" id="readerWhy"></span>
   </div>
+  <!-- the About section's pages, in the pinned second row (the site's navigation law: a section's path stays in view) -->
+  <nav class="row2 subnav" id="aboutNav" aria-label="About" hidden>
+    <a href="#/about/why" data-sub="why">Why</a>
+    <a href="#/about/method" data-sub="method">Method</a>
+    <a href="#/yours" data-sub="yours">Make your own</a>
+  </nav>
 </div></header>
 
 <main id="view"></main>
@@ -439,7 +467,10 @@ function weekOf(dateStr){
   const d = new Date(dateStr + "T00:00:00Z"); const day = d.getUTCDay() || 7; d.setUTCDate(d.getUTCDate() + 4 - day);
   const y0 = new Date(Date.UTC(d.getUTCFullYear(),0,1)); return d.getUTCFullYear() + "-W" + String(Math.ceil(((d - y0) / 864e5 + 1) / 7)).padStart(2,"0");
 }
-const byLevel = (a,b) => LEVELS.indexOf(b.level) - LEVELS.indexOf(a.level) || (b.relevance === "high") - (a.relevance === "high") || (a.date < b.date ? 1 : -1);
+/* what a signal asks first, then how much it touches the project, then the newest: the order of the list and of the radar's choice */
+const REL = {high:2, medium:1, low:0};
+const byLevel = (a,b) => LEVELS.indexOf(b.level) - LEVELS.indexOf(a.level) || (REL[b.relevance] ?? 1) - (REL[a.relevance] ?? 1) || (a.date < b.date ? 1 : a.date > b.date ? -1 : 0);
+const radarLimit = () => Math.min(12, Math.max(3, Number(CONFIG?.watch?.radar_limit) || 7));
 
 /* ------------------------------------------------------------ a card */
 function card(it){
@@ -504,7 +535,7 @@ function viewWeek(wkArg){
   h.querySelector(".wrap").append(facts, nav);
   frag.append(h);
   const s = el("section","block wrap week");
-  const scope = el("div","scope"); scope.append(el("h2",null,"The week across " + NAME()), radar(items));
+  const scope = el("div","scope"); scope.append(el("h2",null,"The week across " + NAME()), radar(items.slice(0, radarLimit()), items.length));   /* a few, each worth a look (docs/METHOD.md) */
   const list = el("div");
   for (const lv of ["urgent","action","advice","info"]){
     const g = items.filter(i => i.level === lv); if (!g.length) continue;
@@ -515,7 +546,7 @@ function viewWeek(wkArg){
   return frag;
 }
 
-function radar(items){
+function radar(items, total = items.length){
   const NS = "http://www.w3.org/2000/svg", mk = (t, a) => { const e = document.createElementNS(NS,t); for (const k in a) e.setAttribute(k,a[k]); return e; };
   const svg = mk("svg",{viewBox:"0 0 440 440",role:"img","aria-label":"Radar: each slice is a layer of " + NAME() + "; the closer to the centre, the more relevant"});
   const C = 220, R = {high:72, medium:122, low:168}, layers = MAP.layers, n = layers.length, step = 360 / n;
@@ -590,7 +621,8 @@ function radar(items){
   }
   stage.append(svg, tip);
   const box = el("div");
-  box.append(el("p","radarhint","Hover a dot to see what it is; click it to open its page in All signals."), stage);
+  box.append(el("p","radarhint","Hover a dot to see what it is; click it to open its page in All signals." +
+    (total > items.length ? " The radar highlights the " + items.length + " that ask most of this week's " + total + "; the list holds them all." : "")), stage);
   const key = el("div","key");
   for (const lv of ["urgent","action","advice","info"]){ const s = el("span"); const d = el("i"); d.style.background = css("--lv-"+lv); s.append(d, document.createTextNode(WORD[lv])); key.append(s); }
   key.append(el("span",null,"centre: most relevant"));
@@ -1146,9 +1178,107 @@ function dress(){
     ["In " + NAME(), "The platform layer by layer; every number opens its signals."],
     ["All signals", "Filter by project, layer, domain, concern, level or week."],
     ["Trends", "The weeks together, each chart with its table."],
-    ["Make your own", "The same watch for your project, and the bar for your pages."]
+    ["About", "Why this watch exists, its method, and how to make your own."]
   ]) dl.append(el("dt",null,t), el("dd",null,d));
   dl.append(el("dt",null,"Levels")); const lv = el("dd"); LEVELS.forEach((k, i) => { if (i) lv.append(document.createTextNode(", ")); lv.append(el("b",null,WORD[k])); }); lv.append(document.createTextNode(".")); dl.append(lv);
+}
+
+/* ------------------------------------------------------------ the About pages: docs/WHY.md and docs/METHOD.md
+   The pages are the repository's own documents, read at the moment they are shown: one text, in two places. The
+   reader below takes the Markdown these documents use and builds page elements from it, never HTML from the text. */
+const DOCS = { why: {file:"docs/WHY.md", eyebrow:"About · Why"}, method: {file:"docs/METHOD.md", eyebrow:"About · Method"} };
+function viewDoc(name){
+  const d = DOCS[name], holder = el("div");
+  holder.append(head(d.eyebrow, " ", []));
+  fetch(d.file, {cache:"no-cache"}).then(r => r.ok ? r.text() : Promise.reject(r.status))
+    .then(md => holder.replaceChildren(...renderDoc(md, d.eyebrow)))
+    .catch(() => holder.replaceChildren(head(d.eyebrow, "This page could not be loaded", ["Reload the page to try again."])));
+  return holder;
+}
+function inlineMd(text, base){
+  const out = document.createDocumentFragment();
+  for (const part of String(text).split(/(\*\*[^*]+\*\*|`[^`]+`|\[[^\]]+\]\([^)\s]+\))/g)){
+    if (!part) continue;
+    let m;
+    if ((m = part.match(/^\*\*([^*]+)\*\*$/))) out.append(el("strong",null,m[1]));
+    else if ((m = part.match(/^`([^`]+)`$/))) out.append(el("code",null,m[1]));
+    else if ((m = part.match(/^\[([^\]]+)\]\(([^)\s]+)\)$/))){
+      const a = el("a",null,m[1]); const u = m[2];
+      a.href = /^https?:/.test(u) ? u : new URL(u, base).href;           /* a link inside the repository opens on GitHub */
+      a.target = "_blank"; a.rel = "noopener"; out.append(a);
+    } else out.append(document.createTextNode(part));
+  }
+  return out;
+}
+function renderDoc(md, eyebrow){
+  const base = CONFIG.watch.repository + "/blob/main/docs/";
+  const lines = md.replace(/\r/g,"").split("\n");
+  let title = "", i = 0;
+  const body = el("section","block wrap doc"), nodes = [];
+  let para = [], list = null, item = null;
+  const flushPara = () => { if (para.length){ const p = el("p"); p.append(inlineMd(para.join(" "), base)); body.append(p); para = []; } };
+  const flushList = () => { list = null; item = null; };
+  while (i < lines.length){
+    const L = lines[i];
+    const fence = L.match(/^(`{3,})(\w*)\s*$/);
+    if (fence){
+      flushPara(); flushList();
+      const close = fence[1], lang = fence[2], buf = [];
+      i++;
+      while (i < lines.length && lines[i].trim() !== close) buf.push(lines[i++]);
+      i++;
+      if (lang === "mermaid") body.append(flowDiagram(buf.join("\n")));
+      else { const w = el("div","code"), pre = el("pre"); pre.textContent = buf.join("\n"); w.append(pre); body.append(w); }
+      continue;
+    }
+    let m;
+    if ((m = L.match(/^# (.*)$/))){ flushPara(); flushList(); title = title || m[1].replace(/\s+--\s+/, ": "); i++; continue; }
+    if ((m = L.match(/^(#{2,3}) (.*)$/))){ flushPara(); flushList(); const hh = el(m[1].length === 2 ? "h2" : "h3"); hh.append(inlineMd(m[2], base)); body.append(hh); i++; continue; }
+    if ((m = L.match(/^(\s*)(-|\d+\.) (.*)$/))){
+      flushPara();
+      const ordered = m[2] !== "-";
+      if (!list || (list.tagName === "OL") !== ordered){ list = el(ordered ? "ol" : "ul"); body.append(list); }
+      item = el("li"); item.dataset.raw = m[3]; list.append(item); i++;
+      while (i < lines.length && /^\s{2,}\S/.test(lines[i]) && !/^\s*(-|\d+\.) /.test(lines[i])) item.dataset.raw += " " + lines[i++].trim();
+      item.append(inlineMd(item.dataset.raw, base)); delete item.dataset.raw;
+      continue;
+    }
+    if (!L.trim()){ flushPara(); flushList(); i++; continue; }
+    flushList(); para.push(L.trim()); i++;
+  }
+  flushPara();
+  nodes.push(head(eyebrow, title, []), body);
+  return nodes;
+}
+/* a mermaid flowchart, drawn as boxes in layers from its first node down: the same diagram GitHub shows, at the
+   page's reading size, and a column on a phone */
+function flowDiagram(src){
+  const label = {}, edges = [];
+  const node = s => { const m = s.trim().match(/^(\w+)(?:\["([^"]*)"\])?$/); if (!m) return null; if (m[2]) label[m[1]] = m[2]; return m[1]; };
+  for (const line of src.split("\n")){
+    const parts = line.split("-->"); if (parts.length !== 2) continue;
+    const a = node(parts[0]), b = node(parts[1]); if (a && b) edges.push([a, b]);
+  }
+  const ids = [...new Set(edges.flat())], depth = {};
+  const roots = ids.filter(id => !edges.some(e => e[1] === id));
+  const walk = (id, d) => { if ((depth[id] ?? -1) >= d) return; depth[id] = d; for (const e of edges) if (e[0] === id) walk(e[1], d + 1); };
+  roots.forEach(r => walk(r, 0));
+  const fig = el("figure","flow"); fig.setAttribute("role","img");
+  const maxD = Math.max(0, ...Object.values(depth));
+  const words = [];
+  for (let d = 0; d <= maxD; d++){
+    if (d) fig.append(el("div","farrow","↓"));
+    const row = el("div","flayer");
+    for (const id of ids.filter(x => depth[x] === d)){
+      const segs = (label[id] || id).split(/<br\s*\/?>/i);
+      const n = el("div","fnode" + (d === 1 ? " fkey" : ""));
+      n.append(el("b",null,segs[0]), el("span",null,segs.slice(1).join(" ")));
+      row.append(n); words.push(segs.join(" "));
+    }
+    fig.append(row);
+  }
+  fig.setAttribute("aria-label","How it flows: " + words.join("; then "));
+  return fig;
 }
 
 /* ------------------------------------------------------------ the router */
@@ -1177,10 +1307,18 @@ function route(keepScroll){
   else if (v === "signals"){ node = viewSignals(new URLSearchParams(qs || "")); title = "All signals · " + RADAR(); }
   else if (v === "signal"){ node = viewSignal(decodeURIComponent(parts[1] || "")); title = (FEED.items.find(i => i.id === parts[1])?.title || "Signal") + " · " + RADAR(); }
   else if (v === "yours" || v === "bar"){ node = viewYours(); title = "Make your own · " + RADAR(); }
+  else if (v === "about" && parts[1] === "method"){ node = viewDoc("method"); title = "Method · " + RADAR(); }
+  else if (v === "about"){ node = viewDoc("why"); title = "Why · " + RADAR(); }
   else if (v === "trends"){ node = viewTrends(new URLSearchParams(qs || "")); title = "Trends · " + RADAR(); }
   else { node = viewWeek(parts[1]); if (parts[1]) title = "Week " + parts[1] + " · " + RADAR(); }
   main.append(node); document.title = title;
-  document.querySelectorAll("nav.views a").forEach(a => a.toggleAttribute("aria-current", a.dataset.view === (v === "signal" ? "signals" : v === "estate" ? "softanza" : v)));
+  /* the About section: its three pages share the pinned second row, where the reader choice stands elsewhere */
+  const about = v === "about" || v === "yours" || v === "bar", sub = v === "about" ? (parts[1] === "method" ? "method" : "why") : "yours";
+  $("#aboutNav").hidden = !about; $("#readerRow").hidden = about;
+  document.querySelectorAll("#aboutNav a").forEach(a => { if (about && a.dataset.sub === sub) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
+  window.headH?.();
+  const navv = v === "signal" ? "signals" : v === "estate" ? "softanza" : about ? "about" : v;
+  document.querySelectorAll("nav.views a").forEach(a => a.toggleAttribute("aria-current", a.dataset.view === navv));
   document.querySelectorAll("nav.views a[aria-current]").forEach(a => a.setAttribute("aria-current","page"));
   if (!keepScroll) window.scrollTo(0, 0);
 }
@@ -1213,7 +1351,7 @@ async function start(){
   live = FEED.items.filter(it => !["declined","superseded"].includes(it.status) && it.review_by >= today);
   const ok = el("span","ok","Signature checked in this browser"); $("#checked").replaceChildren(ok, document.createTextNode(": the feed was signed by " + poss(WATCH()) + " key " + CONFIG.feed.fingerprint.slice(0, 13) + "…" + CONFIG.feed.fingerprint.slice(-4) + " and is unchanged since. " + FEED.items.length + " entries, updated " + FEED.updated.slice(0,10) + "."));
   /* the pinned header's height, so the fixed radar sits just under it */
-  const headH = () => document.documentElement.style.setProperty("--head", document.querySelector("header.top").offsetHeight + "px");
+  const headH = window.headH = () => document.documentElement.style.setProperty("--head", document.querySelector("header.top").offsetHeight + "px");
   headH(); addEventListener("resize", headH);
   addEventListener("hashchange", () => route(false));
   matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => route(true));

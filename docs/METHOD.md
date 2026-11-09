@@ -1,5 +1,19 @@
 # Method -- how an entry is made
 
+## How it flows
+
+```mermaid
+flowchart TD
+  S["Sources<br/>papers, releases, advisories,<br/>practices, the owner's links"] --> A["The watch's agent<br/>reads each one at its source,<br/>judges it, writes it"]
+  A --> E["One entry, one file<br/>a page for people and<br/>data for programs"]
+  E --> D["The weekly digest<br/>the owner reads the week"]
+  E --> F["The signed feed<br/>this site, the bar,<br/>programs and apps"]
+  E --> P["Proposals<br/>to the project each one concerns"]
+```
+
+Everything starts from a source read in full, and everything a reader sees comes from one file per entry. The feed is
+generated from those files and signed, so a page, a program and a notice in an application all say the same thing.
+
 ## What is watched
 
 Anything in AI that can change what Softanza builds, how it builds it, or how it protects the people who use it:
@@ -69,3 +83,14 @@ Once a week the desk surveys its sources (`docs/SOURCES.md`) and the author's li
 week's entries and a digest (`digests/YYYY-Www.md`), and regenerates the feed. `docs/WEEKLY.md` is the exact
 instruction a scheduled run follows. Depth beats breadth: a week with four entries read properly is better than a
 week with twenty headlines.
+
+## The radar highlights a few
+
+The radar on the site highlights at most seven signals a week (`watch.radar_limit` in `lookout.yaml`). It chooses
+them in a fixed order: first what a signal asks of its reader (to do now, to do, to consider, to know), then how much
+it touches Softanza, then the newest. Every signal of the week stays in the list beside the radar, in All signals, in
+the digest and in the feed.
+
+The reason is attention. A radar earns its place by pointing: a few dots, each one worth a look, say where to look
+first. Twenty dots say that everything matters, which tells a reader nothing. The list is the whole week; the radar is
+where the week begins.

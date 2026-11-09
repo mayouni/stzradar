@@ -42,7 +42,8 @@
             "week": { "type": "string" }
           }
         },
-        "publish": { "enum": ["after-reading", "at-once"] }
+        "publish": { "enum": ["after-reading", "at-once"] },
+        "radar_limit": { "type": "string", "pattern": "^[1-9][0-9]?$" }
       }
     },
     "feed": {

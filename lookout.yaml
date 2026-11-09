@@ -34,6 +34,7 @@ watch:                            # the watch itself
     timezone: Africa/Niamey
     week: the latest ISO week that has ended
   publish: after-reading          # the owner reads the digest; only then is the feed signed and pushed
+  radar_limit: 7                  # the radar highlights at most this many signals a week; the list keeps them all
 
 feed:                             # who signs the feed (docs/FEED.md, "The signature")
   signer: feed@lookout
