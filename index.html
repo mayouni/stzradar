@@ -65,14 +65,15 @@ nav.views a[aria-current="page"]{border-bottom-color:var(--accent);color:var(--d
 .help{background:transparent;border:1px solid var(--line);border-radius:8px;padding:4px 12px;cursor:pointer;font-size:1.125rem}
 .row2{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;padding-block:6px 12px;font-size:1.125rem}
 .row2 .lab{font-weight:600;color:var(--ink2)}
-.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg{display:inline-flex;flex-wrap:nowrap;border:1px solid var(--line);border-radius:10px;overflow:hidden}
 .seg button{background:transparent;border:0;padding:5px 14px;cursor:pointer;font-size:1.125rem;font-weight:600}
 .seg button+button{border-left:1px solid var(--line)}
 .seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
 .row2 .why{color:var(--ink2)}
 #readerSel{display:none}
 /* on a phone the pinned header and the help keep their compact size, so the reading text has the screen */
-@media (max-width:520px){nav.views a,.help,.row2,.row2 .lab,#readerSel,.seg a,.seg button{font-size:1rem}nav.views{gap:2px 14px}
+@media (max-width:520px){nav.views a,.help,.row2,.row2 .lab,#readerSel,.seg a,.seg button{font-size:1rem}
+  nav.views{display:grid;grid-template-columns:repeat(3,auto);justify-content:start;gap:2px 18px}   /* five entries as 3 + 2, never one alone */
   .helpbox dl{font-size:1rem}.helpbox dd{font-size:1rem}
   #aboutLab{display:none}.seg a{padding:5px 11px}}
 @media (max-width:520px){#readers{display:none}#readerSel{display:inline-block}.row2{flex-wrap:nowrap}
@@ -335,7 +336,9 @@ pre.yfile .ln.hl{background:color-mix(in srgb,var(--accent) 20%,var(--panel));bo
 .fnode span{color:var(--ink2);font-size:1.125rem}
 .farrow{font-size:1.6rem;line-height:1;color:var(--accent)}
 .row2[hidden]{display:none}
-/* the About bar: the reader bar's buttons, as links to the section's pages */
+/* the About bar: the reader bar's buttons, as links to the section's pages; a bar never breaks its buttons */
+.seg a,.seg button{white-space:nowrap}
+@media (max-width:700px){#aboutLab{display:none}}
 .seg a{display:inline-block;padding:5px 14px;font-size:1.125rem;font-weight:600;color:var(--ink);text-decoration:none}
 .seg a + a{border-left:1px solid var(--line)}
 .seg a[aria-current="page"]{background:var(--accent);color:var(--accent-ink)}
@@ -509,9 +512,12 @@ function card(it){
   else b.append(el("p","plain",clean((LESSONS[it.id]?.lesson || it.summary).split(". ")[0].replace(/\.$/,"") + ".")));
   c.append(stripe, b); return c;
 }
+/* A page head: an optional line of information above the title (the week and its dates), never a path: the two
+   pinned bars already mark every level of this site, so a path would say them again (Zane Rule 108) */
 function head(eyebrow, title, ledes){
   const h = el("div","head"), w = el("div","wrap");
-  w.append(el("p","eyebrow",eyebrow), el("h1",null,title));
+  if (eyebrow) w.append(el("p","eyebrow",eyebrow));
+  w.append(el("h1",null,title));
   for (const l of ledes) w.append(typeof l === "string" ? el("p","lede",l) : l);
   h.append(w); return h;
 }
@@ -640,7 +646,7 @@ function radar(items, total = items.length){
 /* ------------------------------------------------------------ view: the estate */
 function viewEstate(){
   const frag = document.createDocumentFragment();
-  frag.append(head("In " + NAME(), NAME() + ", layer by layer",
+  frag.append(head("", NAME() + ", layer by layer",
     [CONFIG.project.pitch, WATCH() + " places every signal on this map, so each part sees what touches it."]));
   const count = pid => live.filter(it => projectsOf(it).includes(pid)).length;
   const projTile = p => {
@@ -699,7 +705,7 @@ function viewEstate(){
 /* ------------------------------------------------------------ view: all signals */
 function viewSignals(q){
   const frag = document.createDocumentFragment();
-  frag.append(head("All signals", q.get("w") ? "Every signal of week " + q.get("w") + ", filtered your way" : "Every live signal, filtered your way",
+  frag.append(head("", q.get("w") ? "Every signal of week " + q.get("w") + ", filtered your way" : "Every live signal, filtered your way",
     ["Choose a project, a layer, a domain, a concern or a level. Each choice is kept in the address, so a filtered list can be shared."]));
   const s = el("section","block wrap");
   const f = el("div","filters");
@@ -752,7 +758,7 @@ function viewSignal(id){
   const x = LESSONS[it.id] || {};
   const frag = document.createDocumentFragment();
   const m = el("div","meta"); m.append(levelPill(it.level), el("span","pill",it.kind), el("span","pill",it.stance), el("span",null,it.date));
-  frag.append(head("Signal · " + it.date, clean(it.title), [m]));
+  frag.append(head("", clean(it.title), [m]));
   const s = el("section","block wrap sig");
   const back = el("a","back","All signals"); back.href = "#/signals"; s.append(back);
   const part = (title, ...nodes) => { const p = el("div","part"); if (title) p.append(el("h2",null,title)); p.append(...nodes); return p; };
@@ -847,7 +853,7 @@ function viewTrends(q){
   const weeks = span === "all" ? all : all.slice(-Number(span));
   const items = FEED.items.filter(i => weeks.includes(weekOf(i.date)) && i.status !== "superseded");
   const frag = document.createDocumentFragment();
-  frag.append(head("Trends", "How " + NAME() + " reads " + TOPIC() + ", and how it answers",
+  frag.append(head("", "How " + NAME() + " reads " + TOPIC() + ", and how it answers",
     ["Over the weeks " + WATCH() + " has kept: how much was read and how carefully, where " + NAME() + " stands on each development, what it proposed to its own projects, and what it wrote down to learn from. Every number opens the signals behind it."]));
   /* One reading column, four chapters. Each chapter opens on what the numbers say, in a sentence, and the
      figures under it show the same thing; nothing sits beside anything else. */
@@ -1010,7 +1016,7 @@ const yq = s => '"' + String(s).replace(/\\/g,"\\\\").replace(/"/g,'\\"') + '"';
 function viewYours(){
   const frag = document.createDocumentFragment();
   const repo = CONFIG.watch.repository;
-  frag.append(head("Make your own", "A watch like this one, for your own project",
+  frag.append(head("", "A watch like this one, for your own project",
     [WATCH() + " is built so that any project can run its own. Each week an agent reads the news of your field at its source, places every piece on your project's map, writes one sentence for each of your readers, and proposes the work it calls for. You get the same signed feed, this site with its trends, and the bar for your pages, from one file you write: lookout.yaml."]));
 
   const s = el("section","block wrap");
@@ -1193,7 +1199,7 @@ function dress(){
 /* ------------------------------------------------------------ the About pages: docs/WHY.md and docs/METHOD.md
    The pages are the repository's own documents, read at the moment they are shown: one text, in two places. The
    reader below takes the Markdown these documents use and builds page elements from it, never HTML from the text. */
-const DOCS = { why: {file:"docs/WHY.md", eyebrow:"About · Why"}, method: {file:"docs/METHOD.md", eyebrow:"About · Method"} };
+const DOCS = { why: {file:"docs/WHY.md", eyebrow:""}, method: {file:"docs/METHOD.md", eyebrow:""} };
 function viewDoc(name){
   const d = DOCS[name], holder = el("div");
   holder.append(head(d.eyebrow, " ", []));
@@ -1390,7 +1396,7 @@ async function start(){
     FEED = f; MAP = m; LESSONS = l.entries || {};
   } catch (e) {
     $("#checked").textContent = "";
-    $("#view").replaceChildren(head("Lookout Radar", "The feed did not pass its check in this browser", ["Radar shows a feed only after its signature checks: " + e.message + ". Reload the page, or open it in a current browser."]));
+    $("#view").replaceChildren(head("", "The feed did not pass its check in this browser", ["Radar shows a feed only after its signature checks: " + e.message + ". Reload the page, or open it in a current browser."]));
     return;
   }
   indexMap();
