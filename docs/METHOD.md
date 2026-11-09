@@ -15,8 +15,10 @@ flowchart TD
   E --> P["Proposals<br/>to the project each one concerns"]
 ```
 
-Everything starts from a source read in full, and everything a reader sees comes from one file per entry. The feed is
-generated from those files and signed, so a page, a program and a notice in an application all say the same thing.
+- **One source, read in full,** starts every entry.
+- **One file per entry** is where everything a reader sees comes from.
+- **One signed feed** is generated from those files, so a page, a program and a notice in an application all say the
+  same thing.
 
 ## What is watched
 
@@ -32,20 +34,17 @@ Anything in AI that can change what Softanza builds, how it builds it, or how it
 
 ## Six steps from a link to an entry
 
-1. **Read it at the source.** Not a headline, not a summary of a summary. If only a second-hand account can be had,
-   the entry says so (`confidence: reported`). A number a vendor gives about its own product is written as the
-   vendor's claim (`confidence: claimed`), never as a fact.
+1. **Read it at the source.** Never a headline. A second-hand account is marked `confidence: reported`; a vendor's
+   figure about its own product, `confidence: claimed`.
 2. **Say what happened, without judging.** That is the `summary`, two or three sentences.
-3. **Take a stance.** Softanza reads every development for what it can **learn**, **adopt** or **correct**, and for
-   what it must **defend** against. Too early to say is **watch**, with a date to look again. Considered and refused
-   is **decline**, with the reason, and the entry is kept so that nobody analyses it twice.
+3. **Take a stance.** **Learn**, **adopt**, **correct** or **defend**; **watch** with a date to look again; or
+   **decline** with the reason, kept so that nobody analyses it twice.
 4. **Weigh it.** `relevance` says how much it touches Softanza. `level` says how much it asks of the reader.
    `urgent` is kept for a security issue that affects Softanza's users now.
 5. **Write one sentence per audience.** A developer, a user, a learner and a maintainer need different sentences,
    and some of them need none. Write only the ones that are owed.
-6. **Propose the work.** Each action names the Softanza area it concerns and says, verb first, what is proposed. The
-   desk routes it to that project through Bangalo, Softanza's coordination system, and moves the action's `state`
-   as the project answers. The repository it lands in decides how to do it, and whether to do it.
+6. **Propose the work.** Each action names the area it concerns and says, verb first, what is proposed. The project
+   it lands in decides how to do it, and whether.
 
 ## The entry's page
 
@@ -67,9 +66,9 @@ The narrative may be longer than the data, never different from it.
 
 ## Corrections
 
-An entry is corrected in place. Its `updated` field takes the day, and a line under **Corrections** says what
-changed and who found it. Nothing is changed silently, and an entry is never deleted: a wrong one becomes
-`superseded` by its replacement.
+- **In place.** An entry is corrected where it stands, and its `updated` field takes the day.
+- **Never silently.** A line under **Corrections** says what changed and who found it.
+- **Never deleted.** A wrong entry becomes `superseded` by its replacement.
 
 ## What never goes into this repository
 
@@ -83,18 +82,17 @@ This repository is public. So it never holds:
 
 ## The week
 
-Once a week the desk surveys its sources (`docs/SOURCES.md`) and the author's links (`inbox/LINKS.md`), writes the
-week's entries and a digest (`digests/YYYY-Www.md`), and regenerates the feed. `docs/WEEKLY.md` is the exact
-instruction a scheduled run follows. Depth beats breadth: a week with four entries read properly is better than a
-week with twenty headlines.
+- **Survey.** Once a week the desk reads its sources (`docs/SOURCES.md`) and the author's links (`inbox/LINKS.md`).
+- **Write.** It writes the week's entries and a digest (`digests/YYYY-Www.md`), then regenerates the feed.
+- **Follow one instruction.** `docs/WEEKLY.md` is the exact instruction a scheduled run follows.
+- **Depth beats breadth.** Four entries read properly are worth more than twenty headlines.
 
 ## The radar highlights a few
 
-The radar on the site highlights at most seven signals a week (`watch.radar_limit` in `lookout.yaml`). It chooses
-them in a fixed order: first what a signal asks of its reader (to do now, to do, to consider, to know), then how much
-it touches Softanza, then the newest. Every signal of the week stays in the list beside the radar, in All signals, in
-the digest and in the feed.
-
-The reason is attention. A radar earns its place by pointing: a few dots, each one worth a look, say where to look
-first. Twenty dots say that everything matters, which tells a reader nothing. The list is the whole week; the radar is
-where the week begins.
+- **At most seven a week,** set by `watch.radar_limit` in `lookout.yaml`.
+- **Chosen in a fixed order:** what a signal asks of its reader (to do now, to do, to consider, to know), then how
+  much it touches Softanza, then the newest.
+- **Nothing is hidden.** Every signal of the week stays in the list beside the radar, in All signals, in the digest
+  and in the feed.
+- **The reason is attention.** A few dots, each worth a look, say where to look first; twenty say that everything
+  matters, which tells a reader nothing.

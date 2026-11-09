@@ -6,19 +6,22 @@ what it answers, what the author asked of it, what it grew into, and what it giv
 
 ## What it answers
 
-AI changes every week. New projects appear, papers change how programs are written and checked, labs ship
-features, companies change how they sell and govern, and security researchers find holes and the fixes for them.
-Softanza is the governed software platform of the AI age, so almost every one of these touches something it builds:
-its library and engine, its language Haro, its declared machine Harobanda, its interfaces, its intelligence layer.
+AI changes every week, and almost every change touches something Softanza builds:
 
-A finding that matters has to reach the part of Softanza it concerns within days, as work someone can act on. The
-first week showed why: a coding agent's "don't ask again" writes the exact command, password included, into a file
-that projects publish. That reached Softanza's maintainers the day it was read, as a check to run and a rule to adopt.
+- **Projects and papers** change how programs are written and checked.
+- **Labs and companies** ship features and change how they sell and govern.
+- **Security researchers** find holes, and the fixes for them.
+- **Softanza is in the path of each one:** its library and engine, its language Haro, its declared machine
+  Harobanda, its interfaces, its intelligence layer.
 
-Lookout also keeps what used to end with each conversation. Reading a paper or an advisory inside a working
-session produced an opinion that the next session no longer had. Lookout writes it down once, with its sources, where
-every session, every project and every reader can find it again.
+What the watch does about it:
 
+- **It reaches the right part within days.** A finding goes to the part of Softanza it concerns, as work someone
+  can act on.
+- **It proved this the first week.** A coding agent's "don't ask again" wrote a password into a published file;
+  Softanza's maintainers had a check to run and a rule to adopt the same day.
+- **It keeps what was learned.** An opinion formed in one working session used to be gone by the next; Lookout
+  writes it once, with its sources, where every session, project and reader finds it again.
 ## What the author asked for
 
 The author opened Lookout on 2026-11-08 and set its work in five parts:
@@ -32,7 +35,7 @@ The author opened Lookout on 2026-11-08 and set its work in five parts:
 5. **Publish a feed** that any command line, any Softanza tool or application, and one day Softanza's own assistant
    can read and turn into notices for developers, users, learners and maintainers.
 
-And one condition over all of it: the watch is public, so that everyone benefits from what it reads.
+- **One condition over all of it: it is public,** so that everyone benefits from what it reads.
 
 ## What it grew into
 

@@ -113,6 +113,7 @@ main :is(p,li,dd,figcaption,summary,.lede){max-width:78ch}
 .outline a{display:block;padding:.3rem .6rem;color:var(--ink);text-decoration:none;font-size:1.125rem;line-height:1.5;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .outline a:hover{color:var(--deep)}
 .outline a[aria-current]{font-weight:700;color:var(--ink)}
+ul.points{margin:0 0 12px;padding-left:22px;display:flex;flex-direction:column;gap:8px}
 .filterbox{margin:0 0 6px}
 .filterbox .plab{margin:0 0 8px;font-size:1rem;color:var(--ink2)}
 .filterbox .filters{grid-template-columns:repeat(3,minmax(0,1fr))}
@@ -637,6 +638,9 @@ function head(eyebrow, title, ledes){
   h.append(w); return h;
 }
 
+/* short labelled points instead of a dense paragraph (author, 2026-11-09): a bold label, then one short sentence */
+function points(rows){ const ul = el("ul","points"); for (const [k, v] of rows){ const li = el("li"); li.append(el("b",null,k), document.createTextNode(" " + v)); ul.append(li); } return ul; }
+
 /* ------------------------------------------------------------ the reading-page layout, as on Zane's own site
    The text starts at the header's left edge and keeps a reading measure. On its right, a column that stays in view:
    at its top what steers the page (the filters, the period), and under it "On this page", Zane's outline -- a grey
@@ -700,7 +704,7 @@ function viewHome(){
   const outer = el("div","wrap"), cols = el("div","homecols"); outer.append(cols);
   const list = xs => { const ul = el("ul"); for (const t of xs) ul.append(el("li",null,t)); return ul; };
   const col = (t, ...kids) => { const c = el("section","homecol"); c.append(el("h2",null,t), ...kids); cols.append(c); };
-  col("Why it exists", el("p",null,H.why));
+  col("Why it exists", Array.isArray(H.why) ? list(H.why) : el("p",null,H.why));   /* short points, not a dense paragraph (author, 2026-11-09) */
   col("What it answers", list(H.need));
   col("What it gives", list(H.value));
   frag.append(outer);
@@ -1214,7 +1218,10 @@ const BAR_VERSION = "1.2.0", BAR_SRI = "sha384-41Km1SPZGI7Qg1kYW6NYIVash8x+kLEzS
 function barSections(){
   const s = el("section","block wrap");
   s.append(el("h2",null,"Step 5: put the notices on your sites"),
-    el("p",null,"The Lookout bar shows, at the top of any page, the newest notice written for that site's readers: one sentence, its level, and a link to the full entry. It checks the feed's signature in the browser before it shows a word, keeps to plain text, and sits in the page's flow, so it never covers content. Try it on this watch's feed:"));
+    points([["What it shows.", "The newest notice for a site's readers, at the top of any page: one sentence, its level, and a link to the full entry."],
+            ["Checked first.", "It checks the feed's signature in the browser before it shows a word."],
+            ["Plain and in the flow.", "Plain text only, in the page's flow, so it never covers content."]]),
+    el("p",null,"Try it on this watch's feed:"));
   const cfg = el("div","cfg");
   const mkSel = (label, opts, val) => { const l = el("label"); l.append(document.createTextNode(label)); const sl = el("select"); for (const [v,t] of opts) sl.append(new Option(t,v)); sl.value = val; l.append(sl); cfg.append(l); return sl; };
   const aud = mkSel("Your readers are", Object.keys(READERS).map(r => [r, READERS[r].label + "s"]), reader === "user" ? "user" : reader);
@@ -1280,7 +1287,9 @@ function viewYours(){
   step("Copy the repository",
     (() => { const p = el("p"); p.append(document.createTextNode("Fork or copy "), link(repo.replace("https://",""), repo), document.createTextNode(". Keep tools/, schema/, bar/ and index.html. Empty items/ and digests/, and start app/lessons.json with an empty \"entries\" object.")); return p; })());
   step("Describe your project in lookout.yaml",
-    el("p",null,"Who the project is, what the watch reads, who reads it, and what the agent must learn before it reads anything. Write a first one with the form below, then draw your map in the file lookout.yaml names (map/estate.json here): your layers, the parts on each, the domains news can touch, and what is at stake."));
+    points([["What it says.", "Who the project is, what the watch reads, who reads it, and what the agent learns first."],
+            ["Write it.", "Use the form below for a first version."],
+            ["Draw your map.", "In the file lookout.yaml names (map/estate.json here): your layers, the parts on each, the domains news can touch, and what is at stake."]]));
   step("Make the key that signs the feed",
     el("p",null,"One key, kept outside the repository, used for this and nothing else. Put the public key in keys/allowed_signers and in lookout.yaml (feed.key)."),
     code1("ssh-keygen -t ed25519 -f ~/.ssh/watch_feed -C feed@your-watch"));
@@ -1391,7 +1400,7 @@ function viewYours(){
     P("  schedule:"); P("    every: monday"); P('    at: "07:00"'); P("    timezone: UTC"); P("  publish: after-reading"); P("");
     P("home:"); P("  headline: " + yq("{topic} changes every week. {project} hears what concerns it the same week."), "topic", "name");
     P("  promise: " + yq("{title} reads the week's news at its source, judges each piece from {project}'s point of view, and tells us, the {project} team, what it means for us and what we should do about it."), "name");
-    P("  why: " + yq("Almost every development in {topic} touches something {project} builds. A finding that matters reaches the part it concerns within days, as work someone can act on."), "name", "topic");
+    P("  why:"); P("    - " + yq("Almost every development in {topic} touches something {project} builds"), "name", "topic"); P("    - " + yq("A finding that matters reaches the part it concerns within days, as work someone can act on"));
     P("  need:"); P("    - " + yq("Which of this week's developments touch {project}, and which part of it"), "name"); P("    - " + yq("What each reader does next"));
     P("  value:"); P("    - " + yq("Each part of {project} hears what concerns it, as a dated proposal"), "name"); P("    - " + yq("A record that lasts, every entry with its sources")); P("");
     P("feed:"); P("  signer: " + yq("feed@" + slug), "watch"); P("  namespace: " + slug + "-feed", "watch");
