@@ -148,6 +148,10 @@ h1{font:700 clamp(1.75rem,3.2vw,2.5rem)/1.15 var(--f-title);margin:0 0 12px;max-
    paragraph, list item or label leaves one short word alone on its last line */
 h1,h2,h3,h4,.card h3,.ititle,.fnode b,
 p,li,dd,dt,figcaption,summary,.lede,.finding,.notice,.kindline,.ihint,.fnode span,.hint,.q{text-wrap:balance}
+/* and everywhere else, by default: no text on this site ends on a word alone (the author, again on 2026-11-09, on a
+   chart label). "pretty" is inherited, so a block nobody listed above is covered too */
+body{text-wrap:pretty}
+.keyfigs span,.fact,td,th,.hlab{text-wrap:balance}   /* short labels of two lines: two even lines, never one word under the rest */
 .lede{max-width:88ch;margin:0;color:var(--ink);font-size:1.375rem;line-height:1.5}
 .lede+.lede{margin-top:10px}
 h2{font:700 1.5rem/1.2 var(--f-title);margin:0 0 12px}
@@ -178,6 +182,7 @@ section.block{padding-block:28px 8px}
 .scope svg{width:100%;height:auto;display:block}
 .scope .lbl{font:700 22px var(--f-body);fill:var(--ink2)}
 .key{display:flex;flex-wrap:wrap;gap:6px 16px;margin:12px 2px 0;font-size:1.125rem;color:var(--ink2)}
+.key span{white-space:nowrap}
 .key i{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px;vertical-align:-1px}
 .blip{cursor:pointer}
 .blip:focus-visible circle.halo,.blip:hover circle.halo{stroke-width:4}
@@ -1514,15 +1519,25 @@ function linesOf(e){
   const r = document.createRange(); r.selectNodeContents(e);
   const tops = new Set(); let lastL = Infinity, lastR = -Infinity, maxW = 0, lastTop = -1;
   const rows = {};
-  for (const x of r.getClientRects()){ if (!x.width) continue; const k = Math.round(x.top / 4); rows[k] = rows[k] || [x.left, x.right]; rows[k][0] = Math.min(rows[k][0], x.left); rows[k][1] = Math.max(rows[k][1], x.right); }
+  for (const x of r.getClientRects()){ if (x.width < 2) continue; const k = Math.round((x.top + x.height / 2) / 8);   /* by centre: a dot or icon is not a line */ rows[k] = rows[k] || [x.left, x.right]; rows[k][0] = Math.min(rows[k][0], x.left); rows[k][1] = Math.max(rows[k][1], x.right); }
   const keys = Object.keys(rows).map(Number).sort((a,b) => a - b);
   if (!keys.length) return {n:0, ratio:1};
   const widths = keys.map(k => rows[k][1] - rows[k][0]);
   return {n: keys.length, ratio: widths.at(-1) / Math.max(...widths)};
 }
+/* every block on the page that holds text of its own -- not a list of known kinds, which is how a chart label escaped */
+function textBlocks(root = document){
+  const out = [];
+  for (const e of root.querySelectorAll("main *, footer *")){
+    if (!e.offsetParent || e.closest("pre, .code, svg, select, button, .seg, nav, .radarstage, details:not([open])") || e.querySelector(".code, pre, ul, ol, table")) continue;
+    if (![...e.childNodes].some(n => n.nodeType === 3 && n.textContent.trim().length > 1)) continue;
+    if (getComputedStyle(e).display.startsWith("inline")) continue;   /* its block holds it */
+    out.push(e);
+  }
+  return out;
+}
 function evenLast(root = document){
-  for (const e of root.querySelectorAll("main p, main li, main dd, .lede, .finding")){
-    if (!e.offsetParent || e.closest("pre, .code") || e.querySelector(".code, pre, ul, ol")) continue;
+  for (const e of textBlocks(root)){
     e.style.maxWidth = "";
     const m = linesOf(e);
     if (m.n < 2 || m.ratio >= 0.4) continue;              /* past six lines, or where the browser's balance fell short */
