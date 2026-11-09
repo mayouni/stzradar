@@ -163,16 +163,21 @@ a.proj:hover{border-color:var(--accent)}
 .proj b{font-family:var(--f-title);font-size:1.15rem}
 .proj p{margin:4px 0 0;color:var(--ink2);font-size:1.125rem}
 .proj.has{cursor:pointer}   /* the button marks a part with signals; the tile keeps its quiet border */
-.concern .n{display:inline-block;margin-top:8px;padding:5px 14px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:1.125rem}
-.proj .n{display:inline-block;align-self:flex-start;margin-top:10px;padding:5px 14px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:1.125rem}
-a.proj.has:hover .n{filter:brightness(1.12)}
+/* in-page links read as links: bold teal words, underlined, with their arrow. A filled teal pill is kept for one
+   meaning only, the choice selected in the pinned bars, so nothing inside a page looks like one of them. */
+.concern .n,.proj .n{display:inline-block;margin-top:8px;color:var(--deep);font-weight:700;font-size:1.125rem;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px}
+:root[data-theme="dark"] .concern .n,:root[data-theme="dark"] .proj .n{color:var(--accent)}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .concern .n,:root:not([data-theme="light"]) .proj .n{color:var(--accent)} }
+a.proj.has:hover .n,a.concern.has:hover .n{text-decoration-thickness:3px}
 .beside{background:var(--tint);border:1px dashed var(--accent);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
 .beside .proj{flex:none}
 table.grid{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;font-size:1.125rem}
 table.grid th,table.grid td{border:1px solid var(--line);padding:8px 10px;text-align:center;vertical-align:middle}
 table.grid thead th{background:var(--tint);font-weight:700}
 table.grid tbody th{text-align:left;font-weight:700;white-space:normal}
-table.grid td a{display:inline-block;min-width:2.2rem;padding:2px 8px;border-radius:8px;background:var(--accent);color:var(--accent-ink);font-weight:700;text-decoration:none}
+table.grid td a{display:inline-block;min-width:2.2rem;padding:2px 8px;color:var(--deep);font-weight:700;font-size:1.1875rem;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px}
+:root[data-theme="dark"] table.grid td a{color:var(--accent)}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) table.grid td a{color:var(--accent)} }
 .gridlist{display:none}
 @media (max-width:820px){table.grid{display:none}.gridlist{display:flex;flex-direction:column;gap:12px}}
 .gridlist .dom{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
@@ -369,7 +374,11 @@ dialog.helpbox::backdrop{background:rgba(16,38,42,.45)}
 .helpbox dt{font-weight:700}
 .helpbox dd{margin:0;color:var(--ink2)}
 @media (max-width:520px){.helpbox{padding:16px 18px}.helpbox dl{grid-template-columns:1fr;gap:2px;font-size:1.125rem;line-height:1.4}.helpbox dd{margin-bottom:8px}}
-.btn{background:var(--accent);color:var(--accent-ink);border:0;border-radius:8px;padding:6px 16px;font-weight:700;cursor:pointer}
+/* an action inside a page is outlined; only the bars' selected choice is filled */
+.btn{background:var(--panel);color:var(--deep);border:2px solid var(--accent);border-radius:8px;padding:6px 16px;font-weight:700;cursor:pointer}
+.btn:hover{background:var(--tint)}
+:root[data-theme="dark"] .btn{color:var(--accent)}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .btn{color:var(--accent)} }
 footer{border-top:1px solid var(--line);margin-top:36px}
 footer .wrap{padding-block:20px 32px;display:flex;flex-direction:column;gap:8px;font-size:1.1875rem;color:var(--ink2)}
 footer .made{color:var(--ink);font-weight:600}
