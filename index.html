@@ -150,8 +150,9 @@ ul.points{margin:0 0 12px;padding-left:22px;display:flex;flex-direction:column;g
 .browser .bl{height:10px;border-radius:4px;background:#ECEFEF}.browser .bl.short{width:60%}
 /* the front page's way in for adopters */
 /* the way in for adopters: one softly outlined box -- the offer and its reason on the left, the action on the right */
-.homeadopt{margin:28px 0 44px;padding:22px 26px;border:1px solid var(--line);border-radius:14px;background:var(--panel);display:flex;flex-wrap:wrap;align-items:center;gap:16px 36px}
-.homeadopt .adtext{flex:1 1 32rem;min-width:0}
+/* as wide as its content, never stretched to the screen (author, 2026-11-09): the button stands beside the text */
+.homeadopt{margin:28px 0 44px;padding:22px 26px;border:1px solid var(--line);border-radius:14px;background:var(--panel);display:flex;flex-wrap:wrap;align-items:center;gap:16px 36px;width:fit-content;max-width:100%}
+.homeadopt .adtext{flex:0 1 40rem;min-width:0}
 .homeadopt h2{margin:0 0 6px;font:700 1.6rem/1.2 var(--f-title)}
 .homeadopt p{margin:0;font-size:1.25rem;color:var(--ink2)}
 .homeadopt a.btn{text-decoration:none}/* the front page: the hero in two halves (text, live radar), then one row of three columns */
