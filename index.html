@@ -192,8 +192,13 @@ a.concern:hover h3{color:var(--accent)}
 .concern p{margin:4px 0 0;color:var(--ink2);font-size:1.125rem}
 
 /* all signals */
-.filters{display:flex;flex-wrap:wrap;gap:12px 22px;align-items:end;padding:0 0 16px;margin-bottom:18px;border-bottom:1px solid var(--line)}
-.filters label{display:flex;flex-direction:column;gap:4px;font-weight:600;font-size:1.125rem}
+/* the six filters share the row in equal parts, in rows that always come out full: 6, then 3 + 3, then 2 + 2 + 2;
+   a control never sits alone on a line while the line above has room (reported to Zane: ZANE-CONTROLROW-01) */
+.filters{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px 18px;align-items:end;padding:0 0 16px;margin-bottom:18px;border-bottom:1px solid var(--line)}
+@media (max-width:1100px){.filters{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:560px){.filters{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.filters label{display:flex;flex-direction:column;gap:4px;font-weight:600;font-size:1.125rem;min-width:0}
+.filters select{width:100%}
 select{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-size:1.125rem;max-width:100%}
 .count{font-weight:700;margin:0 0 12px}
 .empty{background:var(--panel);border:1px dashed var(--line);border-radius:14px;padding:20px}
