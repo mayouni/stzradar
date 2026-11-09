@@ -1002,7 +1002,8 @@ class FeedRun
         c += "- [Why](" + cP + "docs/WHY.md): what the watch answers and the requirements behind it" + NL1
         c += "- [Method](" + cP + "docs/METHOD.md): how a signal is read, judged, written and published" + NL1
         c += "- [Feed contract](" + cP + "docs/FEED.md): every field of an entry, and how a program shows a notice" + NL1
-        c += "- [Run your own](" + cP + "docs/ADOPT.md): the same watch for another project, from one file" + NL1 + NL1
+        c += "- [Run your own](" + cP + "docs/ADOPT.md): the same watch for another project, from one file" + NL1
+        c += "- [MCP server](" + cP + "docs/MCP.md): ask the radar from any MCP agent (tools/mcp.ring, read-only, checks the signature first)" + NL1 + NL1
         c += "## Optional" + NL1
         c += "- [Full text](" + cP + "llms-full.txt): every signal, with its notices for each reader, its actions and its sources" + NL1
         return c

@@ -1328,6 +1328,7 @@ function viewYours(){
                             ["A record that lasts.", "Every entry keeps its sources and corrections, and is never deleted."]]),
     vgroup("For your apps and sites", [["A signed feed.", "JSON any program reads, checked against your own key."],
                             ["Readable by agents.", "llms.txt and llms-full.txt give agents and language models the whole watch as text."],
+                            ["Askable by agents.", "An MCP server lets Claude Code or any MCP agent ask the radar while it works (docs/MCP.md)."],
                             ["A site like this one.", "The week on a radar, your project layer by layer, every signal filtered, the trends."],
                             ["A bar for your pages.", "One script line shows the newest notice at the top of any page."]]),
     vgroup("For your users", [["One sentence for their role.", "A developer, a maintainer, a learner and a user each read what concerns them."],
@@ -1539,7 +1540,7 @@ function viewFeed(){
   const p1 = el("p"); p1.append(el("span","feedok","Checked in this browser."), document.createTextNode(" The feed was signed with " + poss(RADAR()) + " key and is unchanged since. It holds " + FEED.items.length + (FEED.items.length === 1 ? " entry" : " entries") + ", updated " + FEED.updated.slice(0,10) + "."));
   const p2 = el("p"); p2.append(document.createTextNode("The key's fingerprint: "), el("code",null,CONFIG.feed.fingerprint), document.createTextNode("."));
   const p3 = el("p"); p3.append(document.createTextNode("The feed and the map of " + NAME() + " it is placed on live in the repository, "), link(repo.replace("https://",""), repo), document.createTextNode(". A signal's full entry opens there."));
-  const p3b = el("p"); p3b.append(document.createTextNode("For agents and language models, the same content as text: "), link("llms.txt", "llms.txt"), document.createTextNode(", a guide to every file, and "), link("llms-full.txt", "llms-full.txt"), document.createTextNode(", every signal in full."));
+  const p3b = el("p"); p3b.append(document.createTextNode("For agents and language models, the same content as text: "), link("llms.txt", "llms.txt"), document.createTextNode(", a guide to every file, and "), link("llms-full.txt", "llms-full.txt"), document.createTextNode(", every signal in full. Agents that speak MCP can ask it directly: "), link("docs/MCP.md", CONFIG.watch.repository + "/blob/main/docs/MCP.md"), document.createTextNode("."));
   const p4 = el("p"); p4.append(document.createTextNode("Download "), link("feed/index.json", repo + "/blob/main/feed/index.json"), document.createTextNode(", its signature "),
     link("feed/index.json.sig", repo + "/blob/main/feed/index.json.sig"), document.createTextNode(" and the signer's key "), link("keys/allowed_signers", repo + "/blob/main/keys/allowed_signers"),
     document.createTextNode(" into one folder, then run:"));

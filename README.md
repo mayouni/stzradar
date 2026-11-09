@@ -126,3 +126,5 @@ entry, or with a line saying why it was not kept.
 
 Lookout is a [Softanza](https://mayouni.github.io/stzsite/) project. © 2026 Mansour Ayouni. Released under the MIT
 licence, see [LICENSE](LICENSE).
+
+**For agents.** [llms.txt](https://mayouni.github.io/lookout/llms.txt) gives agents and language models the whole watch as text, and [an MCP server](docs/MCP.md) (`tools/mcp.ring`, read-only, signature checked first) lets any MCP agent ask it while it works.
