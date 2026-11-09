@@ -131,7 +131,7 @@ ul.points{margin:0 0 12px;padding-left:22px;display:flex;flex-direction:column;g
 @media (max-height:640px){.rail{position:static}}
 /* a narrow screen: the tools go above the text, the outline below it, as Zane's site does */
 @media (max-width:1000px){.railpage{grid-template-columns:minmax(0,1fr);gap:20px}.rail{display:contents}
-  .railtools{grid-row:1}.railpage > .railmain{grid-row:2}.outline{grid-row:3;border-top:1px solid var(--line);padding-top:.8rem}
+  .railtools{grid-row:1}.railpage > .railmain{grid-row:2}.outline{grid-row:3;padding-top:1.6rem}
   .outline ul{border-left:0;padding-left:0}
   .railtools .filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 18px}}
 @media (max-width:560px){.railtools .filters{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -149,7 +149,7 @@ ul.points{margin:0 0 12px;padding-left:22px;display:flex;flex-direction:column;g
 .browser .bh{height:18px;width:45%;border-radius:4px;background:#DDE3E3}
 .browser .bl{height:10px;border-radius:4px;background:#ECEFEF}.browser .bl.short{width:60%}
 /* the front page's way in for adopters */
-.homeadopt{margin:8px 0 40px;padding:24px 0 0;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;align-items:center;gap:14px 28px}
+.homeadopt{margin:24px 0 40px;padding:0;display:flex;flex-wrap:wrap;align-items:center;gap:14px 28px}
 .homeadopt h2{margin:0;font:700 1.6rem/1.2 var(--f-title)}
 .homeadopt p{margin:0;flex:1 1 30rem;font-size:1.25rem;color:var(--ink2)}
 .homeadopt a.btn{text-decoration:none}/* the front page: the hero in two halves (text, live radar), then one row of three columns */
@@ -171,7 +171,7 @@ ul.points{margin:0 0 12px;padding-left:22px;display:flex;flex-direction:column;g
 .heroradar h2{font:700 1.4rem/1.2 var(--f-title);margin:0 0 6px}
 .heroradar .radarstage{position:relative;flex:1 1 0;min-height:14rem}
 .homecols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:48px;padding-block:40px 28px}
-.homecol{border-top:3px solid var(--accent);padding-top:16px}
+.homecol{padding-top:0}
 .homecol h2{font:700 1.6rem/1.2 var(--f-title);margin:0 0 14px}
 .homecol p{margin:0;font-size:1.25rem;line-height:1.55}
 .homecol ul{margin:0;padding-left:24px;display:flex;flex-direction:column;gap:12px;font-size:1.25rem;line-height:1.5}
@@ -198,7 +198,7 @@ h2{font:700 1.5rem/1.2 var(--f-title);margin:0 0 12px}
 h3{font:700 1.25rem/1.25 var(--f-title);margin:0}
 section.block{padding-block:28px 8px}
 /* Zane Rule 8 across the site: one primary axis, read top to bottom; figures in one aligned row, no boxes */
-.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(9rem,1fr));gap:12px;margin-top:18px;padding:12px 0;border-block:1px solid var(--line);max-width:64rem}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(9rem,1fr));gap:12px;margin-top:18px;padding:4px 0;max-width:64rem}
 .fact{min-width:0}
 .fact b{display:block;font:700 1.75rem/1.1 var(--f-title);color:var(--deep)}
 :root[data-theme="dark"] .fact b{color:var(--accent)}
@@ -308,14 +308,14 @@ table.grid td a{display:inline-block;min-width:2.2rem;padding:2px 8px;color:var(
 :root[data-theme="dark"] .chip{color:var(--accent)}
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .chip{color:var(--accent)} }
 .concerns{display:flex;flex-direction:column;max-width:64rem}
-.concern{display:block;padding:12px 0;border-top:1px solid var(--line);color:inherit;text-decoration:none}
+.concern{display:block;padding:14px 0;color:inherit;text-decoration:none}
 .concern:first-child{border-top:0}
 .concern p{margin:4px 0 0;color:var(--ink2);font-size:1.125rem}
 
 /* all signals */
 /* the six filters share the row in equal parts, in rows that always come out full: 6, then 3 + 3, then 2 + 2 + 2;
    a control never sits alone on a line while the line above has room (reported to Zane: ZANE-CONTROLROW-01) */
-.filters{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px 18px;align-items:end;padding:0 0 16px;margin-bottom:18px;border-bottom:1px solid var(--line)}
+.filters{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px 18px;align-items:end;padding:0;margin-bottom:28px}
 @media (max-width:1100px){.filters{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (max-width:560px){.filters{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .filters label{display:flex;flex-direction:column;gap:4px;font-weight:600;font-size:1.125rem;min-width:0}
@@ -327,7 +327,7 @@ select{background:var(--panel);border:1px solid var(--line);border-radius:8px;pa
 
 /* one signal: a page, every part in view, ordered for the reader */
 .sig{max-width:820px}
-.sig .part{padding-block:18px 6px;border-top:1px solid var(--line)}
+.sig .part{padding-block:22px 6px}
 .sig .part:first-of-type{border-top:0}
 .sig h2{font-size:1.35rem}
 .sig p{margin:0 0 10px;max-width:80ch}
@@ -361,20 +361,20 @@ nav.weeks .goto{display:flex;flex-direction:column;gap:4px;font-weight:600;font-
 /* Trends in two clear levels (author, 2026-11-09: "separate clearly between sections"): a chapter opens under a strong
    teal rule with wide space above it; each figure inside, with its table, is one block under a thin rule */
 /* chapters part by space and a thin rule, the first by space alone (the author removed the strong rule, 2026-11-09) */
-h2.chap{font:700 1.75rem/1.2 var(--f-title);margin:64px 0 12px;padding-top:24px;border-top:1px solid var(--line)}
+h2.chap{font:700 1.75rem/1.2 var(--f-title);margin:72px 0 12px;padding-top:0}
 h2.chap:first-of-type{margin-top:28px;padding-top:0;border-top:0}
 .report .period{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;margin:0}
 .report .period .plab{flex-basis:100%;font-size:1rem;color:var(--ink2)}
 .report .period .pspan{font-size:1.125rem;color:var(--ink2)}
 p.finding{font-size:1.3125rem;line-height:1.55;margin:0 0 18px;max-width:80ch}
-.keyfigs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0 0 8px;padding:12px 0;border-block:1px solid var(--line)}
+.keyfigs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:8px 0 8px;padding:8px 0}
 .keyfigs div{display:flex;flex-direction:column}
 .keyfigs b{font:700 1.75rem/1.15 var(--f-title);color:var(--deep)}
 :root[data-theme="dark"] .keyfigs b{color:var(--accent)}
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .keyfigs b{color:var(--accent)} }
 .keyfigs span{color:var(--ink2);font-size:1.1875rem}
 @media (max-width:640px){.keyfigs{grid-template-columns:repeat(2,minmax(0,1fr))}}
-.fig{margin:36px 0 0;padding:28px 0 0;min-width:0;border-top:1px solid var(--line)}
+.fig{margin:44px 0 0;padding:0;min-width:0}
 .keyfigs + .fig,.finding + .fig{border-top:0;padding-top:4px}
 .fig .tv{margin-top:12px}
 .fig h3{margin-bottom:4px;font-size:1.2rem}
@@ -410,11 +410,12 @@ details.tv summary{font-size:1.125rem;color:var(--accent)}
 /* make your own */
 /* Zane Rule 8: the steps, the form and the bar's settings read in one column, top to bottom */
 ol.steps{list-style:none;counter-reset:st;padding:0;margin:0;max-width:64rem}
-ol.steps li{counter-increment:st;padding:14px 0 10px;border-top:1px solid var(--line);min-width:0}
-ol.steps li:first-child{border-top:0;padding-top:4px}
-ol.steps li h3::before{content:"Step " counter(st) ": ";color:var(--deep)}
-:root[data-theme="dark"] ol.steps li h3::before{color:var(--accent)}
-@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) ol.steps li h3::before{color:var(--accent)} }
+/* only the steps themselves count and space (a bullet inside a step is not a step); space alone parts them */
+ol.steps > li{counter-increment:st;padding:22px 0 4px;min-width:0}
+ol.steps > li:first-child{padding-top:4px}
+ol.steps > li > h3::before{content:"Step " counter(st) ": ";color:var(--deep)}
+:root[data-theme="dark"] ol.steps > li > h3::before{color:var(--accent)}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) ol.steps > li > h3::before{color:var(--accent)} }
 ol.steps li p{margin:8px 0}
 ol.steps .code pre{padding-right:16px}
 .tbl.learn{background:var(--panel);font-size:1.1875rem}
@@ -422,7 +423,7 @@ ol.steps .code pre{padding-right:16px}
 .tbl.learn thead th{font-family:var(--f-body)}
 @media (max-width:700px){.tbl.learn thead{display:none}.tbl.learn tr{display:block;padding:8px 0;border-bottom:1px solid var(--line)}.tbl.learn th,.tbl.learn td{display:block;border:0;padding:2px 0}}
 .builder{display:flex;flex-direction:column;gap:16px;max-width:56rem;margin-bottom:18px}
-.builder h3.bq{font:700 1.25rem/1.25 var(--f-title);margin:18px 0 0;padding-top:14px;border-top:1px solid var(--line)}
+.builder h3.bq{font:700 1.25rem/1.25 var(--f-title);margin:28px 0 0;padding-top:0}
 .builder h3.bq:first-child{margin-top:0;padding-top:0;border-top:0}
 .builder label{display:flex;flex-direction:column;gap:6px}
 .builder .q{font-weight:600;font-size:1.125rem}
@@ -459,7 +460,7 @@ pre.yfile .ln.hl{background:color-mix(in srgb,var(--accent) 20%,var(--panel));bo
 
 /* the About pages: the repository's documents at reading size, one column */
 .doc{max-width:64rem}
-.doc h2{font:700 1.6rem/1.2 var(--f-title);margin:34px 0 10px;padding-top:20px;border-top:2px solid var(--line)}
+.doc h2{font:700 1.6rem/1.2 var(--f-title);margin:44px 0 10px;padding-top:0}
 .doc h2:first-child{margin-top:4px;padding-top:0;border-top:0}
 .doc h3{margin:22px 0 8px}
 .doc p{margin:0 0 14px;max-width:80ch}
