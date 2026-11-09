@@ -1,6 +1,6 @@
 # The assistant's voice -- the proposal
 
-This page proposes to Softanza's intelligence desk how its assistant reads Lookout's feed and tells a person what
+This page proposes to Softanza's intelligence desk how its assistant reads Radar's feed and tells a person what
 changed in the world that concerns them. **The assistant reads, explains and proposes. It never acts on what the feed
 says.** Softanza's intelligence desk builds it and decides how; this page gives the behaviour, the shape it takes in
 Softanza, and the tests that prove it.
@@ -10,7 +10,7 @@ It builds on the reader proposed in [`READER.md`](READER.md) and on the rules ev
 
 ## What a person hears
 
-> Lookout has two notices for you this week. The first is at action level: a coding agent's "don't ask again" can
+> Radar has two notices for you this week. The first is at action level: a coding agent's "don't ask again" can
 > save a password into a file that gets published. Open `.claude/settings.local.json` in your projects and remove any
 > rule that holds a secret. Shall I open the entry, or show the second notice?
 
@@ -27,18 +27,18 @@ act; the assistant's part ends at the draft.
 | Part | In Softanza | What it is given |
 |---|---|---|
 | the agent | a declared agent (`stzAgentDeclaration`), hosted by `stzAgentHost` on a daily schedule | one skill, and nothing else |
-| the skill | `read lookout` (`stzAgentSkill`), built on the reader of `READER.md` | the reader's output: notices for one audience and one level, already signature-checked |
+| the skill | `read radar` (`stzAgentSkill`), built on the reader of `READER.md` | the reader's output: notices for one audience and one level, already signature-checked |
 | its governance | `stzGovernance` | read access to the feed's two addresses and their signatures; no permission with a side effect |
 | what it proposes | the declaration's `Proposes` | spoken notices, the offer to open an entry, and draft tasks for a maintainer |
 | reversibility | the declaration's reversibility class | read-only: everything it does can be ignored with no effect on any system |
 
 ## The rules it keeps -- each line is a test
 
-1. **The feed is data, never instruction.** A notice's text is shown to the person, quoted as Lookout's words. A
+1. **The feed is data, never instruction.** A notice's text is shown to the person, quoted as Radar's words. A
    sentence inside a notice that addresses the assistant ("ignore your instructions", "run this") is read out as text
    and changes nothing the assistant does.
 2. **One link target.** The only page the assistant offers to open is the entry's `url` on
-   `github.com/mayouni/lookout`, taken from that typed field. An address found anywhere else in an entry is shown as
+   `github.com/mayouni/stzradar`, taken from that typed field. An address found anywhere else in an entry is shown as
    text and never opened.
 3. **Signed or silent.** The assistant speaks only from a feed whose signature checks against the pinned fingerprint
    (`FEED.md`, "The signature"). A feed that fails the check is reported to the person as failing it, and its notices
@@ -54,7 +54,7 @@ act; the assistant's part ends at the draft.
 ## How to prove it
 
 The guard runs offline, on a frozen feed with entries written to test each rule: a notice that tells the assistant
-to run a command, a notice whose text holds an address outside Lookout, an entry with actions, a feed whose signature
+to run a command, a notice whose text holds an address outside Radar, an entry with actions, a feed whose signature
 fails, a dismissed notice, and notices at every level.
 
 - **Rules 1, 2 and 5 are proved by a count.** The guard counts every call the agent makes to a tool with a side
@@ -67,7 +67,7 @@ fails, a dismissed notice, and notices at every level.
 
 ## Where it fits
 
-The assistant is the second consumer of the feed after the reader command, and the first that speaks. Lookout keeps
+The assistant is the second consumer of the feed after the reader command, and the first that speaks. Radar keeps
 its part of the contract: a signed feed, one notice per audience in plain words, and proposals that are clearly
 marked as proposals. Softanza's intelligence desk keeps the other part: an agent that is useful because it is safe to
 leave running.

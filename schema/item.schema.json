@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/mayouni/lookout/schema/item.schema.json",
-  "title": "Lookout entry, version 1",
+  "$id": "https://github.com/mayouni/stzradar/schema/item.schema.json",
+  "title": "Radar entry, version 1",
   "type": "object",
   "required": ["id", "date", "title", "kind", "summary", "stance", "relevance", "level", "audiences", "notice", "status", "confidence", "sources", "review_by"],
   "properties": {

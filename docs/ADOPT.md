@@ -1,22 +1,22 @@
-# Your own Lookout
+# Your own radar
 
-Lookout is Softanza's watch on AI and the tech field, and it is built so that any project can run its own. An agent reads the news
+Radar is Softanza's watch on AI and the tech field, and it is built so that any project can run its own. An agent reads the news
 of your field each week at its source, places every piece on your project's map, writes one sentence for each of
 your readers, and proposes the work it calls for. You get the same signed feed, the same site with its trends
-dashboard, and the same bar for your pages. One file says everything about your project: `lookout.yaml`.
+dashboard, and the same bar for your pages. One file says everything about your project: `radar.yaml`.
 
-The site walks through it with a form that writes your first file: [Make your own](https://mayouni.github.io/lookout/#/yours).
+The site walks through it with a form that writes your first file: [Make your own](https://mayouni.github.io/stzradar/#/yours).
 
 ## The five steps
 
 1. **Copy this repository.** Keep `tools/`, `schema/`, `bar/`, `index.html` and `.nojekyll`. Empty `items/` and
    `digests/`, start `app/lessons.json` as `{"about": "...", "entries": {}}`, and write your first entry: the one that
    says your watch has opened.
-2. **Describe your project in `lookout.yaml`** (below), and draw your map in the file it names.
+2. **Describe your project in `radar.yaml`** (below), and draw your map in the file it names.
 3. **Make the key that signs your feed**, kept outside the repository and used for nothing else:
    `ssh-keygen -t ed25519 -f ~/.ssh/watch_feed -C feed@your-watch`. Put the public key in `keys/allowed_signers` as
    `feed@your-watch namespaces="your-watch-feed" ssh-ed25519 AAAA...`, and the same key, its fingerprint, the signer
-   and the namespace in `lookout.yaml`.
+   and the namespace in `radar.yaml`.
 4. **Give your agent its brief:** [`docs/AGENT.md`](AGENT.md). Schedule it on the day `watch.schedule` names.
 5. **Publish:** run `haro tools/feed.ring`, sign both feed files, run `haro tools/feed.ring verify`, push, and turn on
    GitHub Pages for the main branch. Put [the bar](BAR.md) on your own pages with `data-feed` and `data-key`.
@@ -25,7 +25,7 @@ The site walks through it with a form that writes your first file: [Make your ow
 
 | Key | What it says | What uses it |
 |---|---|---|
-| `lookout` | the version of the file's shape: `1` | the check |
+| `radar` | the version of the file's shape: `1` | the check |
 | `project.name`, `site`, `owner`, `licence`, `licence_url`, `pitch` | the project the watch serves | the site's titles, the In view, the footer credit, the feed's description |
 | `watch.name`, `topic`, `repository`, `pages`, `language` | the watch itself: `name` is the tool's name | every URL the feed writes |
 | `watch.title` | the name readers see, such as "Softanza Radar" | the site's title, the feed's title, the bar's link |
@@ -73,7 +73,7 @@ serve them all, and a program that reads one watch reads every other.
 
 ## The check
 
-`haro tools/feed.ring` reads `lookout.yaml` before anything else and refuses, by name and line, a file that misses a
+`haro tools/feed.ring` reads `radar.yaml` before anything else and refuses, by name and line, a file that misses a
 key, adds one it does not define, names a reader the feed does not know, or carries a key that does not match
 `keys/allowed_signers`. Then it checks every entry, writes the feed, and writes `app/config.json`, the same file as
 JSON, which the site reads. `tools/guard.ring` shows each of these refusals.

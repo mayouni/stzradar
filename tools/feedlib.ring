@@ -1,4 +1,4 @@
-# Lookout's feed library: the JSON reader and writer, the schema check, and the run that
+# Radar's feed library: the JSON reader and writer, the schema check, and the run that
 # turns items/ into feed/index.json and feed/feed.json. tools/feed.ring is its command and
 # tools/guard.ring its guard; both load this file. The rules are docs/FEED.md.
 #
@@ -248,9 +248,9 @@ class FeedRun
     nEntries = 0
     oSchema = NULL
     oItemSchema = NULL
-    oConfig = NULL      # lookout.yaml, read and checked by LoadConfig
+    oConfig = NULL      # radar.yaml, read and checked by LoadConfig
     cConfig = ""        # the same, as the bytes of app/config.json
-    aVoice = []         # the names a text of lookout.yaml may use, with their values (Voice)
+    aVoice = []         # the names a text of radar.yaml may use, with their values (Voice)
     aEntries = []       # [ [cFile, oData], ... ]
     bQuiet = 0          # the guard sets it: problems are kept and not printed
     oIndex = NULL       # what the last Finish built, for the guard to read
@@ -283,7 +283,7 @@ class FeedRun
         MapCheck()
         Finish(cMode)
 
-    # map/estate.json is the estate as Lookout reads it: layers, projects, domains, concerns. Every
+    # map/estate.json is the estate as Radar reads it: layers, projects, domains, concerns. Every
     # entry's areas must name a project of the map (by id or alias, or a dotted sub-area of one), and
     # its domains and concerns must be ids of the map, so the site never places a signal nowhere.
     func MapCheck
@@ -291,7 +291,7 @@ class FeedRun
         if cMapRel = "" cMapRel = "map/estate.json" ok
         cPath = cRoot + "/" + cMapRel
         if not fexists(cPath)
-            Problem(cMapRel, "is the map every entry is placed on (lookout.yaml, map), and this run reads it")
+            Problem(cMapRel, "is the map every entry is placed on (radar.yaml, map), and this run reads it")
             return
         ok
         oReader = new JsonReader
@@ -537,13 +537,13 @@ class FeedRun
         if not islist(oItemSchema) return 0 ok
         return LoadConfig()
 
-    # lookout.yaml: everything that belongs to the project this watch serves (docs/ADOPT.md). It is
+    # radar.yaml: everything that belongs to the project this watch serves (docs/ADOPT.md). It is
     # read with the YAML reader below and checked against schema/config.schema.json; the run does not
     # start without it, because every URL and name the feed carries comes from it.
     func LoadConfig
-        cPath = cRoot + "/lookout.yaml"
+        cPath = cRoot + "/radar.yaml"
         if not fexists(cPath)
-            Problem("lookout.yaml", "is this watch's configuration, and the run reads it first (docs/ADOPT.md)")
+            Problem("radar.yaml", "is this watch's configuration, and the run reads it first (docs/ADOPT.md)")
             return 0
         ok
         return LoadConfigText(read(cPath))
@@ -552,16 +552,16 @@ class FeedRun
     func LoadConfigText cText
         oY = new YamlReader
         try
-            oConfig = oY.Parse(cText, "lookout.yaml")
+            oConfig = oY.Parse(cText, "radar.yaml")
         catch e
-            Problem("lookout.yaml", e.Message())
+            Problem("radar.yaml", e.Message())
             return 0
         done
         oConfigSchema = oSchema.SchemaFile("config.schema.json")
         Drain()
         if not islist(oConfigSchema) return 0 ok
         nBefore = len(aProblems)
-        oSchema.Check(oConfig, oConfigSchema, "lookout.yaml", "")
+        oSchema.Check(oConfig, oConfigSchema, "radar.yaml", "")
         Drain()
         if len(aProblems) > nBefore return 0 ok
         Voice()
@@ -569,7 +569,7 @@ class FeedRun
         cConfig = JWrite(oConfig, 0) + char(10)
         return 1
 
-    # The project's own voice: a text of lookout.yaml may say {project}, {topic}, {watch} or {title},
+    # The project's own voice: a text of radar.yaml may say {project}, {topic}, {watch} or {title},
     # and is published with the configuration's values in their place, so a file copied to another
     # project speaks for that project once its names change. {week} is left for the site, which
     # fills it on the page of an earlier week. Any other {name} is refused, so a typo never reaches a reader.
@@ -610,7 +610,7 @@ class FeedRun
         if nOpen > 0
             nClose = substr(cRest, "}")
             if nClose > nOpen
-                Problem("lookout.yaml", substr(cWhere, 2, len(cWhere) - 1) + " names " + substr(cRest, nOpen, nClose - nOpen + 1) + "; a text may name {project}, {topic}, {watch}, {title} or {week}")
+                Problem("radar.yaml", substr(cWhere, 2, len(cWhere) - 1) + " names " + substr(cRest, nOpen, nClose - nOpen + 1) + "; a text may name {project}, {topic}, {watch}, {title} or {week}")
             ok
         ok
         return c
@@ -632,7 +632,7 @@ class FeedRun
         next
         return v
 
-    # The key lookout.yaml publishes for the site and the bar must be the key the feed is checked
+    # The key radar.yaml publishes for the site and the bar must be the key the feed is checked
     # against, keys/allowed_signers, for the signer it names.
     func KeyCheck
         cPath = cRoot + "/keys/allowed_signers"
@@ -646,7 +646,7 @@ class FeedRun
         for i = 1 to nL1
             if trim(aLines[i]) = cWant return ok
         next
-        Problem("lookout.yaml", "feed.key, feed.signer and feed.namespace must match a line of keys/allowed_signers: " + cWant)
+        Problem("radar.yaml", "feed.key, feed.signer and feed.namespace must match a line of keys/allowed_signers: " + cWant)
 
     # digests/<YYYY-Www>.md, as a sorted JSON list of weeks: the weeks a survey has closed.
     func DigestWeeks
@@ -1076,7 +1076,7 @@ class FeedRun
             aItems + ["{", aPairs]
         next
         return ["{", [
-            ["feed", "lookout"],
+            ["feed", "radar"],
             ["version", ["#", "1"]],
             ["updated", NewestDay()],
             ["home", Conf("watch.repository")],
@@ -1780,7 +1780,7 @@ class Pattern
 
 # ---------------------------------------------------------------- the YAML reader
 #
-# lookout.yaml is read with a small, strict subset of YAML, enough for a configuration a person
+# radar.yaml is read with a small, strict subset of YAML, enough for a configuration a person
 # writes by hand (docs/ADOPT.md, "The file"):
 #   key: value              a map; keys are letters, digits, _ and -
 #   key:                    a deeper block follows, indented by spaces (a tab is refused)
@@ -1980,7 +1980,7 @@ class YamlReader
         if cS = "false" return ["f"] ok
         if cS = "null" or cS = "~" return ["n"] ok
         if left(cS, 1) = "{" or left(cS, 1) = "&" or left(cS, 1) = "*" or left(cS, 1) = "!" or left(cS, 1) = "|" or left(cS, 1) = ">"
-            Fail("this file uses a YAML feature Lookout does not read here (" + left(cS, 1) + "); write the value in quotes")
+            Fail("this file uses a YAML feature Radar does not read here (" + left(cS, 1) + "); write the value in quotes")
         ok
         return cS
 

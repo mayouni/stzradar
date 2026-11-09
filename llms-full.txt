@@ -1,8 +1,8 @@
 # Softanza Radar: every signal, in full
 
-> What changed in AI and the tech field this week, and what it means for what we build in Softanza. Generated from the signed feed (https://mayouni.github.io/lookout/feed/index.json); the feed is the reference.
+> What changed in AI and the tech field this week, and what it means for what we build in Softanza. Generated from the signed feed (https://mayouni.github.io/stzradar/feed/index.json); the feed is the reference.
 
-## Lookout runs for any project: one file says what its agent learns and watches
+## Radar runs for any project: one file says what its agent learns and watches
 
 - id: 2026-11-09-lookout-for-any-project
 - date: 2026-11-09
@@ -10,17 +10,17 @@
 - kind: feature
 - stance: adopt
 - relevance: medium
-- page: https://mayouni.github.io/lookout/items/2026/2026-11-09-lookout-for-any-project.md
+- page: https://mayouni.github.io/stzradar/items/2026/2026-11-09-lookout-for-any-project.md
 
-Lookout now reads everything that belongs to its project from one file, lookout.yaml: the project, the watch, its readers, its map, and what the watching agent learns before each survey. The feed, the site with its trends, and the bar take their names and texts from it, and version 1.1.0 of the bar reads any watch's feed with the key the page gives it.
+Radar now reads everything that belongs to its project from one file, radar.yaml: the project, the watch, its readers, its map, and what the watching agent learns before each survey. The feed, the site with its trends, and the bar take their names and texts from it, and version 1.1.0 of the bar reads any watch's feed with the key the page gives it.
 
 For each reader:
-- developer: Any project can run its own Lookout: copy the repository, write lookout.yaml, and point the bar at your feed with data-feed and data-key.
-- maintainer: Lookout's project-specific values now live in lookout.yaml, checked before every run; bar 1.1.0 is the version to pin, and 1.0.0 keeps working.
+- developer: Any project can run its own Radar: copy the repository, write radar.yaml, and point the bar at your feed with data-feed and data-key.
+- maintainer: Radar's project-specific values now live in radar.yaml, checked before every run; bar 1.1.0 is the version to pin, and 1.0.0 keeps working.
 
 Sources:
-- Your own Lookout (docs/ADOPT.md): https://github.com/mayouni/lookout/blob/main/docs/ADOPT.md
-- The agent's brief (docs/AGENT.md): https://github.com/mayouni/lookout/blob/main/docs/AGENT.md
+- Your own Radar (docs/ADOPT.md): https://github.com/mayouni/stzradar/blob/main/docs/ADOPT.md
+- The agent's brief (docs/AGENT.md): https://github.com/mayouni/stzradar/blob/main/docs/AGENT.md
 
 ## A coding agent's "don't ask again" writes secrets into a file that gets published
 
@@ -30,7 +30,7 @@ Sources:
 - kind: security
 - stance: defend
 - relevance: high
-- page: https://mayouni.github.io/lookout/items/2026/2026-11-08-agent-approvals-leak-secrets.md
+- page: https://mayouni.github.io/stzradar/items/2026/2026-11-08-agent-approvals-leak-secrets.md
 
 Apiiro reports that when a Claude Code user approves a command with "Yes, and don't ask again", the exact command, including any password or key typed into it, is saved as a permission rule in .claude/settings.local.json inside the project. The file is kept out of git only by the developer's global ignore list, not by the repository's own .gitignore, and Apiiro counted 1,122 public copies on GitHub holding a real secret, out of 104,185.
 
@@ -47,7 +47,7 @@ Proposed:
 Sources:
 - Coding Agents Copy Your Secrets to a Hidden File. Thousands Are on GitHub: https://apiiro.com/blog/coding-agents-leaking-secrets-github-dont-ask-again
 
-## Lookout's feed is signed: check it came from this repository unchanged
+## Radar's feed is signed: check it came from this repository unchanged
 
 - id: 2026-11-08-feed-signing
 - date: 2026-11-08
@@ -55,19 +55,19 @@ Sources:
 - kind: feature
 - stance: adopt
 - relevance: medium
-- page: https://mayouni.github.io/lookout/items/2026/2026-11-08-feed-signing.md
+- page: https://mayouni.github.io/stzradar/items/2026/2026-11-08-feed-signing.md
 
-Lookout publishes an SSH signature beside each feed file, feed/index.json.sig and feed/feed.json.sig, made with one Ed25519 key kept for this purpose by Lookout's maintainer. Any reader with OpenSSH can check a feed with ssh-keygen against the public key and the namespace lookout-feed. The change adds files and adds nothing to the feed itself, so the feed stays at version 1; docs/FEED.md gives the key, its fingerprint and the command.
+Radar publishes an SSH signature beside each feed file, feed/index.json.sig and feed/feed.json.sig, made with one Ed25519 key kept for this purpose by Radar's maintainer. Any reader with OpenSSH can check a feed with ssh-keygen against the public key and the namespace radar-feed. The change adds files and adds nothing to the feed itself, so the feed stays at version 1; docs/FEED.md gives the key, its fingerprint and the command.
 
 For each reader:
-- developer: Lookout's feed carries a signature beside each file; a program that shows its notices should check it with ssh-keygen before showing anything.
-- maintainer: Pin Lookout's key fingerprint in your reader rather than fetching the key from the same place as the feed.
+- developer: Radar's feed carries a signature beside each file; a program that shows its notices should check it with ssh-keygen before showing anything.
+- maintainer: Pin Radar's key fingerprint in your reader rather than fetching the key from the same place as the feed.
 
 Proposed:
 - stzlib: add the signature check to the reader proposed in docs/READER.md, with the key's fingerprint pinned in the library (proposed)
 
 Sources:
-- The feed contract, version 1: https://github.com/mayouni/lookout/blob/main/docs/FEED.md
+- The feed contract, version 1: https://github.com/mayouni/stzradar/blob/main/docs/FEED.md
 
 ## GitHub will block pull_request_target in public repositories from December 2
 
@@ -77,7 +77,7 @@ Sources:
 - kind: practice
 - stance: adopt
 - relevance: low
-- page: https://mayouni.github.io/lookout/items/2026/2026-11-08-github-blocks-pull-request-target.md
+- page: https://mayouni.github.io/stzradar/items/2026/2026-11-08-github-blocks-pull-request-target.md
 
 GitHub announced on November 2, 2026 that from December 2, 2026, GitHub Actions blocks pull_request_target events by default in every public repository unless an Actions event policy allows them. Enforcement is tried in two windows, November 9 and November 16, 16:00 to 18:00 UTC. Private and internal repositories are not affected.
 
@@ -96,7 +96,7 @@ Sources:
 - kind: paper
 - stance: adopt
 - relevance: high
-- page: https://mayouni.github.io/lookout/items/2026/2026-11-08-llm-repairs-pass-wrong.md
+- page: https://mayouni.github.io/stzradar/items/2026/2026-11-08-llm-repairs-pass-wrong.md
 
 A study submitted on November 5, 2026 looks at code that models repair after documented changes in CPython, Node.js and SQLite. Repairs that run cleanly can still give wrong answers: a gate built on typical inputs let 41% of the wrong repairs through, and adding one input written from the release note cut that to 6.5%. The expected outputs came from the old program on the old runtime.
 
@@ -112,7 +112,7 @@ Sources:
 - Accepted but Wrong: Silent Failures of LLM Code Repairs after API Migrations: https://arxiv.org/abs/2611.08269
 - Accepted but Wrong, full text (HTML): https://arxiv.org/html/2611.08269v1
 
-## Lookout opens: a public watch on AI, read from Softanza's point of view
+## Radar opens: a public watch on AI, read from Softanza's point of view
 
 - id: 2026-11-08-lookout-opens
 - date: 2026-11-08
@@ -120,22 +120,22 @@ Sources:
 - kind: idea
 - stance: adopt
 - relevance: high
-- page: https://mayouni.github.io/lookout/items/2026/2026-11-08-lookout-opens.md
+- page: https://mayouni.github.io/stzradar/items/2026/2026-11-08-lookout-opens.md
 
-Softanza opened Lookout, a public repository that reads developments in AI at their source and judges each one against what Softanza builds. Every entry is written twice in one file, as a page for people and as data for programs, and a feed is generated from the data.
+Softanza opened Radar, a public repository that reads developments in AI at their source and judges each one against what Softanza builds. Every entry is written twice in one file, as a page for people and as data for programs, and a feed is generated from the data.
 
 For each reader:
 - developer: Softanza now keeps a public watch on AI developments: read it on GitHub, or fetch feed/index.json to show its notices in your own tools.
 - learner: There is now one place that explains, in plain words, what changes in AI mean for what you learn with Softanza.
-- maintainer: Lookout is open: send it the AI developments that touch your project, and expect the tasks it proposes to reach you through Bangalo.
+- maintainer: Radar is open: send it the AI developments that touch your project, and expect the tasks it proposes to reach you through Bangalo.
 
 Proposed:
 - softanza: run the first weekly survey and publish its digest (proposed)
 - stzlib: propose a command that reads this feed for its user's audience and level (proposed)
 
 Sources:
-- Lookout's README: https://github.com/mayouni/lookout
-- The feed contract, version 1: https://github.com/mayouni/lookout/blob/main/docs/FEED.md
+- Radar's README: https://github.com/mayouni/stzradar
+- The feed contract, version 1: https://github.com/mayouni/stzradar/blob/main/docs/FEED.md
 
 ## Two MCP clients let a malicious server obtain a token meant for another server
 
@@ -145,7 +145,7 @@ Sources:
 - kind: security
 - stance: defend
 - relevance: medium
-- page: https://mayouni.github.io/lookout/items/2026/2026-11-08-mcp-oauth-resource-check.md
+- page: https://mayouni.github.io/stzradar/items/2026/2026-11-08-mcp-oauth-resource-check.md
 
 Two advisories published on November 5, 2026 describe the same flaw in two MCP clients, the Go SDK mcp-go before 1.2.1 and the ChatCLI agent before 1.215.2: the client took the resource named in a server's protected resource metadata without checking that it matched the server it had connected to. A malicious MCP server could name another server on the same authorization server, have the user sign in, and replay the token it received.
 
@@ -169,7 +169,7 @@ Sources:
 - kind: paper
 - stance: learn
 - relevance: high
-- page: https://mayouni.github.io/lookout/items/2026/2026-11-08-spillway-target-admission.md
+- page: https://mayouni.github.io/stzradar/items/2026/2026-11-08-spillway-target-admission.md
 
 A paper submitted on November 4, 2026 proposes a defence for tool-using agents against prompt injection that does not rely on a model: a call with side effects is admitted only if every target it names that is not in the user's request was returned in a typed identity field, such as an email address or a channel, by a read-only tool. A rule-based sanitizer removes instruction-like text, and a local model reviews only the calls the rule refused. The authors report no successful in-scope attack across twelve benchmark settings.
 
@@ -192,7 +192,7 @@ Sources:
 - kind: security
 - stance: learn
 - relevance: medium
-- page: https://mayouni.github.io/lookout/items/2026/2026-11-08-tool-paths-from-prompts-run-code.md
+- page: https://mayouni.github.io/stzradar/items/2026/2026-11-08-tool-paths-from-prompts-run-code.md
 
 The Python prompt library banks, up to version 2.4.2, read a tool's import path from the text of a prompt template and imported and called whatever it named when the model asked for that tool (CVE-2026-61536, high). Whoever could write a template, in a shared registry or a fetched prompt, could run code in the application. Version 2.4.3 resolves tools only from a registry filled at render time.
 
@@ -215,7 +215,7 @@ Sources:
 - kind: release
 - stance: watch
 - relevance: medium
-- page: https://mayouni.github.io/lookout/items/2026/2026-11-08-zig-0-17-1.md
+- page: https://mayouni.github.io/stzradar/items/2026/2026-11-08-zig-0-17-1.md
 
 Zig 0.17.1 is a bug-fix release that addresses more than 57 issues reported after 0.17.0, chiefly regressions and upgrade blockers; the project says most users who could not move to 0.17.0 should be able to move to 0.17.1. Its news page dates it November 3, 2026 and its download page November 2.
 

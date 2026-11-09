@@ -1,4 +1,4 @@
-# Why Lookout exists
+# Why Radar exists
 
 Softanza Radar exists so that what changes in AI and the tech field each week reaches the part of Softanza it concerns, as
 work someone can act on, and so that what was learned is kept where every reader finds it again. This page says
@@ -20,11 +20,11 @@ What the watch does about it:
   can act on.
 - **It proved this the first week.** A coding agent's "don't ask again" wrote a password into a published file;
   Softanza's maintainers had a check to run and a rule to adopt the same day.
-- **It keeps what was learned.** An opinion formed in one working session used to be gone by the next; Lookout
+- **It keeps what was learned.** An opinion formed in one working session used to be gone by the next; Radar
   writes it once, with its sources, where every session, project and reader finds it again.
 ## What the author asked for
 
-The author opened Lookout on 2026-11-08 and set its work in five parts:
+The author opened Radar on 2026-11-08 and set its work in five parts:
 
 1. **Read at the source**: projects, papers, lab and product features, commercial practices, security findings and
    fixes, regulation, and the links and ideas the author brings.
@@ -46,7 +46,7 @@ Each requirement that followed came from using it:
 - **A site anyone can use.** The week on a radar, Softanza layer by layer, every signal filtered, and the trends over
   the weeks, each signal written in the order its reader needs it.
 - **A bar for other sites.** One script line puts the newest notice for a site's readers at the top of its pages.
-- **Any project can run its own.** One file, `lookout.yaml`, says which project a watch serves and what its agent
+- **Any project can run its own.** One file, `radar.yaml`, says which project a watch serves and what its agent
   learns, so the same tool serves projects well beyond Softanza.
 - **Pages people can read.** One reading size, one column, one scroll bar: the rules of Zane, Softanza's interface
   constitution.

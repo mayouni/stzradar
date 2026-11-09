@@ -130,8 +130,8 @@ class Guard
 
         # notice: one sentence per audience listed, and only for those
         RefusesOne("notice speaks to an audience that is not listed",
-            q + "maintainer" + q + ": " + q + "Lookout is open",
-            q + "user" + q + ": " + q + "A sentence for a user." + q + "," + NL1 + "    " + q + "maintainer" + q + ": " + q + "Lookout is open",
+            q + "maintainer" + q + ": " + q + "Radar is open",
+            q + "user" + q + ": " + q + "A sentence for a user." + q + "," + NL1 + "    " + q + "maintainer" + q + ": " + q + "Radar is open",
             "notice has a sentence for user, which audiences does not list")
         RefusesOne("an audience listed has no notice",
             q + "learner" + q + ": " + q + "There is now one place that explains, in plain words, what changes in AI mean for what you learn with Softanza." + q + "," + NL1 + "    ",
@@ -153,17 +153,17 @@ class Guard
             q + "confidence" + q + ": " + q + "read" + q + "," + NL1 + "  ", "",
             "is missing confidence")
         RefusesOne("an id with capitals",
-            q + "2026-11-08-lookout-opens" + q, q + "2026-11-08-Lookout-Opens" + q,
+            q + "2026-11-08-lookout-opens" + q, q + "2026-11-08-Radar-Opens" + q,
             "does not match")
         RefusesOne("a day that does not exist",
             q + "date" + q + ": " + q + "2026-11-08" + q, q + "date" + q + ": " + q + "2026-02-30" + q,
             "is not a date")
         RefusesOne("a source that is not https",
-            q + "url" + q + ": " + q + "https://github.com/mayouni/lookout" + q + ",",
-            q + "url" + q + ": " + q + "http://github.com/mayouni/lookout" + q + ",",
+            q + "url" + q + ": " + q + "https://github.com/mayouni/stzradar" + q + ",",
+            q + "url" + q + ": " + q + "http://github.com/mayouni/stzradar" + q + ",",
             "does not match ^https://")
         RefusesOne("an empty title",
-            q + "title" + q + ": " + q + "Lookout opens: a public watch on AI, read from Softanza's point of view" + q,
+            q + "title" + q + ": " + q + "Radar opens: a public watch on AI, read from Softanza's point of view" + q,
             q + "title" + q + ": " + q + q,
             "is shorter than 1 characters")
 
@@ -188,7 +188,7 @@ class Guard
             "the id starts with the entry's date")
         RefusesOne("an entry that writes its own url",
             q + "review_by" + q + ": " + q + "2027-05-08" + q + ",",
-            q + "review_by" + q + ": " + q + "2027-05-08" + q + "," + NL1 + "  " + q + "url" + q + ": " + q + "https://github.com/mayouni/lookout/blob/main/x" + q + ",",
+            q + "review_by" + q + ": " + q + "2027-05-08" + q + "," + NL1 + "  " + q + "url" + q + ": " + q + "https://github.com/mayouni/stzradar/blob/main/x" + q + ",",
             "an entry does not write its url")
         RefusesOne("review_by before the entry's date",
             q + "review_by" + q + ": " + q + "2027-05-08" + q, q + "review_by" + q + ": " + q + "2026-11-01" + q,
@@ -296,14 +296,14 @@ class Guard
             ["^[0-9]{4}-[0-9]{2}-[0-9]{2}-[a-z0-9]+(-[a-z0-9]+)*$", "2026-11-8-lookout", 0],
             ["^[a-z0-9]+(\.[a-z0-9-]+)*$", "stzlib.security", 1],
             ["^[a-z0-9]+(\.[a-z0-9-]+)*$", "stzlib..security", 0],
-            ["^https://github\.com/mayouni/lookout/", "https://github.com/mayouni/lookout/blob/x", 1],
-            ["^https://github\.com/mayouni/lookout/", "https://githubXcom/mayouni/lookout/", 0],
+            ["^https://github\.com/mayouni/stzradar/", "https://github.com/mayouni/stzradar/blob/x", 1],
+            ["^https://github\.com/mayouni/stzradar/", "https://githubXcom/mayouni/stzradar/", 0],
             ["^https://", "see https://x", 0],
             ["^a.*b$", "axxb", 1],
             ["^a.b$", "axb", 1],
             ["^a.b$", "ab", 0],
-            ["^https://.*/$", "https://mayouni.github.io/lookout/", 1],
-            ["^https://.*/$", "https://mayouni.github.io/lookout", 0],
+            ["^https://.*/$", "https://mayouni.github.io/stzradar/", 1],
+            ["^https://.*/$", "https://mayouni.github.io/stzradar", 0],
             ["https://", "see https://x", 1],
             ["^[a-z0-9-]+$", "", 0]
         ]
@@ -383,10 +383,10 @@ class Guard
     # ------------------------------------------------------------ the YAML reader
     func Yaml
         NL1 = char(10)
-        cDoc = "# a comment" + NL1 + "name: Lookout  # after a value" + NL1 + "list:" + NL1 + "  - a" + NL1 + '  - "b: c"' + NL1 +
+        cDoc = "# a comment" + NL1 + "name: Radar  # after a value" + NL1 + "list:" + NL1 + "  - a" + NL1 + '  - "b: c"' + NL1 +
                "people:" + NL1 + "  - id: x" + NL1 + "    n: '1'" + NL1 + "  - id: y" + NL1 + "flow: [one, " + '"two, three"' + "]" + NL1 +
                "on: true" + NL1 + "text: >" + NL1 + "  folded" + NL1 + "  lines" + NL1 + "block: |" + NL1 + "  kept" + NL1 + "  lines" + NL1
-        cWant = '{"name":"Lookout","list":["a","b: c"],"people":[{"id":"x","n":"1"},{"id":"y"}],"flow":["one","two, three"],"on":true,"text":"folded lines","block":"kept' + "\n" + 'lines"}'
+        cWant = '{"name":"Radar","list":["a","b: c"],"people":[{"id":"x","n":"1"},{"id":"y"}],"flow":["one","two, three"],"on":true,"text":"folded lines","block":"kept' + "\n" + 'lines"}'
         oY = new YamlReader
         try
             v = oY.Parse(cDoc, "t.yaml")
@@ -424,17 +424,17 @@ class Guard
         next
         return cOut
 
-    # ------------------------------------------------------------ lookout.yaml is checked before anything runs
+    # ------------------------------------------------------------ radar.yaml is checked before anything runs
     func Config
-        cReal = read(cRoot + "/lookout.yaml")
-        ConfigCase("the real lookout.yaml passes", cReal, "")
+        cReal = read(cRoot + "/radar.yaml")
+        ConfigCase("the real radar.yaml passes", cReal, "")
         ConfigCase("a configuration with no project name is refused", substr(cReal, "  name: Softanza" + char(10), ""), "name")
         ConfigCase("a watch with no title for its readers is refused", substr(cReal, "  title: " + char(34) + "{project} Radar" + char(34) + "          # what readers see: the site's title, the feed's title, the bar's link" + char(10), ""), "title")
         ConfigCase("a text naming a value the configuration does not have is refused", substr(cReal, "what we build in {project}", "what we build in {projet}"), "{projet}")
         ConfigCase("a fingerprint that is not a SHA256 one is refused", substr(cReal, "SHA256:ZUij0xoxJIIEwH3AV5xrDXkJLuEklao7pUVhTxCs49I", "MD5:abc"), "fingerprint")
         ConfigCase("a reader the feed does not know is refused", substr(cReal, "  - id: user", "  - id: investor"), "investor")
         ConfigCase("a key the configuration does not define is refused", cReal + "colour: teal" + char(10), "colour")
-        ConfigCase("a pages address without its closing slash is refused", substr(cReal, "https://mayouni.github.io/lookout/" + char(10), "https://mayouni.github.io/lookout" + char(10)), "pages")
+        ConfigCase("a pages address without its closing slash is refused", substr(cReal, "https://mayouni.github.io/stzradar/" + char(10), "https://mayouni.github.io/stzradar" + char(10)), "pages")
 
     func ConfigCase cName, cText, cReason
         oRun = new FeedRun

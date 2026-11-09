@@ -1,5 +1,5 @@
 {
-  "about": "Checks and lessons that Lookout Radar shows beside each entry, keyed by entry id. Written by the desk with each weekly survey.",
+  "about": "Checks and lessons that Softanza Radar shows beside each entry, keyed by entry id. Written by the desk with each weekly survey.",
   "entries": {
     "2026-11-08-agent-approvals-leak-secrets": {
       "build": [
@@ -219,11 +219,11 @@
     "2026-11-08-feed-signing": {
       "build": [
         {
-          "why": "Check a feed file against Lookout's key.",
-          "cmd": "curl -sO https://raw.githubusercontent.com/mayouni/lookout/main/feed/index.json\ncurl -sO https://raw.githubusercontent.com/mayouni/lookout/main/feed/index.json.sig\ncurl -sO https://raw.githubusercontent.com/mayouni/lookout/main/keys/allowed_signers\nssh-keygen -Y verify -f allowed_signers -I feed@lookout -n lookout-feed -s index.json.sig < index.json"
+          "why": "Check a feed file against Radar's key.",
+          "cmd": "curl -sO https://raw.githubusercontent.com/mayouni/stzradar/main/feed/index.json\ncurl -sO https://raw.githubusercontent.com/mayouni/stzradar/main/feed/index.json.sig\ncurl -sO https://raw.githubusercontent.com/mayouni/stzradar/main/keys/allowed_signers\nssh-keygen -Y verify -f allowed_signers -I feed@radar -n radar-feed -s index.json.sig < index.json"
         }
       ],
-      "lesson": "A signature lets a reader check that a file is exactly what its publisher signed. Lookout signs its feed with one key and publishes the public half. Your tool checks the signature and the key's fingerprint before it shows a single notice.",
+      "lesson": "A signature lets a reader check that a file is exactly what its publisher signed. Radar signs its feed with one key and publishes the public half. Your tool checks the signature and the key's fingerprint before it shows a single notice.",
       "terms": [
         [
           "public key",
@@ -237,7 +237,7 @@
       "quiz": [
         [
           "Why pin the fingerprint in your own code?",
-          "A key fetched beside the feed only proves the two agree; a pinned fingerprint proves it is Lookout's key."
+          "A key fetched beside the feed only proves the two agree; a pinned fingerprint proves it is Radar's key."
         ]
       ]
     },
@@ -245,10 +245,10 @@
       "build": [
         {
           "why": "Every entry touching one area, from the terminal.",
-          "cmd": "curl -s https://raw.githubusercontent.com/mayouni/lookout/main/feed/index.json \\\n | jq -r '.items[] | select(.areas // [] | index(\"stzlib\")) | .title'"
+          "cmd": "curl -s https://raw.githubusercontent.com/mayouni/stzradar/main/feed/index.json \\\n | jq -r '.items[] | select(.areas // [] | index(\"stzlib\")) | .title'"
         }
       ],
-      "lesson": "Lookout reads developments in AI at their source and writes each one twice: as a page for people and as data for programs. The data is a feed any tool can read, filtered by who you are and how urgent the matter is.",
+      "lesson": "Radar reads developments in AI at their source and writes each one twice: as a page for people and as data for programs. The data is a feed any tool can read, filtered by who you are and how urgent the matter is.",
       "terms": [
         [
           "feed",
@@ -270,11 +270,11 @@
       "build": [
         {
           "why": "Copy the watch to start your own. This one writes: it creates a folder.",
-          "cmd": "git clone https://github.com/mayouni/lookout your-watch"
+          "cmd": "git clone https://github.com/mayouni/stzradar your-watch"
         },
         {
           "why": "See everything that belongs to a project: one file.",
-          "cmd": "cat your-watch/lookout.yaml"
+          "cmd": "cat your-watch/radar.yaml"
         },
         {
           "why": "After editing it, let the check name anything missing or wrong, line by line.",
@@ -285,7 +285,7 @@
           "cmd": "ssh-keygen -t ed25519 -f ~/.ssh/watch_feed -C feed@your-watch"
         }
       ],
-      "lesson": "A tool built for one project usually hides that project everywhere in its code: names, addresses, texts. Lookout gathered all of it into one file, lookout.yaml, and the tools read that file instead. Changing the file changes the whole watch: what its agent studies, what it reads, who it writes for, and what the site and the bar show. The parts every watch shares, like the feed's fields and its signature, stay the same, so one reader works for all of them.",
+      "lesson": "A tool built for one project usually hides that project everywhere in its code: names, addresses, texts. Radar gathered all of it into one file, radar.yaml, and the tools read that file instead. Changing the file changes the whole watch: what its agent studies, what it reads, who it writes for, and what the site and the bar show. The parts every watch shares, like the feed's fields and its signature, stay the same, so one reader works for all of them.",
       "terms": [
         [
           "configuration file",

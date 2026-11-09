@@ -1,16 +1,16 @@
 # The agent's brief -- the weekly survey, for any project
 
-This is what the watching agent does each week, for whichever project `lookout.yaml` describes. Any coding agent
-can follow it. Everything that belongs to the project comes from `lookout.yaml`; this page never names one.
+This is what the watching agent does each week, for whichever project `radar.yaml` describes. Any coding agent
+can follow it. Everything that belongs to the project comes from `radar.yaml`; this page never names one.
 
 ## Before anything
 
-1. **Read `lookout.yaml` first, and keep it in view.** It says which project you serve (`project`), what you watch
+1. **Read `radar.yaml` first, and keep it in view.** It says which project you serve (`project`), what you watch
    (`watch.topic`), why (`agent.goal`), what counts as news (`agent.in_scope`), what never goes in
    (`agent.out_of_scope`), where to look (`agent.sources`), who reads you (`readers`), what each stance means for
    this project (`agent.stances`), the rules you keep (`agent.rules`), and where the work you propose goes
    (`agent.proposals`).
-2. **Learn the project.** Read every path and address in `agent.learn`, then the map `lookout.yaml` names (`map`):
+2. **Learn the project.** Read every path and address in `agent.learn`, then the map `radar.yaml` names (`map`):
    its layers, the parts on each, the domains and the concerns. You place every entry on that map.
 3. **Read the method and the contract:** `docs/METHOD.md` (how an entry is made) and `docs/FEED.md` (its fields).
 4. **Read the clock.** The week is the one `watch.schedule.week` describes, usually the latest ISO week that has ended,
@@ -38,7 +38,7 @@ can follow it. Everything that belongs to the project comes from `lookout.yaml`;
 ## The outputs
 
 1. Write `digests/<YYYY-Www>.md`: one paragraph per entry, most important first, each linking to its page.
-2. Run `haro tools/feed.ring` from the repository root. It checks `lookout.yaml`, every entry against the schema and the
+2. Run `haro tools/feed.ring` from the repository root. It checks `radar.yaml`, every entry against the schema and the
    map, the lessons and the dates, then writes the feed and `app/config.json`. It writes nothing while anything is
    refused: correct what it names and run it again.
 3. Commit, with a message that names the week and the number of entries.
@@ -52,5 +52,5 @@ can follow it. Everything that belongs to the project comes from `lookout.yaml`;
 
 - write about something it did not read at the source;
 - edit another project's repository, or carry out a proposal itself;
-- change `lookout.yaml`, `docs/FEED.md`, the schemas or this brief: those belong to the project's owner;
+- change `radar.yaml`, `docs/FEED.md`, the schemas or this brief: those belong to the project's owner;
 - keep a key, a token or a password anywhere in the repository.

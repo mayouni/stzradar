@@ -1,11 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/mayouni/lookout/schema/feed.schema.json",
-  "title": "Lookout feed index, version 1",
+  "$id": "https://github.com/mayouni/stzradar/schema/feed.schema.json",
+  "title": "Radar feed index, version 1",
   "type": "object",
   "required": ["feed", "version", "updated", "home", "items"],
   "properties": {
-    "feed": { "const": "lookout" },
+    "feed": { "const": "radar" },
     "version": { "const": 1 },
     "updated": { "type": "string", "format": "date-time" },
     "home": { "type": "string", "pattern": "^https://github\\.com/[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$" },

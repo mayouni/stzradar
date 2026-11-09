@@ -1,5 +1,5 @@
 {
-  "about": "The Softanza estate as Lookout reads it: the layers of the stack, the projects in each, the domains a piece of news can touch, and the concerns at stake. An entry names its projects in `areas`, and its `domains` and `concerns` from the lists below; the feed tool refuses a name that is not here.",
+  "about": "The Softanza estate as Radar reads it: the layers of the stack, the projects in each, the domains a piece of news can touch, and the concerns at stake. An entry names its projects in `areas`, and its `domains` and `concerns` from the lists below; the feed tool refuses a name that is not here.",
   "version": 1,
   "layers": [
     { "id": "experience",   "name": "Interfaces and applications", "line": "what people see, use and learn with" },
@@ -23,7 +23,7 @@
     { "id": "haro",       "name": "Haro",               "layer": "language",     "line": "The language of languages: declare the language of your domain, and Haro runs it, on its own virtual machine and compiler." },
     { "id": "harobanda",  "name": "Harobanda",          "layer": "machine",      "line": "The declared machine: describe the whole computer in one text file; it boots exactly that and checks every boot against it.", "link": "https://mayouni.github.io/harobanda/" },
     { "id": "takamba",    "name": "Takamba",            "layer": "harness",      "line": "The harness: many working sessions on one body of work, under laws each cited to the incident that taught it." },
-    { "id": "lookout",    "name": "Lookout",            "layer": "harness",      "line": "This watch: what moves in AI, read from Softanza's point of view, in a signed feed.", "link": "https://github.com/mayouni/lookout" }
+    { "id": "radar",      "name": "Softanza Radar",   "layer": "harness",      "line": "This watch: what moves in AI and the tech field, read from Softanza's point of view, in a signed feed.", "link": "https://github.com/mayouni/stzradar", "aliases": ["lookout"] }
   ],
   "domains": [
     { "id": "models",     "name": "AI models",            "line": "models, weights, training and running them" },

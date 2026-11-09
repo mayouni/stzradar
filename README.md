@@ -1,30 +1,30 @@
-# Lookout
+# Softanza Radar
 
 **Softanza Radar: a weekly watch on what is changing in AI and the tech field, read from Softanza's point of view,
 with a signed feed that any program can read.**
 
-**Open it: [mayouni.github.io/lookout](https://mayouni.github.io/lookout/)**
+**Open it: [mayouni.github.io/stzradar](https://mayouni.github.io/stzradar/)**
 
-Lookout is the open tool behind the radar, part of the Softanza Agentic Harness: the layer that builds the platform
-and keeps watch over it. The site shows the week on a radar whose slices are the
+Radar is open source and part of the Softanza Agentic Harness, the layer that builds the platform and keeps watch
+over it: any project can adopt it to run its own radar. The site shows the week on a radar whose slices are the
 layers of Softanza, and, under In Softanza, the whole platform as a stack of layers and a grid of domains. Every earlier week
 stays one click away, and Trends follows the weeks together: what was read, where Softanza stands, what it
 proposed and how far that went, and what it wrote down to learn. Every signal reads
 in the order its reader needs it, whether developer, maintainer, learner or user. The radar checks the feed's signature
 in your browser before it shows anything.
 
-**Put it on your own site: [the Lookout bar](docs/BAR.md)**, one script line that shows the newest notice for your
+**Put it on your own site: [the radar bar](docs/BAR.md)**, one script line that shows the newest notice for your
 readers, checked the same way.
 
-**Run your own Lookout, for your own project: [docs/ADOPT.md](docs/ADOPT.md).** One file, `lookout.yaml`, says
+**Run your own radar, for your own project: [docs/ADOPT.md](docs/ADOPT.md).** One file, `radar.yaml`, says
 which project the watch serves, what it watches, who reads it, and what the agent learns before it reads anything.
-The tools, the feed, this site with its trends, and the bar take everything from it. [`lookout.yaml`](lookout.yaml) is
-Softanza's own, and the site's [For your project](https://mayouni.github.io/lookout/#/yours) page writes a first one with you.
+The tools, the feed, this site with its trends, and the bar take everything from it. [`radar.yaml`](radar.yaml) is
+Softanza's own, and the site's [For your project](https://mayouni.github.io/stzradar/#/yours) page writes a first one with you.
 
-A lookout is the one who keeps watch and calls out what is coming, in time for the others to act.
+A radar scans the horizon and shows what is coming, in time for the others to act.
 
 AI and the tech field move every week. New projects appear, papers change how we think, labs ship features, companies change their
-practices, and security researchers find holes and fixes. Lookout keeps one place where each of these is read at its
+practices, and security researchers find holes and fixes. Radar keeps one place where each of these is read at its
 source, judged against what [Softanza](https://github.com/mayouni/stzlib) builds, and turned into something useful:
 
 - **something to learn**: where Softanza stands, and what it should take from others;
@@ -32,7 +32,7 @@ source, judged against what [Softanza](https://github.com/mayouni/stzlib) builds
 - **something to tell**: a short notice for the people it affects, whether they are developers, users, learners or
   maintainers.
 
-Agents read it too: [llms.txt](https://mayouni.github.io/lookout/llms.txt) gives them the whole watch as text, and an
+Agents read it too: [llms.txt](https://mayouni.github.io/stzradar/llms.txt) gives them the whole watch as text, and an
 MCP server lets an assistant such as Aïcha, or Claude Code, ask it while working and say: *there is a new development
 you should know about, here is what it means for you.*
 
@@ -64,10 +64,10 @@ because they are one file.
 
 The feed is a plain JSON file, refreshed whenever an entry changes:
 
-    https://raw.githubusercontent.com/mayouni/lookout/main/feed/index.json
+    https://raw.githubusercontent.com/mayouni/stzradar/main/feed/index.json
 
 ```sh
-FEED=https://raw.githubusercontent.com/mayouni/lookout/main/feed/index.json
+FEED=https://raw.githubusercontent.com/mayouni/stzradar/main/feed/index.json
 
 # the five newest entries
 curl -s $FEED | jq -r '.items[:5][] | "\(.date)  \(.level)  \(.title)"'
@@ -81,7 +81,7 @@ curl -s $FEED | jq -r '.items[]
 ```
 
 ```powershell
-$feed = Invoke-RestMethod https://raw.githubusercontent.com/mayouni/lookout/main/feed/index.json
+$feed = Invoke-RestMethod https://raw.githubusercontent.com/mayouni/stzradar/main/feed/index.json
 $feed.items | Where-Object { $_.audiences -contains 'learner' } | Select-Object date, title
 ```
 
@@ -90,7 +90,7 @@ including every field, is [`docs/FEED.md`](docs/FEED.md).
 
 ## Showing notices inside an application
 
-An application built with Softanza, or any other, can show Lookout's notices to its own people. The rules are short,
+An application built with Softanza, or any other, can show Radar's notices to its own people. The rules are short,
 and they exist because a remote feed that shows text to users is itself something to defend:
 
 1. Show only the notice written for your audience (`notice.developer`, `notice.user`, `notice.learner`,
@@ -114,7 +114,7 @@ The full rules are in [`docs/FEED.md`](docs/FEED.md#showing-a-notice).
 
 ## Status
 
-Opened on 2026-11-08. Lookout surveys every week and publishes a digest, entries and a signed feed:
+Opened on 2026-11-08. Radar surveys every week and publishes a digest, entries and a signed feed:
 
 - the feed carries an SSH signature beside each file, so an application checks it before showing a notice
   ([`docs/FEED.md`](docs/FEED.md#the-signature));
@@ -128,7 +128,7 @@ Opened on 2026-11-08. Lookout surveys every week and publishes a digest, entries
 Open an issue with a link and one line about why it matters. The desk reads it at the source and answers with an
 entry, or with a line saying why it was not kept.
 
-Lookout is a [Softanza](https://mayouni.github.io/stzsite/) project. © 2026 Mansour Ayouni. Released under the MIT
+Radar is a [Softanza](https://mayouni.github.io/stzsite/) project. © 2026 Mansour Ayouni. Released under the MIT
 licence, see [LICENSE](LICENSE).
 
-**For agents.** [llms.txt](https://mayouni.github.io/lookout/llms.txt) gives agents and language models the whole watch as text, and [an MCP server](docs/MCP.md) (`tools/mcp.ring`, read-only, signature checked first) lets any MCP agent ask it while it works.
+**For agents.** [llms.txt](https://mayouni.github.io/stzradar/llms.txt) gives agents and language models the whole watch as text, and [an MCP server](docs/MCP.md) (`tools/mcp.ring`, read-only, signature checked first) lets any MCP agent ask it while it works.

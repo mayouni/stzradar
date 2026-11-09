@@ -1,4 +1,4 @@
-# Lookout's feed generator and its check.
+# Radar's feed generator and its check.
 #
 #   haro tools/feed.ring           check every entry, then regenerate feed/index.json and feed/feed.json
 #   haro tools/feed.ring check     check every entry and both committed feeds; write nothing
@@ -40,7 +40,7 @@ func main
 
 
 # Both feed files must carry a good SSH signature by the key in keys/allowed_signers, for the
-# signer and namespace lookout.yaml names (feed.signer, feed.namespace). ssh-keygen does the
+# signer and namespace radar.yaml names (feed.signer, feed.namespace). ssh-keygen does the
 # cryptography; this only asks it, file by file, and counts what it refuses. Returns the number of problems.
 func Verify cSigner, cNamespace
     aFiles = ["feed/index.json", "feed/feed.json"]

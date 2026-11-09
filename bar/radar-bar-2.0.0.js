@@ -1,32 +1,32 @@
-/*! Lookout info bar 1.3.0 -- https://github.com/mayouni/lookout -- MIT
+/*! Radar info bar 2.0.0 -- https://github.com/mayouni/stzradar -- MIT
  *
- * One line on any page: the newest Lookout notice written for your readers, checked before it is shown.
+ * One line on any page: the newest Radar notice written for your readers, checked before it is shown.
  *
- *   <script src="https://mayouni.github.io/lookout/bar/lookout-bar-1.3.0.js"
+ *   <script src="https://mayouni.github.io/stzradar/bar/radar-bar-2.0.0.js"
  *           data-audience="developer" data-projects="haro,zane" data-level="advice" defer></script>
  *
- * Any watch built with Lookout (docs/ADOPT.md) uses this same script: data-feed names that watch's site and
+ * Any watch built with Radar (docs/ADOPT.md) uses this same script: data-feed names that watch's site and
  * data-key the public key it signs with, so the page that includes the bar pins the key it trusts.
  *
- * Where it goes: inside the first element carrying `data-lookout-bar`, or else at the top of <body>, in the
+ * Where it goes: inside the first element carrying `data-radar-bar`, or else at the top of <body>, in the
  * page's flow (it never floats over the page). What it does, in the order docs/FEED.md sets:
  *   1. fetches feed/index.json and its signature, at most once a day per browser;
  *   2. checks the SSH signature against the key pinned below, and shows nothing if the check fails;
  *   3. keeps live entries for the chosen audience, level and projects, and drops the ones dismissed;
  *   4. shows one notice as plain text, with one link: the entry's own page.
- * The bar names the watch by data-title when the page gives one, else by the feed's "title", else "Lookout".
+ * The bar names the watch by data-title when the page gives one, else by the feed's "title", else "Radar".
  * Every piece carries a part name -- bar, name, level, text, link, more, dismiss -- so a page restyles it from its own
- * CSS with [data-lookout-bar]::part(name) { ... }; --lookout-accent, --lookout-bg and --lookout-ink set its colours.
- * It also exposes window.LookoutFeed.load(), which the radar site uses, so the site and the bar read the
+ * CSS with [data-radar-bar]::part(name) { ... }; --radar-accent, --radar-bg and --radar-ink set its colours.
+ * It also exposes window.RadarFeed.load(), which the radar site uses, so the site and the bar read the
  * feed through the same check.
  */
 (function () {
   "use strict";
-  var VERSION = "1.3.0";
-  var BASE = "https://mayouni.github.io/lookout/";
+  var VERSION = "2.0.0";
+  var BASE = "https://mayouni.github.io/stzradar/";
   /* the feed key, pinned: keys/allowed_signers, fingerprint SHA256:ZUij0xoxJIIEwH3AV5xrDXkJLuEklao7pUVhTxCs49I */
   var KEY = "AAAAC3NzaC1lZDI1NTE5AAAAIJoTrtZQEdrhJQFEybJGDuZs9DxF/9X/vPE3q2WfEgDK";
-  var NAMESPACE = "lookout-feed";
+  var NAMESPACE = "radar-feed";
   var LEVELS = ["info", "advice", "action", "urgent"];
   var AUDIENCES = ["developer", "user", "learner", "maintainer"];
   var DAY = 864e5;
@@ -66,7 +66,7 @@
   }
 
   /* ------------------------------------------------------------ the feed, checked, at most once a day */
-  function store(k, v) { try { if (v === undefined) return JSON.parse(localStorage.getItem("lookout:" + k)); localStorage.setItem("lookout:" + k, JSON.stringify(v)); } catch (e) { return null; } }
+  function store(k, v) { try { if (v === undefined) return JSON.parse(localStorage.getItem("radar:" + k)); localStorage.setItem("radar:" + k, JSON.stringify(v)); } catch (e) { return null; } }
   async function fetchPair(base) {
     var a = await fetch(base + "feed/index.json", { cache: "no-cache" }), b = await fetch(base + "feed/index.json.sig", { cache: "no-cache" });
     if (!a.ok || !b.ok) throw new Error("the feed could not be fetched (" + a.status + ", " + b.status + ")");
@@ -84,7 +84,7 @@
     }
     await verify(pair.bytes, pair.sig, opts.key, opts.namespace);   /* every read is checked, the cached copy too */
     var feed = JSON.parse(text(pair.bytes));
-    if (feed.feed !== "lookout" || feed.version !== 1) throw new Error("this reader knows feed version 1");
+    if (feed.feed !== "radar" || feed.version !== 1) throw new Error("this reader knows feed version 1");
     return feed;
   }
   function live(feed, today) {
@@ -94,10 +94,10 @@
 
   /* ------------------------------------------------------------ the bar */
   var CSS = ":host{all:initial;display:block;font:inherit;color:inherit}" +
-    ".bar{--lk-accent:var(--lookout-accent,#1B6B72);--lk-bg:var(--lookout-bg,#EAF4F4);--lk-ink:var(--lookout-ink,#10262A);" +
+    ".bar{--lk-accent:var(--radar-accent,#1B6B72);--lk-bg:var(--radar-bg,#EAF4F4);--lk-ink:var(--radar-ink,#10262A);" +
     "display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;background:var(--lk-bg);color:var(--lk-ink);border-bottom:1px solid color-mix(in srgb,var(--lk-accent) 30%,transparent);" +
     "padding:10px max(16px,env(safe-area-inset-left,0px));font-family:inherit;font-size:max(1rem,16px);line-height:1.45}" +
-    "@media (prefers-color-scheme:dark){.bar{--lk-bg:var(--lookout-bg,#12282B);--lk-ink:var(--lookout-ink,#E3F1F2);--lk-accent:var(--lookout-accent,#8FD3D8)}}" +
+    "@media (prefers-color-scheme:dark){.bar{--lk-bg:var(--radar-bg,#12282B);--lk-ink:var(--radar-ink,#E3F1F2);--lk-accent:var(--radar-accent,#8FD3D8)}}" +
     ".who{font-weight:700;white-space:nowrap}.who b{color:var(--lk-accent)}" +
     ".lv{font-weight:700;border-radius:6px;padding:1px 8px;background:var(--lk-accent);color:var(--lk-bg);white-space:nowrap}" +
     ".lv.urgent{background:#B42318;color:#fff}.lv.action{background:#B54708;color:#fff}" +
@@ -143,9 +143,9 @@
   }
 
   async function mount(script) {
-    var host = document.querySelector("[data-lookout-bar]");
+    var host = document.querySelector("[data-radar-bar]") || document.querySelector("[data-lookout-bar]");   /* the hook's former name still works */
     var cfg = config(host && host.dataset, script && script.dataset);
-    if (!host) { host = document.createElement("div"); host.setAttribute("data-lookout-bar", ""); host.hidden = true; document.body.insertBefore(host, document.body.firstChild); }
+    if (!host) { host = document.createElement("div"); host.setAttribute("data-radar-bar", ""); host.hidden = true; document.body.insertBefore(host, document.body.firstChild); }
     return mountInto(host, cfg, { base: cfg.feed || undefined, key: cfg.key || undefined, namespace: cfg.namespace || undefined });
   }
 
@@ -153,12 +153,12 @@
      dismissed notices again, for a preview */
   async function mountInto(host, cfg, opts) {
     cfg = config(cfg);
-    var turn = (host.__lookoutTurn = (host.__lookoutTurn || 0) + 1);   /* only the newest mount of a host draws */
+    var turn = (host.__radarTurn = (host.__radarTurn || 0) + 1);   /* only the newest mount of a host draws */
     var feed;
-    try { feed = await load({ base: opts.base, key: opts.key, namespace: opts.namespace }); } catch (e) { if (window.console) console.info("Lookout bar: nothing shown, " + e.message); host.hidden = true; return; }
+    try { feed = await load({ base: opts.base, key: opts.key, namespace: opts.namespace }); } catch (e) { if (window.console) console.info("Radar bar: nothing shown, " + e.message); host.hidden = true; return; }
     var alias = await aliasFn(cfg.projects, opts.base);
-    if (turn !== host.__lookoutTurn) return;
-    var title = (cfg.title || (typeof feed.title === "string" && feed.title) || "Lookout").replace(/[\u0000-\u001f\u007f]/g, " ");
+    if (turn !== host.__radarTurn) return;
+    var title = (cfg.title || (typeof feed.title === "string" && feed.title) || "Radar").replace(/[\u0000-\u001f\u007f]/g, " ");
     var root = host.shadowRoot || host.attachShadow({ mode: "open" });
     function draw() {
       var dismissed = opts.keepDismissed ? [] : (store("dismissed") || []);
@@ -184,8 +184,8 @@
     draw();
   }
 
-  window.LookoutFeed = { version: VERSION, load: load, verify: verify, live: live };
-  window.LookoutBar = { version: VERSION, mount: mountInto };
+  window.RadarFeed = { version: VERSION, load: load, verify: verify, live: live };
+  window.RadarBar = { version: VERSION, mount: mountInto };
   var me = document.currentScript;
   if (me && me.hasAttribute("data-no-bar")) return;          /* the radar site loads the checker without the bar */
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", function () { mount(me); });

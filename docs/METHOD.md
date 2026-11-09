@@ -89,7 +89,7 @@ This repository is public. So it never holds:
 
 ## The radar highlights a few
 
-- **At most seven a week,** set by `watch.radar_limit` in `lookout.yaml`.
+- **At most seven a week,** set by `watch.radar_limit` in `radar.yaml`.
 - **Chosen in a fixed order:** what a signal asks of its reader (to do now, to do, to consider, to know), then how
   much it touches Softanza, then the newest.
 - **Nothing is hidden.** Every signal of the week stays in the list beside the radar, in All signals, in the digest

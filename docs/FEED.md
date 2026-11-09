@@ -1,6 +1,6 @@
 # The feed -- contract, version 1
 
-This file is the contract between Lookout and every program that reads it: a shell one-liner, a Softanza command, an
+This file is the contract between Radar and every program that reads it: a shell one-liner, a Softanza command, an
 application that shows notices to its users, or an assistant that reads them aloud. It is versioned. A change that
 would break a reader bumps the major version, and that change is announced as an entry before it lands.
 
@@ -8,8 +8,8 @@ would break a reader bumps the major version, and that change is announced as an
 
 | File | What it holds | Address |
 |---|---|---|
-| `feed/index.json` | every entry, newest first, with its full data | `https://raw.githubusercontent.com/mayouni/lookout/main/feed/index.json` |
-| `feed/feed.json` | the same entries as a [JSON Feed 1.1](https://www.jsonfeed.org/version/1.1/), for feed readers | `https://raw.githubusercontent.com/mayouni/lookout/main/feed/feed.json` |
+| `feed/index.json` | every entry, newest first, with its full data | `https://raw.githubusercontent.com/mayouni/stzradar/main/feed/index.json` |
+| `feed/feed.json` | the same entries as a [JSON Feed 1.1](https://www.jsonfeed.org/version/1.1/), for feed readers | `https://raw.githubusercontent.com/mayouni/stzradar/main/feed/feed.json` |
 | `schema/feed.schema.json` | the shape of `index.json`, as JSON Schema 2020-12 | in this repository |
 | `schema/item.schema.json` | the shape of one entry | in this repository |
 | `feed/index.json.sig`, `feed/feed.json.sig` | an SSH signature of each feed file | beside the file, at the same address plus `.sig` |
@@ -23,16 +23,16 @@ those blocks, and nobody edits them by hand.
 
 ```json
 {
-  "feed": "lookout",
+  "feed": "radar",
   "version": 1,
   "updated": "2026-11-08T11:30:00Z",
-  "home": "https://github.com/mayouni/lookout",
+  "home": "https://github.com/mayouni/stzradar",
   "title": "Softanza Radar",
   "items": [ { "...": "one entry, as below, plus its url" } ]
 }
 ```
 
-`title` is the name readers see for this watch (`watch.title` in `lookout.yaml`), and a bar uses it in its link to the
+`title` is the name readers see for this watch (`watch.title` in `radar.yaml`), and a bar uses it in its link to the
 site. It was added after version 1 was published, so a reader treats it as optional.
 
 `updated` is the newest `date` or `updated` among the entries, at midnight UTC. It is not the moment of generation,
@@ -60,7 +60,7 @@ own `tags`. Notices, actions and sources are in the index only.
 {
   "id": "2026-11-08-lookout-opens",
   "date": "2026-11-08",
-  "title": "Lookout opens: a public watch on AI, read from Softanza's point of view",
+  "title": "Radar opens: a public watch on AI, read from Softanza's point of view",
   "kind": "idea",
   "summary": "Two or three plain sentences: what happened.",
   "stance": "adopt",
@@ -79,11 +79,11 @@ own `tags`. Notices, actions and sources are in the index only.
   "status": "done",
   "confidence": "read",
   "sources": [
-    { "title": "Lookout's README", "url": "https://github.com/mayouni/lookout", "by": "Softanza", "read": "2026-11-08" }
+    { "title": "Radar's README", "url": "https://github.com/mayouni/stzradar", "by": "Softanza", "read": "2026-11-08" }
   ],
   "review_by": "2027-05-08",
   "tags": ["watch", "feed"],
-  "url": "https://github.com/mayouni/lookout/blob/main/items/2026/2026-11-08-lookout-opens.md"
+  "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-08-lookout-opens.md"
 }
 ```
 
@@ -124,13 +124,13 @@ the action has not reached. When a proposal moves, its `state` changes, its new 
 **The estate map.** [`map/estate.json`](../map/estate.json) lists the layers of the Softanza stack (machine, language,
 foundation, data, web and server, intelligence, interfaces and applications, and the harness beside them), the
 projects on each layer with their aliases, the domains and the concerns. It is served beside the feed at
-`https://mayouni.github.io/lookout/map/estate.json`. The feed tool refuses an entry whose `areas`, `domains` or
+`https://mayouni.github.io/stzradar/map/estate.json`. The feed tool refuses an entry whose `areas`, `domains` or
 `concerns` name something the map does not list, so every entry can be placed on the map.
 
 ## Asking it questions
 
 ```sh
-FEED=https://raw.githubusercontent.com/mayouni/lookout/main/feed/index.json
+FEED=https://raw.githubusercontent.com/mayouni/stzradar/main/feed/index.json
 
 # what is new since a day
 curl -s $FEED | jq '[.items[] | select(.date > "2026-11-01")] | length'
@@ -149,12 +149,12 @@ curl -s $FEED | jq -r --arg min action '
 
 ## Showing a notice
 
-These rules are for any program that shows Lookout's notices to people. A feed that puts text in front of users is
+These rules are for any program that shows Radar's notices to people. A feed that puts text in front of users is
 an attack surface, so it is treated as one.
 
 1. **Plain text only.** Never render a notice, a title or a summary as HTML or Markdown.
 2. **Your audience only.** Show `notice[<your audience>]`. If the entry has no notice for your audience, show nothing.
-3. **One link, and it is ours.** Link to the entry's `url` on `github.com/mayouni/lookout`, never straight to a
+3. **One link, and it is ours.** Link to the entry's `url` on `github.com/mayouni/stzradar`, never straight to a
    source from a notice. The entry's page carries the sources.
 4. **Respect time and state.** Hide an entry after `review_by`, and hide `declined` and `superseded` entries.
 5. **Once is enough.** Remember dismissed ids on the reader's side and never show a dismissed id again.
@@ -166,23 +166,23 @@ an attack surface, so it is treated as one.
 ## The signature
 
 Since 2026-11-08 each feed file has an SSH signature beside it, made with `ssh-keygen -Y sign` by one Ed25519 key
-kept for this purpose on Lookout's maintainer's machine, outside every repository. It signs at publish only, after
+kept for this purpose on Radar's maintainer's machine, outside every repository. It signs at publish only, after
 the maintainer has read the week's digest; scheduled runs never sign. It is allowed to sign this namespace and
 nothing else.
 
 | | |
 |---|---|
-| principal | `feed@lookout` |
-| namespace | `lookout-feed` |
+| principal | `feed@radar` |
+| namespace | `radar-feed` |
 | key fingerprint | `SHA256:ZUij0xoxJIIEwH3AV5xrDXkJLuEklao7pUVhTxCs49I` |
 | public key | [`keys/allowed_signers`](../keys/allowed_signers) |
 
 Check a feed file with OpenSSH, which ships with macOS, Linux and Git for Windows:
 
 ```sh
-curl -sO https://raw.githubusercontent.com/mayouni/lookout/main/feed/index.json
-curl -sO https://raw.githubusercontent.com/mayouni/lookout/main/feed/index.json.sig
-ssh-keygen -Y verify -f allowed_signers -I feed@lookout -n lookout-feed -s index.json.sig < index.json
+curl -sO https://raw.githubusercontent.com/mayouni/stzradar/main/feed/index.json
+curl -sO https://raw.githubusercontent.com/mayouni/stzradar/main/feed/index.json.sig
+ssh-keygen -Y verify -f allowed_signers -I feed@radar -n radar-feed -s index.json.sig < index.json
 ```
 
 **Pin the fingerprint.** A key fetched from the same place as the feed proves only that the two agree. A reader

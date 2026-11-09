@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Source+Sans+3:wght@400;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
 <style>
-/* Softanza Radar, built with Lookout. The reading laws of the estate's sites, applied:
+/* Softanza Radar. The reading laws of the estate's sites, applied:
    - one reading size (19 px) and nothing below 16 px; secondary text is a readable tone, never small-and-grey;
    - one scroll bar on screen (Zane Rules 14 and 92), nothing scrolls sideways at 375 px;
    - no motion while navigating; a bar never covers content; no tabs that hide content (Rule 12).
@@ -444,7 +444,7 @@ ol.steps .code pre{padding-right:16px}
 .builder .rrow label{flex-direction:row;align-items:center;gap:8px;font-size:1.125rem}
 .builder .rrow input{width:auto}
 
-/* the lookout.yaml window: questions on the left, the file on the right. The page beneath is frozen; the questions
+/* the radar.yaml window: questions on the left, the file on the right. The page beneath is frozen; the questions
    carry the one visible scroll bar; the file follows the answer being typed and scrolls without a bar of its own */
 dialog.yamlbox{width:min(1400px,94vw);height:90vh;max-width:none;max-height:none;padding:0;border:1px solid var(--line);border-radius:14px;background:var(--bg);color:var(--ink);overflow:hidden}
 dialog.yamlbox[open]{display:flex;flex-direction:column}
@@ -552,7 +552,7 @@ footer .made{color:var(--ink2);font-weight:400;font-size:1.125rem}   /* auxiliar
     </nav>
     <div class="tools">
       <button class="help" type="button" id="helpOpen" aria-haspopup="dialog"><span class="long">How to read it</span><span class="short">Help</span></button>
-      <a class="gh" id="ghLink" href="https://github.com/mayouni/lookout" target="_blank" rel="noopener" aria-label="This watch on GitHub" title="This watch on GitHub">
+      <a class="gh" id="ghLink" href="https://github.com/mayouni/stzradar" target="_blank" rel="noopener" aria-label="This watch on GitHub" title="This watch on GitHub">
         <svg viewBox="0 0 16 16" width="26" height="26" aria-hidden="true"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
       </a>
     </div>
@@ -585,11 +585,11 @@ footer .made{color:var(--ink2);font-weight:400;font-size:1.125rem}   /* auxiliar
   <dl id="helpList"></dl>
 </dialog>
 
-<script src="bar/lookout-bar.js" data-no-bar></script>
+<script src="bar/radar-bar.js" data-no-bar></script>
 <script>
 "use strict";
 let FEED = null, MAP = null, LESSONS = {}, CONFIG = null, DIGESTS = [];
-/* the project this watch serves, from app/config.json (lookout.yaml) */
+/* the project this watch serves, from app/config.json (radar.yaml) */
 const NAME = () => CONFIG.project.name, WATCH = () => CONFIG.watch.name, TOPIC = () => CONFIG.watch.topic;
 const RADAR = () => CONFIG.watch.title || (NAME() + " " + TOPIC() + " Radar");   /* what readers see; WATCH() is the tool */
 const poss = s => s + (/s$/.test(s) ? "'" : "'s");
@@ -736,7 +736,7 @@ addEventListener("scroll", spy, {passive:true});
    What the watch is for, before any week. The hero holds two halves (author, 2026-11-09: "use the space"): on the
    left the promise, the two ways in and this week's key figures; on the right this week's radar itself, live, so a
    reader can hover a signal and open it from the first screen. Below, why it exists, what it answers and what it
-   gives stand as one row of three columns. Every word comes from lookout.yaml's home section. */
+   gives stand as one row of three columns. Every word comes from radar.yaml's home section. */
 function viewHome(){
   const H = CONFIG.home, frag = document.createDocumentFragment();
   const weeks = weeksAll(), wk = weeks.find(x => DIGESTS.includes(x)) || weeks[0];
@@ -764,7 +764,7 @@ function viewHome(){
   /* the offer said plainly, and a button that says what it does (author, 2026-11-09) */
   const ad = el("div","homeadopt"), adt = el("div","adtext"), go2 = el("a","btn big","Make your own radar →"); go2.href = "#/yours";
   adt.append(el("h2",null,"Run this radar for your own project"),
-    el("p",null,"Lookout, the open tool behind " + RADAR() + ", reads your field every week and tells your team, your apps and your users what it means for them, in your project's name and from one file."));
+    el("p",null,"Radar is open source and part of the Softanza Agentic Harness. Adopt it, and every week it reads your field and tells your team, your apps and your users what it means for them, in your project's name and from one file."));
   ad.append(adt, go2);
   outer.append(ad);
   frag.append(outer);
@@ -1112,7 +1112,7 @@ function viewSignal(id){
    Four questions over a chosen period: how much was read and how carefully, how Softanza positioned itself,
    how it reacted, and what it learned. Charts are HTML (their text keeps the reading size), each with its table.
    A chart over time appears from two weeks on; one week is shown as ranked bars, never as a one-bar chart. */
-let STANCE = {};                                  /* filled from lookout.yaml, agent.stances */
+let STANCE = {};                                  /* filled from radar.yaml, agent.stances */
 const ASTATE = ["proposed","routed","in-progress","done"];
 const days = (a, b) => Math.round((new Date(b + "T00:00:00Z") - new Date(a + "T00:00:00Z")) / 864e5);
 const median = xs => { if (!xs.length) return 0; const s = [...xs].sort((a,b) => a - b), m = s.length >> 1; return s.length % 2 ? s[m] : Math.round((s[m-1] + s[m]) / 2); };
@@ -1272,8 +1272,8 @@ function viewTrends(q){
   return frag;
 }
 
-/* ------------------------------------------------------------ view: the Lookout bar */
-const BAR_VERSION = "1.3.0", BAR_SRI = "sha384-NZkxKhrxUpTqqS25DrRh/6cSSr3u0SYKlukMdTUkEJRervNKvKkjc3uE6ad1jlxQ", BAR_HOME = "https://mayouni.github.io/lookout/";
+/* ------------------------------------------------------------ view: the radar bar */
+const BAR_VERSION = "2.0.0", BAR_SRI = "sha384-hPj4WqAR9I90Diwycb8sQ7HcAgqXZDWl2fCnwcB7dnsgQ9AOnBeL1FfxkNyCWRPW", BAR_HOME = "https://mayouni.github.io/stzradar/";
 /* the bar, as two sections of the Make your own view */
 function barSections(){
   const s = el("section","block wrap");
@@ -1300,7 +1300,7 @@ function barSections(){
   /* the preview is drawn as another site -- a browser frame of its own, at a site's width -- so it reads as something
      to add to a page, not as part of this one */
   const pv = el("div","browser"), bar = el("div","bbar"); bar.append(el("i"), el("i"), el("i"), el("span","burl","your-site.example/docs"));
-  const host = el("div"); host.setAttribute("data-lookout-bar","");
+  const host = el("div"); host.setAttribute("data-radar-bar","");
   const fakePage = el("div","bpage"); fakePage.append(el("div","bh"), el("div","bl"), el("div","bl"), el("div","bl short"));
   pv.append(bar, host, fakePage);
   s.append(pv);
@@ -1311,13 +1311,13 @@ function barSections(){
   const update = () => {
     const projects = picks.filter(c => c.getAttribute("aria-pressed") === "true").map(c => c.value).join(",");
     const title = (nameIn.value.trim() || "Your project") + " Radar";
-    host.style.setProperty("--lookout-accent", cAcc.value); host.style.setProperty("--lookout-bg", cBg.value); host.style.setProperty("--lookout-ink", cInk.value);
-    /* another watch than Lookout's own names its site and its key, so the page pins the key it trusts */
+    host.style.setProperty("--radar-accent", cAcc.value); host.style.setProperty("--radar-bg", cBg.value); host.style.setProperty("--radar-ink", cInk.value);
+    /* another watch than Radar's own names its site and its key, so the page pins the key it trusts */
     const other = CONFIG.watch.pages !== BAR_HOME;
-    pre.textContent = '<div data-lookout-bar data-title="' + title.replace(/"/g, "&quot;") + '"\n     style="--lookout-accent:' + cAcc.value + ';--lookout-bg:' + cBg.value + ';--lookout-ink:' + cInk.value + '"></div>\n' + '<script src="' + BAR_HOME + 'bar/lookout-bar-' + BAR_VERSION + '.js"\n        integrity="' + BAR_SRI + '" crossorigin="anonymous"\n' +
+    pre.textContent = '<div data-radar-bar data-title="' + title.replace(/"/g, "&quot;") + '"\n     style="--radar-accent:' + cAcc.value + ';--radar-bg:' + cBg.value + ';--radar-ink:' + cInk.value + '"></div>\n' + '<script src="' + BAR_HOME + 'bar/radar-bar-' + BAR_VERSION + '.js"\n        integrity="' + BAR_SRI + '" crossorigin="anonymous"\n' +
       (other ? '        data-feed="' + CONFIG.watch.pages + '" data-namespace="' + CONFIG.feed.namespace + '"\n        data-key="' + CONFIG.feed.key + '"\n' : '') +
       '        data-audience="' + aud.value + '" data-level="' + lev.value + '"' + (projects ? ' data-projects="' + projects + '"' : '') + ' defer></' + 'script>';
-    if (window.LookoutBar) LookoutBar.mount(host, {audience:aud.value, level:lev.value, projects, title}, {base:new URL(".", location.href).href, key:CONFIG.feed.key, namespace:CONFIG.feed.namespace, keepDismissed:true});
+    if (window.RadarBar) RadarBar.mount(host, {audience:aud.value, level:lev.value, projects, title}, {base:new URL(".", location.href).href, key:CONFIG.feed.key, namespace:CONFIG.feed.namespace, keepDismissed:true});
   };
   [aud, lev].forEach(c => c.addEventListener("change", update));
   [nameIn, cAcc, cBg, cInk].forEach(c => c.addEventListener("input", update));
@@ -1328,18 +1328,18 @@ function barSections(){
     "It reads feed/index.json and its signature at most once a day per browser, and checks the signature against the key the page gives it (this radar's own when none is given); a feed that fails the check shows nothing.",
     "It shows the notice written for the audience you choose, as plain text, with one link: the entry's own page in the watch's repository.",
     "A reader who dismisses a notice does not see it again on that browser.",
-    "It goes inside the first element carrying data-lookout-bar, or else at the top of the body, in the page's flow.",
-    "Its styles live in a shadow root, so your page's styles and its own never mix. Set --lookout-accent, --lookout-bg and --lookout-ink on that element to match your colours.",
+    "It goes inside the first element carrying data-radar-bar, or else at the top of the body, in the page's flow.",
+    "Its styles live in a shadow root, so your page's styles and its own never mix. Set --radar-accent, --radar-bg and --radar-ink on that element to match your colours.",
     "A published version never changes. A new version gets a new file name, and the line above keeps working."
   ]) ul.append(el("li",null,t));
   s2.append(ul);
   /* make it the adopter's own: its name, its colours, every piece restyled from their CSS */
   s2.append(el("h3",null,"Style it your way"),
-    points([["Its name is yours.", "data-title names the bar; without it, the bar takes watch.title from your lookout.yaml, so it always speaks your project's words."],
-            ["Your colours.", "--lookout-accent, --lookout-bg and --lookout-ink on the element that holds the bar."],
+    points([["Its name is yours.", "data-title names the bar; without it, the bar takes watch.title from your radar.yaml, so it always speaks your project's words."],
+            ["Your colours.", "--radar-accent, --radar-bg and --radar-ink on the element that holds the bar."],
             ["Every piece, from your CSS.", "The bar's pieces carry part names: bar, name, level, text, link, more and dismiss."]]));
   const cssBox = el("div","code withcopy"), cssPre = el("pre");
-  cssPre.textContent = "/* in your own stylesheet */\n[data-lookout-bar]::part(bar)     { border-radius: 12px; font-size: 15px; }\n[data-lookout-bar]::part(name)    { font-weight: 600; }\n[data-lookout-bar]::part(level)   { border-radius: 999px; }\n[data-lookout-bar]::part(urgent)  { background: crimson; }\n[data-lookout-bar]::part(link)    { color: inherit; }\n[data-lookout-bar]::part(dismiss) { border: 0; }";
+  cssPre.textContent = "/* in your own stylesheet */\n[data-radar-bar]::part(bar)     { border-radius: 12px; font-size: 15px; }\n[data-radar-bar]::part(name)    { font-weight: 600; }\n[data-radar-bar]::part(level)   { border-radius: 999px; }\n[data-radar-bar]::part(urgent)  { background: crimson; }\n[data-radar-bar]::part(link)    { color: inherit; }\n[data-radar-bar]::part(dismiss) { border: 0; }";
   const cssCp = el("button","copy","Copy"); cssCp.type = "button";
   cssCp.addEventListener("click", async () => { try { await navigator.clipboard.writeText(cssPre.textContent); cssCp.textContent = "Copied"; } catch(e){ cssCp.textContent = "Select it"; } setTimeout(() => cssCp.textContent = "Copy", 1600); });
   cssBox.append(cssPre, cssCp); s2.append(cssBox);
@@ -1347,15 +1347,15 @@ function barSections(){
 }
 
 /* ------------------------------------------------------------ view: make your own
-   The same tool for any project: one file (lookout.yaml) says which project, what to watch and what the agent
-   learns first. This view explains the steps and writes a first lookout.yaml with the reader. */
+   The same tool for any project: one file (radar.yaml) says which project, what to watch and what the agent
+   learns first. This view explains the steps and writes a first radar.yaml with the reader. */
 const link = (t, h) => { const a = el("a",null,t); a.href = h; a.target = "_blank"; a.rel = "noopener"; return a; };
 const yq = s => '"' + String(s).replace(/\\/g,"\\\\").replace(/"/g,'\\"') + '"';    /* a YAML string the reader takes */
 function viewYours(){
   const frag = document.createDocumentFragment();
   const repo = CONFIG.watch.repository;
   frag.append(head("", "A radar like this one, for your own project",
-    [RADAR() + " is built with " + WATCH() + ", an open tool. Run it for your project and your team gets a weekly watch on your field, your apps get a signed feed, and your users get one plain notice for their role -- all from one file you write, lookout.yaml."]));
+    [RADAR() + " is built with " + WATCH() + ", an open tool. Run it for your project and your team gets a weekly watch on your field, your apps get a signed feed, and your users get one plain notice for their role -- all from one file you write, radar.yaml."]));
 
   /* the value, said first and by who receives it (author, 2026-11-09: "the value proposition for the adopter and its
      apps and users is not clear") */
@@ -1385,22 +1385,22 @@ function viewYours(){
   const code1 = c => { const w = el("div","code"); const p = el("pre"); p.textContent = c; w.append(p); return w; };
   step("Copy the repository",
     (() => { const p = el("p"); p.append(document.createTextNode("Fork or copy "), link(repo.replace("https://",""), repo), document.createTextNode(". Keep tools/, schema/, bar/ and index.html. Empty items/ and digests/, and start app/lessons.json with an empty \"entries\" object.")); return p; })());
-  step("Describe your project in lookout.yaml",
+  step("Describe your project in radar.yaml",
     points([["What it says.", "Who the project is, what the watch reads, who reads it, and what the agent learns first."],
             ["Write it.", "Use the form below for a first version."],
-            ["Draw your map.", "In the file lookout.yaml names (map/estate.json here): your layers, the parts on each, the domains news can touch, and what is at stake."]]));
+            ["Draw your map.", "In the file radar.yaml names (map/estate.json here): your layers, the parts on each, the domains news can touch, and what is at stake."]]));
   step("Make the key that signs the feed",
-    el("p",null,"One key, kept outside the repository, used for this and nothing else. Put the public key in keys/allowed_signers and in lookout.yaml (feed.key)."),
+    el("p",null,"One key, kept outside the repository, used for this and nothing else. Put the public key in keys/allowed_signers and in radar.yaml (feed.key)."),
     code1("ssh-keygen -t ed25519 -f ~/.ssh/watch_feed -C feed@your-watch"));
   step("Give the agent its brief, and run it each week",
-    (() => { const p = el("p"); p.append(document.createTextNode("Any coding agent can run the survey: "), link("docs/AGENT.md", repo + "/blob/main/docs/AGENT.md"), document.createTextNode(" tells it to read lookout.yaml first and follow it. Schedule it on the day lookout.yaml names. The check runs on Haro; GitHub Pages serves the site from the repository's main branch.")); return p; })(),
+    (() => { const p = el("p"); p.append(document.createTextNode("Any coding agent can run the survey: "), link("docs/AGENT.md", repo + "/blob/main/docs/AGENT.md"), document.createTextNode(" tells it to read radar.yaml first and follow it. Schedule it on the day radar.yaml names. The check runs on Haro; GitHub Pages serves the site from the repository's main branch.")); return p; })(),
     code1("haro tools/feed.ring          # check every entry and the configuration, then write the feed\nharo tools/feed.ring verify   # after signing: both feed files carry a good signature"));
   s.append(steps);
   frag.append(s);
 
   /* what the agent takes from each part of the file, with this watch's own values */
   const s2 = el("section","block wrap");
-  s2.append(el("h2",null,"What the agent learns from your file"), (() => { const p = el("p"); p.append(document.createTextNode("Each part of lookout.yaml teaches the agent one thing. Here is "), link(poss(RADAR()) + " own file", repo + "/blob/main/lookout.yaml"), document.createTextNode(", read part by part.")); return p; })());
+  s2.append(el("h2",null,"What the agent learns from your file"), (() => { const p = el("p"); p.append(document.createTextNode("Each part of radar.yaml teaches the agent one thing. Here is "), link(poss(RADAR()) + " own file", repo + "/blob/main/radar.yaml"), document.createTextNode(", read part by part.")); return p; })());
   const rows = [
     ["agent.goal", "why it watches at all", CONFIG.agent.goal],
     ["agent.learn", "what it reads about your project first, every run", CONFIG.agent.learn.join(", ")],
@@ -1422,15 +1422,15 @@ function viewYours(){
      right. Each line of the file knows which answers wrote it, so the lines an answer changes light up and come
      into view as it is typed (Zane Rules 8 and 28: the questions read top to bottom, as a conversation). */
   const s3 = el("section","block wrap");
-  const openB = el("button","btn big","Write your lookout.yaml"); openB.type = "button";
-  s3.append(el("h2",null,"Write your first lookout.yaml"),
+  const openB = el("button","btn big","Write your radar.yaml"); openB.type = "button";
+  s3.append(el("h2",null,"Write your first radar.yaml"),
     el("p",null,"Answer a few questions about your project, your watch and its readers. The file is written beside your answers as you type, ready to copy or save; put it at the root of your copy, and the check names anything left to complete."),
     openB);
   frag.append(s3);
 
   document.querySelector("dialog.yamlbox")?.remove();          /* one window, built fresh with the view */
   const dlg = el("dialog","yamlbox"); dlg.setAttribute("aria-labelledby","yamlTitle");
-  const top = el("div","yhead"); const yt = el("h2",null,"Write your lookout.yaml"); yt.id = "yamlTitle";
+  const top = el("div","yhead"); const yt = el("h2",null,"Write your radar.yaml"); yt.id = "yamlTitle";
   const closeF = el("form"); closeF.method = "dialog"; const closeB = el("button","help","Close"); closeB.type = "submit"; closeF.append(closeB);
   top.append(yt, closeF);
   const body = el("div","ybody"), left = el("div","yleft"), right = el("div","yright");
@@ -1465,9 +1465,9 @@ function viewYours(){
   field("to", "Who receives the work the agent proposes?", "the project's maintainers");
   left.append(form);
 
-  const fileHead = el("div","yfilehead"); fileHead.append(el("b",null,"lookout.yaml"));
+  const fileHead = el("div","yfilehead"); fileHead.append(el("b",null,"radar.yaml"));
   const cp = el("button","help","Copy"); cp.type = "button";
-  const save = el("button","btn","Save lookout.yaml"); save.type = "button";
+  const save = el("button","btn","Save radar.yaml"); save.type = "button";
   const acts = el("span","yacts"); acts.append(cp, save); fileHead.append(acts);
   const pre = el("pre","yfile");
   right.append(fileHead, pre);
@@ -1488,7 +1488,7 @@ function viewYours(){
     const slug = (watch.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"") || "watch");
     const y = [];                                    /* [text, the answers that wrote it] */
     const P = (text, ...keys) => y.push([text, keys]);
-    P("# lookout.yaml -- everything about this watch that belongs to its project (docs/ADOPT.md)."); P("lookout: 1"); P("");
+    P("# radar.yaml -- everything about this watch that belongs to its project (docs/ADOPT.md)."); P("radar: 1"); P("");
     P("project:"); P("  name: " + yq(name), "name"); P("  site: " + yq(v("site")), "site"); P("  owner: " + yq(v("owner") || "you"), "owner");
     P("  licence: " + yq(v("licence") || "MIT"), "licence"); P("  pitch: " + yq(name + " in one sentence: what it is and what it does."), "name"); P("");
     P("watch:"); P("  name: " + yq(watch), "watch"); P("  topic: " + yq(topic), "topic"); P("  repository: " + yq(repoU), "repo"); P("  pages: " + yq(pages), "repo");
@@ -1530,7 +1530,7 @@ function viewYours(){
   form.addEventListener("input", focusOn); form.addEventListener("focusin", focusOn);
   build();
   cp.addEventListener("click", async () => { try { await navigator.clipboard.writeText(fileText); cp.textContent = "Copied"; } catch(e){ cp.textContent = "Select it"; } setTimeout(() => cp.textContent = "Copy", 1600); });
-  save.addEventListener("click", () => { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([fileText], {type:"text/yaml"})); a.download = "lookout.yaml"; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000); });
+  save.addEventListener("click", () => { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([fileText], {type:"text/yaml"})); a.download = "radar.yaml"; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000); });
   for (const n of barSections()) frag.append(n);
   return outlined(frag);
 }
@@ -1542,7 +1542,7 @@ function dress(){
   for (const r of CONFIG.readers){ READERS[r.id].label = r.label; READERS[r.id].why = r.first; }
   if (!READERS[reader]) reader = CONFIG.readers[0].id;
   readerRow();
-  { /* the brand: the project's own wordmark when lookout.yaml names one, then the rest of the title ("Radar") */
+  { /* the brand: the project's own wordmark when radar.yaml names one, then the rest of the title ("Radar") */
     const rest = RADAR().startsWith(NAME()) ? RADAR().slice(NAME().length).trim() : RADAR();
     const P = CONFIG.project, b = $("#brand");
     b.classList.toggle("haslogo", !!P.logo); $("#brandName").textContent = NAME(); $("#brandRest").textContent = rest;
@@ -1801,7 +1801,7 @@ async function start(){
     const here = new URL(".", location.href).href;
     CONFIG = await fetch("app/config.json", {cache:"no-cache"}).then(r => { if (!r.ok) throw new Error("configuration " + r.status); return r.json(); });
     const [f, m, l] = await Promise.all([
-      window.LookoutFeed.load({ base: here, fresh: true, key: CONFIG.feed.key, namespace: CONFIG.feed.namespace }),
+      window.RadarFeed.load({ base: here, fresh: true, key: CONFIG.feed.key, namespace: CONFIG.feed.namespace }),
       fetch(CONFIG.map, {cache:"no-cache"}).then(r => { if (!r.ok) throw new Error("estate map " + r.status); return r.json(); }),
       fetch("app/lessons.json", {cache:"no-cache"}).then(r => r.ok ? r.json() : {entries:{}}).catch(() => ({entries:{}})),
       fetch("app/digests.json", {cache:"no-cache"}).then(r => r.ok ? r.json() : []).catch(() => [])

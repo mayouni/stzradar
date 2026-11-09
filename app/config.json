@@ -1,22 +1,22 @@
 {
-  "lookout": "1",
+  "radar": "1",
   "project": {
     "name": "Softanza",
     "site": "https://mayouni.github.io/stzsite/",
     "owner": "Mansour Ayouni",
     "since": "2020",
     "licence": "MIT",
-    "licence_url": "https://github.com/mayouni/lookout/blob/main/LICENSE",
+    "licence_url": "https://github.com/mayouni/stzradar/blob/main/LICENSE",
     "logo": "assets/wordmark.png",
     "logo_dark": "assets/wordmark-dark.png",
     "pitch": "The governed software platform of the AI age: a library and its Zig engine, a declared machine (Harobanda), a language of languages (Haro), and the projects built on them."
   },
   "watch": {
-    "name": "Lookout",
+    "name": "Radar",
     "title": "Softanza Radar",
     "topic": "AI and the tech field",
-    "repository": "https://github.com/mayouni/lookout",
-    "pages": "https://mayouni.github.io/lookout/",
+    "repository": "https://github.com/mayouni/stzradar",
+    "pages": "https://mayouni.github.io/stzradar/",
     "language": "en",
     "tagline": "What changed in AI and the tech field this week, and what it means for what we build in Softanza",
     "tagline_past": "What changed in AI and the tech field in week {week}, and what it meant for what we build in Softanza",
@@ -47,12 +47,12 @@
       "Each project of Softanza hears what concerns it, as a dated proposal it decides on",
       "A record that lasts, every entry with its sources, its stance and its corrections",
       "A signed feed any program can read, and a bar any site can show",
-      "The same watch for any project, from one file, lookout.yaml"
+      "The same watch for any project, from one file, radar.yaml"
     ]
   },
   "feed": {
-    "signer": "feed@lookout",
-    "namespace": "lookout-feed",
+    "signer": "feed@radar",
+    "namespace": "radar-feed",
     "fingerprint": "SHA256:ZUij0xoxJIIEwH3AV5xrDXkJLuEklao7pUVhTxCs49I",
     "key": "AAAAC3NzaC1lZDI1NTE5AAAAIJoTrtZQEdrhJQFEybJGDuZs9DxF/9X/vPE3q2WfEgDK"
   },

@@ -1,15 +1,15 @@
 # The weekly survey -- what a scheduled run does
 
-This is the instruction a scheduled, unattended run of the Lookout desk follows. An attended session follows it too
+This is the instruction a scheduled, unattended run of the Radar desk follows. An attended session follows it too
 when the author says "run the week". It is [`docs/AGENT.md`](AGENT.md), the brief any watch's agent follows, with what
 Softanza's own desk adds: the memo to Central, the cost line, and the estate's rules. Everything that belongs to the
-project is in `lookout.yaml`, which the run reads first.
+project is in `radar.yaml`, which the run reads first.
 
 ## Before anything
 
 - You are an **unattended run**. Everything you write stays inside this repository. Your memo goes into
   `.central/outbox.md` and Central relays it. You message no other session.
-- Read `lookout.yaml`, then `CLAUDE.md`, `docs/AGENT.md`, `docs/METHOD.md` and `docs/FEED.md`.
+- Read `radar.yaml`, then `CLAUDE.md`, `docs/AGENT.md`, `docs/METHOD.md` and `docs/FEED.md`.
 - Read the clock. The week is the latest ISO week that has **ended** at that reading, Monday to Sunday: a run on a
   Monday surveys the week before (`docs/SCHEDULE.md`). An attended run may survey the current week when the author
   asks. Write it `YYYY-Www`.
@@ -18,7 +18,7 @@ project is in `lookout.yaml`, which the run reads first.
 ## The survey
 
 1. Take every new line in `inbox/LINKS.md` first. They are the author's.
-2. Then go through `agent.sources` in `lookout.yaml` (with the notes in `docs/SOURCES.md`), newest first, looking
+2. Then go through `agent.sources` in `radar.yaml` (with the notes in `docs/SOURCES.md`), newest first, looking
    back to the last digest's date.
 3. For each candidate, read it at the source. Keep it only if it can change what Softanza builds, how it builds it, or
    how it protects the people who use it.

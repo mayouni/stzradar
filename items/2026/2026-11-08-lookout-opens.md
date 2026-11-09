@@ -1,13 +1,13 @@
-# Lookout opens: a public watch on AI, read from Softanza's point of view
+# Radar opens: a public watch on AI, read from Softanza's point of view
 
 ```json
 {
   "id": "2026-11-08-lookout-opens",
   "date": "2026-11-08",
   "updated": "2026-11-09",
-  "title": "Lookout opens: a public watch on AI, read from Softanza's point of view",
+  "title": "Radar opens: a public watch on AI, read from Softanza's point of view",
   "kind": "idea",
-  "summary": "Softanza opened Lookout, a public repository that reads developments in AI at their source and judges each one against what Softanza builds. Every entry is written twice in one file, as a page for people and as data for programs, and a feed is generated from the data.",
+  "summary": "Softanza opened Radar, a public repository that reads developments in AI at their source and judges each one against what Softanza builds. Every entry is written twice in one file, as a page for people and as data for programs, and a feed is generated from the data.",
   "stance": "adopt",
   "relevance": "high",
   "level": "info",
@@ -19,11 +19,11 @@
   "notice": {
     "developer": "Softanza now keeps a public watch on AI developments: read it on GitHub, or fetch feed/index.json to show its notices in your own tools.",
     "learner": "There is now one place that explains, in plain words, what changes in AI mean for what you learn with Softanza.",
-    "maintainer": "Lookout is open: send it the AI developments that touch your project, and expect the tasks it proposes to reach you through Bangalo."
+    "maintainer": "Radar is open: send it the AI developments that touch your project, and expect the tasks it proposes to reach you through Bangalo."
   },
   "areas": [
     "softanza"
-  , "lookout"],
+  , "radar"],
   "domains": ["learning", "models", "agents"],
   "concerns": ["clarity"],
   "actions": [
@@ -42,14 +42,14 @@
   "confidence": "read",
   "sources": [
     {
-      "title": "Lookout's README",
-      "url": "https://github.com/mayouni/lookout",
+      "title": "Radar's README",
+      "url": "https://github.com/mayouni/stzradar",
       "by": "Softanza",
       "read": "2026-11-08"
     },
     {
       "title": "The feed contract, version 1",
-      "url": "https://github.com/mayouni/lookout/blob/main/docs/FEED.md",
+      "url": "https://github.com/mayouni/stzradar/blob/main/docs/FEED.md",
       "by": "Softanza",
       "read": "2026-11-08"
     }
@@ -87,13 +87,14 @@ first form of that feature. Because it is open, any program can do the same toda
 
 ## Sources
 
-- [Lookout's README](https://github.com/mayouni/lookout), read 2026-11-08.
-- [The feed contract, version 1](https://github.com/mayouni/lookout/blob/main/docs/FEED.md), read 2026-11-08.
+- [Radar's README](https://github.com/mayouni/stzradar), read 2026-11-08.
+- [The feed contract, version 1](https://github.com/mayouni/stzradar/blob/main/docs/FEED.md), read 2026-11-08.
 
 ## Corrections
 
 - 2026-11-08: the repository was renamed on the day it opened, before the feed had any reader, so that its name is
   plain English like the rest of Softanza's internal names. This entry's id and addresses changed with it.
 - 2026-11-09: the paragraph on Softanza now says what holds and what is proposed, in affirmative sentences; the facts are unchanged.
-- 2026-11-09: placed on the estate map, with the domains and concerns it touches and Lookout among its areas; the facts are unchanged.
+- 2026-11-09: placed on the estate map, with the domains and concerns it touches and Radar among its areas; the facts are unchanged.
 - 2026-11-09: each proposal now carries the day it reached each stage, read from this repository's history; the facts are unchanged.
+- 2026-11-09: the tool was renamed from Lookout to Radar, and its repository from `lookout` to `stzradar`; the names, addresses and signature names in this entry follow. Decided by the author.

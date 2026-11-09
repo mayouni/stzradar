@@ -1,11 +1,11 @@
-# lookout.yaml -- everything about this watch that belongs to its project.
+# radar.yaml -- everything about this watch that belongs to its project.
 #
-# Lookout is a tool any project can run: a weekly survey by an agent, a signed feed, a site with a dashboard,
+# Radar is a tool any project can run: a weekly survey by an agent, a signed feed, a site with a dashboard,
 # and a bar other sites include. This file is the only place that says WHICH project, WHAT it watches, and
 # WHAT the agent must learn first. The tools read it (haro tools/feed.ring checks it and publishes
 # app/config.json for the site), and the agent reads it before every survey. docs/ADOPT.md explains each key.
 
-lookout: 1                        # the version of this file's shape
+radar: 1                          # the version of this file's shape
 
 project:                          # the project the watch serves
   name: Softanza
@@ -13,7 +13,7 @@ project:                          # the project the watch serves
   owner: Mansour Ayouni
   since: 2020                      # the year the project began; the copyright runs from it to this year
   licence: MIT
-  licence_url: https://github.com/mayouni/lookout/blob/main/LICENSE
+  licence_url: https://github.com/mayouni/stzradar/blob/main/LICENSE
   logo: assets/wordmark.png       # the project's wordmark, shown in place of its name in the site's brand
   logo_dark: assets/wordmark-dark.png
   pitch: >
@@ -24,11 +24,11 @@ project:                          # the project the watch serves
 # place, so the watch speaks in its own project's voice. {week} names the week on an earlier week's page.
 
 watch:                            # the watch itself
-  name: Lookout                   # the tool's name: the repository, the feed format, the bar's script
+  name: Radar                   # the tool's name: the repository, the feed format, the bar's script
   title: "{project} Radar"          # what readers see: the site's title, the feed's title, the bar's link
   topic: AI and the tech field
-  repository: https://github.com/mayouni/lookout
-  pages: https://mayouni.github.io/lookout/
+  repository: https://github.com/mayouni/stzradar
+  pages: https://mayouni.github.io/stzradar/
   language: en
   tagline: What changed in {topic} this week, and what it means for what we build in {project}
   tagline_past: What changed in {topic} in week {week}, and what it meant for what we build in {project}
@@ -63,11 +63,11 @@ home:                             # the front page: what the watch is for, befor
     - Each project of {project} hears what concerns it, as a dated proposal it decides on
     - A record that lasts, every entry with its sources, its stance and its corrections
     - A signed feed any program can read, and a bar any site can show
-    - The same watch for any project, from one file, lookout.yaml
+    - The same watch for any project, from one file, radar.yaml
 
 feed:                             # who signs the feed (docs/FEED.md, "The signature")
-  signer: feed@lookout
-  namespace: lookout-feed
+  signer: feed@radar
+  namespace: radar-feed
   fingerprint: SHA256:ZUij0xoxJIIEwH3AV5xrDXkJLuEklao7pUVhTxCs49I
   key: AAAAC3NzaC1lZDI1NTE5AAAAIJoTrtZQEdrhJQFEybJGDuZs9DxF/9X/vPE3q2WfEgDK   # the public key; keys/allowed_signers holds the same
 

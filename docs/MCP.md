@@ -28,14 +28,14 @@ Each tool takes a `reader` (`developer`, `maintainer`, `learner` or `user`) wher
 - **Claude Code**, from any project:
 
   ```
-  claude mcp add softanza-radar -- haro /path/to/lookout/tools/mcp.ring /path/to/lookout
+  claude mcp add softanza-radar -- haro /path/to/stzradar/tools/mcp.ring /path/to/stzradar
   ```
 
 - **Any MCP client**, in its configuration (`.mcp.json` for a project):
 
   ```json
   { "mcpServers": { "softanza-radar": {
-      "command": "haro", "args": ["/path/to/lookout/tools/mcp.ring", "/path/to/lookout"] } } }
+      "command": "haro", "args": ["/path/to/stzradar/tools/mcp.ring", "/path/to/stzradar"] } } }
   ```
 
 - **Keep it current** with `git pull` in the checkout; the server reads the files at start.
@@ -43,7 +43,7 @@ Each tool takes a `reader` (`developer`, `maintainer`, `learner` or `user`) wher
 ## Your own radar
 
 - **The same server serves any watch.** Point it at your own checkout: it takes its name, readers and map from your
-  `lookout.yaml` (through `app/config.json`) and your key.
+  `radar.yaml` (through `app/config.json`) and your key.
 - **Name it for your project** in the client's configuration, e.g. `acme-radar`.
 
 ## The protocol

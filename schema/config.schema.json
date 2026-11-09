@@ -1,12 +1,12 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/mayouni/lookout/schema/config.schema.json",
-  "title": "lookout.yaml, version 1",
+  "$id": "https://github.com/mayouni/stzradar/schema/config.schema.json",
+  "title": "radar.yaml, version 1",
   "type": "object",
-  "required": ["lookout", "project", "watch", "feed", "map", "readers", "agent", "checks"],
+  "required": ["radar", "project", "watch", "feed", "map", "readers", "agent", "checks"],
   "additionalProperties": false,
   "properties": {
-    "lookout": { "const": "1" },
+    "radar": { "const": "1" },
     "home": {
       "type": "object",
       "required": ["headline", "promise", "why", "need", "value"],

@@ -1,6 +1,6 @@
 # A reader for Softanza -- the proposal
 
-This page proposes to stzlib a small class and a command that read Lookout's feed and show its notices to one person,
+This page proposes to stzlib a small class and a command that read Radar's feed and show its notices to one person,
 for one audience and one level. **stzlib builds it**, and decides how and when; this
 page says what the reader must do, what stzlib already has to do it, and how to prove it works. It is written for
 stzlib, and it is public so that anyone writing a reader in another language can follow the same rules.
@@ -11,29 +11,29 @@ repeated here as things to test.
 ## What a person sees
 
 ```text
-$ softanza lookout --audience developer --level advice
+$ softanza radar --audience developer --level advice
 
-Lookout -- 3 notices for a developer, at advice or above
+Radar -- 3 notices for a developer, at advice or above
 
 [action] A coding agent's "don't ask again" writes secrets into a file that gets published
          Open .claude/settings.local.json in each project you use a coding agent in, delete any rule that
          contains a password, key or token, and rotate it if the file was ever committed.
-         https://github.com/mayouni/lookout/blob/main/items/2026/2026-11-08-agent-approvals-leak-secrets.md
+         https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-08-agent-approvals-leak-secrets.md
 ...
 
-softanza lookout --dismiss <id>   hides one notice for good
+softanza radar --dismiss <id>   hides one notice for good
 ```
 
 The same reading, from code:
 
 ```ring
-oLookout = StzLookoutQ(:developer)
-oLookout.SetLevel(:advice)
-? oLookout.Notices()          # each: [ :id, :level, :title, :notice, :url ]
-oLookout.Dismiss("2026-11-08-zig-0-17-1")
+oRadar = StzRadarQ(:developer)
+oRadar.SetLevel(:advice)
+? oRadar.Notices()          # each: [ :id, :level, :title, :notice, :url ]
+oRadar.Dismiss("2026-11-08-zig-0-17-1")
 ```
 
-The names follow stzlib's own conventions (a class `stzLookout` with its `StzLookoutQ()` constructor, verb-first
+The names follow stzlib's own conventions (a class `stzRadar` with its `StzRadarQ()` constructor, verb-first
 methods, nouns for data). They are a suggestion; stzlib names its own classes.
 
 ## What it must do -- each line is a test
@@ -46,7 +46,7 @@ methods, nouns for data). They are a suggestion; stzlib names its own classes.
 5. **Hide an entry after its `review_by` day**, and hide every `declined` or `superseded` entry.
 6. **Plain text only.** Never render a title or a notice as HTML or Markdown, and strip control characters before
    printing, so that a feed cannot move the cursor or colour a terminal.
-7. **One link, and it is Lookout's**: the entry's `url`, never a source's address.
+7. **One link, and it is Radar's**: the entry's `url`, never a source's address.
 8. **Dismissed once, gone for good**: keep dismissed ids on the reader's side and never show them again.
 9. **Fetch at most once a day**, sending `If-None-Match` with the `ETag` from the last fetch. A `304` means the
    kept copy is current. With no network, show the kept copy and say how old it is.
@@ -62,8 +62,8 @@ Read on stzlib `origin/main` at `c4f6f85ea`, 2026-11-08.
 | HTTPS GET with a request header | `stzHttpClient`: `SetHeader()`, `Get_()`, `ResponseCode()`, `ResponseBody()`, `ResponseHeaders()`, on the Zig engine | a helper that reads one header (`ETag`) out of the raw header block |
 | Reading JSON | `JsonToList()` and `stzJson` in pure Ring; `StzJsonIsValid()`, `StzJsonGet()` and the other `StzJson*` functions on the engine | the reader validates with `StzJsonIsValid()` and reads each field through the engine |
 | Keeping the ETag, the kept copy and the dismissed ids | `stzFileBlobStore`, a file-backed store given a folder | a per-user state folder, a convention for the whole library that this reader is the first to use |
-| A command | the `softanza` program, whose commands are branches in its `main()` | a `lookout` branch, most simply running a Ring script |
-| Levels | `stzLog` has its own levels (`trace` to `fatal`) | Lookout's four levels are different and should not be mapped onto them |
+| A command | the `softanza` program, whose commands are branches in its `main()` | a `radar` branch, most simply running a Ring script |
+| Levels | `stzLog` has its own levels (`trace` to `fatal`) | Radar's four levels are different and should not be mapped onto them |
 
 **Reading the feed through the engine.** The engine's JSON functions read every character the feed carries,
 including the non-ASCII text it writes as raw UTF-8, so the reader validates the whole feed once and then reads each
@@ -86,4 +86,4 @@ it at 80 columns and saying whether it is clear. That reading is recorded with i
   elsewhere) is a decision for the whole library, not for this reader alone.
 - **Which runtime the guard runs on.** Haro first, as the estate rules; the Ring++ path where a port step still needs
   it.
-- **When it ships**, Lookout announces it as an entry, as `FEED.md` promises under "What is planned".
+- **When it ships**, Radar announces it as an entry, as `FEED.md` promises under "What is planned".
