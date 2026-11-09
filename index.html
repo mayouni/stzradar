@@ -258,12 +258,35 @@ ol.steps .code pre{padding-right:16px}
 .builder label{display:flex;flex-direction:column;gap:6px}
 .builder .q{font-weight:600;font-size:1.125rem}
 .builder input,.builder textarea{width:100%;font:400 1.125rem/1.45 var(--f-body);color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 12px}
-.builder textarea{resize:vertical}
+.builder textarea{resize:none;overflow:hidden}
 .builder .hint{font-weight:400;color:var(--ink2)}
 .builder .rd{display:flex;flex-direction:column;gap:8px}
 .builder .rrow{display:flex;flex-wrap:wrap;gap:6px 22px}
 .builder .rrow label{flex-direction:row;align-items:center;gap:8px;font-size:1.125rem}
 .builder .rrow input{width:auto}
+
+/* the lookout.yaml window: questions on the left, the file on the right. The page beneath is frozen; the questions
+   carry the one visible scroll bar; the file follows the answer being typed and scrolls without a bar of its own */
+dialog.yamlbox{width:min(1400px,94vw);height:90vh;max-width:none;max-height:none;padding:0;border:1px solid var(--line);border-radius:14px;background:var(--bg);color:var(--ink);overflow:hidden}
+dialog.yamlbox[open]{display:flex;flex-direction:column}
+dialog.yamlbox::backdrop{background:rgba(16,38,42,.45)}
+.yhead{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 22px;border-bottom:1px solid var(--line);background:var(--panel)}
+.yhead h2{margin:0}
+.yhead form{margin:0}
+.ybody{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.yleft{overflow-y:auto;overscroll-behavior:contain;padding:18px 26px 26px}
+.yintro{margin:0;color:var(--ink2)}
+.yright{overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;background:var(--tint);border-left:1px solid var(--line);padding:0 24px 24px}
+.yright::-webkit-scrollbar{display:none}
+.yfilehead{position:sticky;top:0;z-index:1;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 0 10px;background:var(--tint);border-bottom:1px solid var(--line);margin-bottom:10px}
+.yfilehead b{font:600 1.0625rem var(--f-mono)}
+.yacts{display:flex;gap:8px;flex-wrap:wrap}
+pre.yfile{margin:0;font:400 1rem/1.6 var(--f-mono);white-space:pre-wrap;overflow-wrap:anywhere}
+pre.yfile .ln{display:block;padding:0 6px;border-radius:4px}
+pre.yfile .ln.hl{background:color-mix(in srgb,var(--accent) 20%,var(--panel));box-shadow:inset 3px 0 0 var(--accent)}
+.btn.big{font-size:1.125rem;padding:10px 22px}
+@media (max-width:900px){dialog.yamlbox{width:100vw;height:100dvh;border-radius:0;border:0}
+  .ybody{display:block;overflow-y:auto}.yleft,.yright{overflow:visible}.yright{border-left:0;border-top:1px solid var(--line)}}
 
 /* the bar page */
 .preview{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--panel);margin-bottom:16px}
@@ -944,10 +967,22 @@ function viewYours(){
   t.append(tb); s2.append(t);
   frag.append(s2);
 
-  /* the builder: a first lookout.yaml, written as the reader fills it */
+  /* the builder: a window as wide as the screen allows, the questions on the left and the file they write on the
+     right. Each line of the file knows which answers wrote it, so the lines an answer changes light up and come
+     into view as it is typed (Zane Rules 8 and 28: the questions read top to bottom, as a conversation). */
   const s3 = el("section","block wrap");
-  s3.append(el("h2",null,"Write your first lookout.yaml"), el("p",null,"Fill in what you know; the file updates as you type. Copy it or save it, put it at the root of your copy, and run the check: it names anything left to complete."));
-  /* Zane Rules 8 and 28: one column read top to bottom, a conversation of questions in order, never a grid */
+  const openB = el("button","btn big","Write your lookout.yaml"); openB.type = "button";
+  s3.append(el("h2",null,"Write your first lookout.yaml"),
+    el("p",null,"Answer a few questions about your project, your watch and its readers. The file is written beside your answers as you type, ready to copy or save; put it at the root of your copy, and the check names anything left to complete."),
+    openB);
+  frag.append(s3);
+
+  document.querySelector("dialog.yamlbox")?.remove();          /* one window, built fresh with the view */
+  const dlg = el("dialog","yamlbox"); dlg.setAttribute("aria-labelledby","yamlTitle");
+  const top = el("div","yhead"); const yt = el("h2",null,"Write your lookout.yaml"); yt.id = "yamlTitle";
+  const closeF = el("form"); closeF.method = "dialog"; const closeB = el("button","help","Close"); closeB.type = "submit"; closeF.append(closeB);
+  top.append(yt, closeF);
+  const body = el("div","ybody"), left = el("div","yleft"), right = el("div","yright");
   const form = el("div","builder"), fields = {};
   const group = title => form.append(el("h3","bq",title));
   const field = (key, label, value, kind = "input", hint = "") => {
@@ -956,6 +991,7 @@ function viewYours(){
     const i = el(kind); if (kind === "input") i.type = "text"; i.value = value; i.dataset.key = key; if (kind === "textarea") i.rows = 3;
     l.append(i); form.append(l); fields[key] = i; return i;
   };
+  form.append(el("p","yintro","Each answer writes its lines of the file on the right; they light up as you type."));
   group("Your project");
   field("name", "What is your project called?", "");
   field("site", "Where does it live on the web?", "https://");
@@ -973,52 +1009,70 @@ function viewYours(){
   group("Who reads it, and who acts");
   const rl = el("div","rd"); rl.append(el("span","q","Who are the notices written for?"));
   const rrow = el("div","rrow"), rboxes = [];
-  for (const [id, label] of [["developer","developers"],["maintainer","maintainers"],["learner","learners"],["user","users"]]){ const lb = el("label"); const cb = el("input"); cb.type = "checkbox"; cb.value = id; cb.checked = id !== "learner"; rboxes.push(cb); lb.append(cb, document.createTextNode(" " + label)); rrow.append(lb); }
+  for (const [id, label] of [["developer","developers"],["maintainer","maintainers"],["learner","learners"],["user","users"]]){ const lb = el("label"); const cb = el("input"); cb.type = "checkbox"; cb.value = id; cb.dataset.key = "readers"; cb.checked = id !== "learner"; rboxes.push(cb); lb.append(cb, document.createTextNode(" " + label)); rrow.append(lb); }
   rl.append(rrow); form.append(rl);
   field("to", "Who receives the work the agent proposes?", "the project's maintainers");
-  s3.append(form);
-  const out = el("div","code withcopy"), pre = el("pre"); out.append(pre);
-  const cp = el("button","copy","Copy"); cp.type = "button"; out.append(cp);
-  const save = el("button","help","Save lookout.yaml"); save.type = "button";
-  s3.append(out, save);
+  left.append(form);
+
+  const fileHead = el("div","yfilehead"); fileHead.append(el("b",null,"lookout.yaml"));
+  const cp = el("button","help","Copy"); cp.type = "button";
+  const save = el("button","btn","Save lookout.yaml"); save.type = "button";
+  const acts = el("span","yacts"); acts.append(cp, save); fileHead.append(acts);
+  const pre = el("pre","yfile");
+  right.append(fileHead, pre);
+  body.append(left, right); dlg.append(top, body); document.body.append(dlg);
+  new MutationObserver(() => document.documentElement.classList.toggle("locked", dlg.open)).observe(dlg, {attributes:true, attributeFilter:["open"]});
+  openB.addEventListener("click", () => { dlg.showModal(); fields.name.focus(); });
+
   const lines = v => v.split("\n").map(x => x.trim()).filter(Boolean);
   const FIRST = {developer:"checks and code to run in your own project come first", maintainer:"what happened and the work proposed come first",
                  learner:"each signal opens on a lesson in plain words", user:"what happened, and what it means for the software you use"};
   const LABEL = {developer:"Developer", maintainer:"Maintainer", learner:"Learner", user:"User"};
+  let fileText = "", active = "";
   const build = () => {
     const v = k => fields[k].value.trim();
-    const name = v("name") || "Your project", watch = v("watch") || "Your watch", repoU = v("repo").replace(/\/+$/,"");
+    const name = v("name") || "Your project", watch = v("watch") || "Your watch", repoU = v("repo").replace(/\/+$/,""), topic = v("topic") || "AI";
     const m = repoU.match(/^https:\/\/github\.com\/([^/]+)\/([^/]+)$/);
     const pages = m ? "https://" + m[1].toLowerCase() + ".github.io/" + m[2] + "/" : "https://you.github.io/your-watch/";
     const slug = (watch.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"") || "watch");
-    const y = [];
-    y.push("# lookout.yaml -- everything about this watch that belongs to its project (docs/ADOPT.md).", "lookout: 1", "",
-      "project:", "  name: " + yq(name), "  site: " + yq(v("site")), "  owner: " + yq(v("owner") || "you"), "  licence: " + yq(v("licence") || "MIT"),
-      "  pitch: " + yq(name + " in one sentence: what it is and what it does."), "",
-      "watch:", "  name: " + yq(watch), "  topic: " + yq(v("topic") || "AI"), "  repository: " + yq(repoU), "  pages: " + yq(pages), "  language: en",
-      "  tagline: " + yq("What changed in " + (v("topic") || "AI") + " this week, and what it means for " + name),
-      "  intro: " + yq(watch + " reads the week's news at its source and shows where each piece lands in " + name + "."),
-      "  schedule:", "    every: monday", '    at: "07:00"', "    timezone: UTC", "  publish: after-reading", "",
-      "feed:", "  signer: " + yq("feed@" + slug), "  namespace: " + slug + "-feed",
-      "  fingerprint: SHA256:the-43-characters-ssh-keygen-prints   # step 3", "  key: the-base64-after-ssh-ed25519                       # step 3", "",
-      "map: map/estate.json", "", "readers:");
-    for (const cb of rboxes.filter(c => c.checked)) y.push("  - id: " + cb.value, "    label: " + LABEL[cb.value], "    first: " + yq(FIRST[cb.value]));
-    y.push("", "agent:", "  goal: " + yq(v("goal") || ("Keep " + name + " and its people ahead of what changes in " + (v("topic") || "AI") + ".")),
-      "  learn:", "    - map/estate.json", "    - docs/METHOD.md", "  in_scope:");
-    for (const l of lines(fields.scope.value)) y.push("    - " + yq(l));
-    y.push("  out_of_scope:"); for (const l of lines(fields.out.value)) y.push("    - " + yq(l));
-    y.push("  sources:");
-    for (const l of lines(fields.sources.value)){ const [n, u] = l.split("|").map(x => (x || "").trim()); y.push("    - name: " + yq(n || u), "      url: " + yq(u || n)); }
-    y.push("  stances:", "    adopt: " + yq("take it into " + name), "    learn: " + yq("it changes how we think"), "    correct: " + yq(name + " can do it better"),
-      "    defend: " + yq("a risk " + name + " and its users must be protected from"), "    watch: " + yq("too early; look again by the review date"), "    decline: " + yq("considered and refused, with the reason"),
-      "  rules:", "    - read every development at its source before writing about it", "    - write one plain sentence for each reader the entry concerns",
-      "  proposals:", "    to: " + yq(v("to") || "the project's maintainers"), "", "checks:", "  affirm: false");
-    pre.textContent = y.join("\n") + "\n";
+    const y = [];                                    /* [text, the answers that wrote it] */
+    const P = (text, ...keys) => y.push([text, keys]);
+    P("# lookout.yaml -- everything about this watch that belongs to its project (docs/ADOPT.md)."); P("lookout: 1"); P("");
+    P("project:"); P("  name: " + yq(name), "name"); P("  site: " + yq(v("site")), "site"); P("  owner: " + yq(v("owner") || "you"), "owner");
+    P("  licence: " + yq(v("licence") || "MIT"), "licence"); P("  pitch: " + yq(name + " in one sentence: what it is and what it does."), "name"); P("");
+    P("watch:"); P("  name: " + yq(watch), "watch"); P("  topic: " + yq(topic), "topic"); P("  repository: " + yq(repoU), "repo"); P("  pages: " + yq(pages), "repo");
+    P("  language: en"); P("  tagline: " + yq("What changed in " + topic + " this week, and what it means for " + name), "topic", "name");
+    P("  intro: " + yq(watch + " reads the week's news at its source and shows where each piece lands in " + name + "."), "watch", "name");
+    P("  schedule:"); P("    every: monday"); P('    at: "07:00"'); P("    timezone: UTC"); P("  publish: after-reading"); P("");
+    P("feed:"); P("  signer: " + yq("feed@" + slug), "watch"); P("  namespace: " + slug + "-feed", "watch");
+    P("  fingerprint: SHA256:the-43-characters-ssh-keygen-prints   # step 3"); P("  key: the-base64-after-ssh-ed25519                       # step 3"); P("");
+    P("map: map/estate.json"); P(""); P("readers:", "readers");
+    for (const cb of rboxes.filter(c => c.checked)){ P("  - id: " + cb.value, "readers"); P("    label: " + LABEL[cb.value], "readers"); P("    first: " + yq(FIRST[cb.value]), "readers"); }
+    P(""); P("agent:"); P("  goal: " + yq(v("goal") || ("Keep " + name + " and its people ahead of what changes in " + topic + ".")), "goal", "name", "topic");
+    P("  learn:"); P("    - map/estate.json"); P("    - docs/METHOD.md");
+    P("  in_scope:", "scope"); for (const l of lines(fields.scope.value)) P("    - " + yq(l), "scope");
+    P("  out_of_scope:", "out"); for (const l of lines(fields.out.value)) P("    - " + yq(l), "out");
+    P("  sources:", "sources");
+    for (const l of lines(fields.sources.value)){ const [n, u] = l.split("|").map(x => (x || "").trim()); P("    - name: " + yq(n || u), "sources"); P("      url: " + yq(u || n), "sources"); }
+    P("  stances:"); P("    adopt: " + yq("take it into " + name), "name"); P("    learn: " + yq("it changes how we think")); P("    correct: " + yq(name + " can do it better"), "name");
+    P("    defend: " + yq("a risk " + name + " and its users must be protected from"), "name"); P("    watch: " + yq("too early; look again by the review date")); P("    decline: " + yq("considered and refused, with the reason"));
+    P("  rules:"); P("    - read every development at its source before writing about it"); P("    - write one plain sentence for each reader the entry concerns");
+    P("  proposals:"); P("    to: " + yq(v("to") || "the project's maintainers"), "to"); P(""); P("checks:"); P("  affirm: false");
+    fileText = y.map(r => r[0]).join("\n") + "\n";
+    /* the file, line by line; the lines the active answer wrote are marked */
+    pre.replaceChildren(...y.map(([t, keys]) => el("span", active && keys.includes(active) ? "ln hl" : "ln", t || " ")));
+    const first = pre.querySelector(".hl");
+    if (first){ const r = first.offsetTop - right.clientHeight / 3; right.scrollTo({top: Math.max(0, r)}); }
   };
-  form.addEventListener("input", build); build();
-  cp.addEventListener("click", async () => { try { await navigator.clipboard.writeText(pre.textContent); cp.textContent = "Copied"; } catch(e){ cp.textContent = "Select it"; } setTimeout(() => cp.textContent = "Copy", 1600); });
-  save.addEventListener("click", () => { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([pre.textContent], {type:"text/yaml"})); a.download = "lookout.yaml"; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000); });
-  frag.append(s3);
+  /* a text box grows with its text, so it never scrolls inside itself (one scroll bar) */
+  const grow = t => { t.style.height = "auto"; t.style.height = t.scrollHeight + 2 + "px"; };
+  const growAll = () => form.querySelectorAll("textarea").forEach(grow);
+  openB.addEventListener("click", growAll);
+  const focusOn = e => { if (e.target?.tagName === "TEXTAREA") grow(e.target); const k = e.target?.dataset?.key; if (k){ active = k; build(); } };
+  form.addEventListener("input", focusOn); form.addEventListener("focusin", focusOn);
+  build();
+  cp.addEventListener("click", async () => { try { await navigator.clipboard.writeText(fileText); cp.textContent = "Copied"; } catch(e){ cp.textContent = "Select it"; } setTimeout(() => cp.textContent = "Copy", 1600); });
+  save.addEventListener("click", () => { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([fileText], {type:"text/yaml"})); a.download = "lookout.yaml"; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000); });
   for (const n of barSections()) frag.append(n);
   return frag;
 }
