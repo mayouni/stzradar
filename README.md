@@ -1,8 +1,12 @@
 # Lookout
 
-**A public watch on what is changing in AI and the tech field, read from Softanza's point of view, with a feed that any program can read.**
+**Softanza Radar: a weekly watch on what is changing in AI and the tech field, read from Softanza's point of view,
+with a signed feed that any program can read.**
 
-**Open it: [Softanza Radar](https://mayouni.github.io/lookout/)**, the site Lookout builds for Softanza. It shows the week on a radar whose slices are the
+**Open it: [mayouni.github.io/lookout](https://mayouni.github.io/lookout/)**
+
+Lookout is the open tool behind the radar, part of the Softanza Agentic Harness: the layer that builds the platform
+and keeps watch over it. The site shows the week on a radar whose slices are the
 layers of Softanza, and, under In Softanza, the whole platform as a stack of layers and a grid of domains. Every earlier week
 stays one click away, and Trends follows the weeks together: what was read, where Softanza stands, what it
 proposed and how far that went, and what it wrote down to learn. Every signal reads
@@ -15,7 +19,7 @@ readers, checked the same way.
 **Run your own Lookout, for your own project: [docs/ADOPT.md](docs/ADOPT.md).** One file, `lookout.yaml`, says
 which project the watch serves, what it watches, who reads it, and what the agent learns before it reads anything.
 The tools, the feed, this site with its trends, and the bar take everything from it. [`lookout.yaml`](lookout.yaml) is
-Softanza's own, and the site's [Make your own](https://mayouni.github.io/lookout/#/yours) view writes a first one with you.
+Softanza's own, and the site's [For your project](https://mayouni.github.io/lookout/#/yours) page writes a first one with you.
 
 A lookout is the one who keeps watch and calls out what is coming, in time for the others to act.
 
@@ -28,15 +32,15 @@ source, judged against what [Softanza](https://github.com/mayouni/stzlib) builds
 - **something to tell**: a short notice for the people it affects, whether they are developers, users, learners or
   maintainers.
 
-The day this becomes a feature of the stack itself, an assistant such as Aicha will read this feed and say: *there is
-a new development you should know about, here is what it means for you.* Until then, the feed is open to any program
-that wants to do the same.
+Agents read it too: [llms.txt](https://mayouni.github.io/lookout/llms.txt) gives them the whole watch as text, and an
+MCP server lets an assistant such as Aïcha, or Claude Code, ask it while working and say: *there is a new development
+you should know about, here is what it means for you.*
 
 ## How it works
 
 ```mermaid
 flowchart LR
-  S["Sources<br/>papers, releases, advisories,<br/>practices, the author's links"] --> D["The Lookout desk<br/>reads at the source,<br/>judges, writes"]
+  S["Sources<br/>papers, releases, advisories,<br/>practices, the author's links"] --> D["The watch's agent<br/>reads at the source,<br/>judges, writes"]
   D --> I["items/<br/>one file per entry:<br/>narrative + data"]
   D --> W["digests/<br/>one per week"]
   I --> F["feed/index.json<br/>feed/feed.json"]
