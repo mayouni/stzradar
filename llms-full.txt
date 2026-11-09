@@ -1,0 +1,231 @@
+# Softanza Radar: every signal, in full
+
+> What changed in AI this week, and what it means for what we build in Softanza. Generated from the signed feed (https://mayouni.github.io/lookout/feed/index.json); the feed is the reference.
+
+## Lookout runs for any project: one file says what its agent learns and watches
+
+- id: 2026-11-09-lookout-for-any-project
+- date: 2026-11-09
+- level: info
+- kind: feature
+- stance: adopt
+- relevance: medium
+- page: https://mayouni.github.io/lookout/items/2026/2026-11-09-lookout-for-any-project.md
+
+Lookout now reads everything that belongs to its project from one file, lookout.yaml: the project, the watch, its readers, its map, and what the watching agent learns before each survey. The feed, the site with its trends, and the bar take their names and texts from it, and version 1.1.0 of the bar reads any watch's feed with the key the page gives it.
+
+For each reader:
+- developer: Any project can run its own Lookout: copy the repository, write lookout.yaml, and point the bar at your feed with data-feed and data-key.
+- maintainer: Lookout's project-specific values now live in lookout.yaml, checked before every run; bar 1.1.0 is the version to pin, and 1.0.0 keeps working.
+
+Sources:
+- Your own Lookout (docs/ADOPT.md): https://github.com/mayouni/lookout/blob/main/docs/ADOPT.md
+- The agent's brief (docs/AGENT.md): https://github.com/mayouni/lookout/blob/main/docs/AGENT.md
+
+## A coding agent's "don't ask again" writes secrets into a file that gets published
+
+- id: 2026-11-08-agent-approvals-leak-secrets
+- date: 2026-11-08
+- level: action
+- kind: security
+- stance: defend
+- relevance: high
+- page: https://mayouni.github.io/lookout/items/2026/2026-11-08-agent-approvals-leak-secrets.md
+
+Apiiro reports that when a Claude Code user approves a command with "Yes, and don't ask again", the exact command, including any password or key typed into it, is saved as a permission rule in .claude/settings.local.json inside the project. The file is kept out of git only by the developer's global ignore list, not by the repository's own .gitignore, and Apiiro counted 1,122 public copies on GitHub holding a real secret, out of 104,185.
+
+For each reader:
+- developer: Open .claude/settings.local.json in each project you use a coding agent in, delete any rule that contains a password, key or token, and rotate it if the file was ever committed.
+- maintainer: Add .claude/settings.local.json to your repository's own .gitignore, and scan agent folders, transcripts and memory files for passwords written inside commands.
+
+Proposed:
+- stzlib: add .claude/settings.local.json to the repository's own .gitignore, so the protection travels with the repository and not with one machine (routed)
+- haro: add .claude/settings.local.json to the repository's own .gitignore, for the same reason (routed)
+- stzlib.security: add a check for passwords written inside commands (PGPASSWORD=, sshpass -p, mysql -p, bearer headers) over agent settings, transcripts, memory files and handoff notes (routed)
+- softanza: write the house rule: a secret is referenced as an environment variable in a command, never typed into it (routed)
+
+Sources:
+- Coding Agents Copy Your Secrets to a Hidden File. Thousands Are on GitHub: https://apiiro.com/blog/coding-agents-leaking-secrets-github-dont-ask-again
+
+## Lookout's feed is signed: check it came from this repository unchanged
+
+- id: 2026-11-08-feed-signing
+- date: 2026-11-08
+- level: info
+- kind: feature
+- stance: adopt
+- relevance: medium
+- page: https://mayouni.github.io/lookout/items/2026/2026-11-08-feed-signing.md
+
+Lookout publishes an SSH signature beside each feed file, feed/index.json.sig and feed/feed.json.sig, made with one Ed25519 key kept for this purpose by Lookout's maintainer. Any reader with OpenSSH can check a feed with ssh-keygen against the public key and the namespace lookout-feed. The change adds files and adds nothing to the feed itself, so the feed stays at version 1; docs/FEED.md gives the key, its fingerprint and the command.
+
+For each reader:
+- developer: Lookout's feed carries a signature beside each file; a program that shows its notices should check it with ssh-keygen before showing anything.
+- maintainer: Pin Lookout's key fingerprint in your reader rather than fetching the key from the same place as the feed.
+
+Proposed:
+- stzlib: add the signature check to the reader proposed in docs/READER.md, with the key's fingerprint pinned in the library (proposed)
+
+Sources:
+- The feed contract, version 1: https://github.com/mayouni/lookout/blob/main/docs/FEED.md
+
+## GitHub will block pull_request_target in public repositories from December 2
+
+- id: 2026-11-08-github-blocks-pull-request-target
+- date: 2026-11-08
+- level: info
+- kind: practice
+- stance: adopt
+- relevance: low
+- page: https://mayouni.github.io/lookout/items/2026/2026-11-08-github-blocks-pull-request-target.md
+
+GitHub announced on November 2, 2026 that from December 2, 2026, GitHub Actions blocks pull_request_target events by default in every public repository unless an Actions event policy allows them. Enforcement is tried in two windows, November 9 and November 16, 16:00 to 18:00 UTC. Private and internal repositories are not affected.
+
+For each reader:
+- developer: If your public project's workflows use pull_request_target, expect them to fail on November 9 and 16 between 16:00 and 18:00 UTC, and to stop from December 2 unless you allow them.
+- maintainer: Check your public repositories for pull_request_target before December 2; Softanza's own repositories do not use it.
+
+Sources:
+- pull_request_target blocked by default December 2: https://github.blog/changelog/2026-11-02-pull_request_target-blocked-by-default-december-2
+
+## Code repaired by a model after an API change can pass its checks and still be wrong
+
+- id: 2026-11-08-llm-repairs-pass-wrong
+- date: 2026-11-08
+- level: advice
+- kind: paper
+- stance: adopt
+- relevance: high
+- page: https://mayouni.github.io/lookout/items/2026/2026-11-08-llm-repairs-pass-wrong.md
+
+A study submitted on November 5, 2026 looks at code that models repair after documented changes in CPython, Node.js and SQLite. Repairs that run cleanly can still give wrong answers: a gate built on typical inputs let 41% of the wrong repairs through, and adding one input written from the release note cut that to 6.5%. The expected outputs came from the old program on the old runtime.
+
+For each reader:
+- developer: When an agent repairs code for a changed API, test the repair with one input that exercises the change, and take the expected answer from the old version.
+- learner: A program that runs without errors can still be wrong: test it with the case that changed, not only with the usual ones.
+- maintainer: Gate every model-made port or repair on edge inputs taken from the change itself, with expected outputs from the old runtime, never from the model's own tests alone.
+
+Proposed:
+- stzlib: for code moved from Ring++ to Haro by an agent, gate each change on at least one input that exercises the documented difference, with the expected output read off the old runtime (routed)
+
+Sources:
+- Accepted but Wrong: Silent Failures of LLM Code Repairs after API Migrations: https://arxiv.org/abs/2611.08269
+- Accepted but Wrong, full text (HTML): https://arxiv.org/html/2611.08269v1
+
+## Lookout opens: a public watch on AI, read from Softanza's point of view
+
+- id: 2026-11-08-lookout-opens
+- date: 2026-11-08
+- level: info
+- kind: idea
+- stance: adopt
+- relevance: high
+- page: https://mayouni.github.io/lookout/items/2026/2026-11-08-lookout-opens.md
+
+Softanza opened Lookout, a public repository that reads developments in AI at their source and judges each one against what Softanza builds. Every entry is written twice in one file, as a page for people and as data for programs, and a feed is generated from the data.
+
+For each reader:
+- developer: Softanza now keeps a public watch on AI developments: read it on GitHub, or fetch feed/index.json to show its notices in your own tools.
+- learner: There is now one place that explains, in plain words, what changes in AI mean for what you learn with Softanza.
+- maintainer: Lookout is open: send it the AI developments that touch your project, and expect the tasks it proposes to reach you through Bangalo.
+
+Proposed:
+- softanza: run the first weekly survey and publish its digest (proposed)
+- stzlib: propose a command that reads this feed for its user's audience and level (proposed)
+
+Sources:
+- Lookout's README: https://github.com/mayouni/lookout
+- The feed contract, version 1: https://github.com/mayouni/lookout/blob/main/docs/FEED.md
+
+## Two MCP clients let a malicious server obtain a token meant for another server
+
+- id: 2026-11-08-mcp-oauth-resource-check
+- date: 2026-11-08
+- level: advice
+- kind: security
+- stance: defend
+- relevance: medium
+- page: https://mayouni.github.io/lookout/items/2026/2026-11-08-mcp-oauth-resource-check.md
+
+Two advisories published on November 5, 2026 describe the same flaw in two MCP clients, the Go SDK mcp-go before 1.2.1 and the ChatCLI agent before 1.215.2: the client took the resource named in a server's protected resource metadata without checking that it matched the server it had connected to. A malicious MCP server could name another server on the same authorization server, have the user sign in, and replay the token it received.
+
+For each reader:
+- developer: If you use mcp-go or ChatCLI, update to mcp-go 1.2.1 or ChatCLI 1.215.2, and only sign in to MCP servers you chose yourself.
+- maintainer: An MCP client must check that the resource a server declares is the server URL it connected to before it asks for a token.
+
+Proposed:
+- stzlib: record as a requirement for any MCP client Softanza builds: the declared resource is checked against the configured server URL before a token is requested, with a guard that a mismatching server is refused (routed)
+
+Sources:
+- GHSA-h3x9-8c36-m89w: mcp-go OAuth protected resource metadata not validated: https://github.com/advisories/GHSA-h3x9-8c36-m89w
+- GHSA-2gm2-hpg7-78f2: ChatCLI MCP OAuth resource indicator: https://github.com/advisories/GHSA-2gm2-hpg7-78f2
+- MCP specification 2026-07-28: Authorization: https://modelcontextprotocol.io/specification/2026-07-28/basic/authorization
+
+## SPILLWAY: an agent may act only on targets that came from a trusted, typed field
+
+- id: 2026-11-08-spillway-target-admission
+- date: 2026-11-08
+- level: advice
+- kind: paper
+- stance: learn
+- relevance: high
+- page: https://mayouni.github.io/lookout/items/2026/2026-11-08-spillway-target-admission.md
+
+A paper submitted on November 4, 2026 proposes a defence for tool-using agents against prompt injection that does not rely on a model: a call with side effects is admitted only if every target it names that is not in the user's request was returned in a typed identity field, such as an email address or a channel, by a read-only tool. A rule-based sanitizer removes instruction-like text, and a local model reviews only the calls the rule refused. The authors report no successful in-scope attack across twelve benchmark settings.
+
+For each reader:
+- developer: A strong defence against prompt injection is a plain rule, not a smarter model: let an agent send or pay only to a target that came from the user or from a trusted, typed field.
+- maintainer: Compare Softanza's tool governance with SPILLWAY's admission rule: where a side effect's target comes from matters as much as which tool is allowed.
+
+Proposed:
+- stzlib.security: study whether Softanza's agent governance can check the provenance of a side effect's target, not only the tool's name, and report what it would take (routed)
+
+Sources:
+- SPILLWAY: Separating Target Admission from Sanitization to Defend Tool-Using Agents against Prompt Injection: https://arxiv.org/abs/2611.07222
+- SPILLWAY, full text (HTML): https://arxiv.org/html/2611.07222v1
+
+## A prompt library ran any function a template named: tools must come from a registry
+
+- id: 2026-11-08-tool-paths-from-prompts-run-code
+- date: 2026-11-08
+- level: advice
+- kind: security
+- stance: learn
+- relevance: medium
+- page: https://mayouni.github.io/lookout/items/2026/2026-11-08-tool-paths-from-prompts-run-code.md
+
+The Python prompt library banks, up to version 2.4.2, read a tool's import path from the text of a prompt template and imported and called whatever it named when the model asked for that tool (CVE-2026-61536, high). Whoever could write a template, in a shared registry or a fetched prompt, could run code in the application. Version 2.4.3 resolves tools only from a registry filled at render time.
+
+For each reader:
+- developer: If your agent resolves a tool from a name or path found in a prompt or a config file, resolve it only against a list of tools you registered in code.
+- maintainer: Check that every way an agent finds a tool goes through an explicit registry, never through an import or a lookup built from text.
+
+Proposed:
+- stzlib.intelligence: check that declarative agents resolve their tools only against tools registered in code, and add a guard that a tool named only in the agent's text is refused (routed)
+
+Sources:
+- GHSA-64vx-6h2c-rjh7: banks CompletionExtension tool import path: https://github.com/advisories/GHSA-64vx-6h2c-rjh7
+- The fix: resolve tool callables from an explicit registry: https://github.com/masci/banks/commit/e443f112b80a20ac24438afe4eb8f8a746a8396d
+
+## Zig 0.17.1 fixes the blockers of 0.17.0; Softanza measures the move from 0.15.2
+
+- id: 2026-11-08-zig-0-17-1
+- date: 2026-11-08
+- level: advice
+- kind: release
+- stance: watch
+- relevance: medium
+- page: https://mayouni.github.io/lookout/items/2026/2026-11-08-zig-0-17-1.md
+
+Zig 0.17.1 is a bug-fix release that addresses more than 57 issues reported after 0.17.0, chiefly regressions and upgrade blockers; the project says most users who could not move to 0.17.0 should be able to move to 0.17.1. Its news page dates it November 3, 2026 and its download page November 2.
+
+For each reader:
+- maintainer: Zig 0.17.1 is the first 0.17 release meant to be upgraded to; Softanza builds on 0.15.2 and measures the move on a branch before it plans it.
+
+Proposed:
+- stzlib: measure what building the engine on Zig 0.17.1 breaks, on a branch, as one capped build, and report the count before planning the move (routed)
+- haro: measure the same for Haro's VM, after stzlib's measurement and never at the same time (routed)
+
+Sources:
+- 0.17.1 Released: https://ziglang.org/news/0.17.1-released/
+- Zig downloads: https://ziglang.org/download/

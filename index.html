@@ -4,6 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Softanza Radar</title>
+<!-- for agents and language models: the same content as data and plain text (the llms.txt convention) -->
+<link rel="alternate" type="text/plain" href="llms.txt" title="For agents and language models">
+<link rel="alternate" type="text/plain" href="llms-full.txt" title="Every signal in full, for agents">
+<link rel="alternate" type="application/feed+json" href="feed/feed.json" title="Softanza Radar, JSON Feed">
 <meta name="description" content="Softanza Radar: what changed in AI this week, and what it means for what we build in Softanza.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -560,7 +564,7 @@ footer .made{color:var(--ink2);font-weight:400;font-size:1.125rem}   /* auxiliar
   </nav>
 </div></header>
 
-<main id="view"></main>
+<main id="view"><noscript><p>This page is drawn by a script. The same content as data and text: <a href="llms.txt">llms.txt</a> (a guide for agents and language models), <a href="llms-full.txt">llms-full.txt</a> (every signal in full), and the signed feed <a href="feed/index.json">feed/index.json</a>.</p></noscript></main>
 
 <footer><div class="wrap">
   <span class="made" id="made"></span>
@@ -1323,6 +1327,7 @@ function viewYours(){
                             ["Work proposed where it belongs.", "Each finding goes to the part of your project it concerns, dated and followed."],
                             ["A record that lasts.", "Every entry keeps its sources and corrections, and is never deleted."]]),
     vgroup("For your apps and sites", [["A signed feed.", "JSON any program reads, checked against your own key."],
+                            ["Readable by agents.", "llms.txt and llms-full.txt give agents and language models the whole watch as text."],
                             ["A site like this one.", "The week on a radar, your project layer by layer, every signal filtered, the trends."],
                             ["A bar for your pages.", "One script line shows the newest notice at the top of any page."]]),
     vgroup("For your users", [["One sentence for their role.", "A developer, a maintainer, a learner and a user each read what concerns them."],
@@ -1534,13 +1539,14 @@ function viewFeed(){
   const p1 = el("p"); p1.append(el("span","feedok","Checked in this browser."), document.createTextNode(" The feed was signed with " + poss(RADAR()) + " key and is unchanged since. It holds " + FEED.items.length + (FEED.items.length === 1 ? " entry" : " entries") + ", updated " + FEED.updated.slice(0,10) + "."));
   const p2 = el("p"); p2.append(document.createTextNode("The key's fingerprint: "), el("code",null,CONFIG.feed.fingerprint), document.createTextNode("."));
   const p3 = el("p"); p3.append(document.createTextNode("The feed and the map of " + NAME() + " it is placed on live in the repository, "), link(repo.replace("https://",""), repo), document.createTextNode(". A signal's full entry opens there."));
+  const p3b = el("p"); p3b.append(document.createTextNode("For agents and language models, the same content as text: "), link("llms.txt", "llms.txt"), document.createTextNode(", a guide to every file, and "), link("llms-full.txt", "llms-full.txt"), document.createTextNode(", every signal in full."));
   const p4 = el("p"); p4.append(document.createTextNode("Download "), link("feed/index.json", repo + "/blob/main/feed/index.json"), document.createTextNode(", its signature "),
     link("feed/index.json.sig", repo + "/blob/main/feed/index.json.sig"), document.createTextNode(" and the signer's key "), link("keys/allowed_signers", repo + "/blob/main/keys/allowed_signers"),
     document.createTextNode(" into one folder, then run:"));
   const cb = el("div","code"), pre = el("pre");
   pre.textContent = "ssh-keygen -Y verify -f allowed_signers -I " + CONFIG.feed.signer + " -n " + CONFIG.feed.namespace + " -s index.json.sig < index.json";
   cb.append(pre);
-  doc.append(el("h2",null,"What this browser checked"), p1, p2, el("h2",null,"Where the data lives"), p3, el("h2",null,"Check it yourself"), p4, cb,
+  doc.append(el("h2",null,"What this browser checked"), p1, p2, el("h2",null,"Where the data lives"), p3, p3b, el("h2",null,"Check it yourself"), p4, cb,
     el("p",null,"It answers \"Good signature\" with the signer's name. Any change to the file, even one character, makes the check fail."));
   frag.append(railPage(doc, {outline: contentsOf(doc, "h2")}));
   return frag;

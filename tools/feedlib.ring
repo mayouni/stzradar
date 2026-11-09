@@ -702,6 +702,8 @@ class FeedRun
         Settle(cMode, "feed/feed.json", cFeed)
         Settle(cMode, "app/config.json", cConfig)      # the site and the bar read the configuration here
         Settle(cMode, "app/digests.json", DigestWeeks())  # the weeks surveyed: the site opens on the newest
+        Settle(cMode, "llms.txt", BuildLlms())             # the site for agents and language models
+        Settle(cMode, "llms-full.txt", BuildLlmsFull())
 
     func Say cLine
         if not bQuiet see cLine + char(10) ok
@@ -962,6 +964,90 @@ class FeedRun
     func EntryUrl oData
         cId = JGet(oData, "id")
         return Conf("watch.repository") + "/blob/main/items/" + left(cId, 4) + "/" + cId + ".md"
+
+    # The site for agents and language models (the llms.txt convention): the site itself is drawn by a
+    # script, so an agent that fetches its address reads almost nothing. llms.txt says what the watch is
+    # and where its data lives -- the signed feeds, one Markdown file per signal, the documents -- and
+    # llms-full.txt carries every signal in plain text. Both are generated from the entries, like the feed.
+    func Str oObj, cKey
+        v = JGet(oObj, cKey)
+        if isstring(v) return v ok
+        return ""
+
+    func PageUrl oData
+        cId = JGet(oData, "id")
+        return Conf("watch.pages") + "items/" + left(cId, 4) + "/" + cId + ".md"
+
+    func BuildLlms
+        NL1 = char(10)
+        cP = Conf("watch.pages")
+        c = "# " + Conf("watch.title") + NL1 + NL1
+        c += "> " + Conf("watch.tagline") + ". " + Conf("home.promise") + NL1 + NL1
+        c += "Every file below is plain data or plain text. The two feed files are signed with SSH (Ed25519, namespace " +
+             Conf("feed.namespace") + ", signer " + Conf("feed.signer") + "): check a signature before trusting a feed." + NL1 + NL1
+        c += "## Feeds" + NL1
+        c += "- [Feed index](" + cP + "feed/index.json): every entry as data; its signature is feed/index.json.sig, its contract docs/FEED.md" + NL1
+        c += "- [JSON Feed 1.1](" + cP + "feed/feed.json): the same entries for feed readers; signature feed/feed.json.sig" + NL1
+        c += "- [Signer key](" + cP + "keys/allowed_signers): the public key both signatures are checked against" + NL1
+        c += "- [Configuration](" + cP + "app/config.json): the project, its readers, its stances and where its map is" + NL1
+        c += "- [Map](" + cP + Conf("map") + "): the project's layers, parts, domains and concerns" + NL1 + NL1
+        c += "## Signals, newest first" + NL1
+        n = len(aEntries)
+        for i = 1 to n
+            o = aEntries[i][2]
+            c += "- [" + Str(o, "title") + "](" + PageUrl(o) + "): " + Str(o, "level") + ", " + Str(o, "kind") + ", " +
+                 Str(o, "stance") + ", " + Str(o, "date") + ". " + Str(o, "summary") + NL1
+        next
+        c += NL1 + "## About" + NL1
+        c += "- [Why](" + cP + "docs/WHY.md): what the watch answers and the requirements behind it" + NL1
+        c += "- [Method](" + cP + "docs/METHOD.md): how a signal is read, judged, written and published" + NL1
+        c += "- [Feed contract](" + cP + "docs/FEED.md): every field of an entry, and how a program shows a notice" + NL1
+        c += "- [Run your own](" + cP + "docs/ADOPT.md): the same watch for another project, from one file" + NL1 + NL1
+        c += "## Optional" + NL1
+        c += "- [Full text](" + cP + "llms-full.txt): every signal, with its notices for each reader, its actions and its sources" + NL1
+        return c
+
+    func BuildLlmsFull
+        NL1 = char(10)
+        c = "# " + Conf("watch.title") + ": every signal, in full" + NL1 + NL1
+        c += "> " + Conf("watch.tagline") + ". Generated from the signed feed (" + Conf("watch.pages") + "feed/index.json); the feed is the reference." + NL1
+        n = len(aEntries)
+        for i = 1 to n
+            o = aEntries[i][2]
+            c += NL1 + "## " + Str(o, "title") + NL1 + NL1
+            c += "- id: " + Str(o, "id") + NL1 + "- date: " + Str(o, "date") + NL1 + "- level: " + Str(o, "level") + NL1 +
+                 "- kind: " + Str(o, "kind") + NL1 + "- stance: " + Str(o, "stance") + NL1 + "- relevance: " + Str(o, "relevance") + NL1 +
+                 "- page: " + PageUrl(o) + NL1 + NL1
+            c += Str(o, "summary") + NL1
+            vN = JGet(o, "notice")
+            if JKind(vN) = "object"
+                c += NL1 + "For each reader:" + NL1
+                aP = vN[2]
+                nP = len(aP)
+                for k = 1 to nP
+                    if isstring(aP[k][2]) c += "- " + aP[k][1] + ": " + aP[k][2] + NL1 ok
+                next
+            ok
+            vA = JGet(o, "actions")
+            if JKind(vA) = "array"
+                aA = JItems(vA)
+                nA = len(aA)
+                if nA > 0 c += NL1 + "Proposed:" + NL1 ok
+                for k = 1 to nA
+                    c += "- " + Str(aA[k], "area") + ": " + Str(aA[k], "do") + " (" + Str(aA[k], "state") + ")" + NL1
+                next
+            ok
+            vS = JGet(o, "sources")
+            if JKind(vS) = "array"
+                aS = JItems(vS)
+                nS = len(aS)
+                if nS > 0 c += NL1 + "Sources:" + NL1 ok
+                for k = 1 to nS
+                    c += "- " + Str(aS[k], "title") + ": " + Str(aS[k], "url") + NL1
+                next
+            ok
+        next
+        return c
 
     # The newest date or updated among the entries, at midnight UTC: an unchanged feed
     # regenerates to the same bytes.
