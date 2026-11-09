@@ -167,7 +167,7 @@ ul.points{margin:0 0 12px;padding-left:22px;display:flex;flex-direction:column;g
 .herotext{align-self:center}
 .heroradar{display:flex;flex-direction:column;min-height:0}
 .heroradar > div{display:flex;flex-direction:column;flex:1 1 auto;min-height:0}
-.hero h1{font-size:clamp(1.9rem,min(3.4vw,4.7vh),3.2rem);max-width:20ch;margin-bottom:clamp(10px,1.8vh,18px)}
+.hero h1{font-size:clamp(1.9rem,min(3.4vw,4.7vh),3.2rem);max-width:none;margin-bottom:clamp(10px,1.8vh,18px)}
 /* the promise keeps the site's reading size at any window height (author, 2026-11-09: "this text is small again"); the title gives way instead */
 .hero .lede{max-width:60ch;font-size:1.375rem}
 .hero .cta{margin:clamp(14px,2.8vh,28px) 0 0;display:flex;flex-wrap:wrap;align-items:center;gap:12px 28px}
@@ -192,6 +192,7 @@ ul.points{margin:0 0 12px;padding-left:22px;display:flex;flex-direction:column;g
 :root[data-theme="dark"] .eyebrow{color:var(--accent)}
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .eyebrow{color:var(--accent)} }
 h1{font:700 clamp(1.75rem,3.2vw,2.5rem)/1.15 var(--f-title);margin:0 0 12px;max-width:30ch;text-wrap:balance}
+h1 .sent{display:block;text-wrap:balance}   /* one sentence, one block: lines break inside a sentence, never across two */
 /* lines in equilibrium (Zane amendment docket F-1, the author's recurring remark): a title balances its lines, and no
    paragraph, list item or label leaves one short word alone on its last line */
 h1,h2,h3,h4,.card h3,.ititle,.fnode b,
@@ -664,12 +665,20 @@ function card(it){
   const go = el("a","n","Open this signal →"); go.href = "#/signal/" + it.id; b.append(go);
   c.append(stripe, b); return c;
 }
+/* A title of several sentences sets each sentence on its own line(s), balanced within itself, so a line never breaks
+   in the middle of one sentence to start the next (author, 2026-11-09: "bad line cuts AGAIN and AGAIN"). */
+function titleEl(text){
+  const h = el("h1"), parts = String(text).match(/[^.!?]+[.!?]+(\s+|$)|[^.!?]+$/g) || [text];
+  if (parts.length < 2){ h.textContent = text; return h; }
+  for (const t of parts) h.append(el("span","sent",t.trim()));
+  return h;
+}
 /* A page head: an optional line of information above the title (the week and its dates), never a path: the two
    pinned bars already mark every level of this site, so a path would say them again (Zane Rule 108) */
 function head(eyebrow, title, ledes){
   const h = el("div","head"), w = el("div","wrap");
   if (eyebrow) w.append(el("p","eyebrow",eyebrow));
-  w.append(el("h1",null,title));
+  w.append(titleEl(title));
   for (const l of ledes) w.append(typeof l === "string" ? el("p","lede",l) : l);
   h.append(w); return h;
 }
@@ -741,7 +750,7 @@ function viewHome(){
   fact(items.length, items.length === 1 ? "signal this week" : "signals this week");
   fact(items.filter(i => i.level === "action" || i.level === "urgent").length, "to do");
   fact(new Set(items.flatMap(projectsOf)).size, "projects touched");
-  txt.append(el("h1",null,H.headline), el("p","lede",H.promise), cta, el("p","herofact","Week " + wk + ", " + weekSpan(wk)), facts);
+  txt.append(titleEl(H.headline), el("p","lede",H.promise), cta, el("p","herofact","Week " + wk + ", " + weekSpan(wk)), facts);
   const pane = el("div","scope heroradar");
   pane.append(el("h2",null,"This week across " + NAME()), radar(items.slice(0, radarLimit()), items.length));
   w.append(txt, pane); hero.append(w); frag.append(hero);
