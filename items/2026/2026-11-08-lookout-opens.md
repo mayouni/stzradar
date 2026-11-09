@@ -23,7 +23,9 @@
   },
   "areas": [
     "softanza"
-  ],
+  , "lookout"],
+  "domains": ["learning", "models", "agents"],
+  "concerns": ["clarity"],
   "actions": [
     {
       "area": "softanza",
@@ -93,3 +95,4 @@ first form of that feature. Because it is open, any program can do the same toda
 - 2026-11-08: the repository was renamed on the day it opened, before the feed had any reader, so that its name is
   plain English like the rest of Softanza's internal names. This entry's id and addresses changed with it.
 - 2026-11-09: the paragraph on Softanza now says what holds and what is proposed, in affirmative sentences; the facts are unchanged.
+- 2026-11-09: placed on the estate map, with the domains and concerns it touches and Lookout among its areas; the facts are unchanged.

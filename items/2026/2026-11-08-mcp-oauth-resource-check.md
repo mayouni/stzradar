@@ -17,6 +17,8 @@
     "maintainer": "An MCP client must check that the resource a server declares is the server URL it connected to before it asks for a token."
   },
   "areas": ["stzlib", "haro"],
+  "domains": ["agents", "security"],
+  "concerns": ["trust"],
   "actions": [
     { "area": "stzlib", "do": "record as a requirement for any MCP client Softanza builds: the declared resource is checked against the configured server URL before a token is requested, with a guard that a mismatching server is refused", "state": "routed" }
   ],
@@ -67,3 +69,4 @@ configured server URL, with a guard that proves a mismatching server is refused.
 ## Corrections
 
 - 2026-11-09: the paragraph on Softanza now says what holds and what is proposed, in affirmative sentences; the facts are unchanged.
+- 2026-11-09: placed on the estate map, with the domains and concerns it touches; the facts are unchanged.

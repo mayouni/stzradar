@@ -4,6 +4,7 @@
 {
   "id": "2026-11-08-llm-repairs-pass-wrong",
   "date": "2026-11-08",
+  "updated": "2026-11-09",
   "title": "Code repaired by a model after an API change can pass its checks and still be wrong",
   "kind": "paper",
   "summary": "A study submitted on November 5, 2026 looks at code that models repair after documented changes in CPython, Node.js and SQLite. Repairs that run cleanly can still give wrong answers: a gate built on typical inputs let 41% of the wrong repairs through, and adding one input written from the release note cut that to 6.5%. The expected outputs came from the old program on the old runtime.",
@@ -17,6 +18,8 @@
     "maintainer": "Gate every model-made port or repair on edge inputs taken from the change itself, with expected outputs from the old runtime, never from the model's own tests alone."
   },
   "areas": ["stzlib", "haro"],
+  "domains": ["code", "models"],
+  "concerns": ["correctness"],
   "actions": [
     { "area": "stzlib", "do": "for code moved from Ring++ to Haro by an agent, gate each change on at least one input that exercises the documented difference, with the expected output read off the old runtime", "state": "routed" }
   ],
@@ -62,3 +65,7 @@ work.
 - Xiaobo Chen et al., [Accepted but Wrong](https://arxiv.org/abs/2611.08269), arXiv 2611.08269, submitted
   November 5, 2026, and its [HTML full text](https://arxiv.org/html/2611.08269v1), read 2026-11-08. The first part
   of the full text was read word for word; the rest was read through a summary, and nothing here rests on it alone.
+
+## Corrections
+
+- 2026-11-09: placed on the estate map, with the domains and concerns it touches; the facts are unchanged.

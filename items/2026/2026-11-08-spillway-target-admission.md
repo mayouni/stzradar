@@ -17,6 +17,8 @@
     "maintainer": "Compare Softanza's tool governance with SPILLWAY's admission rule: where a side effect's target comes from matters as much as which tool is allowed."
   },
   "areas": ["stzlib.intelligence", "stzlib.security"],
+  "domains": ["agents", "security"],
+  "concerns": ["trust", "correctness"],
   "actions": [
     { "area": "stzlib.security", "do": "study whether Softanza's agent governance can check the provenance of a side effect's target, not only the tool's name, and report what it would take", "state": "routed" }
   ],
@@ -74,3 +76,4 @@ but **where its target came from**. The answer is a set lookup and costs nothing
 ## Corrections
 
 - 2026-11-09: the paragraph on Softanza now says what holds and what is proposed, in affirmative sentences; the facts are unchanged.
+- 2026-11-09: placed on the estate map, with the domains and concerns it touches; the facts are unchanged.

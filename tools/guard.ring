@@ -36,6 +36,7 @@ class Guard
         Writing()
         Patterns()
         Affirm()
+        Map()
 
     func Pass cName
         nPass++
@@ -343,6 +344,32 @@ class Guard
         else
             Fail("tools/affirm-allow.txt loads, every line with its reason", Joined(oRun.aProblems))
         ok
+
+    # ------------------------------------------------------------ every entry sits on the estate map
+    # The real map/estate.json, and the frozen entry with its areas line changed in memory.
+    func Map
+        cAct = '"actions": ['
+        MapCase("an area that names no project is refused", Broken('"softanza"', '"nowhere"'), "area nowhere names no project")
+        MapCase("a domain the map does not list is refused", Broken(cAct, '"domains": ["spaceships"], ' + cAct), "domains value spaceships")
+        MapCase("a concern the map does not list is refused", Broken(cAct, '"concerns": ["luck"], ' + cAct), "concerns value luck")
+        cText = Broken(cAct, '"domains": ["agents", "security"], "concerns": ["trust"], ' + cAct)
+        cText = substr(cText, '"areas": [', '"areas": ["stzlib", "stzlib.security", "haro", ')
+        MapCase("an alias and a dotted sub-area pass, with known domains and concerns", cText, "")
+
+    func MapCase cName, cText, cReason
+        if cText = ""
+            Fail(cName, "the change did not apply to the entry's text")
+            return
+        ok
+        oRun = NewRun()
+        oRun.AddEntryText("items/2026/" + cFile, "2026", cFile, cText)
+        oRun.MapCheck()
+        cSaid = Joined(oRun.aProblems)
+        if cReason = ""
+            if cSaid = "" Pass(cName) else Fail(cName, cSaid) ok
+            return
+        ok
+        if substr(cSaid, cReason) > 0 Pass(cName) else Fail(cName, "not refused for this reason: " + cSaid) ok
 
     func q2 s
         return '"' + s + '"'

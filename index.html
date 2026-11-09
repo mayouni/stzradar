@@ -3,224 +3,261 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="Lookout Radar: what changed in AI this week, read from Softanza's point of view. Watch, build and learn from each signal.">
 <title>Lookout Radar</title>
+<meta name="description" content="Lookout Radar: what changed in AI this week, placed on the Softanza estate -- Harobanda, Haro, Softanza, HaroBase, HaroServ, HaroScript, Aïcha, Zane -- and what each reader can do with it.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Source+Sans+3:wght@400;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
 <style>
-/* Layout: a sticky console bar (role + level + help), then a radar scope beside a signal list; the detail opens as a sheet. */
+/* Lookout Radar. The reading laws of the estate's sites, applied:
+   - one reading size (19 px) and nothing below 16 px; secondary text is a readable tone, never small-and-grey;
+   - one scroll bar on screen (Zane Rules 14 and 92), nothing scrolls sideways at 375 px;
+   - no motion while navigating; a bar never covers content; no tabs that hide content (Rule 12).
+   The palette is the Compass palette the estate's sites share (teal accent, serif titles). */
 :root{
-  --bg:#f3f5f8; --panel:#ffffff; --ink:#15202c; --muted:#5a6878; --line:#d9dfe7;
-  --accent:#2950c8; --accent-ink:#ffffff; --scope:#e8edf5; --scope-line:#c5cfdd;
-  --lv-info:#6b7a8c; --lv-advice:#2950c8; --lv-action:#c27a0b; --lv-urgent:#c3322b;
-  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --bg:#F6F8F8; --panel:#FFFFFF; --tint:#EAF4F4; --ink:#10262A; --ink2:#34474B; --line:#CFDCDD;
+  --accent:#1B6B72; --accent-ink:#FFFFFF; --deep:#0E4E54;
+  --lv-info:#4F6266; --lv-advice:#1B6B72; --lv-action:#B54708; --lv-urgent:#B42318;
+  --f-title:"Source Serif 4", Georgia, serif;
   --f-body:"Source Sans 3", "Segoe UI", system-ui, sans-serif;
   --f-mono:"JetBrains Mono", ui-monospace, Consolas, monospace;
+  --read:1.1875rem;  /* 19 px */
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
-  --bg:#0e131a; --panel:#151c26; --ink:#e6ebf2; --muted:#93a1b3; --line:#263141;
-  --accent:#7d9cff; --accent-ink:#0e131a; --scope:#121924; --scope-line:#2a3647;
-  --lv-info:#8d9bad; --lv-advice:#7d9cff; --lv-action:#e6a33b; --lv-urgent:#ef6a5f; color-scheme:dark }}
+  --bg:#0C1617; --panel:#122022; --tint:#16292C; --ink:#E3F1F2; --ink2:#B9CFD2; --line:#28403F;
+  --accent:#8FD3D8; --accent-ink:#0C1617; --deep:#5FB6BC;
+  --lv-info:#A7BDC0; --lv-advice:#8FD3D8; --lv-action:#F2A65A; --lv-urgent:#F28B82; color-scheme:dark }}
 :root[data-theme="dark"]{
-  --bg:#0e131a; --panel:#151c26; --ink:#e6ebf2; --muted:#93a1b3; --line:#263141;
-  --accent:#7d9cff; --accent-ink:#0e131a; --scope:#121924; --scope-line:#2a3647;
-  --lv-info:#8d9bad; --lv-advice:#7d9cff; --lv-action:#e6a33b; --lv-urgent:#ef6a5f; color-scheme:dark }
+  --bg:#0C1617; --panel:#122022; --tint:#16292C; --ink:#E3F1F2; --ink2:#B9CFD2; --line:#28403F;
+  --accent:#8FD3D8; --accent-ink:#0C1617; --deep:#5FB6BC;
+  --lv-info:#A7BDC0; --lv-advice:#8FD3D8; --lv-action:#F2A65A; --lv-urgent:#F28B82; color-scheme:dark }
 
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font:16px/1.5 var(--f-body);margin:0}
+html{font-size:16px}
+body{background:var(--bg);color:var(--ink);font:400 var(--read)/1.55 var(--f-body);margin:0}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--panel)}
-.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1240px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+a{color:var(--accent);text-underline-offset:3px}
 button,select{font:inherit;color:inherit}
-:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+html.locked,html.locked body{overflow:hidden}
 
-header.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--panel);border-bottom:1px solid var(--line)}
-.bar .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;padding-block:12px}
-.brand{display:flex;align-items:baseline;gap:10px;margin-right:auto}
-.brand h1{font:700 1.45rem/1 var(--f-display);margin:0;letter-spacing:-.01em}
-.brand small{font:400 .78rem var(--f-mono);color:var(--muted)}
-.ctl{display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--muted)}
-.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
-.seg button{background:transparent;border:0;padding:6px 11px;cursor:pointer;font-size:.9rem}
+/* the pinned head: level 1 = the views, level 2 = who is reading */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--panel);border-bottom:1px solid var(--line)}
+.row1{display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"brand nav help";align-items:center;gap:8px 28px;padding-block:12px 8px}
+.row1 .brand{grid-area:brand}.row1 nav{grid-area:nav}.row1 .help{grid-area:help}
+@media (max-width:820px){.row1{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"brand help" "nav nav"}}
+@media (max-width:900px){.row2 .why{display:none}}
+.brand{font:700 1.5rem/1 var(--f-title);color:var(--ink);text-decoration:none;white-space:nowrap}
+.brand span{color:var(--accent)}
+nav.views{display:flex;flex-wrap:wrap;gap:4px 20px}
+nav.views a{font-weight:600;color:var(--ink);text-decoration:none;padding:4px 0;border-bottom:3px solid transparent;font-size:1.0625rem}
+nav.views a[aria-current="page"]{border-bottom-color:var(--accent);color:var(--deep)}
+:root[data-theme="dark"] nav.views a[aria-current="page"]{color:var(--accent)}
+.help{background:transparent;border:1px solid var(--line);border-radius:8px;padding:4px 12px;cursor:pointer;font-size:1rem}
+.row2{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;padding-block:6px 12px;font-size:1rem}
+.row2 .lab{font-weight:600;color:var(--ink2)}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{background:transparent;border:0;padding:5px 14px;cursor:pointer;font-size:1rem;font-weight:600}
+.seg button+button{border-left:1px solid var(--line)}
 .seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
-select{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:5px 8px}
+.row2 .why{color:var(--ink2)}
 
-.intro{padding-block:22px 6px;display:flex;flex-wrap:wrap;gap:12px 32px;align-items:end}
-.intro p{margin:0;max-width:66ch;color:var(--muted)}
-.lead{display:flex;flex-direction:column;gap:8px}
-.intro p.what{color:var(--ink);font-size:1.08rem}
-.intro p.what strong{font-family:var(--f-display)}
-.help{background:transparent;border:1px solid var(--line);border-radius:8px;padding:5px 11px;cursor:pointer;font-size:.9rem}
-.help:hover{border-color:var(--accent)}
-.helpbox{border:1px solid var(--line);border-radius:14px;background:var(--panel);color:var(--ink);padding:20px 22px;width:min(520px,calc(100% - 32px))}
-.helpbox::backdrop{background:color-mix(in srgb,var(--ink) 35%,transparent)}
-.helpbox h2{font:700 1.2rem/1.2 var(--f-display);margin:0 0 12px}
-.helpbox dl{display:grid;grid-template-columns:auto 1fr;gap:8px 14px;margin:0 0 16px;font-size:.93rem}
-.helpbox dt{font-weight:700}
-.helpbox dd{margin:0;color:var(--muted)}
-@media (max-width:480px){.helpbox{padding:16px 18px}.helpbox dl{grid-template-columns:1fr;gap:2px;font-size:.9rem;line-height:1.4;margin-bottom:12px}.helpbox dd{margin-bottom:8px}}
-.intro strong{color:var(--ink)}
-.stamp{font:400 .8rem var(--f-mono);color:var(--muted);display:flex;flex-direction:column;gap:2px}
-.stamp b{color:var(--ink);font-weight:600}
+/* page heads */
+.head{background:var(--tint);border-bottom:1px solid var(--line)}
+.head .wrap{padding-block:28px 26px}
+.eyebrow{font:600 1rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--deep);margin:0 0 8px}
+:root[data-theme="dark"] .eyebrow{color:var(--accent)}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .eyebrow{color:var(--accent)} }
+h1{font:700 clamp(1.75rem,3.2vw,2.5rem)/1.15 var(--f-title);margin:0 0 12px;max-width:30ch;text-wrap:balance}
+.lede{max-width:66ch;margin:0;color:var(--ink)}
+.lede+.lede{margin-top:10px}
+h2{font:700 1.5rem/1.2 var(--f-title);margin:0 0 12px}
+h3{font:700 1.25rem/1.25 var(--f-title);margin:0}
+section.block{padding-block:28px 8px}
+.facts{display:flex;flex-wrap:wrap;gap:12px;margin-top:18px}
+.fact{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 16px;min-width:9rem}
+.fact b{display:block;font:700 1.75rem/1.1 var(--f-title);color:var(--deep)}
+:root[data-theme="dark"] .fact b{color:var(--accent)}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .fact b{color:var(--accent)} }
 
-main.grid{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:24px;padding-block:16px 48px}
-@media (max-width:860px){main.grid{grid-template-columns:minmax(0,1fr)}}
-
-.scope{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;align-self:start;position:sticky;top:calc(env(safe-area-inset-top,0px) + 76px)}
-@media (max-width:860px){.scope{position:static}}
-.scope h2,.list h2{font:700 .8rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:2px 4px 10px}
+/* this week */
+.week{display:grid;grid-template-columns:minmax(0,440px) minmax(0,1fr);gap:28px;align-items:start}
+@media (max-width:900px){.week{grid-template-columns:minmax(0,1fr)}}
+.scope{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:0 1px 3px rgba(16,38,42,.06)}
 .scope svg{width:100%;height:auto;display:block}
-.legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin:10px 4px 2px;font-size:.82rem;color:var(--muted)}
-.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.scope .lbl{font:700 22px var(--f-body);fill:var(--ink2)}
+.key{display:flex;flex-wrap:wrap;gap:6px 16px;margin:12px 2px 0;font-size:1rem;color:var(--ink2)}
+.key i{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px;vertical-align:-1px}
 .blip{cursor:pointer}
-.blip:focus{outline:none}
-.blip:focus-visible circle.ring,.blip:hover circle.ring{stroke-width:3}
-.sweep{transform-origin:200px 200px;animation:sweep 9s linear infinite}
-@keyframes sweep{to{transform:rotate(360deg)}}
-@media (prefers-reduced-motion:reduce){.sweep{animation:none}}
-
-.list{min-width:0}
-.cards{display:flex;flex-direction:column;gap:10px}
-.card{display:grid;grid-template-columns:6px minmax(0,1fr);background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;cursor:pointer;text-align:left;padding:0;width:100%}
+.blip:focus-visible circle.halo,.blip:hover circle.halo{stroke-width:4}
+.group{margin-bottom:22px}
+.group>h3{font:700 1rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);margin:0 0 10px}
+.cards{display:flex;flex-direction:column;gap:12px}
+.card{display:grid;grid-template-columns:6px minmax(0,1fr);background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;color:inherit;text-decoration:none;box-shadow:0 1px 3px rgba(16,38,42,.06)}
 .card:hover{border-color:var(--accent)}
 .card .stripe{background:var(--lv-info)}
-.card .body{padding:12px 16px 14px;display:flex;flex-direction:column;gap:6px;min-width:0}
-.meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font:400 .75rem var(--f-mono);color:var(--muted)}
-.pill{border:1px solid var(--line);border-radius:999px;padding:1px 8px;white-space:nowrap}
-.pill.lv{color:var(--panel);border-color:transparent;font-weight:600}
-.new{color:var(--accent);font-weight:600}
-.card h3{font:700 1.08rem/1.3 var(--f-display);margin:0;text-wrap:balance}
-.card p{margin:0;color:var(--ink)}
-.card p.quiet{color:var(--muted)}
-.empty{background:var(--panel);border:1px dashed var(--line);border-radius:12px;padding:20px;color:var(--muted)}
+.card .body{padding:14px 18px 16px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.meta{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:1rem;color:var(--ink2)}
+.pill{border:1px solid var(--line);border-radius:999px;padding:0 10px;white-space:nowrap;background:var(--panel)}
+.pill.lv{color:#fff;border-color:transparent;font-weight:700}
+.pill.proj{border-color:var(--accent);color:var(--deep);font-weight:600}
+:root[data-theme="dark"] .pill.proj{color:var(--accent)}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .pill.proj{color:var(--accent)} }
+.new{color:var(--accent);font-weight:700}
+.card h3{font-size:1.2rem}
+.card p{margin:0}
+.card p.plain{color:var(--ink2)}
 
-/* detail sheet */
-.sheet{position:fixed;inset:0;z-index:20;display:flex;justify-content:flex-end;background:color-mix(in srgb,var(--ink) 35%,transparent)}
-.sheet[hidden]{display:none!important}
-/* Rules 14 and 92: while a sheet is open the page beneath is frozen, so only one scroll bar exists on screen */
-html.sheet-open,html.sheet-open body{overflow:hidden}
-.panel{background:var(--panel);width:min(680px,100%);height:100%;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;padding-block:calc(env(safe-area-inset-top,0px) + 18px) calc(env(safe-area-inset-bottom,0px) + 32px);padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));border-left:1px solid var(--line)}
-.panel .top{display:flex;justify-content:space-between;gap:12px;align-items:start}
-.panel h2{font:700 1.5rem/1.2 var(--f-display);margin:6px 0 10px;text-wrap:balance}
-.close{background:transparent;border:1px solid var(--line);border-radius:8px;padding:4px 10px;cursor:pointer}
-.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin:14px 0 16px}
-.tabs button{background:transparent;border:0;border-bottom:2px solid transparent;padding:8px 12px;cursor:pointer;color:var(--muted);font-weight:600}
-.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
-.sec{display:flex;flex-direction:column;gap:14px}
-.sec h4{font:700 .78rem var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:6px 0 0}
-.sec p{margin:0;max-width:66ch}
-.notice{border-left:3px solid var(--accent);padding:4px 0 4px 12px}
-.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:.92rem}
-.kv dt{color:var(--muted)}
+/* the estate */
+.estate{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,19rem);gap:20px;align-items:start}
+@media (max-width:900px){.estate{grid-template-columns:minmax(0,1fr)}}
+.stack{display:flex;flex-direction:column;gap:10px}
+.layer{display:grid;grid-template-columns:minmax(0,15rem) minmax(0,1fr);gap:12px 18px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;box-shadow:0 1px 3px rgba(16,38,42,.06)}
+@media (max-width:700px){.layer{grid-template-columns:minmax(0,1fr)}}
+.layer .name p{margin:4px 0 0;color:var(--ink2);font-size:1rem}
+.projects{display:flex;flex-wrap:wrap;gap:10px}
+.proj{flex:1 1 15rem;border:1px solid var(--line);border-radius:12px;padding:10px 14px;color:inherit;text-decoration:none;background:var(--bg)}
+a.proj:hover{border-color:var(--accent)}
+.proj b{font-family:var(--f-title);font-size:1.15rem}
+.proj p{margin:4px 0 0;color:var(--ink2);font-size:1rem}
+.proj .n{display:inline-block;margin-top:6px;font-weight:700;color:var(--deep)}
+:root[data-theme="dark"] .proj .n{color:var(--accent)}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .proj .n{color:var(--accent)} }
+.beside{background:var(--tint);border:1px dashed var(--accent);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.beside .proj{flex:none}
+table.grid{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;font-size:1rem}
+table.grid th,table.grid td{border:1px solid var(--line);padding:8px 10px;text-align:center;vertical-align:middle}
+table.grid thead th{background:var(--tint);font-weight:700}
+table.grid tbody th{text-align:left;font-weight:700;white-space:normal}
+table.grid td a{display:inline-block;min-width:2.2rem;padding:2px 8px;border-radius:8px;background:var(--accent);color:var(--accent-ink);font-weight:700;text-decoration:none}
+.gridlist{display:none}
+@media (max-width:820px){table.grid{display:none}.gridlist{display:flex;flex-direction:column;gap:12px}}
+.gridlist .dom{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.chip{border:1px solid var(--accent);border-radius:999px;padding:2px 12px;text-decoration:none;font-weight:600;font-size:1rem;color:var(--deep);background:var(--panel)}
+:root[data-theme="dark"] .chip{color:var(--accent)}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .chip{color:var(--accent)} }
+.concerns{display:grid;grid-template-columns:repeat(auto-fill,minmax(15rem,1fr));gap:12px}
+.concern{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 16px;color:inherit;text-decoration:none}
+a.concern:hover{border-color:var(--accent)}
+.concern p{margin:4px 0 0;color:var(--ink2);font-size:1rem}
+
+/* all signals */
+.filters{display:grid;grid-template-columns:repeat(auto-fill,minmax(12rem,1fr));gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:18px}
+.filters label{display:flex;flex-direction:column;gap:4px;font-weight:600;font-size:1rem}
+select{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-size:1rem;max-width:100%}
+.count{font-weight:700;margin:0 0 12px}
+.empty{background:var(--panel);border:1px dashed var(--line);border-radius:14px;padding:20px}
+
+/* one signal: a page, every part in view, ordered for the reader */
+.sig{max-width:820px}
+.sig .part{padding-block:18px 6px;border-top:1px solid var(--line)}
+.sig .part:first-of-type{border-top:0}
+.sig h2{font-size:1.35rem}
+.sig p{margin:0 0 10px;max-width:68ch}
+.notice{border-left:4px solid var(--accent);padding:6px 0 6px 16px;font-size:1.25rem}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;margin:0}
+.kv dt{color:var(--ink2);font-weight:600}
 .kv dd{margin:0}
-ul.src,ul.act{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px}
-a{color:var(--accent)}
-.code{position:relative;background:var(--scope);border:1px solid var(--line);border-radius:10px}
-.code pre{margin:0;padding:12px 14px;font:400 .85rem/1.5 var(--f-mono);white-space:pre-wrap;overflow-wrap:anywhere}
-.code .why{padding:8px 14px 0;font-size:.88rem;color:var(--muted)}
-.copy{position:absolute;top:6px;right:6px;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:2px 8px;font-size:.78rem;cursor:pointer}
-details{border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+ul.plain{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:6px}
+.code{position:relative;background:var(--tint);border:1px solid var(--line);border-radius:12px;margin-bottom:12px}
+.code .why{padding:10px 16px 0;color:var(--ink2);font-size:1rem}
+.code pre{margin:0;padding:12px 16px 14px;font:400 1rem/1.5 var(--f-mono);white-space:pre-wrap;overflow-wrap:anywhere}
+.copy{position:absolute;top:8px;right:8px;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:2px 10px;font-size:1rem;cursor:pointer}
+.code.withcopy pre{padding-right:5.5rem}
+details{border:1px solid var(--line);border-radius:12px;padding:10px 16px;margin-bottom:10px;background:var(--panel)}
 details summary{cursor:pointer;font-weight:600}
 details p{margin-top:8px}
-.terms{display:flex;flex-wrap:wrap;gap:8px}
-.term{border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:.9rem;max-width:100%}
-.term b{font-family:var(--f-mono);font-size:.82rem}
-.foot{border-top:1px solid var(--line);padding-block:18px 28px;color:var(--muted);font-size:.88rem;display:flex;flex-wrap:wrap;gap:8px 24px}
-.foot code{font-family:var(--f-mono);font-size:.8rem;overflow-wrap:anywhere}
+.terms{display:flex;flex-direction:column;gap:8px}
+.term b{font-family:var(--f-mono);font-size:1rem}
+.back{display:inline-block;margin-bottom:10px;font-weight:600}
+
+/* the bar page */
+.preview{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--panel);margin-bottom:16px}
+.preview .fake{padding:14px 16px;color:var(--ink2)}
+.cfg{display:grid;grid-template-columns:repeat(auto-fill,minmax(13rem,1fr));gap:12px;margin-bottom:16px}
+.cfg label{display:flex;flex-direction:column;gap:4px;font-weight:600;font-size:1rem}
+.cfg .boxes{display:flex;flex-wrap:wrap;gap:6px 14px;font-weight:400}
+
+/* help, and the foot */
+dialog.helpbox{border:1px solid var(--line);border-radius:14px;background:var(--panel);color:var(--ink);padding:20px 22px;width:min(560px,calc(100% - 32px))}
+dialog.helpbox::backdrop{background:rgba(16,38,42,.45)}
+.helpbox h2{margin-bottom:10px}
+.helpbox dl{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;margin:0 0 16px;font-size:1.0625rem}
+.helpbox dt{font-weight:700}
+.helpbox dd{margin:0;color:var(--ink2)}
+@media (max-width:520px){.helpbox{padding:16px 18px}.helpbox dl{grid-template-columns:1fr;gap:2px;font-size:1rem;line-height:1.4}.helpbox dd{margin-bottom:8px}}
+.btn{background:var(--accent);color:var(--accent-ink);border:0;border-radius:8px;padding:6px 16px;font-weight:700;cursor:pointer}
+footer{border-top:1px solid var(--line);margin-top:36px}
+footer .wrap{padding-block:20px 32px;display:flex;flex-direction:column;gap:8px;font-size:1rem;color:var(--ink2)}
+footer code{font-family:var(--f-mono);overflow-wrap:anywhere}
+.ok{color:var(--deep);font-weight:700}
+:root[data-theme="dark"] .ok{color:var(--accent)}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .ok{color:var(--accent)} }
 </style>
 </head>
 <body>
 
-
-<header class="bar"><div class="wrap">
-  <div class="brand"><h1>Lookout Radar</h1><small id="weekTag"></small></div>
-  <label class="ctl" for="role">I am a
-    <select id="role">
-      <option value="developer">developer</option>
-      <option value="learner">learner</option>
-      <option value="maintainer">maintainer</option>
-      <option value="user">user</option>
-    </select>
-  </label>
-  <label class="ctl" for="level">show
-    <select id="level">
-      <option value="info">every signal</option>
-      <option value="advice">advice and above</option>
-      <option value="action">actions to take</option>
-      <option value="urgent">urgent only</option>
-    </select>
-  </label>
-  <button class="help" type="button" id="helpOpen" aria-haspopup="dialog">How to read it</button>
+<header class="top"><div class="wrap">
+  <div class="row1">
+    <a class="brand" href="#/week">Lookout <span>Radar</span></a>
+    <nav class="views" aria-label="Views">
+      <a href="#/week" data-view="week">This week</a>
+      <a href="#/estate" data-view="estate">The estate</a>
+      <a href="#/signals" data-view="signals">All signals</a>
+      <a href="#/bar" data-view="bar">Lookout bar</a>
+    </nav>
+    <button class="help" type="button" id="helpOpen" aria-haspopup="dialog">How to read it</button>
+  </div>
+  <div class="row2">
+    <span class="lab" id="readerLab">Reading as</span>
+    <div class="seg" role="group" aria-labelledby="readerLab" id="readers"></div>
+    <span class="why" id="readerWhy"></span>
+  </div>
 </div></header>
 
-<div class="wrap intro">
-  <div class="lead">
-    <p class="what"><strong>What changed in AI this week, and what it means for you.</strong> Every Monday, Lookout reads the
-      week's papers, releases, security findings and practices at their source, and judges each one against what
-      <a href="https://github.com/mayouni/stzlib" target="_blank" rel="noopener">Softanza</a> builds.</p>
-    <p id="roleIntro"></p>
-  </div>
-  <div class="stamp"><span>feed <b id="feedStamp"></b></span><span>signed · <b>SHA256:ZUij0x…s49I</b></span></div>
-</div>
+<main id="view"></main>
 
-<main class="wrap grid">
-  <section class="scope" aria-label="Radar">
-    <h2>This week on the radar</h2>
-    <svg id="radar" viewBox="0 0 400 400" role="img" aria-label="Radar of this week's entries: closer to the centre means more relevant to Softanza"></svg>
-    <div class="legend" id="legend"></div>
-  </section>
-  <section class="list" aria-label="Signals">
-    <h2 id="listTitle">Signals</h2>
-    <div class="cards" id="cards"></div>
-  </section>
-</main>
-
-<div class="wrap foot">
-  <span>Data: Lookout's public feed, <a href="https://github.com/mayouni/lookout" target="_blank" rel="noopener">github.com/mayouni/lookout</a>. Every link opens the entry's page there.</span>
-  <span>Check the feed yourself: <code>ssh-keygen -Y verify -f allowed_signers -I feed@lookout -n lookout-feed -s index.json.sig &lt; index.json</code></span>
-</div>
+<footer><div class="wrap">
+  <span id="checked">Checking the feed's signature in this browser...</span>
+  <span>Data: Lookout's public feed and estate map, <a href="https://github.com/mayouni/lookout" target="_blank" rel="noopener">github.com/mayouni/lookout</a>. A signal's full entry opens there.</span>
+  <span>Check it yourself: <code>ssh-keygen -Y verify -f allowed_signers -I feed@lookout -n lookout-feed -s index.json.sig &lt; index.json</code></span>
+</div></footer>
 
 <dialog class="helpbox" id="help" aria-labelledby="helpTitle">
   <h2 id="helpTitle">How to read Lookout Radar</h2>
   <dl>
-    <dt>I am a</dt><dd>Pick who you are. Each signal then speaks to you in one sentence, and opens where it is most useful to you.</dd>
-    <dt>Show</dt><dd>How much a signal asks of you: <b>info</b> to know, <b>advice</b> to consider, <b>action</b> to do, <b>urgent</b> to do now.</dd>
-    <dt>The radar</dt><dd>The closer a dot sits to the centre, the more it matters to Softanza. Its ring is its level, its colour the kind of news (security, paper, release...).</dd>
-    <dt>A signal</dt><dd>Click a dot or a card. <b>Watch</b> says what happened, <b>Build</b> gives checks to run in your own project, <b>Learn</b> explains it in plain words with a question to test yourself.</dd>
-    <dt>new</dt><dd>A signal you have not opened yet on this device.</dd>
-    <dt>signed</dt><dd>The feed carries a signature, so anyone can check it came from Lookout unchanged (the command is at the bottom of the page).</dd>
+    <dt>What it is</dt><dd>Every week Lookout reads what changed in AI at its source, and places each piece of news on the Softanza estate: the machine, the language, the foundation and every project built on them.</dd>
+    <dt>Reading as</dt><dd>Say who you are once. Each signal then speaks to you in one sentence, and its page opens with what you need first: checks to run for a developer, the work proposed for a maintainer, a lesson for a learner.</dd>
+    <dt>This week</dt><dd>The week's signals on a radar: each slice is a layer of the estate, and the closer a dot sits to the centre, the more it matters.</dd>
+    <dt>The estate</dt><dd>The whole Softanza stack, layer by layer, and a grid of domains against layers: click any number to see those signals.</dd>
+    <dt>All signals</dt><dd>Every live signal, filtered by project, layer, domain, concern or level.</dd>
+    <dt>Lookout bar</dt><dd>One line of these notices on your own site, from one script tag.</dd>
+    <dt>Levels</dt><dd><b>to know</b>, <b>to consider</b>, <b>to do</b>, <b>to do now</b>.</dd>
   </dl>
-  <form method="dialog"><button class="close" type="submit">Got it</button></form>
+  <form method="dialog"><button class="btn" type="submit">Got it</button></form>
 </dialog>
 
-<div class="sheet" id="sheet" hidden>
-  <article class="panel" role="dialog" aria-modal="true" aria-labelledby="dTitle">
-    <div class="top"><div class="meta" id="dMeta"></div><button class="close" type="button" id="dClose">Close</button></div>
-    <h2 id="dTitle"></h2>
-    <div class="tabs" role="tablist">
-      <button type="button" role="tab" data-tab="watch" aria-selected="true">Watch</button>
-      <button type="button" role="tab" data-tab="build" aria-selected="false">Build</button>
-      <button type="button" role="tab" data-tab="learn" aria-selected="false">Learn</button>
-    </div>
-    <div id="dBody"></div>
-  </article>
-</div>
-
+<script src="bar/lookout-bar.js" data-no-bar></script>
 <script>
-let FEED = null;
-
-/* The app's own layer over the feed: for each entry, checks a programmer can run, and a short lesson.
-   Written by the desk, shown under the Build and Learn lenses; the feed's own text is shown under Watch. */
-let EXTRA = {};
-
+"use strict";
+let FEED = null, MAP = null, LESSONS = {};
+let live = [];
 const LEVELS = ["info","advice","action","urgent"];
-const KINDS = ["security","paper","release","practice","feature","idea","regulation","market"];
-const KIND_COLOR = {security:"--lv-urgent",paper:"--accent",release:"--lv-action",practice:"--muted",feature:"--lv-info",idea:"--lv-info",regulation:"--muted",market:"--muted"};
-/* who you are decides what a card says and which tab a signal opens on: one control, no second "lens" */
-const ROLE = {
-  developer: {tab:"build", intro:"As a <strong>developer</strong>, each signal opens on <strong>Build</strong>: checks and commands to run in your own project today."},
-  maintainer:{tab:"watch", intro:"As a <strong>maintainer</strong>, each signal opens on <strong>Watch</strong>: what happened, and the work proposed to Softanza's projects."},
-  learner:   {tab:"learn", intro:"As a <strong>learner</strong>, each signal opens on <strong>Learn</strong>: the news in plain words, its terms, and a question to test yourself."},
-  user:      {tab:"watch", intro:"As a <strong>user</strong>, each signal opens on <strong>Watch</strong>: what happened and what it means for the software you use."}
+const WORD = {info:"to know", advice:"to consider", action:"to do", urgent:"to do now"};
+const GROUP = {urgent:"To do now", action:"To do", advice:"To consider", info:"To know"};
+
+/* one reader, chosen once; it decides what a card says and in which order a signal's page reads */
+const READERS = {
+  developer: {label:"Developer",  why:"checks and code to run in your own project come first",
+              order:["notice","build","happened","learn","estate","actions","sources"]},
+  maintainer:{label:"Maintainer", why:"what happened and the work proposed to Softanza's projects come first",
+              order:["notice","happened","actions","estate","build","learn","sources"]},
+  learner:   {label:"Learner",    why:"each signal opens on a lesson in plain words",
+              order:["notice","learn","happened","estate","build","sources"]},
+  user:      {label:"User",       why:"what happened, and what it means for the software you use",
+              order:["notice","happened","learn","estate","sources"]}
 };
 
 const $ = s => document.querySelector(s);
@@ -228,84 +265,209 @@ const el = (t, cls, txt) => { const e = document.createElement(t); if (cls) e.cl
 const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 const store = { get(k,d){ try{ const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); }catch(e){ return d; } },
                 set(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} } };
-const clean = s => String(s ?? "").replace(/[\u0000-\u001f\u007f]/g, " ");   /* plain text only, control characters out */
+const clean = s => String(s ?? "").replace(/[\u0000-\u001f\u007f]/g, " ");      /* plain text only */
 const today = new Date().toISOString().slice(0,10);
-
-let state = { role: store.get("role","developer"), level: store.get("level","info") };
-if (!ROLE[state.role]) state.role = "developer";
+const plural = (n, w) => n + " " + w + (n === 1 ? "" : "s");
+let reader = store.get("reader", store.get("role", "developer"));
+if (!READERS[reader]) reader = "developer";
 const seen = new Set(store.get("seen", []));
-let live = [];
 
-function visible(){
-  const min = LEVELS.indexOf(state.level);
-  return live.filter(it => LEVELS.indexOf(it.level) >= min)
-             .sort((a,b) => (!!b.notice?.[state.role]) - (!!a.notice?.[state.role]))
-             .sort((a,b) => LEVELS.indexOf(b.level) - LEVELS.indexOf(a.level) || (b.relevance === "high") - (a.relevance === "high"));
+/* ------------------------------------------------------------ the map */
+let ALIAS = {}, PROJ = {}, LAYER = {}, DOMAIN = {}, CONCERN = {};
+function indexMap(){
+  for (const l of MAP.layers) LAYER[l.id] = l;
+  for (const p of MAP.projects){ PROJ[p.id] = p; ALIAS[p.id] = p.id; for (const a of (p.aliases||[])) ALIAS[a] = p.id; }
+  for (const d of MAP.domains) DOMAIN[d.id] = d;
+  for (const c of MAP.concerns) CONCERN[c.id] = c;
+}
+const projOf = a => ALIAS[a] || ALIAS[a.split(".")[0]] || null;
+const projectsOf = it => [...new Set((it.areas||[]).map(projOf).filter(Boolean))];
+const layersOf = it => [...new Set(projectsOf(it).map(p => PROJ[p].layer))];
+const levelPill = lv => { const p = el("span","pill lv",WORD[lv]); p.style.background = css("--lv-"+lv); return p; };
+function weekOf(dateStr){
+  const d = new Date(dateStr + "T00:00:00Z"); const day = d.getUTCDay() || 7; d.setUTCDate(d.getUTCDate() + 4 - day);
+  const y0 = new Date(Date.UTC(d.getUTCFullYear(),0,1)); return d.getUTCFullYear() + "-W" + String(Math.ceil(((d - y0) / 864e5 + 1) / 7)).padStart(2,"0");
+}
+const byLevel = (a,b) => LEVELS.indexOf(b.level) - LEVELS.indexOf(a.level) || (b.relevance === "high") - (a.relevance === "high") || (a.date < b.date ? 1 : -1);
+
+/* ------------------------------------------------------------ a card */
+function card(it){
+  const c = el("a","card"); c.href = "#/signal/" + it.id;
+  const stripe = el("span","stripe"); stripe.style.background = css("--lv-"+it.level);
+  const b = el("span","body"), m = el("span","meta");
+  m.append(levelPill(it.level));
+  for (const p of projectsOf(it)) m.append(el("span","pill proj",PROJ[p].name));
+  m.append(el("span",null,it.kind));
+  if (!seen.has(it.id)) m.append(el("span","new","new"));
+  b.append(m, el("h3",null,clean(it.title)));
+  const note = it.notice?.[reader];
+  if (note) b.append(el("p",null,clean(note)));
+  else b.append(el("p","plain",clean((LESSONS[it.id]?.lesson || it.summary).split(". ")[0].replace(/\.$/,"") + ".")));
+  c.append(stripe, b); return c;
+}
+function head(eyebrow, title, ledes){
+  const h = el("div","head"), w = el("div","wrap");
+  w.append(el("p","eyebrow",eyebrow), el("h1",null,title));
+  for (const l of ledes) w.append(typeof l === "string" ? el("p","lede",l) : l);
+  h.append(w); return h;
 }
 
-function levelPill(lv){ const p = el("span","pill lv",lv); p.style.background = css("--lv-"+lv); return p; }
-
-function renderCards(){
-  const box = $("#cards"); box.replaceChildren();
-  const items = visible();
-  const mine = items.filter(it => it.notice?.[state.role]).length;
-  $("#listTitle").textContent = items.length + (items.length === 1 ? " signal" : " signals") + (mine ? " · " + mine + " written for a " + state.role : "");
-  if (!items.length){ box.append(el("div","empty","Choose \"every signal\" under Show to see the whole week.")); return; }
-  for (const it of items){
-    const c = el("button","card"); c.type = "button";
-    const stripe = el("span","stripe"); stripe.style.background = css("--lv-"+it.level);
-    const b = el("span","body");
-    const m = el("span","meta");
-    m.append(levelPill(it.level), el("span","pill",it.kind), el("span","pill",it.stance), el("span",null,"relevance " + it.relevance));
-    if (!seen.has(it.id)) m.append(el("span","new","new"));
-    b.append(m, el("h3",null,clean(it.title)));
-    /* the notice written for this role when there is one (feed rule: own audience only); otherwise the plain-words line */
-    if (it.notice?.[state.role]) b.append(el("p",null,clean(it.notice[state.role])));
-    else b.append(el("p","quiet",clean((EXTRA[it.id]?.lesson || it.summary).split(". ")[0].replace(/\.$/,"") + ".")));
-    c.append(stripe, b);
-    c.addEventListener("click", () => openEntry(it.id));
-    box.append(c);
+/* ------------------------------------------------------------ view: this week */
+function viewWeek(){
+  const newest = live.map(i => i.date).sort().pop() || today;
+  const wk = weekOf(newest);
+  const items = live.filter(i => weekOf(i.date) === wk).sort(byLevel);
+  const frag = document.createDocumentFragment();
+  const h = head("Week " + wk, "What changed in AI this week, and what it means for what you build",
+    ["Lookout reads the week's papers, releases, security findings and practices at their source, and places each one on the Softanza estate: the machine (Harobanda), the language (Haro), the foundation (Softanza), and the projects built on them."]);
+  const facts = el("div","facts");
+  const fact = (n, w) => { if (n > 0){ const f = el("div","fact"); f.append(el("b",null,String(n)), document.createTextNode(w)); facts.append(f); } };
+  fact(items.length, items.length === 1 ? "signal this week" : "signals this week");
+  fact(items.filter(i => i.level === "action" || i.level === "urgent").length, "to do");
+  fact(items.filter(i => i.notice?.[reader]).length, "written for a " + reader);
+  fact(new Set(items.flatMap(projectsOf)).size, "projects touched");
+  h.querySelector(".wrap").append(facts);
+  frag.append(h);
+  const s = el("section","block wrap week");
+  const scope = el("div","scope"); scope.append(el("h2",null,"The week on the estate"), radar(items));
+  const list = el("div");
+  for (const lv of ["urgent","action","advice","info"]){
+    const g = items.filter(i => i.level === lv); if (!g.length) continue;
+    const grp = el("div","group"); grp.append(el("h3",null,GROUP[lv] + " (" + g.length + ")"));
+    const cs = el("div","cards"); for (const it of g) cs.append(card(it)); grp.append(cs); list.append(grp);
   }
+  s.append(scope, list); frag.append(s);
+  return frag;
 }
 
-function renderRadar(){
-  const svg = $("#radar"); const NS = "http://www.w3.org/2000/svg";
-  const mk = (t, a) => { const e = document.createElementNS(NS,t); for (const k in a) e.setAttribute(k,a[k]); return e; };
-  svg.replaceChildren();
-  const C = 200, R = {high:70, medium:120, low:165};
-  svg.append(mk("circle",{cx:C,cy:C,r:185,fill:css("--scope"),stroke:css("--scope-line")}));
-  for (const [k,r] of Object.entries(R)){
-    svg.append(mk("circle",{cx:C,cy:C,r,fill:"none",stroke:css("--scope-line"),"stroke-dasharray":"3 5"}));
-    const t = mk("text",{x:C+4,y:C-r+14,fill:css("--muted"),"font-size":"11","font-family":"JetBrains Mono, monospace"}); t.textContent = k; svg.append(t);
-  }
-  svg.append(mk("line",{x1:C,y1:15,x2:C,y2:385,stroke:css("--scope-line")}), mk("line",{x1:15,y1:C,x2:385,y2:C,stroke:css("--scope-line")}));
-  const sw = mk("g",{class:"sweep"});
-  sw.append(mk("path",{d:`M${C},${C} L${C},15 A185,185 0 0,1 ${C+185*Math.sin(Math.PI/7)},${C-185*Math.cos(Math.PI/7)} Z`,fill:css("--accent"),opacity:"0.10"}));
-  svg.append(sw);
-  const items = visible();
-  const kinds = [...new Set(items.map(i => i.kind))];
-  items.forEach((it, i) => {
-    const k = KINDS.indexOf(it.kind); const sameRing = items.filter(x => x.relevance === it.relevance);
-    const idx = sameRing.indexOf(it);
-    const ang = (k * 45 + idx * 23 + 15) * Math.PI / 180;
-    const r = R[it.relevance] - 22 + (idx % 2) * 14;
-    const x = C + r * Math.sin(ang), y = C - r * Math.cos(ang);
-    const g = mk("g",{class:"blip",tabindex:"0",role:"button","aria-label":clean(it.title)});
-    const size = {info:6,advice:8,action:10,urgent:12}[it.level];
-    g.append(mk("circle",{class:"ring",cx:x,cy:y,r:size+4,fill:"none",stroke:css("--lv-"+it.level),"stroke-width":"1.5"}));
-    g.append(mk("circle",{cx:x,cy:y,r:size,fill:css(KIND_COLOR[it.kind] || "--muted")}));
-    const tt = mk("title",{}); tt.textContent = it.kind + " · " + it.level + " — " + clean(it.title); g.append(tt);
-    g.addEventListener("click", () => openEntry(it.id));
-    g.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " "){ e.preventDefault(); openEntry(it.id); }});
-    svg.append(g);
+function radar(items){
+  const NS = "http://www.w3.org/2000/svg", mk = (t, a) => { const e = document.createElementNS(NS,t); for (const k in a) e.setAttribute(k,a[k]); return e; };
+  const svg = mk("svg",{viewBox:"0 0 440 440",role:"img","aria-label":"Radar: each slice is a layer of the Softanza estate; the closer to the centre, the more relevant"});
+  const C = 220, R = {high:72, medium:122, low:168}, layers = MAP.layers, n = layers.length, step = 360 / n;
+  svg.append(mk("circle",{cx:C,cy:C,r:186,fill:css("--tint"),stroke:css("--line")}));
+  for (const r of Object.values(R)) svg.append(mk("circle",{cx:C,cy:C,r,fill:"none",stroke:css("--line"),"stroke-dasharray":"4 6"}));
+  layers.forEach((l, i) => {
+    const a = (i * step) * Math.PI / 180;
+    svg.append(mk("line",{x1:C,y1:C,x2:C + 186*Math.sin(a),y2:C - 186*Math.cos(a),stroke:css("--line")}));
+    const m = ((i + .5) * step) * Math.PI / 180, t = mk("text",{class:"lbl",x:C + 204*Math.sin(m),y:C - 204*Math.cos(m) + 8,"text-anchor":"middle"});
+    t.textContent = String(i + 1); svg.append(t);
   });
-  const lg = $("#legend"); lg.replaceChildren();
-  for (const k of kinds){ const s = el("span"); const d = el("i"); d.style.background = css(KIND_COLOR[k]); s.append(d, document.createTextNode(k)); lg.append(s); }
-  const s2 = el("span",null,"ring = level · centre = most relevant"); lg.append(s2);
+  const slot = {};
+  for (const it of items){
+    const lid = layersOf(it)[0] || "foundation", li = layers.findIndex(l => l.id === lid);
+    const key = lid + it.relevance; slot[key] = (slot[key] || 0) + 1;
+    const k = slot[key], ang = ((li + .5) * step + ((k % 2 ? 1 : -1) * Math.ceil((k - 1) / 2) * 14)) * Math.PI / 180;
+    const r = R[it.relevance] - 16 + ((k - 1) % 2) * 14;
+    const x = C + r * Math.sin(ang), y = C - r * Math.cos(ang), size = {info:7,advice:9,action:11,urgent:13}[it.level];
+    const g = mk("a",{class:"blip",href:"#/signal/" + it.id,"aria-label":clean(it.title)});
+    g.append(mk("circle",{class:"halo",cx:x,cy:y,r:size+4,fill:"none",stroke:css("--lv-"+it.level),"stroke-width":"2"}));
+    g.append(mk("circle",{cx:x,cy:y,r:size,fill:css("--lv-"+it.level)}));
+    const tt = mk("title",{}); tt.textContent = WORD[it.level] + ": " + clean(it.title); g.append(tt);
+    svg.append(g);
+  }
+  const box = el("div"); box.append(svg);
+  const key = el("div","key");
+  for (const lv of ["urgent","action","advice","info"]){ const s = el("span"); const d = el("i"); d.style.background = css("--lv-"+lv); s.append(d, document.createTextNode(WORD[lv])); key.append(s); }
+  key.append(el("span",null,"centre: most relevant"));
+  const order = el("div","key"); order.append(el("b",null,"Slices, clockwise:"));
+  layers.forEach((l, i) => { const a = el("a",null,(i + 1) + " " + l.name); a.href = "#/signals?l=" + l.id; order.append(a); });
+  box.append(key, order); return box;
 }
 
+/* ------------------------------------------------------------ view: the estate */
+function viewEstate(){
+  const frag = document.createDocumentFragment();
+  frag.append(head("The estate", "Softanza and its family, layer by layer",
+    ["Softanza is the foundation of a family of projects: a machine beneath it, a language that runs on it, a store, a server and a browser runtime, an intelligence layer, and the interfaces and applications people use. Lookout places every signal on this map, so each project sees what touches it."]));
+  const count = pid => live.filter(it => projectsOf(it).includes(pid)).length;
+  const projTile = p => {
+    const n = count(p.id), t = n ? el("a","proj") : el("div","proj");
+    if (n) t.href = "#/signals?p=" + p.id;
+    t.append(el("b",null,p.name), el("p",null,p.line));
+    if (n) t.append(el("span","n",plural(n,"signal")));
+    return t;
+  };
+  const s = el("section","block wrap"); s.append(el("h2",null,"The stack"));
+  const grid = el("div","estate"), stack = el("div","stack"), beside = el("aside","beside");
+  for (const l of MAP.layers){
+    const ps = MAP.projects.filter(p => p.layer === l.id);
+    if (l.beside){ beside.append(el("h3",null,l.name), el("p",null,l.line)); for (const p of ps) beside.append(projTile(p)); continue; }
+    const row = el("div","layer"), nm = el("div","name"); nm.append(el("h3",null,l.name), el("p",null,l.line));
+    const pr = el("div","projects"); for (const p of ps) pr.append(projTile(p));
+    row.append(nm, pr); stack.append(row);
+  }
+  grid.append(stack, beside); s.append(grid); frag.append(s);
+
+  /* domains against layers: the strict grid, and the same content as a list on a phone */
+  const s2 = el("section","block wrap"); s2.append(el("h2",null,"Domains against layers"));
+  s2.append(el("p","lede","Each number is the count of live signals in that domain touching that layer. Click it to read them."));
+  const t = el("table","grid"), thead = el("thead"), hr = el("tr"); hr.append(el("th",null,"Domain"));
+  for (const l of MAP.layers) hr.append(el("th",null,l.name));
+  thead.append(hr); t.append(thead);
+  const tb = el("tbody"), gl = el("div","gridlist");
+  for (const d of MAP.domains){
+    const tr = el("tr"), th = el("th"); th.scope = "row"; th.textContent = d.name; tr.append(th);
+    const li = el("div","dom"), chips = el("div","chips"); li.append(el("h3",null,d.name));
+    for (const l of MAP.layers){
+      const n = live.filter(it => (it.domains||[]).includes(d.id) && layersOf(it).includes(l.id)).length;
+      const td = el("td");
+      if (n){ const a = el("a",null,String(n)); a.href = "#/signals?d=" + d.id + "&l=" + l.id; a.setAttribute("aria-label", plural(n,"signal") + ": " + d.name + ", " + l.name); td.append(a);
+        const c = el("a","chip",l.name + " · " + n); c.href = a.href; chips.append(c); }
+      tr.append(td);
+    }
+    tb.append(tr);
+    if (chips.children.length){ li.append(chips); gl.append(li); }
+  }
+  t.append(tb); s2.append(t, gl); frag.append(s2);
+
+  const s3 = el("section","block wrap"); s3.append(el("h2",null,"What is at stake"));
+  const cs = el("div","concerns");
+  for (const c of MAP.concerns){
+    const n = live.filter(it => (it.concerns||[]).includes(c.id)).length;
+    const b = n ? el("a","concern") : el("div","concern"); if (n) b.href = "#/signals?c=" + c.id;
+    b.append(el("h3",null,c.name), el("p",null,c.line)); if (n) b.append(el("span","new",plural(n,"signal")));
+    cs.append(b);
+  }
+  s3.append(cs); frag.append(s3);
+  return frag;
+}
+
+/* ------------------------------------------------------------ view: all signals */
+function viewSignals(q){
+  const frag = document.createDocumentFragment();
+  frag.append(head("All signals", "Every live signal, filtered your way",
+    ["Choose a project, a layer, a domain, a concern or a level. Each choice is kept in the address, so a filtered list can be shared."]));
+  const s = el("section","block wrap");
+  const f = el("div","filters");
+  const sel = (key, label, opts) => {
+    const l = el("label"); l.append(document.createTextNode(label));
+    const sl = el("select"); sl.append(new Option("any", ""));
+    for (const [v, t] of opts) sl.append(new Option(t, v));
+    sl.value = q.get(key) || "";
+    sl.addEventListener("change", () => { if (sl.value) q.set(key, sl.value); else q.delete(key); location.hash = "#/signals" + (q.toString() ? "?" + q : ""); });
+    l.append(sl); f.append(l);
+  };
+  sel("p","Project", MAP.projects.map(p => [p.id, p.name]));
+  sel("l","Layer", MAP.layers.map(l => [l.id, l.name]));
+  sel("d","Domain", MAP.domains.map(d => [d.id, d.name]));
+  sel("c","Concern", MAP.concerns.map(c => [c.id, c.name]));
+  sel("v","Level at least", LEVELS.map(v => [v, WORD[v]]));
+  s.append(f);
+  const items = live.filter(it =>
+       (!q.get("p") || projectsOf(it).includes(q.get("p")))
+    && (!q.get("l") || layersOf(it).includes(q.get("l")))
+    && (!q.get("d") || (it.domains||[]).includes(q.get("d")))
+    && (!q.get("c") || (it.concerns||[]).includes(q.get("c")))
+    && (!q.get("v") || LEVELS.indexOf(it.level) >= LEVELS.indexOf(q.get("v")))).sort(byLevel);
+  s.append(el("p","count", plural(items.length, "signal")));
+  if (!items.length){ const e = el("div","empty"); e.append(document.createTextNode("Widen a filter to see more: ")); const a = el("a",null,"every signal"); a.href = "#/signals"; e.append(a, document.createTextNode(".")); s.append(e); }
+  const cs = el("div","cards"); for (const it of items) cs.append(card(it)); s.append(cs);
+  frag.append(s); return frag;
+}
+
+/* ------------------------------------------------------------ view: one signal */
 function codeBlock(c){
-  const w = el("div","code");
+  const w = el("div","code withcopy");
   if (c.why) w.append(el("div","why",c.why));
   const pre = el("pre"); pre.textContent = c.cmd; w.append(pre);
   const b = el("button","copy","Copy"); b.type = "button";
@@ -316,91 +478,148 @@ function codeBlock(c){
   });
   w.append(b); return w;
 }
-
-let current = null;
-function openEntry(id, tab){
-  const it = FEED.items.find(x => x.id === id); if (!it) return;
-  current = it; seen.add(id); store.set("seen",[...seen]);
-  $("#dMeta").replaceChildren(levelPill(it.level), el("span","pill",it.kind), el("span","pill",it.stance), el("span",null,it.date));
-  $("#dTitle").textContent = clean(it.title);
-  showTab(tab || ROLE[state.role].tab);
-  $("#sheet").hidden = false; document.documentElement.classList.add("sheet-open"); $("#dClose").focus();
-  renderCards();
+function viewSignal(id){
+  const it = FEED.items.find(x => x.id === id);
+  if (!it){ const s = el("section","block wrap"); s.append(el("h1",null,"This signal is in the archive"), (() => { const a = el("a",null,"Read every live signal"); a.href = "#/signals"; return a; })()); return s; }
+  seen.add(id); store.set("seen",[...seen]);
+  const x = LESSONS[it.id] || {};
+  const frag = document.createDocumentFragment();
+  const m = el("div","meta"); m.append(levelPill(it.level), el("span","pill",it.kind), el("span","pill",it.stance), el("span",null,it.date));
+  frag.append(head("Signal · " + it.date, clean(it.title), [m]));
+  const s = el("section","block wrap sig");
+  const back = el("a","back","All signals"); back.href = "#/signals"; s.append(back);
+  const part = (title, ...nodes) => { const p = el("div","part"); if (title) p.append(el("h2",null,title)); p.append(...nodes); return p; };
+  const P = {
+    notice: () => it.notice?.[reader] ? part("For a " + reader, el("p","notice",clean(it.notice[reader]))) : null,
+    happened: () => part("What happened", el("p",null,clean(it.summary))),
+    build: () => (x.build||[]).length ? part("Build: checks to run in your project",
+                    el("p",null,"Each one reads your project and changes nothing unless it says it writes."), ...x.build.map(codeBlock)) : null,
+    learn: () => {
+      const nodes = [el("p",null,x.lesson || clean(it.summary))];
+      if (x.terms?.length){ const t = el("div","terms"); for (const [k,v] of x.terms){ const d = el("p"); d.append(el("b",null,k), document.createTextNode(" — " + v)); t.append(d); } nodes.push(el("h3",null,"Terms"), t); }
+      if (x.quiz?.length){ nodes.push(el("h3",null,"Check yourself")); for (const [q,a] of x.quiz){ const d = el("details"); d.append(el("summary",null,q), el("p",null,a)); nodes.push(d); } }
+      return part("Learn: in plain words", ...nodes);
+    },
+    estate: () => {
+      const chips = el("div","chips");
+      const chip = (txt, href) => { const a = el("a","chip",txt); a.href = href; chips.append(a); };
+      for (const p of projectsOf(it)) chip(PROJ[p].name + " · " + LAYER[PROJ[p].layer].name, "#/signals?p=" + p);
+      for (const d of (it.domains||[])) chip(DOMAIN[d]?.name || d, "#/signals?d=" + d);
+      for (const c of (it.concerns||[])) chip(CONCERN[c]?.name || c, "#/signals?c=" + c);
+      const kv = el("dl","kv");
+      for (const [k,v] of [["stance",it.stance],["relevance",it.relevance],["confidence",it.confidence],["look again by",it.review_by]]) kv.append(el("dt",null,k), el("dd",null,clean(v)));
+      return part("Where it sits on the estate", chips, kv);
+    },
+    actions: () => it.actions?.length ? part("Proposed to Softanza's maintainers", (() => { const ul = el("ul","plain"); for (const a of it.actions){ const p = projOf(a.area); ul.append(el("li",null,clean((p ? PROJ[p].name : a.area) + ": " + a.do + " (" + a.state + ")"))); } return ul; })()) : null,
+    sources: () => { const ul = el("ul","plain"); for (const so of it.sources) ul.append(el("li",null,clean(so.title + " — " + (so.by || "") + ", read " + so.read)));
+      const p = el("p"); const a = el("a",null,"Read the full entry on Lookout"); a.href = it.url; a.target = "_blank"; a.rel = "noopener"; p.append(a);
+      return part("Sources", ul, p); }
+  };
+  for (const k of READERS[reader].order){ const n = P[k](); if (n) s.append(n); }
+  frag.append(s); return frag;
 }
-function showTab(t){
-  document.querySelectorAll(".tabs button").forEach(b => b.setAttribute("aria-selected", String(b.dataset.tab === t)));
-  const it = current, x = EXTRA[it.id] || {}, body = $("#dBody"); body.replaceChildren();
-  const sec = el("div","sec");
-  if (t === "watch"){
-    const note = it.notice?.[state.role];
-    if (note){ sec.append(el("h4",null,"For a " + state.role)); sec.append(el("p","notice",clean(note))); }
-    sec.append(el("h4",null,"What happened"), el("p",null,clean(it.summary)));
-    const kv = el("dl","kv");
-    for (const [k,v] of [["stance",it.stance],["relevance",it.relevance],["level",it.level],["confidence",it.confidence],["areas",(it.areas||[]).join(", ")],["look again by",it.review_by]]){ kv.append(el("dt",null,k), el("dd",null,clean(v))); }
-    sec.append(kv);
-    if (it.actions?.length){
-      sec.append(el("h4",null,"Proposed to Softanza's maintainers"));
-      const ul = el("ul","act"); for (const a of it.actions) ul.append(el("li",null,clean(a.area + ": " + a.do + " (" + a.state + ")"))); sec.append(ul);
-    }
-    sec.append(el("h4",null,"Sources, as listed on the entry"));
-    const ul = el("ul","src"); for (const s of it.sources) ul.append(el("li",null,clean(s.title + " — " + (s.by || "") + ", read " + s.read))); sec.append(ul);
-    const p = el("p"); const a = el("a",null,"Read the full entry on Lookout"); a.href = it.url; a.target = "_blank"; a.rel = "noopener"; p.append(a); sec.append(p);
-  } else if (t === "build"){
-    sec.append(el("p",null,"Run these in your own project. Each one is read-only unless it says it writes."));
-    for (const c of (x.build || [])) sec.append(codeBlock(c));
-  } else {
-    sec.append(el("h4",null,"In plain words"), el("p",null,x.lesson || clean(it.summary)));
-    if (x.terms?.length){ sec.append(el("h4",null,"Terms")); const box = el("div","terms");
-      for (const [k,v] of x.terms){ const s = el("span","term"); s.append(el("b",null,k), document.createTextNode(" — " + v)); box.append(s); } sec.append(box); }
-    if (x.quiz?.length){ sec.append(el("h4",null,"Check yourself"));
-      for (const [q,a] of x.quiz){ const d = el("details"); d.append(el("summary",null,q), el("p",null,a)); sec.append(d); } }
+
+/* ------------------------------------------------------------ view: the Lookout bar */
+const BAR_VERSION = "1.0.0", BAR_SRI = "sha384-G9y4SkVgX4Tv9gtIOvZUKRgSci1cEqckGO/CHjIj91V0zrNpldPRt0vB2tkgxYeL";
+function viewBar(){
+  const frag = document.createDocumentFragment();
+  frag.append(head("Lookout bar", "Lookout's notices on your own site, from one line",
+    ["The Lookout bar shows, at the top of any page, the newest notice written for that site's readers: one sentence, its level, and a link to the full entry. It checks the feed's signature in the browser before it shows a word, keeps to plain text, and sits in the page's flow, so it never covers content."]));
+  const s = el("section","block wrap");
+  s.append(el("h2",null,"Try it"));
+  const cfg = el("div","cfg");
+  const mkSel = (label, opts, val) => { const l = el("label"); l.append(document.createTextNode(label)); const sl = el("select"); for (const [v,t] of opts) sl.append(new Option(t,v)); sl.value = val; l.append(sl); cfg.append(l); return sl; };
+  const aud = mkSel("Your readers are", Object.keys(READERS).map(r => [r, READERS[r].label + "s"]), reader === "user" ? "user" : reader);
+  const lev = mkSel("Show from level", LEVELS.map(v => [v, WORD[v]]), "advice");
+  const pl = el("label"); pl.append(document.createTextNode("Only signals touching"));
+  const boxes = el("div","boxes"); const picks = [];
+  for (const p of MAP.projects){ const lb = el("label"); const cb = el("input"); cb.type = "checkbox"; cb.value = p.id; picks.push(cb); lb.append(cb, document.createTextNode(" " + p.name)); boxes.append(lb); }
+  pl.append(boxes); cfg.append(pl);
+  s.append(cfg);
+  const pv = el("div","preview"), host = el("div"); host.setAttribute("data-lookout-bar",""); pv.append(host, el("div","fake","Your page starts here."));
+  s.append(pv);
+  const code = el("div","code withcopy"), pre = el("pre"); code.append(pre);
+  const cp = el("button","copy","Copy"); cp.type = "button"; code.append(cp);
+  s.append(el("h2",null,"Add it to your page"), el("p",null,"Paste this line into your page's head. The integrity value pins this exact version: the browser refuses the script if one byte differs."), code);
+  cp.addEventListener("click", async () => { try { await navigator.clipboard.writeText(pre.textContent); cp.textContent = "Copied"; } catch(e){ cp.textContent = "Select it"; } setTimeout(() => cp.textContent = "Copy", 1600); });
+  const update = () => {
+    const projects = picks.filter(c => c.checked).map(c => c.value).join(",");
+    pre.textContent = '<script src="https://mayouni.github.io/lookout/bar/lookout-bar-' + BAR_VERSION + '.js"\n        integrity="' + BAR_SRI + '" crossorigin="anonymous"\n        data-audience="' + aud.value + '" data-level="' + lev.value + '"' + (projects ? ' data-projects="' + projects + '"' : '') + ' defer></' + 'script>';
+    if (window.LookoutBar) LookoutBar.mount(host, {audience:aud.value, level:lev.value, projects}, {base:new URL(".", location.href).href, keepDismissed:true});
+  };
+  [aud, lev, ...picks].forEach(c => c.addEventListener("change", update));
+  update();
+  const s2 = el("section","block wrap"); s2.append(el("h2",null,"How it behaves"));
+  const ul = el("ul","plain");
+  for (const t of [
+    "It reads feed/index.json and its signature at most once a day per browser, and checks the signature against the key written into the script; a feed that fails the check shows nothing.",
+    "It shows the notice written for the audience you choose, as plain text, with one link: the entry's own page on Lookout.",
+    "A reader who dismisses a notice does not see it again on that browser.",
+    "It goes inside the first element carrying data-lookout-bar, or else at the top of the body, in the page's flow.",
+    "Its styles live in a shadow root, so your page's styles and its own never mix. Set --lookout-accent, --lookout-bg and --lookout-ink on that element to match your colours.",
+    "A published version never changes. A new version gets a new file name, and the line above keeps working."
+  ]) ul.append(el("li",null,t));
+  s2.append(ul);
+  frag.append(s, s2); return frag;
+}
+
+/* ------------------------------------------------------------ the router */
+function readerRow(){
+  const box = $("#readers"); box.replaceChildren();
+  for (const r of Object.keys(READERS)){
+    const b = el("button",null,READERS[r].label); b.type = "button"; b.setAttribute("aria-pressed", String(r === reader));
+    b.addEventListener("click", () => { reader = r; store.set("reader", r); readerRow(); route(true); });
+    box.append(b);
   }
-  body.append(sec);
+  $("#readerWhy").textContent = READERS[reader].why + ".";
 }
-function closeSheet(){ $("#sheet").hidden = true; document.documentElement.classList.remove("sheet-open"); current = null; }
-
-function setRole(r){
-  state.role = r; store.set("role",r);
-  $("#roleIntro").innerHTML = ROLE[r].intro;
-  renderCards(); renderRadar();
+function route(keepScroll){
+  const h = location.hash || "#/week";
+  const [path, qs] = h.slice(1).split("?");
+  const parts = path.split("/").filter(Boolean);
+  const v = parts[0] || "week";
+  const main = $("#view"); main.replaceChildren();
+  let node, title = "Lookout Radar";
+  if (v === "estate"){ node = viewEstate(); title = "The estate · Lookout Radar"; }
+  else if (v === "signals"){ node = viewSignals(new URLSearchParams(qs || "")); title = "All signals · Lookout Radar"; }
+  else if (v === "signal"){ node = viewSignal(decodeURIComponent(parts[1] || "")); title = (FEED.items.find(i => i.id === parts[1])?.title || "Signal") + " · Lookout Radar"; }
+  else if (v === "bar"){ node = viewBar(); title = "Lookout bar · Lookout Radar"; }
+  else { node = viewWeek(); }
+  main.append(node); document.title = title;
+  document.querySelectorAll("nav.views a").forEach(a => a.toggleAttribute("aria-current", a.dataset.view === (v === "signal" ? "signals" : v)));
+  document.querySelectorAll("nav.views a[aria-current]").forEach(a => a.setAttribute("aria-current","page"));
+  if (!keepScroll) window.scrollTo(0, 0);
 }
 
 async function start(){
+  const help = $("#help");
+  const openHelp = () => { help.showModal(); document.documentElement.classList.add("locked"); };
+  $("#helpOpen").addEventListener("click", openHelp);
+  help.addEventListener("close", () => document.documentElement.classList.remove("locked"));
+  help.addEventListener("click", e => { if (e.target === help) help.close(); });
+  readerRow();
   try {
-    const [f, l] = await Promise.all([
-      fetch("feed/index.json", {cache: "no-cache"}).then(r => { if (!r.ok) throw new Error("feed " + r.status); return r.json(); }),
-      fetch("app/lessons.json", {cache: "no-cache"}).then(r => r.ok ? r.json() : {entries:{}}).catch(() => ({entries:{}}))
+    const here = new URL(".", location.href).href;
+    const [f, m, l] = await Promise.all([
+      window.LookoutFeed.load({ base: here, fresh: true }),
+      fetch("map/estate.json", {cache:"no-cache"}).then(r => { if (!r.ok) throw new Error("estate map " + r.status); return r.json(); }),
+      fetch("app/lessons.json", {cache:"no-cache"}).then(r => r.ok ? r.json() : {entries:{}}).catch(() => ({entries:{}}))
     ]);
-    if (f.feed !== "lookout" || f.version !== 1) throw new Error("this page reads feed version 1");
-    FEED = f; EXTRA = l.entries || {};
+    FEED = f; MAP = m; LESSONS = l.entries || {};
   } catch (e) {
-    document.querySelector("#cards").replaceChildren(el("div", "empty", "The feed could not be loaded (" + e.message + "). Reload the page to try again."));
+    $("#checked").textContent = "";
+    $("#view").replaceChildren(head("Lookout Radar", "The feed did not pass its check in this browser", ["Radar shows a feed only after its signature checks: " + e.message + ". Reload the page, or open it in a current browser."]));
     return;
   }
+  indexMap();
   live = FEED.items.filter(it => !["declined","superseded"].includes(it.status) && it.review_by >= today);
-  $("#role").value = state.role; $("#level").value = state.level;
-  $("#role").addEventListener("change", e => setRole(e.target.value));
-  $("#level").addEventListener("change", e => { state.level = e.target.value; store.set("level",state.level); renderCards(); renderRadar(); });
-  const help = $("#help");
-  $("#helpOpen").addEventListener("click", () => { help.showModal(); document.documentElement.classList.add("sheet-open"); });
-  help.addEventListener("close", () => document.documentElement.classList.remove("sheet-open"));
-  help.addEventListener("click", e => { if (e.target === help) help.close(); });
-  if (!store.get("helped", false)) { store.set("helped", true); help.showModal(); document.documentElement.classList.add("sheet-open"); }
-  document.querySelectorAll(".tabs button").forEach(b => b.addEventListener("click", () => showTab(b.dataset.tab)));
-  $("#dClose").addEventListener("click", closeSheet);
-  $("#sheet").addEventListener("click", e => { if (e.target.id === "sheet") closeSheet(); });
-  document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("#sheet").hidden) closeSheet(); });
-  matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", renderRadar);
-  new MutationObserver(renderRadar).observe(document.documentElement, {attributes:true, attributeFilter:["data-theme"]});
-
-  const d = new Date(FEED.items.map(i => i.date).sort().pop() + "T00:00:00Z"); const wk = (() => { const t = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate())); const day = t.getUTCDay() || 7; t.setUTCDate(t.getUTCDate() + 4 - day); const y0 = new Date(Date.UTC(t.getUTCFullYear(),0,1)); return t.getUTCFullYear() + "-W" + String(Math.ceil(((t - y0) / 864e5 + 1) / 7)).padStart(2,"0"); })();
-  $("#weekTag").textContent = "week " + wk;
-  $("#feedStamp").textContent = FEED.items.length + " entries · " + FEED.updated.slice(0,10);
-  setRole(state.role);
-
+  const ok = el("span","ok","Signature checked in this browser"); $("#checked").replaceChildren(ok, document.createTextNode(": the feed was signed by Lookout's key SHA256:ZUij0x…s49I and is unchanged since. " + FEED.items.length + " entries, updated " + FEED.updated.slice(0,10) + "."));
+  addEventListener("hashchange", () => route(false));
+  matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => route(true));
+  route(true);
+  if (!store.get("helped", false)) { store.set("helped", true); openHelp(); }
 }
 start();
 </script>
-
 </body>
 </html>

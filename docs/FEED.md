@@ -96,7 +96,9 @@ own `tags`. Notices, actions and sources are in the index only.
 | `level` | yes | `info` < `advice` < `action` < `urgent`. `urgent` is kept for a security issue that affects Softanza's users now |
 | `audiences` | yes | one or more of `developer`, `user`, `learner`, `maintainer` |
 | `notice` | yes | one plain sentence per audience listed, and only for those |
-| `areas` | no | the public Softanza areas it touches: `softanza`, `stzlib`, `haro`, `stzzui`, `harobanda`, or a dotted sub-area such as `stzlib.security` |
+| `areas` | no | the projects of the estate it touches, by the id or an alias listed in [`map/estate.json`](../map/estate.json) (`softanza`, `haro`, `harobanda`, `zane`, `haroserv`, `haroscript`...), or a dotted sub-area of one such as `stzlib.security` |
+| `domains` | no | what the news is about, from the map's domains: `models`, `agents`, `security`, `code`, `interfaces`, `data`, `web`, `devices`, `learning`, `society` |
+| `concerns` | no | what is at stake, from the map's concerns: `trust`, `correctness`, `sovereignty`, `speed`, `clarity`, `cost` |
 | `actions` | no | proposals to Softanza's maintainers; `state` is `proposed`, `routed`, `in-progress`, `done` or `declined` |
 | `status` | yes | `new`, `analysed`, `routed`, `done`, `declined`, `superseded` |
 | `supersedes` | no | the `id` of an entry this one replaces |
@@ -108,6 +110,12 @@ own `tags`. Notices, actions and sources are in the index only.
 
 A reader that knows version 1 **ignores any field it does not know**, and **refuses a feed whose major `version` it
 does not know**. That lets the feed grow without breaking anyone.
+
+**The estate map.** [`map/estate.json`](../map/estate.json) lists the layers of the Softanza stack (machine, language,
+foundation, data, web and server, intelligence, interfaces and applications, and the harness beside them), the
+projects on each layer with their aliases, the domains and the concerns. It is served beside the feed at
+`https://mayouni.github.io/lookout/map/estate.json`. The feed tool refuses an entry whose `areas`, `domains` or
+`concerns` name something the map does not list, so every entry can be placed on the map.
 
 ## Asking it questions
 

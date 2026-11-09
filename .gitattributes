@@ -4,3 +4,6 @@
 feed/*.json -text
 feed/*.sig -text
 keys/* -text
+
+# A pinned bar version: browsers check its sha384 (docs/BAR.md), so its bytes never change.
+bar/lookout-bar-*.js -text

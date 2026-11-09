@@ -1,0 +1,48 @@
+{
+  "about": "The Softanza estate as Lookout reads it: the layers of the stack, the projects in each, the domains a piece of news can touch, and the concerns at stake. An entry names its projects in `areas`, and its `domains` and `concerns` from the lists below; the feed tool refuses a name that is not here.",
+  "version": 1,
+  "layers": [
+    { "id": "experience",   "name": "Interfaces and applications", "line": "what people see, use and learn with" },
+    { "id": "intelligence", "name": "Intelligence",                "line": "models and agents on your own device, under a governed actor" },
+    { "id": "web",          "name": "Web and server",              "line": "Haro in the browser and on the server" },
+    { "id": "data",         "name": "Data",                        "line": "one governed store for every face" },
+    { "id": "foundation",   "name": "Foundation",                  "line": "the library and its engine, under everything else" },
+    { "id": "language",     "name": "Language",                    "line": "the language you declare your domain in" },
+    { "id": "machine",      "name": "Machine",                     "line": "the computer itself, declared in one file" },
+    { "id": "harness",      "name": "Harness",                     "line": "how the estate is built and kept watch over", "beside": true }
+  ],
+  "projects": [
+    { "id": "zane",       "name": "Zane",               "layer": "experience",   "line": "The interface language and its constitution: rules a machine checks, so every screen reads well.", "link": "https://github.com/mayouni/zane", "aliases": ["stzzui"] },
+    { "id": "studio",     "name": "Softanza Studio",    "layer": "experience",   "line": "The visual environment over the same plain-text truth." },
+    { "id": "learning",   "name": "The Learning System","layer": "experience",   "line": "Courses, missions, projects and a tutor, built on Softanza." },
+    { "id": "aicha",      "name": "Aïcha",              "layer": "intelligence", "line": "Knowledge, models and agents on your own device: a model proposes, a governed actor commits.", "aliases": ["stzlib.intelligence"] },
+    { "id": "haroserv",   "name": "HaroServ",           "layer": "web",          "line": "The server for Haro applications and web services, growing from RingServ.", "link": "https://mayouni.github.io/ringserv/", "aliases": ["ringserv"] },
+    { "id": "haroscript", "name": "HaroScript",         "layer": "web",          "line": "Haro in the browser, growing from RingScript.", "link": "https://mayouni.github.io/ringscript/", "aliases": ["ringscript"] },
+    { "id": "harobase",   "name": "HaroBase",           "layer": "data",         "line": "The governed store every Softanza face shares: SQLite in the process, governed." },
+    { "id": "softanza",   "name": "Softanza",           "layer": "foundation",   "line": "The foundation: the library and its Zig engine, with every medium plane.", "link": "https://github.com/mayouni/stzlib", "aliases": ["stzlib"] },
+    { "id": "haro",       "name": "Haro",               "layer": "language",     "line": "The language of languages: declare the language of your domain, and Haro runs it, on its own virtual machine and compiler." },
+    { "id": "harobanda",  "name": "Harobanda",          "layer": "machine",      "line": "The declared machine: describe the whole computer in one text file; it boots exactly that and checks every boot against it.", "link": "https://mayouni.github.io/harobanda/" },
+    { "id": "takamba",    "name": "Takamba",            "layer": "harness",      "line": "The harness: many working sessions on one body of work, under laws each cited to the incident that taught it." },
+    { "id": "lookout",    "name": "Lookout",            "layer": "harness",      "line": "This watch: what moves in AI, read from Softanza's point of view, in a signed feed.", "link": "https://github.com/mayouni/lookout" }
+  ],
+  "domains": [
+    { "id": "models",     "name": "AI models",            "line": "models, weights, training and running them" },
+    { "id": "agents",     "name": "Agents and tools",     "line": "agents, tool calls, prompts and the protocols between them" },
+    { "id": "security",   "name": "Security and trust",   "line": "secrets, permissions, signatures and the supply chain" },
+    { "id": "code",       "name": "Code and languages",   "line": "compilers, toolchains, testing and code written by models" },
+    { "id": "interfaces", "name": "Interfaces",           "line": "screens, reading, voice and accessibility" },
+    { "id": "data",       "name": "Data and knowledge",   "line": "stores, formats and what a system knows" },
+    { "id": "web",        "name": "Web and servers",      "line": "protocols, hosting and continuous integration" },
+    { "id": "devices",    "name": "Devices and machines", "line": "operating systems, small boards and hardware" },
+    { "id": "learning",   "name": "Learning",             "line": "teaching, courses and how people learn a craft" },
+    { "id": "society",    "name": "Rules and markets",    "line": "law, licences, prices and practices of companies" }
+  ],
+  "concerns": [
+    { "id": "trust",       "name": "Trust",       "line": "who may act, and how you know what you run is what was made" },
+    { "id": "correctness", "name": "Correctness", "line": "an answer that is right, and a check that proves it" },
+    { "id": "sovereignty", "name": "Sovereignty", "line": "your own device, your own data, no lock-in" },
+    { "id": "speed",       "name": "Speed",       "line": "time and memory, measured" },
+    { "id": "clarity",     "name": "Clarity",     "line": "what a person reads, understands and learns" },
+    { "id": "cost",        "name": "Cost",        "line": "what it costs to build, run and keep" }
+  ]
+}

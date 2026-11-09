@@ -2,8 +2,13 @@
 
 **A public watch on what is changing in AI, read from Softanza's point of view, with a feed that any program can read.**
 
-**Open it: [Lookout Radar](https://mayouni.github.io/lookout/)**, the week on a radar, with each signal to watch, to build
-from and to learn from, for developers, learners, maintainers and users.
+**Open it: [Lookout Radar](https://mayouni.github.io/lookout/)**. It shows the week on a radar whose slices are the
+layers of the Softanza estate, and the whole estate as a stack of layers and a grid of domains. Every signal reads
+in the order its reader needs it, whether developer, maintainer, learner or user. Radar checks the feed's signature
+in your browser before it shows anything.
+
+**Put it on your own site: [the Lookout bar](docs/BAR.md)**, one script line that shows the newest notice for your
+readers, checked the same way.
 
 A lookout is the one who keeps watch and calls out what is coming, in time for the others to act.
 

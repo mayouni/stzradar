@@ -4,7 +4,7 @@
 {
   "id": "2026-11-08-feed-signing",
   "date": "2026-11-08",
-  "updated": "2026-11-08",
+  "updated": "2026-11-09",
   "title": "Lookout's feed is signed: check it came from this repository unchanged",
   "kind": "feature",
   "summary": "Lookout publishes an SSH signature beside each feed file, feed/index.json.sig and feed/feed.json.sig, made with one Ed25519 key kept for this purpose by Lookout's maintainer. Any reader with OpenSSH can check a feed with ssh-keygen against the public key and the namespace lookout-feed. The change adds files and adds nothing to the feed itself, so the feed stays at version 1; docs/FEED.md gives the key, its fingerprint and the command.",
@@ -16,7 +16,9 @@
     "developer": "Lookout's feed carries a signature beside each file; a program that shows its notices should check it with ssh-keygen before showing anything.",
     "maintainer": "Pin Lookout's key fingerprint in your reader rather than fetching the key from the same place as the feed."
   },
-  "areas": ["softanza", "stzlib"],
+  "areas": ["softanza", "stzlib", "lookout"],
+  "domains": ["security"],
+  "concerns": ["trust"],
   "actions": [
     { "area": "stzlib", "do": "add the signature check to the reader proposed in docs/READER.md, with the key's fingerprint pinned in the library", "state": "proposed" }
   ],
@@ -65,3 +67,4 @@ Lookout signature from being mistaken for a signature on anything else.
   of the signature as present. The key was first meant to carry a passphrase; the maintainer chose instead a key with
   none, kept on their machine and used only at publish, so that no secret has to be remembered. The text above says
   so.
+- 2026-11-09: placed on the estate map, with the domains and concerns it touches and Lookout among its areas; the facts are unchanged.

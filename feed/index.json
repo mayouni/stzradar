@@ -28,6 +28,13 @@
         "stzlib.security",
         "haro"
       ],
+      "domains": [
+        "agents",
+        "security"
+      ],
+      "concerns": [
+        "trust"
+      ],
       "actions": [
         {
           "area": "stzlib",
@@ -72,7 +79,7 @@
     {
       "id": "2026-11-08-feed-signing",
       "date": "2026-11-08",
-      "updated": "2026-11-08",
+      "updated": "2026-11-09",
       "title": "Lookout's feed is signed: check it came from this repository unchanged",
       "kind": "feature",
       "summary": "Lookout publishes an SSH signature beside each feed file, feed/index.json.sig and feed/feed.json.sig, made with one Ed25519 key kept for this purpose by Lookout's maintainer. Any reader with OpenSSH can check a feed with ssh-keygen against the public key and the namespace lookout-feed. The change adds files and adds nothing to the feed itself, so the feed stays at version 1; docs/FEED.md gives the key, its fingerprint and the command.",
@@ -89,7 +96,14 @@
       },
       "areas": [
         "softanza",
-        "stzlib"
+        "stzlib",
+        "lookout"
+      ],
+      "domains": [
+        "security"
+      ],
+      "concerns": [
+        "trust"
       ],
       "actions": [
         {
@@ -119,6 +133,7 @@
     {
       "id": "2026-11-08-github-blocks-pull-request-target",
       "date": "2026-11-08",
+      "updated": "2026-11-09",
       "title": "GitHub will block pull_request_target in public repositories from December 2",
       "kind": "practice",
       "summary": "GitHub announced on November 2, 2026 that from December 2, 2026, GitHub Actions blocks pull_request_target events by default in every public repository unless an Actions event policy allows them. Enforcement is tried in two windows, November 9 and November 16, 16:00 to 18:00 UTC. Private and internal repositories are not affected.",
@@ -135,6 +150,13 @@
       },
       "areas": [
         "softanza"
+      ],
+      "domains": [
+        "security",
+        "web"
+      ],
+      "concerns": [
+        "trust"
       ],
       "status": "done",
       "confidence": "read",
@@ -157,6 +179,7 @@
     {
       "id": "2026-11-08-llm-repairs-pass-wrong",
       "date": "2026-11-08",
+      "updated": "2026-11-09",
       "title": "Code repaired by a model after an API change can pass its checks and still be wrong",
       "kind": "paper",
       "summary": "A study submitted on November 5, 2026 looks at code that models repair after documented changes in CPython, Node.js and SQLite. Repairs that run cleanly can still give wrong answers: a gate built on typical inputs let 41% of the wrong repairs through, and adding one input written from the release note cut that to 6.5%. The expected outputs came from the old program on the old runtime.",
@@ -176,6 +199,13 @@
       "areas": [
         "stzlib",
         "haro"
+      ],
+      "domains": [
+        "code",
+        "models"
+      ],
+      "concerns": [
+        "correctness"
       ],
       "actions": [
         {
@@ -230,7 +260,16 @@
         "maintainer": "Lookout is open: send it the AI developments that touch your project, and expect the tasks it proposes to reach you through Bangalo."
       },
       "areas": [
-        "softanza"
+        "softanza",
+        "lookout"
+      ],
+      "domains": [
+        "learning",
+        "models",
+        "agents"
+      ],
+      "concerns": [
+        "clarity"
       ],
       "actions": [
         {
@@ -289,6 +328,13 @@
       "areas": [
         "stzlib",
         "haro"
+      ],
+      "domains": [
+        "agents",
+        "security"
+      ],
+      "concerns": [
+        "trust"
       ],
       "actions": [
         {
@@ -350,6 +396,14 @@
         "stzlib.intelligence",
         "stzlib.security"
       ],
+      "domains": [
+        "agents",
+        "security"
+      ],
+      "concerns": [
+        "trust",
+        "correctness"
+      ],
       "actions": [
         {
           "area": "stzlib.security",
@@ -405,6 +459,13 @@
         "stzlib.intelligence",
         "stzlib.security"
       ],
+      "domains": [
+        "agents",
+        "security"
+      ],
+      "concerns": [
+        "trust"
+      ],
       "actions": [
         {
           "area": "stzlib.intelligence",
@@ -456,6 +517,13 @@
       "areas": [
         "stzlib",
         "haro"
+      ],
+      "domains": [
+        "code"
+      ],
+      "concerns": [
+        "correctness",
+        "speed"
       ],
       "actions": [
         {

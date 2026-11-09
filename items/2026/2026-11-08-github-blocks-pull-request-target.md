@@ -4,6 +4,7 @@
 {
   "id": "2026-11-08-github-blocks-pull-request-target",
   "date": "2026-11-08",
+  "updated": "2026-11-09",
   "title": "GitHub will block pull_request_target in public repositories from December 2",
   "kind": "practice",
   "summary": "GitHub announced on November 2, 2026 that from December 2, 2026, GitHub Actions blocks pull_request_target events by default in every public repository unless an Actions event policy allows them. Enforcement is tried in two windows, November 9 and November 16, 16:00 to 18:00 UTC. Private and internal repositories are not affected.",
@@ -16,6 +17,8 @@
     "maintainer": "Check your public repositories for pull_request_target before December 2; Softanza's own repositories do not use it."
   },
   "areas": ["softanza"],
+  "domains": ["security", "web"],
+  "concerns": ["trust"],
   "status": "done",
   "confidence": "read",
   "sources": [
@@ -53,3 +56,7 @@ The practice is one Softanza already follows: code from outside never runs where
 
 - GitHub changelog, [pull_request_target blocked by default December 2](https://github.blog/changelog/2026-11-02-pull_request_target-blocked-by-default-december-2),
   November 2, 2026, read 2026-11-08.
+
+## Corrections
+
+- 2026-11-09: placed on the estate map, with the domains and concerns it touches; the facts are unchanged.

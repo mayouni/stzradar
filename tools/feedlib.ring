@@ -276,7 +276,119 @@ class FeedRun
         AffirmScan()
         ReadEntries()
         LessonsCheck()
+        MapCheck()
         Finish(cMode)
+
+    # map/estate.json is the estate as Lookout reads it: layers, projects, domains, concerns. Every
+    # entry's areas must name a project of the map (by id or alias, or a dotted sub-area of one), and
+    # its domains and concerns must be ids of the map, so the site never places a signal nowhere.
+    func MapCheck
+        cPath = cRoot + "/map/estate.json"
+        if not fexists(cPath)
+            Problem("map/estate.json", "is the estate map every entry is placed on, and this run reads it")
+            return
+        ok
+        oReader = new JsonReader
+        try
+            oM = oReader.Parse(StripCR(read(cPath)), "map/estate.json")
+        catch e
+            Problem("map/estate.json", "is not valid JSON: " + e.Message())
+            return
+        done
+        if JKind(oM) != "object"
+            Problem("map/estate.json", "holds one object")
+            return
+        ok
+        aLayers = MapIds(oM, "layers")
+        aDomains = MapIds(oM, "domains")
+        aConcerns = MapIds(oM, "concerns")
+        aNames = []
+        if not JHas(oM, "projects") or JKind(JGet(oM, "projects")) != "array"
+            Problem("map/estate.json", 'holds a "projects" array')
+            return
+        ok
+        aP = JItems(JGet(oM, "projects"))
+        nP = len(aP)
+        for i = 1 to nP
+            oP = aP[i]
+            if JKind(oP) != "object" or not JHas(oP, "id") or not JHas(oP, "name") or not JHas(oP, "layer") or not JHas(oP, "line")
+                Problem("map/estate.json", "project " + i + " has an id, a name, a layer and a line")
+                loop
+            ok
+            cId = JGet(oP, "id")
+            if find(aNames, cId) > 0 Problem("map/estate.json", "names " + cId + " twice") ok
+            aNames + cId
+            if find(aLayers, JGet(oP, "layer")) = 0
+                Problem("map/estate.json", "project " + cId + " sits on layer " + JGet(oP, "layer") + ", and the map has no layer with that id")
+            ok
+            if JHas(oP, "link")
+                cLink = JGet(oP, "link")
+                if not isstring(cLink) or left(cLink, 8) != "https://"
+                    Problem("map/estate.json", "project " + cId + " links to an https:// address")
+                ok
+            ok
+            if JHas(oP, "aliases")
+                aA = JItems(JGet(oP, "aliases"))
+                nA = len(aA)
+                for j = 1 to nA
+                    if find(aNames, aA[j]) > 0 Problem("map/estate.json", "names " + aA[j] + " twice") ok
+                    aNames + aA[j]
+                next
+            ok
+        next
+        nE = len(aEntries)
+        for i = 1 to nE
+            oData = aEntries[i][2]
+            cWhere = aEntries[i][1]
+            if JHas(oData, "areas")
+                aV = JItems(JGet(oData, "areas"))
+                nV = len(aV)
+                for j = 1 to nV
+                    if not MapNames(aNames, aV[j])
+                        Problem(cWhere, "area " + aV[j] + " names no project of map/estate.json")
+                    ok
+                next
+            ok
+            MapField(cWhere, oData, "domains", aDomains)
+            MapField(cWhere, oData, "concerns", aConcerns)
+        next
+
+    # The ids of one list of the map, refusing a list that is missing or an item with no id.
+    func MapIds oM, cKey
+        aIds = []
+        if not JHas(oM, cKey) or JKind(JGet(oM, cKey)) != "array"
+            Problem("map/estate.json", 'holds a "' + cKey + '" array')
+            return aIds
+        ok
+        aI = JItems(JGet(oM, cKey))
+        nI = len(aI)
+        for i = 1 to nI
+            if JKind(aI[i]) != "object" or not JHas(aI[i], "id") or not JHas(aI[i], "name")
+                Problem("map/estate.json", cKey + " item " + i + " has an id and a name")
+                loop
+            ok
+            cId = JGet(aI[i], "id")
+            if find(aIds, cId) > 0 Problem("map/estate.json", cKey + " names " + cId + " twice") ok
+            aIds + cId
+        next
+        return aIds
+
+    # An area matches by its whole name, or by the project it is a dotted sub-area of.
+    func MapNames aNames, cArea
+        if find(aNames, cArea) > 0 return 1 ok
+        nDot = substr(cArea, ".")
+        if nDot > 1 and find(aNames, left(cArea, nDot - 1)) > 0 return 1 ok
+        return 0
+
+    func MapField cWhere, oData, cKey, aIds
+        if not JHas(oData, cKey) return ok
+        aV = JItems(JGet(oData, cKey))
+        nV = len(aV)
+        for j = 1 to nV
+            if find(aIds, aV[j]) = 0
+                Problem(cWhere, cKey + " value " + aV[j] + " is not an id of map/estate.json")
+            ok
+        next
 
     # app/lessons.json is what Lookout Radar shows under Build and Learn. It must be valid JSON, and
     # every key under "entries" must name an entry that exists, so the site never shows an orphan.

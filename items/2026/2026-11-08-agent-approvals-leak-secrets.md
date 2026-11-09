@@ -17,6 +17,8 @@
     "maintainer": "Add .claude/settings.local.json to your repository's own .gitignore, and scan agent folders, transcripts and memory files for passwords written inside commands."
   },
   "areas": ["softanza", "stzlib", "stzlib.security", "haro"],
+  "domains": ["agents", "security"],
+  "concerns": ["trust"],
   "actions": [
     { "area": "stzlib", "do": "add .claude/settings.local.json to the repository's own .gitignore, so the protection travels with the repository and not with one machine", "state": "routed" },
     { "area": "haro", "do": "add .claude/settings.local.json to the repository's own .gitignore, for the same reason", "state": "routed" },
@@ -82,3 +84,4 @@ typed into a command is recorded wherever an agent records what it ran.
 ## Corrections
 
 - 2026-11-09: the paragraph on Softanza now says what holds and what is proposed, in affirmative sentences; the facts are unchanged.
+- 2026-11-09: placed on the estate map, with the domains and concerns it touches; the facts are unchanged.
