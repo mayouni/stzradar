@@ -18,7 +18,7 @@ The site walks through it with a form that writes your first file: [Make your ow
    `feed@your-watch namespaces="your-watch-feed" ssh-ed25519 AAAA...`, and the same key, its fingerprint, the signer
    and the namespace in `radar.yaml`.
 4. **Give your agent its brief:** [`docs/AGENT.md`](AGENT.md). Schedule it on the day `watch.schedule` names.
-5. **Publish:** run `haro tools/feed.ring`, sign both feed files, run `haro tools/feed.ring verify`, push, and turn on
+5. **Publish:** run `haro tools/feed.haro`, sign both feed files, run `haro tools/feed.haro verify`, push, and turn on
    GitHub Pages for the main branch. Put [the bar](BAR.md) on your own pages with `data-feed` and `data-key`.
 
 ## The file, key by key
@@ -73,7 +73,7 @@ serve them all, and a program that reads one watch reads every other.
 
 ## The check
 
-`haro tools/feed.ring` reads `radar.yaml` before anything else and refuses, by name and line, a file that misses a
+`haro tools/feed.haro` reads `radar.yaml` before anything else and refuses, by name and line, a file that misses a
 key, adds one it does not define, names a reader the feed does not know, or carries a key that does not match
 `keys/allowed_signers`. Then it checks every entry, writes the feed, and writes `app/config.json`, the same file as
-JSON, which the site reads. `tools/guard.ring` shows each of these refusals.
+JSON, which the site reads. `tools/guard.haro` shows each of these refusals.

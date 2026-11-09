@@ -106,7 +106,7 @@ For each reader:
 - maintainer: Gate every model-made port or repair on edge inputs taken from the change itself, with expected outputs from the old runtime, never from the model's own tests alone.
 
 Proposed:
-- stzlib: for code moved from Ring++ to Haro by an agent, gate each change on at least one input that exercises the documented difference, with the expected output read off the old runtime (routed)
+- stzlib: for code ported to Haro by an agent, gate each change on at least one input that exercises the documented difference, with the expected output read off the old runtime (routed)
 
 Sources:
 - Accepted but Wrong: Silent Failures of LLM Code Repairs after API Migrations: https://arxiv.org/abs/2611.08269

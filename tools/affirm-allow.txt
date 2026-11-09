@@ -1,4 +1,4 @@
-# Lines of public pages that may keep a phrase tools/feed.ring otherwise refuses (PRINCIPAL-AFFIRM-01).
+# Lines of public pages that may keep a phrase tools/feed.haro otherwise refuses (PRINCIPAL-AFFIRM-01).
 # One line each: file | words from the line | reason. A line with no reason is refused.
 
 docs/FEED.md | if the entry has no notice for your audience | a reading rule for programs, about an entry's data, not a statement about Softanza

@@ -28,7 +28,7 @@ Every file below is plain data or plain text. The two feed files are signed with
 - [Method](https://mayouni.github.io/stzradar/docs/METHOD.md): how a signal is read, judged, written and published
 - [Feed contract](https://mayouni.github.io/stzradar/docs/FEED.md): every field of an entry, and how a program shows a notice
 - [Run your own](https://mayouni.github.io/stzradar/docs/ADOPT.md): the same watch for another project, from one file
-- [MCP server](https://mayouni.github.io/stzradar/docs/MCP.md): ask the radar from any MCP agent (tools/mcp.ring, read-only, checks the signature first)
+- [MCP server](https://mayouni.github.io/stzradar/docs/MCP.md): ask the radar from any MCP agent (tools/mcp.haro, read-only, checks the signature first)
 
 ## Optional
 - [Full text](https://mayouni.github.io/stzradar/llms-full.txt): every signal, with its notices for each reader, its actions and its sources

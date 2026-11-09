@@ -1,0 +1,479 @@
+# The guard for tools/feed.haro: every rule of the check is shown refusing an entry broken on
+# purpose, and the generator is shown writing the bytes docs/FEED.md fixes.
+#
+#   haro tools/guard.haro          from the repository root; the exit code is the number of failures
+#
+# Each broken entry is the real first entry with ONE change, made in memory, so the guard needs
+# no fixture files and touches no file. A case passes only when the check refuses the entry for
+# the reason the case names; refusing it for another reason is a failure, because a check that
+# refuses for the wrong reason would pass a different defect.
+
+load "feedlib.haro"
+
+func main
+    nStart = Clock()
+    oG = new Guard
+    oG.tRoot = CurrentDir()
+    # A frozen copy of the first entry as it stood at the bootstrap: the broken copies are made from
+    # it, so a correction to the live entry never changes what the guard tests.
+    oG.tGood = Read(oG.tRoot + "/tools/fixtures/entry.md")
+    oG.All()
+    nMs = Floor((Clock() - nStart) * 1000 / ClocksPerSecond())
+    see "guard: " + String(oG.nPass) + " passed, " + String(oG.nFail) + " failed, " + String(nMs) + " ms" + Char(10)
+    Shutdown(oG.nFail)
+
+class Guard
+    tRoot = ""
+    tGood = ""
+    tFile = "2026-11-08-lookout-opens.md"
+    nPass = 0
+    nFail = 0
+
+    func All
+        Controls()
+        Refusals()
+        CrossFile()
+        Writing()
+        Patterns()
+        Affirm()
+        Map()
+        Dates()
+        Yaml()
+        Config()
+
+    func Pass tName
+        nPass++
+        see "  ok    " + tName + Char(10)
+
+    func Fail tName, tWhy
+        nFail++
+        see "  FAIL  " + tName + ": " + tWhy + Char(10)
+
+    func NewRun
+        oRun = new FeedRun
+        oRun.tRoot = tRoot
+        oRun.bQuiet = true
+        oRun.Prepare()
+        return oRun
+
+    # The good entry with exactly one change. Returns "" if the change did not apply, so a case
+    # whose text drifted from the entry fails instead of testing nothing.
+    func Broken tOld, tNew
+        if SubStr(tGood, tOld) = 0 return "" ok
+        return SubStr(tGood, tOld, tNew)
+
+    func Joined aProblems
+        tC = ""
+        nN = Len(aProblems)
+        for i = 1 to nN
+            tC += aProblems[i] + " | "
+        next
+        return tC
+
+    # One entry text, one expected reason.
+    func Refuses tName, tText, tYear, tFileName, tReason
+        if tText = ""
+            Fail(tName, "the change did not apply to the entry's text")
+            return
+        ok
+        oRun = NewRun()
+        oRun.AddEntryText("items/" + tYear + "/" + tFileName, tYear, tFileName, tText)
+        oRun.Finish("none")
+        if Len(oRun.aProblems) = 0
+            Fail(tName, "the check accepted it")
+            return
+        ok
+        if SubStr(Joined(oRun.aProblems), tReason) = 0
+            Fail(tName, "refused, but not for this reason: " + Joined(oRun.aProblems))
+            return
+        ok
+        Pass(tName)
+
+    func RefusesOne tName, tOld, tNew, tReason
+        Refuses(tName, Broken(tOld, tNew), "2026", tFile, tReason)
+
+    # ------------------------------------------------------------ the control
+    func Controls
+        oRun = NewRun()
+        oRun.AddEntryText("items/2026/" + tFile, "2026", tFile, tGood)
+        oRun.Finish("none")
+        if Len(oRun.aProblems) > 0
+            Fail("control: the real entry passes", Joined(oRun.aProblems))
+            return
+        ok
+        Pass("control: the real entry passes")
+
+        # every entry in items/, built in memory, must give the committed bytes
+        oRun = NewRun()
+        oRun.ReadEntries()
+        oRun.Finish("none")
+        if Len(oRun.aProblems) > 0
+            Fail("control: every entry in items/ passes", Joined(oRun.aProblems))
+            return
+        ok
+        Pass("control: every entry in items/ passes (" + String(oRun.nEntries) + ")")
+        if oRun.tIndex = Read(tRoot + "/feed/index.json")
+            Pass("control: in memory, index.json is the committed bytes")
+        else
+            Fail("control: in memory, index.json is the committed bytes", "they differ")
+        ok
+        if oRun.tFeed = Read(tRoot + "/feed/feed.json")
+            Pass("control: in memory, feed.json is the committed bytes")
+        else
+            Fail("control: in memory, feed.json is the committed bytes", "they differ")
+        ok
+
+    # ------------------------------------------------------------ one entry, one defect
+    func Refusals
+        tQ = '"'
+        tNL = Char(10)
+
+        # notice: one sentence per audience listed, and only for those
+        RefusesOne("notice speaks to an audience that is not listed",
+            tQ + "maintainer" + tQ + ": " + tQ + "Radar is open",
+            tQ + "user" + tQ + ": " + tQ + "A sentence for a user." + tQ + "," + tNL + "    " + tQ + "maintainer" + tQ + ": " + tQ + "Radar is open",
+            "notice has a sentence for user, which audiences does not list")
+        RefusesOne("an audience listed has no notice",
+            tQ + "learner" + tQ + ": " + tQ + "There is now one place that explains, in plain words, what changes in AI mean for what you learn with Softanza." + tQ + "," + tNL + "    ",
+            "",
+            "audiences lists learner, and notice has no sentence for it")
+        RefusesOne("an audience that does not exist",
+            tQ + "developer" + tQ + "," + tNL,
+            tQ + "developer" + tQ + "," + tNL + "    " + tQ + "robot" + tQ + "," + tNL,
+            tQ + "robot" + tQ + " is not one of")
+
+        # the schema's values
+        RefusesOne("a stance outside the list",
+            tQ + "stance" + tQ + ": " + tQ + "adopt" + tQ, tQ + "stance" + tQ + ": " + tQ + "embrace" + tQ,
+            tQ + "embrace" + tQ + " is not one of")
+        RefusesOne("a level outside the list",
+            tQ + "level" + tQ + ": " + tQ + "info" + tQ, tQ + "level" + tQ + ": " + tQ + "critical" + tQ,
+            tQ + "critical" + tQ + " is not one of")
+        RefusesOne("a required field is missing",
+            tQ + "confidence" + tQ + ": " + tQ + "read" + tQ + "," + tNL + "  ", "",
+            "is missing confidence")
+        RefusesOne("an id with capitals",
+            tQ + "2026-11-08-lookout-opens" + tQ, tQ + "2026-11-08-Radar-Opens" + tQ,
+            "does not match")
+        RefusesOne("a day that does not exist",
+            tQ + "date" + tQ + ": " + tQ + "2026-11-08" + tQ, tQ + "date" + tQ + ": " + tQ + "2026-02-30" + tQ,
+            "is not a date")
+        RefusesOne("a source that is not https",
+            tQ + "url" + tQ + ": " + tQ + "https://github.com/mayouni/stzradar" + tQ + ",",
+            tQ + "url" + tQ + ": " + tQ + "http://github.com/mayouni/stzradar" + tQ + ",",
+            "does not match ^https://")
+        RefusesOne("an empty title",
+            tQ + "title" + tQ + ": " + tQ + "Radar opens: a public watch on AI, read from Softanza's point of view" + tQ,
+            tQ + "title" + tQ + ": " + tQ + tQ,
+            "is shorter than 1 characters")
+
+        # the JSON itself
+        RefusesOne("a trailing comma", tQ + "notices" + tQ + tNL, tQ + "notices" + tQ + "," + tNL,
+            "is not valid JSON")
+        RefusesOne("a key written twice",
+            tQ + "kind" + tQ + ": " + tQ + "idea" + tQ + ",",
+            tQ + "kind" + tQ + ": " + tQ + "idea" + tQ + "," + tNL + "  " + tQ + "kind" + tQ + ": " + tQ + "paper" + tQ + ",",
+            "the key kind is written twice")
+        RefusesOne("no json block", "```json", "```text", "has no fenced json block")
+        RefusesOne("a json block never closed", tNL + "```" + tNL + tNL + "## What happened", tNL + tNL + "## What happened",
+            "its json block is never closed")
+
+        # what docs/FEED.md says and the schema cannot
+        Refuses("a file not named after its id", tGood, "2026", "wrong-name.md",
+            "the file is named after its id")
+        Refuses("an entry in the wrong year folder", tGood, "2025", tFile,
+            "lives in items/2026/")
+        RefusesOne("an id that does not start with its date",
+            tQ + "date" + tQ + ": " + tQ + "2026-11-08" + tQ, tQ + "date" + tQ + ": " + tQ + "2026-11-07" + tQ,
+            "the id starts with the entry's date")
+        RefusesOne("an entry that writes its own url",
+            tQ + "review_by" + tQ + ": " + tQ + "2027-05-08" + tQ + ",",
+            tQ + "review_by" + tQ + ": " + tQ + "2027-05-08" + tQ + "," + tNL + "  " + tQ + "url" + tQ + ": " + tQ + "https://github.com/mayouni/stzradar/blob/main/x" + tQ + ",",
+            "an entry does not write its url")
+        RefusesOne("review_by before the entry's date",
+            tQ + "review_by" + tQ + ": " + tQ + "2027-05-08" + tQ, tQ + "review_by" + tQ + ": " + tQ + "2026-11-01" + tQ,
+            "must come after the entry's date")
+        RefusesOne("updated before the entry's date",
+            tQ + "updated" + tQ + ": " + tQ + "2026-11-08" + tQ, tQ + "updated" + tQ + ": " + tQ + "2026-11-07" + tQ,
+            "is before the entry's date")
+        RefusesOne("supersedes an id that does not exist",
+            tQ + "review_by" + tQ + ": ",
+            tQ + "supersedes" + tQ + ": " + tQ + "2026-01-01-nothing" + tQ + "," + tNL + "  " + tQ + "review_by" + tQ + ": ",
+            "there is no entry with that id")
+
+    # ------------------------------------------------------------ across files
+    func CrossFile
+        oRun = NewRun()
+        oRun.AddEntryText("items/2026/" + tFile, "2026", tFile, tGood)
+        oRun.AddEntryText("items/2026/" + tFile, "2026", tFile, tGood)
+        oRun.Finish("none")
+        if SubStr(Joined(oRun.aProblems), "is already used by") > 0
+            Pass("two entries with one id")
+        else
+            Fail("two entries with one id", "not refused for that: " + Joined(oRun.aProblems))
+        ok
+
+    # ------------------------------------------------------------ the bytes written
+    func Second tDate, tUpdated
+        tQ = '"'
+        tId = tDate + "-second"
+        tC = SubStr(tGood, tQ + "2026-11-08-lookout-opens" + tQ, tQ + tId + tQ)
+        tC = SubStr(tC, tQ + "date" + tQ + ": " + tQ + "2026-11-08" + tQ, tQ + "date" + tQ + ": " + tQ + tDate + tQ)
+        tC = SubStr(tC, tQ + "updated" + tQ + ": " + tQ + "2026-11-08" + tQ, tQ + "updated" + tQ + ": " + tQ + tUpdated + tQ)
+        tC = SubStr(tC, tQ + "proposed" + tQ + ": " + tQ + "2026-11-08" + tQ, tQ + "proposed" + tQ + ": " + tQ + tDate + tQ)
+        return tC
+
+    func Writing
+        tQ = '"'
+        # escapes in, UTF-8 out; a tab goes back out escaped
+        tText = Broken(tQ + "summary" + tQ + ": " + tQ + "Softanza opened",
+                       tQ + "summary" + tQ + ": " + tQ + "Café 😀 tab\there. Softanza opened")
+        oRun = NewRun()
+        oRun.AddEntryText("items/2026/" + tFile, "2026", tFile, tText)
+        oRun.Finish("none")
+        tWant = "Caf" + Char(195) + Char(169) + " " + Char(240) + Char(159) + Char(152) + Char(128) + " tab\there."
+        if Len(oRun.aProblems) = 0 and SubStr(oRun.tIndex, tWant) > 0
+            Pass("\u escapes are written as UTF-8, a tab as \t")
+        else
+            Fail("\u escapes are written as UTF-8, a tab as \t", Joined(oRun.aProblems))
+        ok
+
+        # newest date first; updated is the newest day; date_modified only when it differs
+        oRun = NewRun()
+        oRun.AddEntryText("items/2026/" + tFile, "2026", tFile, tGood)
+        tTwo = Second("2026-11-09", "2026-11-10")
+        oRun.AddEntryText("items/2026/2026-11-09-second.md", "2026", "2026-11-09-second.md", tTwo)
+        oRun.Finish("none")
+        if Len(oRun.aProblems) > 0
+            Fail("two entries build", Joined(oRun.aProblems))
+            return
+        ok
+        nNew = SubStr(oRun.tIndex, tQ + "2026-11-09-second" + tQ)
+        nOld = SubStr(oRun.tIndex, tQ + "2026-11-08-lookout-opens" + tQ)
+        if nNew > 0 and nNew < nOld
+            Pass("the newer entry comes first")
+        else
+            Fail("the newer entry comes first", "it does not")
+        ok
+        if SubStr(oRun.tIndex, tQ + "updated" + tQ + ": " + tQ + "2026-11-10T00:00:00Z" + tQ) > 0
+            Pass("the index's updated is the newest updated, at midnight UTC")
+        else
+            Fail("the index's updated is the newest updated, at midnight UTC", "it is not")
+        ok
+        if SubStr(oRun.tFeed, tQ + "date_modified" + tQ + ": " + tQ + "2026-11-10T00:00:00Z" + tQ) > 0
+            Pass("feed.json writes date_modified when updated differs from date")
+        else
+            Fail("feed.json writes date_modified when updated differs from date", "it does not")
+        ok
+        aOne = NewRun()
+        aOne.AddEntryText("items/2026/" + tFile, "2026", tFile, tGood)
+        aOne.Finish("none")
+        if SubStr(aOne.tFeed, "date_modified") = 0
+            Pass("feed.json writes no date_modified when updated equals date")
+        else
+            Fail("feed.json writes no date_modified when updated equals date", "it does")
+        ok
+
+        # the same day: by id
+        oRun = NewRun()
+        tA = Second("2026-11-08", "2026-11-08")
+        oRun.AddEntryText("items/2026/2026-11-08-second.md", "2026", "2026-11-08-second.md", tA)
+        oRun.AddEntryText("items/2026/" + tFile, "2026", tFile, tGood)
+        oRun.Finish("none")
+        nA = SubStr(oRun.tIndex, tQ + "2026-11-08-lookout-opens" + tQ)
+        nB = SubStr(oRun.tIndex, tQ + "2026-11-08-second" + tQ)
+        if Len(oRun.aProblems) = 0 and nA > 0 and nA < nB
+            Pass("on one day, entries go by id")
+        else
+            Fail("on one day, entries go by id", Joined(oRun.aProblems))
+        ok
+
+    # ------------------------------------------------------------ the pattern matcher
+    func Patterns
+        aCases = [
+            ["^[0-9]{4}-[0-9]{2}-[0-9]{2}-[a-z0-9]+(-[a-z0-9]+)*$", "2026-11-08-lookout-opens", true],
+            ["^[0-9]{4}-[0-9]{2}-[0-9]{2}-[a-z0-9]+(-[a-z0-9]+)*$", "2026-11-08-lookout-", false],
+            ["^[0-9]{4}-[0-9]{2}-[0-9]{2}-[a-z0-9]+(-[a-z0-9]+)*$", "2026-11-8-lookout", false],
+            ["^[a-z0-9]+(\.[a-z0-9-]+)*$", "stzlib.security", true],
+            ["^[a-z0-9]+(\.[a-z0-9-]+)*$", "stzlib..security", false],
+            ["^https://github\.com/mayouni/stzradar/", "https://github.com/mayouni/stzradar/blob/x", true],
+            ["^https://github\.com/mayouni/stzradar/", "https://githubXcom/mayouni/stzradar/", false],
+            ["^https://", "see https://x", false],
+            ["^a.*b$", "axxb", true],
+            ["^a.b$", "axb", true],
+            ["^a.b$", "ab", false],
+            ["^https://.*/$", "https://mayouni.github.io/stzradar/", true],
+            ["^https://.*/$", "https://mayouni.github.io/stzradar", false],
+            ["https://", "see https://x", true],
+            ["^[a-z0-9-]+$", "", false]
+        ]
+        nN = Len(aCases)
+        nBad = 0
+        for i = 1 to nN
+            oP = new Pattern
+            bFound = oP.Search(aCases[i][1], aCases[i][2])
+            if bFound != aCases[i][3]
+                nBad++
+                Fail("pattern " + aCases[i][1], "on " + q2(aCases[i][2]) + " answered " + BoolText(bFound))
+            ok
+        next
+        if nBad = 0 Pass("the pattern matcher, " + String(nN) + " cases") ok
+
+    # ------------------------------------------------------------ public pages speak affirmatively
+    func Affirm
+        oRun = NewRun()
+        oRun.AffirmLine("README.md", 1, "A reader command does not exist yet.", [])
+        if SubStr(Joined(oRun.aProblems), "a public page lists what is missing") > 0
+            Pass("a public line saying what is missing is refused")
+        else
+            Fail("a public line saying what is missing is refused", "it was accepted")
+        ok
+
+        oRun = NewRun()
+        oRun.AffirmLine("README.md", 1, "A reader command does not exist yet.", [["README.md", "a reader command"]])
+        if Len(oRun.aProblems) = 0
+            Pass("an allowed line passes")
+        else
+            Fail("an allowed line passes", Joined(oRun.aProblems))
+        ok
+
+        oRun = NewRun()
+        oRun.AffirmLine("docs/FEED.md", 1, "Softanza reads the feed and shows each notice.", [])
+        if Len(oRun.aProblems) = 0
+            Pass("an affirmative line passes")
+        else
+            Fail("an affirmative line passes", Joined(oRun.aProblems))
+        ok
+
+        # the real allow list loads, and every entry in it gives a reason
+        oRun = NewRun()
+        aAllow = oRun.AffirmAllow()
+        if Len(oRun.aProblems) = 0 and Len(aAllow) > 0
+            Pass("tools/affirm-allow.txt loads, every line with its reason (" + String(Len(aAllow)) + ")")
+        else
+            Fail("tools/affirm-allow.txt loads, every line with its reason", Joined(oRun.aProblems))
+        ok
+
+    # ------------------------------------------------------------ every entry sits on the estate map
+    # The real map/estate.json, and the frozen entry with its areas line changed in memory.
+    func Map
+        tAct = '"actions": ['
+        MapCase("an area that names no project is refused", Broken('"softanza"', '"nowhere"'), "area nowhere names no project")
+        MapCase("a domain the map does not list is refused", Broken(tAct, '"domains": ["spaceships"], ' + tAct), "domains value spaceships")
+        MapCase("a concern the map does not list is refused", Broken(tAct, '"concerns": ["luck"], ' + tAct), "concerns value luck")
+        tText = Broken(tAct, '"domains": ["agents", "security"], "concerns": ["trust"], ' + tAct)
+        tText = SubStr(tText, '"areas": [', '"areas": ["stzlib", "stzlib.security", "haro", ')
+        MapCase("an alias and a dotted sub-area pass, with known domains and concerns", tText, "")
+
+    # ------------------------------------------------------------ every proposal dates its stages
+    # The fixture's actions are proposed on 2026-11-08 (dated on 2026-11-09, when the rule came in).
+    func Dates
+        tP = '"dates": { "proposed": "2026-11-08" }'
+        RefusesOne("an action with no dates is refused", ", " + tP, "", "has no dates")
+        RefusesOne("a stage dated before the entry is refused", tP, '"dates": { "proposed": "2026-11-07" }', "before the entry's date")
+        RefusesOne("a stage dated after the entry was last written is refused", tP, '"dates": { "proposed": "2026-11-12" }', "after the entry was last written")
+        RefusesOne("the current state without its date is refused", '"state": "proposed", ' + tP, '"state": "routed", ' + tP, "is routed and does not date that stage")
+        RefusesOne("a later stage than the current one is refused", tP, '"dates": { "proposed": "2026-11-08", "done": "2026-11-08" }', "dates a later stage, done")
+        RefusesOne("a stage the contract does not know is refused", tP, '"dates": { "proposed": "2026-11-08", "shipped": "2026-11-08" }', "")
+        tOrder = Broken('"state": "proposed", ' + tP, '"state": "routed", "dates": { "proposed": "2026-11-08", "routed": "2026-11-08" }')
+        tOrder = SubStr(tOrder, '"updated": "2026-11-08"', '"updated": "2026-11-10"')
+        tOrder = SubStr(tOrder, '"proposed": "2026-11-08", "routed": "2026-11-08"', '"proposed": "2026-11-10", "routed": "2026-11-09"')
+        Refuses("stages out of order are refused", tOrder, "2026", tFile, "before an earlier stage")
+
+    # ------------------------------------------------------------ the YAML reader
+    func Yaml
+        tNL = Char(10)
+        tDoc = "# a comment" + tNL + "name: Radar  # after a value" + tNL + "list:" + tNL + "  - a" + tNL + '  - "b: c"' + tNL +
+               "people:" + tNL + "  - id: x" + tNL + "    n: '1'" + tNL + "  - id: y" + tNL + "flow: [one, " + '"two, three"' + "]" + tNL +
+               "on: true" + tNL + "text: >" + tNL + "  folded" + tNL + "  lines" + tNL + "block: |" + tNL + "  kept" + tNL + "  lines" + tNL
+        tWant = '{"name":"Radar","list":["a","b: c"],"people":[{"id":"x","n":"1"},{"id":"y"}],"flow":["one","two, three"],"on":true,"text":"folded lines","block":"kept' + "\n" + 'lines"}'
+        oY = new YamlReader
+        try
+            xV = oY.Parse(tDoc, "t.yaml")
+            tGot = Compact(JWrite(xV, 0))
+            if tGot = tWant Pass("YAML: maps, lists, lists of maps, quotes, [lists], booleans, > and | text")
+            else Fail("YAML: the sample reads as expected", tGot) ok
+        catch e
+            Fail("YAML: the sample reads as expected", e.Message())
+        done
+        YamlRefuses("YAML: a tab in the indent is refused", "a:" + tNL + Char(9) + "b: 1" + tNL, "a tab indents")
+        YamlRefuses("YAML: a key written twice is refused", "a: 1" + tNL + "a: 2" + tNL, "written twice")
+        YamlRefuses("YAML: a feature this reader does not take is refused", "a: &anchor 1" + tNL, "does not read here")
+        YamlRefuses("YAML: an unclosed quote is refused", 'a: "open' + tNL, "not closed")
+        YamlRefuses("YAML: a key indented deeper than its siblings is refused", "a: 1" + tNL + "   b: 2" + tNL, "indented more")
+
+    func YamlRefuses tName, tDoc, tReason
+        oY = new YamlReader
+        try
+            oY.Parse(tDoc, "t.yaml")
+            Fail(tName, "it was accepted")
+        catch e
+            if SubStr(e.Message(), tReason) > 0 Pass(tName) else Fail(tName, "refused for another reason: " + e.Message()) ok
+        done
+
+    # JSON written by JWrite, with the layout spaces outside strings removed, to compare with a literal.
+    func Compact tC
+        tOut = ""
+        bIn = false
+        nN = Len(tC)
+        for i = 1 to nN
+            xCh = tC[i]
+            if xCh = '"' and (i = 1 or tC[i - 1] != "\") bIn = not bIn ok
+            if not bIn and (xCh = " " or Ascii(xCh) = 10) loop ok
+            tOut += xCh
+        next
+        return tOut
+
+    # ------------------------------------------------------------ radar.yaml is checked before anything runs
+    func Config
+        tReal = Read(tRoot + "/radar.yaml")
+        ConfigCase("the real radar.yaml passes", tReal, "")
+        ConfigCase("a configuration with no project name is refused", SubStr(tReal, "  name: Softanza" + Char(10), ""), "name")
+        ConfigCase("a watch with no title for its readers is refused", SubStr(tReal, "  title: " + Char(34) + "{project} Radar" + Char(34) + "          # what readers see: the site's title, the feed's title, the bar's link" + Char(10), ""), "title")
+        ConfigCase("a text naming a value the configuration does not have is refused", SubStr(tReal, "what we build in {project}", "what we build in {projet}"), "{projet}")
+        ConfigCase("a fingerprint that is not a SHA256 one is refused", SubStr(tReal, "SHA256:ZUij0xoxJIIEwH3AV5xrDXkJLuEklao7pUVhTxCs49I", "MD5:abc"), "fingerprint")
+        ConfigCase("a reader the feed does not know is refused", SubStr(tReal, "  - id: user", "  - id: investor"), "investor")
+        ConfigCase("a key the configuration does not define is refused", tReal + "colour: teal" + Char(10), "colour")
+        ConfigCase("a pages address without its closing slash is refused", SubStr(tReal, "https://mayouni.github.io/stzradar/" + Char(10), "https://mayouni.github.io/stzradar" + Char(10)), "pages")
+
+    func ConfigCase tName, tText, tReason
+        oRun = new FeedRun
+        oRun.tRoot = tRoot
+        oRun.bQuiet = true
+        oRun.oSchema = new SchemaCheck
+        oRun.oSchema.tDir = tRoot + "/schema"
+        bOk = oRun.LoadConfigText(tText)
+        tSaid = Joined(oRun.aProblems)
+        if tReason = ""
+            if bOk and tSaid = "" Pass(tName) else Fail(tName, tSaid) ok
+            return
+        ok
+        if bOk
+            Fail(tName, "it was accepted")
+        but SubStr(tSaid, tReason) > 0
+            Pass(tName)
+        else
+            Fail(tName, "refused for another reason: " + tSaid)
+        ok
+
+    func MapCase tName, tText, tReason
+        if tText = ""
+            Fail(tName, "the change did not apply to the entry's text")
+            return
+        ok
+        oRun = NewRun()
+        oRun.AddEntryText("items/2026/" + tFile, "2026", tFile, tText)
+        oRun.MapCheck()
+        tSaid = Joined(oRun.aProblems)
+        if tReason = ""
+            if tSaid = "" Pass(tName) else Fail(tName, tSaid) ok
+            return
+        ok
+        if SubStr(tSaid, tReason) > 0 Pass(tName) else Fail(tName, "not refused for this reason: " + tSaid) ok
+
+    func q2 xS
+        return '"' + xS + '"'
+
+func BoolText bV
+    if bV return "true" ok
+    return "false"

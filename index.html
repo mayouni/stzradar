@@ -1394,7 +1394,7 @@ function viewYours(){
     code1("ssh-keygen -t ed25519 -f ~/.ssh/watch_feed -C feed@your-watch"));
   step("Give the agent its brief, and run it each week",
     (() => { const p = el("p"); p.append(document.createTextNode("Any coding agent can run the survey: "), link("docs/AGENT.md", repo + "/blob/main/docs/AGENT.md"), document.createTextNode(" tells it to read radar.yaml first and follow it. Schedule it on the day radar.yaml names. The check runs on Haro; GitHub Pages serves the site from the repository's main branch.")); return p; })(),
-    code1("haro tools/feed.ring          # check every entry and the configuration, then write the feed\nharo tools/feed.ring verify   # after signing: both feed files carry a good signature"));
+    code1("haro tools/feed.haro          # check every entry and the configuration, then write the feed\nharo tools/feed.haro verify   # after signing: both feed files carry a good signature"));
   s.append(steps);
   frag.append(s);
 

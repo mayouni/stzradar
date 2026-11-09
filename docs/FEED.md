@@ -44,10 +44,10 @@ Text is written as UTF-8 and not escaped, except `"`, `\` and the control charac
 requires (`\n`, `\t` and the like, and `\u00XX` for the rest). An empty list is written `[]`. In the index, each
 entry is its data block with `url` added as its last key.
 
-**The generator is `tools/feed.ring`**, run with Haro from the repository root. `haro tools/feed.ring` checks every
-entry and rewrites both files if their bytes change; `haro tools/feed.ring check` writes nothing and also refuses a
+**The generator is `tools/feed.haro`**, run with Haro from the repository root. `haro tools/feed.haro` checks every
+entry and rewrites both files if their bytes change; `haro tools/feed.haro check` writes nothing and also refuses a
 committed feed that is not what the entries generate. The exit code is the number of problems found. Its guard,
-`haro tools/guard.ring`, shows each rule refusing an entry broken on purpose.
+`haro tools/guard.haro`, shows each rule refusing an entry broken on purpose.
 
 **The JSON Feed** carries, for each entry: `id`, `url`, `title`, `summary`, `content_text` (the summary again, since
 JSON Feed 1.1 requires a content field), `date_published` (the entry's `date` at midnight UTC), `date_modified`

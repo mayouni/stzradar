@@ -278,7 +278,7 @@
         },
         {
           "why": "After editing it, let the check name anything missing or wrong, line by line.",
-          "cmd": "cd your-watch && haro tools/feed.ring check"
+          "cmd": "cd your-watch && haro tools/feed.haro check"
         },
         {
           "why": "Make the key that signs your feed, outside the repository. This one writes: it creates the key pair.",

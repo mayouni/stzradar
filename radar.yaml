@@ -2,7 +2,7 @@
 #
 # Radar is a tool any project can run: a weekly survey by an agent, a signed feed, a site with a dashboard,
 # and a bar other sites include. This file is the only place that says WHICH project, WHAT it watches, and
-# WHAT the agent must learn first. The tools read it (haro tools/feed.ring checks it and publishes
+# WHAT the agent must learn first. The tools read it (haro tools/feed.haro checks it and publishes
 # app/config.json for the site), and the agent reads it before every survey. docs/ADOPT.md explains each key.
 
 radar: 1                          # the version of this file's shape

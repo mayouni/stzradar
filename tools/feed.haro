@@ -1,0 +1,68 @@
+# Radar's feed generator and its check.
+#
+#   haro tools/feed.haro           check every entry, then regenerate feed/index.json and feed/feed.json
+#   haro tools/feed.haro check     check every entry and both committed feeds; write nothing
+#   haro tools/feed.haro verify    check that both feed files carry a good signature (docs/FEED.md, "The signature")
+#
+# Run it from the repository root. The exit code is the number of problems found, so 0 means
+# every entry passed, both feeds match their schema, and (in check mode) the committed feeds are
+# exactly what the entries generate. The rules are docs/FEED.md; the shapes are schema/.
+#
+# It runs on Haro. The work is in tools/feedlib.haro, which needs no
+# other library; tools/guard.haro proves that the check refuses broken entries.
+
+load "feedlib.haro"
+
+func main
+    nStart = Clock()
+    tMode = "generate"
+    if Len(sysargv) >= 3
+        tMode = Lower(sysargv[3])
+    ok
+    if tMode != "generate" and tMode != "check" and tMode != "verify"
+        see "usage: haro tools/feed.haro [check | verify]" + Char(10)
+        Shutdown(1)
+    ok
+    if tMode = "verify"
+        oConf = new FeedRun
+        oConf.tRoot = CurrentDir()
+        if not oConf.Prepare() Shutdown(1) ok
+        Shutdown(Verify(oConf.Conf("feed.signer"), oConf.Conf("feed.namespace")))
+    ok
+
+    oRun = new FeedRun
+    oRun.tRoot = CurrentDir()
+    oRun.Go(tMode)
+
+    nMs = Floor((Clock() - nStart) * 1000 / ClocksPerSecond())
+    see "entries accepted " + String(oRun.nEntries) + ", problems " + String(Len(oRun.aProblems)) + ", " + String(nMs) + " ms" + Char(10)
+    Shutdown(Len(oRun.aProblems))
+
+
+# Both feed files must carry a good SSH signature by the key in keys/allowed_signers, for the
+# signer and namespace radar.yaml names (feed.signer, feed.namespace). ssh-keygen does the
+# cryptography; this only asks it, file by file, and counts what it refuses. Returns the number of problems.
+func Verify tSigner, tNamespace
+    aFiles = ["feed/index.json", "feed/feed.json"]
+    nBad = 0
+    if not FExists("keys/allowed_signers")
+        see "REFUSED keys/allowed_signers: there is no key to check against" + Char(10)
+        return 1
+    ok
+    nF = Len(aFiles)
+    for i = 1 to nF
+        tF = aFiles[i]
+        if not FExists(tF + ".sig")
+            see "REFUSED " + tF + ": it has no signature, " + tF + ".sig" + Char(10)
+            nBad++
+            loop
+        ok
+        tCmd = "ssh-keygen -Y verify -f keys/allowed_signers -I " + tSigner + " -n " + tNamespace + " -s " +
+               tF + ".sig < " + tF
+        if System(tCmd) != 0
+            see "REFUSED " + tF + ": its signature does not verify; sign it again after any change" + Char(10)
+            nBad++
+        ok
+    next
+    see "signatures checked " + String(nF) + ", problems " + String(nBad) + Char(10)
+    return nBad

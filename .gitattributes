@@ -7,3 +7,6 @@ keys/* -text
 
 # A pinned bar version: browsers check its sha384 (docs/BAR.md), so its bytes never change.
 bar/lookout-bar-*.js -text
+# signatures are data, not code (GitHub read them as Standard ML)
+*.sig linguist-detectable=false
+bar/radar-bar-*.js -text

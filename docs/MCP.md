@@ -2,7 +2,7 @@
 
 Any agent that speaks MCP -- Claude Code, an IDE, a desktop assistant -- can ask the radar questions while it works:
 what this week asks of a developer, which signals touch a part of the project, one signal in full. The server is
-`tools/mcp.ring`, a small read-only program that runs on Haro beside a checkout of the radar.
+`tools/mcp.haro`, a small read-only program that runs on Haro beside a checkout of the radar.
 
 ## What it answers
 
@@ -19,7 +19,7 @@ Each tool takes a `reader` (`developer`, `maintainer`, `learner` or `user`) wher
 
 - **The signed feed, and nothing else.** It reads `feed/index.json`, the map and `app/config.json` from the checkout.
 - **Checked first.** Before it answers anything, `feed/index.json`'s signature must check against
-  `keys/allowed_signers` (`ssh-keygen`, as `haro tools/feed.ring verify` does). A feed that fails is not served:
+  `keys/allowed_signers` (`ssh-keygen`, as `haro tools/feed.haro verify` does). A feed that fails is not served:
   every tool answers why.
 - **Read-only.** It writes no file and calls nothing outside the checkout but `ssh-keygen`.
 
@@ -28,14 +28,14 @@ Each tool takes a `reader` (`developer`, `maintainer`, `learner` or `user`) wher
 - **Claude Code**, from any project:
 
   ```
-  claude mcp add softanza-radar -- haro /path/to/stzradar/tools/mcp.ring /path/to/stzradar
+  claude mcp add softanza-radar -- haro /path/to/stzradar/tools/mcp.haro /path/to/stzradar
   ```
 
 - **Any MCP client**, in its configuration (`.mcp.json` for a project):
 
   ```json
   { "mcpServers": { "softanza-radar": {
-      "command": "haro", "args": ["/path/to/stzradar/tools/mcp.ring", "/path/to/stzradar"] } } }
+      "command": "haro", "args": ["/path/to/stzradar/tools/mcp.haro", "/path/to/stzradar"] } } }
   ```
 
 - **Keep it current** with `git pull` in the checkout; the server reads the files at start.

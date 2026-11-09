@@ -1,0 +1,471 @@
+# The radar for agents: a small, read-only MCP server over the signed feed.
+#
+#   haro tools/mcp.haro            run from the repository root; speaks MCP over standard input and output
+#   haro tools/mcp.haro <folder>   the same, for the radar checked out in <folder>
+#
+# An agent that supports MCP (Claude Code, an IDE, any MCP client) starts this program and asks it
+# questions while it works: what this week asks of a developer, which signals touch a part of the
+# project, one signal in full. Everything comes from the radar's own files -- feed/index.json, the map,
+# app/config.json -- and nothing is answered until feed/index.json's signature checks against
+# keys/allowed_signers (ssh-keygen does the cryptography, as tools/feed.haro verify does).
+#
+# The protocol: JSON-RPC 2.0, one message per line (MCP's stdio transport). It answers initialize,
+# ping, tools/list and tools/call, and ignores notifications. Nothing it does writes a file.
+
+load "feedlib.haro"
+
+tRoot = ""
+aCfg = null
+aMap = null
+aItems = []
+aDigests = []
+tTrust = ""            # "" when the signature checked; otherwise why it did not
+
+func main
+    $tRoot = CurrentDir()
+    if Len(sysargv) >= 3 $tRoot = sysargv[3] ok
+    LoadRadar()
+    nEmpty = 0
+    while true
+        give tLine
+        if tLine = ""
+            nEmpty++
+            if nEmpty > 3 exit ok          # the client closed our input
+            loop
+        ok
+        nEmpty = 0
+        Handle(tLine)
+    end
+
+# ---------------------------------------------------------------- the radar's data
+
+func LoadRadar
+    oReader = new JsonReader
+    try
+        aIndex = oReader.Parse(Read($tRoot + "/feed/index.json"), "feed/index.json")
+        $aItems = JItems(JGet(aIndex, "items"))
+        $aCfg = oReader.Parse(Read($tRoot + "/app/config.json"), "app/config.json")
+    catch e
+        $tTrust = "the radar's files could not be read from " + $tRoot + ": " + e.Message()
+        return
+    done
+    try
+        $aMap = oReader.Parse(Read($tRoot + "/" + Cf("map")), "map")
+    catch
+        $tTrust = "the map " + Cf("map") + " could not be read"
+        return
+    done
+    if FExists($tRoot + "/app/digests.json")
+        try
+            $aDigests = JItems(oReader.Parse(Read($tRoot + "/app/digests.json"), "digests"))
+        catch
+            $aDigests = []
+        done
+    ok
+    $tTrust = CheckSignature()
+
+# The feed is trusted only when its signature checks; ssh-keygen's own words are kept off our output,
+# which carries the protocol.
+func CheckSignature
+    tIdx = $tRoot + "/feed/index.json"
+    if not FExists(tIdx + ".sig") return "feed/index.json has no signature (feed/index.json.sig)" ok
+    if not FExists($tRoot + "/keys/allowed_signers") return "there is no key to check the feed against (keys/allowed_signers)" ok
+    tQuiet = " >/dev/null 2>&1"
+    if IsWindows() tQuiet = " >nul 2>&1" ok
+    tCmd = "ssh-keygen -Y verify -f " + Q($tRoot + "/keys/allowed_signers") + " -I " + Cf("feed.signer") +
+           " -n " + Cf("feed.namespace") + " -s " + Q(tIdx + ".sig") + " < " + Q(tIdx) + tQuiet
+    if System(tCmd) != 0 return "feed/index.json's signature does not check against keys/allowed_signers (or ssh-keygen is missing)" ok
+    return ""
+
+func Q tC
+    return '"' + tC + '"'
+
+# one value of app/config.json by its dotted path
+func Cf tPath
+    xV = $aCfg
+    tPart = ""
+    tP = tPath + "."
+    nP = Len(tP)
+    for i = 1 to nP
+        if tP[i] = "."
+            if JKind(xV) != "object" or not JHas(xV, tPart) return "" ok
+            xV = JGet(xV, tPart)
+            tPart = ""
+        else
+            tPart += tP[i]
+        ok
+    next
+    if IsString(xV) return xV ok
+    return ""
+
+func S xO, tKey
+    if JKind(xO) != "object" return "" ok
+    xV = JGet(xO, tKey)
+    if IsString(xV) return xV ok
+    return ""
+
+func Word tLevel
+    if tLevel = "info" return "To know" ok
+    if tLevel = "advice" return "To consider" ok
+    if tLevel = "action" return "To do" ok
+    if tLevel = "urgent" return "To do now" ok
+    return tLevel
+
+func LevelRank tLevel
+    return Find(["info", "advice", "action", "urgent"], tLevel)
+
+func RelRank tC
+    return Find(["low", "medium", "high"], tC)
+
+# ISO week of a "YYYY-MM-DD" date, as "YYYY-Www"
+func IsoWeek tDate
+    nY = Number(Left(tDate, 4)) nMo = Number(SubStr(tDate, 6, 2)) nDa = Number(SubStr(tDate, 9, 2))
+    aCum = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334]
+    nOrd = aCum[nMo] + nDa
+    if nMo > 2 and Leap(nY) nOrd++ ok
+    nW = Floor((nOrd - Dow(nY, nMo, nDa) + 10) / 7)
+    if nW < 1
+        nY--
+        nW = WeeksIn(nY)
+    but nW > WeeksIn(nY)
+        nY++
+        nW = 1
+    ok
+    tW = "" + String(nW)
+    if nW < 10 tW = "0" + tW ok
+    return "" + String(nY) + "-W" + tW
+
+func Leap xY
+    return (xY % 4 = 0 and xY % 100 != 0) or xY % 400 = 0
+
+# Monday 1 .. Sunday 7
+func Dow xY, nM, xD
+    aT = [0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4]
+    if nM < 3 xY-- ok
+    xN = (xY + Floor(xY / 4) - Floor(xY / 100) + Floor(xY / 400) + aT[nM] + xD) % 7
+    if xN = 0 return 7 ok
+    return xN
+
+func WeeksIn xY
+    if P(xY) = 4 or P(xY - 1) = 3 return 53 ok
+    return 52
+
+func P xY
+    return (xY + Floor(xY / 4) - Floor(xY / 100) + Floor(xY / 400)) % 7
+
+# the project ids an entry touches: its areas through the map's ids and aliases
+func ProjectsOf xO
+    aOut = []
+    xA = JGet(xO, "areas")
+    if JKind(xA) != "array" return aOut ok
+    aA = JItems(xA)
+    aP = JItems(JGet($aMap, "projects"))
+    nA = Len(aA) nP = Len(aP)
+    for i = 1 to nA
+        tA = Lower(aA[i])
+        tHead = tA
+        nDot = SubStr(tA, ".")
+        if nDot > 0 tHead = Left(tA, nDot - 1) ok
+        tHit = ""
+        for k = 1 to nP
+            tId = S(aP[k], "id")
+            if tA = tId or tHead = tId tHit = tId exit ok
+            xAl = JGet(aP[k], "aliases")
+            if JKind(xAl) = "array"
+                aAl = JItems(xAl) nAl = Len(aAl)
+                for j = 1 to nAl
+                    if Lower(aAl[j]) = tA or Lower(aAl[j]) = tHead tHit = tId exit 2 ok
+                next
+            ok
+        next
+        if tHit != "" and Find(aOut, tHit) = 0 aOut + tHit ok
+    next
+    return aOut
+
+func LayersOf xO
+    aOut = []
+    aPr = ProjectsOf(xO)
+    aP = JItems(JGet($aMap, "projects"))
+    nN = Len(aPr) nP = Len(aP)
+    for i = 1 to nN
+        for k = 1 to nP
+            if S(aP[k], "id") = aPr[i]
+                tL = S(aP[k], "layer")
+                if Find(aOut, tL) = 0 aOut + tL ok
+            ok
+        next
+    next
+    return aOut
+
+func NameOf tList, tId
+    aX = JItems(JGet($aMap, tList))
+    nN = Len(aX)
+    for i = 1 to nN
+        if S(aX[i], "id") = tId return S(aX[i], "name") ok
+    next
+    return tId
+
+func HasIn xO, tKey, tId
+    xV = JGet(xO, tKey)
+    if JKind(xV) != "array" return false ok
+    return Find(JItems(xV), tId) > 0
+
+# newest week the survey closed (it has a digest), else the newest week that holds an entry
+func LatestWeek
+    tBest = ""
+    nN = Len($aDigests)
+    for i = 1 to nN
+        if IsString($aDigests[i]) and $aDigests[i] > tBest tBest = $aDigests[i] ok
+    next
+    if tBest != "" return tBest ok
+    nN = Len($aItems)
+    for i = 1 to nN
+        xW = IsoWeek(S($aItems[i], "date"))
+        if xW > tBest tBest = xW ok
+    next
+    return tBest
+
+# most pressing first: level, then relevance, then newest
+func SortItems aIn
+    aA = aIn
+    nN = Len(aA)
+    for i = 2 to nN
+        xJ = i
+        while xJ > 1 and Before(aA[xJ], aA[xJ - 1])
+            xT = aA[xJ] aA[xJ] = aA[xJ - 1] aA[xJ - 1] = xT
+            xJ--
+        end
+    next
+    return aA
+
+func Before xA, xB
+    xLa = LevelRank(S(xA, "level")) xLb = LevelRank(S(xB, "level"))
+    if xLa != xLb return xLa > xLb ok
+    xRa = RelRank(S(xA, "relevance")) xRb = RelRank(S(xB, "relevance"))
+    if xRa != xRb return xRa > xRb ok
+    return S(xA, "date") > S(xB, "date")
+
+func ReaderOk tC
+    return Find(["developer", "maintainer", "learner", "user"], tC) > 0
+
+# one signal in a few lines, for a list
+func Brief xO, tReader, nNo
+    tC = "" + String(nNo) + ". [" + Word(S(xO, "level")) + "] " + S(xO, "title") + Char(10)
+    tLine = ""
+    xN = JGet(xO, "notice")
+    if JKind(xN) = "object" tLine = S(xN, tReader) ok
+    if tLine = "" tLine = S(xO, "summary") ok
+    tC += "   " + tLine + Char(10)
+    aPr = ProjectsOf(xO)
+    aNames = []
+    nN = Len(aPr)
+    for i = 1 to nN aNames + NameOf("projects", aPr[i]) next
+    tC += "   touches: " + Joined(aNames, ", ") + " | id: " + S(xO, "id") + " | " + S(xO, "date") + Char(10)
+    return tC
+
+func Joined xA, tSep
+    tC = ""
+    nN = Len(xA)
+    for i = 1 to nN
+        if i > 1 tC += tSep ok
+        tC += xA[i]
+    next
+    return tC
+
+# ---------------------------------------------------------------- the tools
+
+func ToolList
+    tR = '"reader":{"type":"string","enum":["developer","maintainer","learner","user"],"description":"who the answer is written for; default developer"}'
+    return '{"tools":[' +
+      '{"name":"radar_week","description":"The signals of one week, most pressing first, each with the sentence written for the reader. Without a week, the latest surveyed week.",' +
+      '"inputSchema":{"type":"object","properties":{"week":{"type":"string","description":"ISO week, e.g. 2026-W45"},' + tR + '}}},' +
+      '{"name":"radar_search","description":"Signals that match every filter given: a project, layer, domain or concern of the map (ids from radar_map), a lowest level, a week, or words in the title or summary.",' +
+      '"inputSchema":{"type":"object","properties":{"project":{"type":"string"},"layer":{"type":"string"},"domain":{"type":"string"},"concern":{"type":"string"},' +
+      '"level_at_least":{"type":"string","enum":["info","advice","action","urgent"]},"week":{"type":"string"},"text":{"type":"string"},' + tR + '}}},' +
+      '{"name":"radar_signal","description":"One signal in full: what happened, the sentence for each reader, what was proposed, its sources and its page.",' +
+      '"inputSchema":{"type":"object","properties":{"id":{"type":"string","description":"the signal id, from radar_week or radar_search"}},"required":["id"]}},' +
+      '{"name":"radar_map","description":"The project map signals are placed on: layers, parts (projects), domains and concerns, with the ids the other tools take.",' +
+      '"inputSchema":{"type":"object","properties":{}}}' +
+      ']}'
+
+func Arg aArgs, tKey
+    if JKind(aArgs) != "object" return "" ok
+    return S(aArgs, tKey)
+
+func CallTool tName, aArgs
+    if $tTrust != "" return [true, "The radar did not answer: " + $tTrust + ". Its feed is trusted only when its signature checks."] ok
+    tReader = Lower(Arg(aArgs, "reader"))
+    if not ReaderOk(tReader) tReader = "developer" ok
+    if tName = "radar_week" return [false, ToolWeek(Arg(aArgs, "week"), tReader)] ok
+    if tName = "radar_search" return [false, ToolSearch(aArgs, tReader)] ok
+    if tName = "radar_signal" return ToolSignal(Arg(aArgs, "id")) ok
+    if tName = "radar_map" return [false, ToolMap()] ok
+    return [true, "There is no tool named " + tName + "; the tools are radar_week, radar_search, radar_signal and radar_map."]
+
+func ToolWeek tWeek, tReader
+    if tWeek = "" tWeek = LatestWeek() ok
+    aW = []
+    nN = Len($aItems)
+    for i = 1 to nN
+        xO = $aItems[i]
+        if IsoWeek(S(xO, "date")) = tWeek and S(xO, "status") != "superseded" aW + xO ok
+    next
+    if Len(aW) = 0 return Cf("watch.title") + " holds no signal for week " + tWeek + "." ok
+    aW = SortItems(aW)
+    tN = "" + String(Len(aW)) + " signals"
+    if Len(aW) = 1 tN = "1 signal" ok
+    tC = Cf("watch.title") + ", week " + tWeek + ": " + tN + ", written for a " + tReader + "." + Char(10) + Char(10)
+    nN = Len(aW)
+    for i = 1 to nN tC += Brief(aW[i], tReader, i) next
+    tC += Char(10) + "Ask radar_signal with an id for the whole signal."
+    return tC
+
+func ToolSearch aArgs, tReader
+    tP = Lower(Arg(aArgs, "project")) tL = Lower(Arg(aArgs, "layer")) tD = Lower(Arg(aArgs, "domain"))
+    tC = Lower(Arg(aArgs, "concern")) tV = Lower(Arg(aArgs, "level_at_least")) tW = Arg(aArgs, "week")
+    tT = Lower(Arg(aArgs, "text"))
+    aHit = []
+    nN = Len($aItems)
+    for i = 1 to nN
+        xO = $aItems[i]
+        if S(xO, "status") = "superseded" loop ok
+        if tP != "" and Find(ProjectsOf(xO), tP) = 0 loop ok
+        if tL != "" and Find(LayersOf(xO), tL) = 0 loop ok
+        if tD != "" and not HasIn(xO, "domains", tD) loop ok
+        if tC != "" and not HasIn(xO, "concerns", tC) loop ok
+        if tV != "" and LevelRank(S(xO, "level")) < LevelRank(tV) loop ok
+        if tW != "" and IsoWeek(S(xO, "date")) != tW loop ok
+        if tT != "" and SubStr(Lower(S(xO, "title") + " " + S(xO, "summary")), tT) = 0 loop ok
+        aHit + xO
+    next
+    if Len(aHit) = 0 return "No signal matches these filters. radar_map lists the ids the filters take." ok
+    aHit = SortItems(aHit)
+    tN = "" + String(Len(aHit)) + " signals match"
+    if Len(aHit) = 1 tN = "1 signal matches" ok
+    xC = tN + ", most pressing first, written for a " + tReader + "." + Char(10) + Char(10)
+    nN = Len(aHit)
+    for i = 1 to nN xC += Brief(aHit[i], tReader, i) next
+    return xC
+
+func ToolSignal tId
+    nN = Len($aItems)
+    for i = 1 to nN
+        xO = $aItems[i]
+        if S(xO, "id") = tId
+            tNL = Char(10)
+            tC = S(xO, "title") + tNL + tNL
+            tC += "Level: " + Word(S(xO, "level")) + ". Kind: " + S(xO, "kind") + ". Stance: " + S(xO, "stance") + ". Relevance: " +
+                 S(xO, "relevance") + ". Date: " + S(xO, "date") + ". Week: " + IsoWeek(S(xO, "date")) + "." + tNL + tNL
+            tC += "What happened: " + S(xO, "summary") + tNL
+            xN = JGet(xO, "notice")
+            if JKind(xN) = "object"
+                tC += tNL + "For each reader:" + tNL
+                aP = xN[2] nP = Len(aP)
+                for k = 1 to nP
+                    if IsString(aP[k][2]) tC += "- " + aP[k][1] + ": " + aP[k][2] + tNL ok
+                next
+            ok
+            xA = JGet(xO, "actions")
+            if JKind(xA) = "array" and Len(JItems(xA)) > 0
+                tC += tNL + "Proposed:" + tNL
+                aA = JItems(xA) nA = Len(aA)
+                for k = 1 to nA tC += "- " + S(aA[k], "area") + ": " + S(aA[k], "do") + " (" + S(aA[k], "state") + ")" + tNL next
+            ok
+            xS = JGet(xO, "sources")
+            if JKind(xS) = "array"
+                tC += tNL + "Sources:" + tNL
+                aS = JItems(xS) nS = Len(aS)
+                for k = 1 to nS tC += "- " + S(aS[k], "title") + ": " + S(aS[k], "url") + tNL next
+            ok
+            tC += tNL + "Page: " + Cf("watch.pages") + "items/" + Left(tId, 4) + "/" + tId + ".md"
+            return [false, tC]
+        ok
+    next
+    return [true, "There is no signal " + tId + "; radar_week and radar_search give the ids."]
+
+func ToolMap
+    tNL = Char(10)
+    tC = "The map of " + Cf("project.name") + " (id: name)." + tNL
+    aLists = [["layers", "Layers"], ["projects", "Parts"], ["domains", "Domains"], ["concerns", "Concerns"]]
+    for q = 1 to 4
+        aList = aLists[q]
+        tC += tNL + aList[2] + ":" + tNL
+        aX = JItems(JGet($aMap, aList[1]))
+        nN = Len(aX)
+        for i = 1 to nN
+            tC += "- " + S(aX[i], "id") + ": " + S(aX[i], "name")
+            if aList[1] = "projects" tC += " (layer " + S(aX[i], "layer") + ")" ok
+            tC += tNL
+        next
+    next
+    return tC
+
+# ---------------------------------------------------------------- the protocol
+
+func Handle tLine
+    oReader = new JsonReader
+    try
+        aMsg = oReader.Parse(tLine, "message")
+    catch
+        Send('{"jsonrpc":"2.0","id":null,"error":{"code":-32700,"message":"Parse error"}}')
+        return
+    done
+    if JKind(aMsg) != "object" return ok
+    if not JHas(aMsg, "id") return ok                       # a notification: nothing to answer
+    tId = JLine(JGet(aMsg, "id"))
+    tMethod = S(aMsg, "method")
+    aParams = JGet(aMsg, "params")
+    if tMethod = "initialize"
+        tVer = S(aParams, "protocolVersion")
+        if tVer = "" tVer = "2025-06-18" ok
+        Result(tId, '{"protocolVersion":' + JQuote(tVer) + ',"capabilities":{"tools":{}},' +
+            '"serverInfo":{"name":"softanza-radar","title":' + JQuote(Cf("watch.title")) + ',"version":"1.0.0"},' +
+            '"instructions":' + JQuote(Cf("watch.title") + ": " + Cf("watch.tagline") + ". Start with radar_week; use radar_map for the ids radar_search takes.") + '}')
+        return
+    ok
+    if tMethod = "ping" Result(tId, "{}") return ok
+    if tMethod = "tools/list" Result(tId, ToolList()) return ok
+    if tMethod = "tools/call"
+        aArgs = ["n"]
+        if JKind(aParams) = "object" aArgs = JGet(aParams, "arguments") ok
+        aR = CallTool(S(aParams, "name"), aArgs)
+        tErr = "false"
+        if aR[1] tErr = "true" ok
+        Result(tId, '{"content":[{"type":"text","text":' + JQuote(aR[2]) + '}],"isError":' + tErr + '}')
+        return
+    ok
+    Send('{"jsonrpc":"2.0","id":' + tId + ',"error":{"code":-32601,"message":' + JQuote("Method not found: " + tMethod) + '}}')
+
+func Result tId, tJson
+    Send('{"jsonrpc":"2.0","id":' + tId + ',"result":' + tJson + '}')
+
+func Send tC
+    see tC + Char(10)
+    Flush()
+
+# Haro buffers a program's output when it goes to a pipe, and has no flush for it yet; system() flushes
+# it before running its command, so an empty command sends each reply now. The client waits on every reply,
+# so without this nothing would arrive until the program ended. Reported to the Haro desk (HARO-STDIOFLUSH-01):
+# give should flush before it waits for input, as C's stdio does, or Haro should offer flush().
+func Flush
+    if IsWindows() System("rem") else System(":") ok
+
+# a JSON value on one line (the stdio transport carries one message per line)
+func JLine xV
+    xK = JKind(xV)
+    if xK = "string" return JQuote(xV) ok
+    if xK = "number" return xV[2] ok
+    if xK = "boolean"
+        if xV[1] = "t" return "true" ok
+        return "false"
+    ok
+    if xK = "null" return "null" ok
+    tC = ""
+    aI = xV[2]
+    nN = Len(aI)
+    for i = 1 to nN
+        if i > 1 tC += "," ok
+        if xK = "array" tC += JLine(aI[i]) else tC += JQuote(aI[i][1]) + ":" + JLine(aI[i][2]) ok
+    next
+    if xK = "array" return "[" + tC + "]" ok
+    return "{" + tC + "}"

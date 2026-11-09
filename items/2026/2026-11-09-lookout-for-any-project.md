@@ -37,7 +37,7 @@ who signs the feed, and what the watching agent must learn first: its goal, the 
 as news and what never goes in, the sources to read, what each stance means, the rules it keeps, and where the work it
 proposes goes.
 
-`haro tools/feed.ring` reads that file before anything else, checks it against `schema/config.schema.json`, and
+`haro tools/feed.haro` reads that file before anything else, checks it against `schema/config.schema.json`, and
 publishes it as `app/config.json`. Softanza Radar takes its names, taglines, introductions, readers and stances from
 it. A view of the site, Make your own, explains the steps and writes a first `radar.yaml` with its reader. Version
 1.1.0 of the bar takes `data-feed`, `data-key` and `data-namespace`, so one script serves every watch, and the page
@@ -63,3 +63,4 @@ piece, with Softanza's own configuration as its first example.
 ## Corrections
 
 - 2026-11-09: the tool was renamed from Lookout to Radar, and its repository from `lookout` to `stzradar`; the names, addresses and signature names in this entry follow. Decided by the author.
+- 2026-11-09: the tools are written in Haro (`.haro` files); the commands in this entry name them so. Decided by the author.

@@ -21,7 +21,7 @@
   "domains": ["code", "models"],
   "concerns": ["correctness"],
   "actions": [
-    { "area": "stzlib", "do": "for code moved from Ring++ to Haro by an agent, gate each change on at least one input that exercises the documented difference, with the expected output read off the old runtime", "state": "routed", "dates": { "proposed": "2026-11-08", "routed": "2026-11-08" } }
+    { "area": "stzlib", "do": "for code ported to Haro by an agent, gate each change on at least one input that exercises the documented difference, with the expected output read off the old runtime", "state": "routed", "dates": { "proposed": "2026-11-08", "routed": "2026-11-08" } }
   ],
   "status": "routed",
   "confidence": "read",
@@ -50,8 +50,8 @@ a menu of candidate repairs rather than free-form code, which they name as a lim
 
 ## Why it matters to Softanza
 
-Softanza is in the middle of exactly this situation. Its library is being moved from one runtime to another, Ring++
-to Haro, largely by agents, and the two runtimes differ in documented ways. Softanza's own working rules already say
+Softanza is in the middle of exactly this situation. Its library is being moved to Haro, largely by agents, and the
+old and new runtimes differ in documented ways. Softanza's own working rules already say
 that a test and the thing it checks must have separate authors. This study measures why, and gives the cheapest
 remedy: one input per documented difference, with the expected answer read off the old runtime, does most of the
 work.
@@ -70,3 +70,4 @@ work.
 
 - 2026-11-09: placed on the estate map, with the domains and concerns it touches; the facts are unchanged.
 - 2026-11-09: each proposal now carries the day it reached each stage, read from this repository's history; the facts are unchanged.
+- 2026-11-09: the port is named by where it goes, Haro; the action and this section say so. Decided by the author.

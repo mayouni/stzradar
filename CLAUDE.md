@@ -445,9 +445,9 @@ project it concerns, and publishes a feed that programs read. Start with `README
 9. **One heavy job at a time.** A survey is a corpus job. Never run two at once, and never run one while another
    repository is building.
 
-**Fast path:** regenerating and checking the feed is one process over `items/`: `haro tools/feed.ring` (or `check`
-to write nothing), 4 ms for one entry on 2026-11-08. Its guard is `haro tools/guard.ring`, 33 cases in 80 ms. Run the
-guard after changing `tools/` or `schema/`. Before any push, `haro tools/feed.ring verify` must pass: the attended
+**Fast path:** regenerating and checking the feed is one process over `items/`: `haro tools/feed.haro` (or `check`
+to write nothing), 4 ms for one entry on 2026-11-08. Its guard is `haro tools/guard.haro`, 33 cases in 80 ms. Run the
+guard after changing `tools/` or `schema/`. Before any push, `haro tools/feed.haro verify` must pass: the attended
 session signs at publish, after the author approves the digest, with the key kept in the author's `.ssh` folder. The
 key has no passphrase, by the author's ruling of 2026-11-08: no secret for them to keep. A survey is the slow path and runs once a week.
 

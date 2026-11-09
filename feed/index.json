@@ -282,7 +282,7 @@
       "actions": [
         {
           "area": "stzlib",
-          "do": "for code moved from Ring++ to Haro by an agent, gate each change on at least one input that exercises the documented difference, with the expected output read off the old runtime",
+          "do": "for code ported to Haro by an agent, gate each change on at least one input that exercises the documented difference, with the expected output read off the old runtime",
           "state": "routed",
           "dates": {
             "proposed": "2026-11-08",

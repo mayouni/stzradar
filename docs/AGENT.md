@@ -38,12 +38,12 @@ can follow it. Everything that belongs to the project comes from `radar.yaml`; t
 ## The outputs
 
 1. Write `digests/<YYYY-Www>.md`: one paragraph per entry, most important first, each linking to its page.
-2. Run `haro tools/feed.ring` from the repository root. It checks `radar.yaml`, every entry against the schema and the
+2. Run `haro tools/feed.haro` from the repository root. It checks `radar.yaml`, every entry against the schema and the
    map, the lessons and the dates, then writes the feed and `app/config.json`. It writes nothing while anything is
    refused: correct what it names and run it again.
 3. Commit, with a message that names the week and the number of entries.
 4. **Publishing follows `watch.publish`.** With `after-reading`, leave the commit for the owner: they read the digest,
-   then sign the feed (`docs/FEED.md`, "The signature"), run `haro tools/feed.ring verify`, and push. The agent never
+   then sign the feed (`docs/FEED.md`, "The signature"), run `haro tools/feed.haro verify`, and push. The agent never
    signs.
 5. Send the proposals the way `agent.proposals` says: to `to`, through `through`, never as `never`. List each with its
    part of the map, its level and its entry.

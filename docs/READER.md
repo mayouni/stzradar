@@ -26,7 +26,7 @@ softanza radar --dismiss <id>   hides one notice for good
 
 The same reading, from code:
 
-```ring
+```haro
 oRadar = StzRadarQ(:developer)
 oRadar.SetLevel(:advice)
 ? oRadar.Notices()          # each: [ :id, :level, :title, :notice, :url ]
@@ -60,9 +60,9 @@ Read on stzlib `origin/main` at `c4f6f85ea`, 2026-11-08.
 | Need | What stzlib has | What the reader adds |
 |---|---|---|
 | HTTPS GET with a request header | `stzHttpClient`: `SetHeader()`, `Get_()`, `ResponseCode()`, `ResponseBody()`, `ResponseHeaders()`, on the Zig engine | a helper that reads one header (`ETag`) out of the raw header block |
-| Reading JSON | `JsonToList()` and `stzJson` in pure Ring; `StzJsonIsValid()`, `StzJsonGet()` and the other `StzJson*` functions on the engine | the reader validates with `StzJsonIsValid()` and reads each field through the engine |
+| Reading JSON | `JsonToList()` and `stzJson` in Softanza code; `StzJsonIsValid()`, `StzJsonGet()` and the other `StzJson*` functions on the engine | the reader validates with `StzJsonIsValid()` and reads each field through the engine |
 | Keeping the ETag, the kept copy and the dismissed ids | `stzFileBlobStore`, a file-backed store given a folder | a per-user state folder, a convention for the whole library that this reader is the first to use |
-| A command | the `softanza` program, whose commands are branches in its `main()` | a `radar` branch, most simply running a Ring script |
+| A command | the `softanza` program, whose commands are branches in its `main()` | a `radar` branch, most simply running a Haro script |
 | Levels | `stzLog` has its own levels (`trace` to `fatal`) | Radar's four levels are different and should not be mapped onto them |
 
 **Reading the feed through the engine.** The engine's JSON functions read every character the feed carries,
@@ -84,6 +84,5 @@ it at 80 columns and saying whether it is clear. That reading is recorded with i
 
 - **Where a user's own state lives.** A per-user folder (`%APPDATA%` on Windows, `$XDG_STATE_HOME` or `~/.local/state`
   elsewhere) is a decision for the whole library, not for this reader alone.
-- **Which runtime the guard runs on.** Haro first, as the estate rules; the Ring++ path where a port step still needs
-  it.
+- **Which runtime the guard runs on.** Haro, as the estate rules.
 - **When it ships**, Radar announces it as an entry, as `FEED.md` promises under "What is planned".
