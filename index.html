@@ -208,7 +208,9 @@ section.block{padding-block:28px 8px}
 .blip.picked circle.halo{stroke-width:4}
 .infobar .iopen{color:var(--deep);text-decoration:underline;font-size:1.125rem;white-space:nowrap}
 .infobar .ititle{font:700 1.0625rem/1.35 var(--f-title);flex:1 1 14rem;min-width:0}
-.radarhint{margin:0 0 6px;font-size:1.1875rem;line-height:1.4;color:var(--ink2)}
+/* the card's own words (title and hint) and the drawing's labels are two levels of reading: a clear gap between them,
+   about twice the line height, so the slice names never read as part of the hint (author, 2026-11-09) */
+.radarhint{margin:0 0 clamp(18px,3.2vh,32px);font-size:1.1875rem;line-height:1.4;color:var(--ink2)}
 /* around the rim, each slice's number sits just outside it and its name runs outward from the number, as plain text
    (author, 2026-11-09: labels are not links) */
 .radarstage .sl{position:absolute;display:flex;align-items:center;gap:.4em;font-size:1.125rem;line-height:1.25;color:var(--lab)}
