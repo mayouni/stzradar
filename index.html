@@ -167,12 +167,13 @@ ul.points{margin:0 0 12px;padding-left:22px;display:flex;flex-direction:column;g
 .herotext{align-self:center}
 .heroradar{display:flex;flex-direction:column;min-height:0}
 .heroradar > div{display:flex;flex-direction:column;flex:1 1 auto;min-height:0}
-.hero h1{font-size:clamp(2rem,min(3.6vw,5.6vh),3.4rem);max-width:20ch;margin-bottom:clamp(10px,1.8vh,18px)}
-.hero .lede{max-width:60ch;font-size:clamp(1.125rem,2.2vh,1.375rem)}
+.hero h1{font-size:clamp(1.9rem,min(3.4vw,4.7vh),3.2rem);max-width:20ch;margin-bottom:clamp(10px,1.8vh,18px)}
+/* the promise keeps the site's reading size at any window height (author, 2026-11-09: "this text is small again"); the title gives way instead */
+.hero .lede{max-width:60ch;font-size:1.375rem}
 .hero .cta{margin:clamp(14px,2.8vh,28px) 0 0;display:flex;flex-wrap:wrap;align-items:center;gap:12px 28px}
 .hero .cta a{text-decoration:none;display:inline-block}   /* the border marks it as the way in; no underline on top (one emphasis) */
 .hero .cta a.out{color:var(--deep);font-size:1.1875rem;text-decoration:underline}
-.hero .herofact{text-wrap:balance;margin:clamp(22px,4.4vh,44px) 0 0;font:600 1.125rem var(--f-mono);letter-spacing:.04em;text-transform:uppercase;color:var(--deep)}
+.hero .herofact{text-wrap:balance;margin:clamp(12px,3.6vh,44px) 0 0;font:600 1.125rem var(--f-mono);letter-spacing:.04em;text-transform:uppercase;color:var(--deep)}
 /* the week's figures in a softly outlined box, set a little lower, so they read as one group of facts */
 .hero .herofacts{margin-top:10px;max-width:40rem;border:1px solid var(--line);border-radius:12px;padding:12px 18px;background:color-mix(in srgb,var(--panel) 55%,transparent)}
 .heroradar h2{font:700 1.4rem/1.2 var(--f-title);margin:0 0 6px}
