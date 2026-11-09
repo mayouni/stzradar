@@ -1420,7 +1420,9 @@ function dress(){
   $("#ghLink").href = CONFIG.watch.repository;                    /* each watch links its own repository */
   $("#navIn").textContent = "In " + NAME();
   document.querySelector('meta[name="description"]').content = RADAR() + ": " + CONFIG.watch.tagline.charAt(0).toLowerCase() + CONFIG.watch.tagline.slice(1) + ".";   /* the project's own words, for a share or a search */
-  const year = Math.min(...FEED.items.map(i => +i.date.slice(0,4)));
+  /* the copyright runs from the year the project began (project.since) to this year (author, 2026-11-09) */
+  const now = new Date().getUTCFullYear(), since = Number(CONFIG.project.since) || Math.min(...FEED.items.map(i => +i.date.slice(0,4)));
+  const year = since < now ? since + "–" + now : String(now);
   $("#made").replaceChildren(document.createTextNode(RADAR() + " is a "), link(NAME(), CONFIG.project.site),
     document.createTextNode(" project. © " + year + " " + CONFIG.project.owner + ". Released under the "),
     link(CONFIG.project.licence + " licence", CONFIG.project.licence_url || CONFIG.watch.repository), document.createTextNode("."));

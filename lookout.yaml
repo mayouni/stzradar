@@ -11,6 +11,7 @@ project:                          # the project the watch serves
   name: Softanza
   site: https://mayouni.github.io/stzsite/
   owner: Mansour Ayouni
+  since: 2020                      # the year the project began; the copyright runs from it to this year
   licence: MIT
   licence_url: https://github.com/mayouni/lookout/blob/main/LICENSE
   logo: assets/wordmark.png       # the project's wordmark, shown in place of its name in the site's brand
