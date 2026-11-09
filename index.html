@@ -205,6 +205,8 @@ section.block{padding-block:28px 8px}
 .infobar{min-height:4.4rem;margin-top:8px;padding:8px 12px;border-left:4px solid var(--line);background:var(--bg);border-radius:0 10px 10px 0;display:flex;align-items:center;gap:6px 12px;flex-wrap:wrap}
 .infobar.on{border-left-color:var(--accent)}
 .infobar .ihint{color:var(--ink2);font-size:1.1875rem}
+.blip.picked circle.halo{stroke-width:4}
+.infobar .iopen{color:var(--deep);text-decoration:underline;font-size:1.125rem;white-space:nowrap}
 .infobar .ititle{font:700 1.0625rem/1.35 var(--f-title);flex:1 1 14rem;min-width:0}
 .radarhint{margin:0 0 6px;font-size:1.1875rem;line-height:1.4;color:var(--ink2)}
 /* around the rim, each slice's number sits just outside it and its name runs outward from the number, as plain text
@@ -798,17 +800,36 @@ function radar(items, total = items.length){
      and it keeps one height so the radar never moves. */
   const stage = el("div","radarstage");
   const info = el("div","infobar"); info.id = "radarInfo"; info.setAttribute("aria-live","polite");
-  const hide = () => { info.classList.remove("on"); info.replaceChildren(el("span","ihint","Hover a signal on the radar to see a short description here.")); };
-  const show = it => { info.classList.add("on"); info.replaceChildren(levelPill(it.level), el("span","ititle",clean(it.title))); };
+  /* A phone has no hover (author, 2026-11-09: "did you think how this hover feature would work on a mobile phone?!").
+     With a finger, the first tap on a dot SELECTS it: the bar shows its level and title and stays, with the one way on,
+     "Open this signal"; a second tap on the same dot, or that link, opens it. With a mouse, hover shows and a click
+     opens, as before. The choice is made per touch (pointerType), so a laptop with a touch screen gets both. */
+  const touchUI = matchMedia("(hover: none)").matches;
+  let picked = null, lastType = touchUI ? "touch" : "mouse";
+  const hide = () => { info.classList.remove("on"); info.replaceChildren(el("span","ihint", touchUI ? "Tap a signal on the radar to see a short description here." : "Hover a signal on the radar to see a short description here.")); };
+  const show = (it, withWay) => {
+    info.classList.add("on"); info.replaceChildren(levelPill(it.level), el("span","ititle",clean(it.title)));
+    if (withWay){ const a = el("a","iopen","Open this signal →"); a.href = "#/signal/" + it.id; info.append(a); }   /* it stays, so it can be reached */
+  };
+  const blips = [];
   hide();
   for (const d of dots){
     const it = d.it, [x, y] = xy(d), size = d.size;
     const g = mk("a",{class:"blip",tabindex:"0",href:"#/signal/" + it.id,"aria-describedby":"radarInfo","aria-label":WORD[it.level] + ": " + clean(it.title) + ". Opens its page in All signals."});
+    g.append(mk("circle",{class:"hit",cx:x,cy:y,r:size+11,fill:"transparent"}));   /* a target a finger can hit */
     g.append(mk("circle",{class:"halo",cx:x,cy:y,r:size+4,fill:"none",stroke:css("--lv-"+it.level),"stroke-width":"2"}));
     g.append(mk("circle",{cx:x,cy:y,r:size,fill:css("--lv-"+it.level)}));
-    g.addEventListener("mouseenter", () => show(it)); g.addEventListener("focusin", () => show(it));
-    g.addEventListener("mouseleave", hide); g.addEventListener("focusout", hide);
-    svg.append(g);
+    g.addEventListener("pointerdown", e => { lastType = e.pointerType || lastType; });
+    g.addEventListener("click", e => {
+      if (lastType !== "touch" || picked === it) return;            /* a mouse click, or the second tap: open */
+      e.preventDefault(); picked = it;
+      blips.forEach(b => b.classList.toggle("picked", b === g)); show(it, true);
+    });
+    g.addEventListener("mouseenter", () => { if (lastType !== "touch") show(it, false); });
+    g.addEventListener("mouseleave", () => { if (lastType !== "touch") picked ? show(picked, true) : hide(); });
+    g.addEventListener("focusin", () => show(it, picked === it));
+    g.addEventListener("focusout", () => { if (!picked) hide(); });
+    blips.push(g); svg.append(g);
   }
   /* each slice's number stands just outside the rim and its name runs outward from it (author, 2026-11-09). They are HTML, so they
      keep the page's reading size at any radar size; place() sizes the radar to leave them room. Where the card is too
@@ -861,7 +882,7 @@ function radar(items, total = items.length){
   window.placeRadar = place;                                                          /* the window's resize hook calls the current one */
   stage.append(svg);
   const box = el("div");
-  box.append(el("p","radarhint","Click a signal to open its page." + (total > items.length ? " Showing the " + items.length + " that ask most, of " + total + "." : "")), stage);
+  box.append(el("p","radarhint",(touchUI ? "Tap a signal to read it below; tap it again to open its page." : "Click a signal to open its page.") + (total > items.length ? " Showing the " + items.length + " that ask most, of " + total + "." : "")), stage);
   const key = el("div","key");
   for (const lv of ["urgent","action","advice","info"]){ const s = el("span"); const d = el("i"); d.style.background = css("--lv-"+lv); s.append(d, document.createTextNode(WORD[lv])); key.append(s); }
   key.append(el("span",null,"centre: most relevant"));
