@@ -135,12 +135,12 @@ ul.points{margin:0 0 12px;padding-left:22px;display:flex;flex-direction:column;g
   .outline ul{border-left:0;padding-left:0}
   .railtools .filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 18px}}
 @media (max-width:560px){.railtools .filters{grid-template-columns:repeat(2,minmax(0,1fr))}}
-/* For your project: what you get, by who receives it, as three aligned columns under a teal rule (as the front page) */
-.vgroups{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:36px;margin-top:8px}
-.vgroup{border-top:3px solid var(--accent);padding-top:12px}
-.vgroup h3{margin:0 0 10px;font:700 1.3rem/1.2 var(--f-title)}
-@media (max-width:900px){.vgroups{grid-template-columns:minmax(0,1fr);gap:24px}}
-/* the bar's preview drawn as another site: a browser frame at a site's width, a mock page under the bar */
+/* For your project: what you get, as one list -- who receives it, then plain points; thin rules, no boxes */
+.vlist{display:grid;grid-template-columns:13rem minmax(0,1fr);margin:6px 0 0}
+.vlist dt{margin:0;padding:14px 16px 14px 0;border-top:1px solid var(--line);font-weight:600;font-size:1.1875rem}
+.vlist dd{margin:0;padding:14px 0;border-top:1px solid var(--line)}
+.vlist ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:1.1875rem;line-height:1.5}
+@media (max-width:700px){.vlist{grid-template-columns:minmax(0,1fr)}.vlist dd{border-top:0;padding-top:0}}/* the bar's preview drawn as another site: a browser frame at a site's width, a mock page under the bar */
 .pvlab{color:var(--ink2)}
 .colours{display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px}.colours .plab{flex-basis:100%;font-weight:600}
 .colours .col1{display:flex;align-items:center;gap:6px;font-weight:400}.colours input[type=color]{width:44px;height:32px;padding:0;border:1px solid var(--line);border-radius:6px;background:none}
@@ -1342,22 +1342,21 @@ function viewYours(){
   /* the value, said first and by who receives it (author, 2026-11-09: "the value proposition for the adopter and its
      apps and users is not clear") */
   const v = el("section","block wrap"); v.append(el("h2",null,"What you get"));
-  const vgroup = (t, rows) => { const g = el("div","vgroup"); g.append(el("h3",null,t), points(rows)); return g; };
-  const vg = el("div","vgroups");
-  vg.append(
-    vgroup("For your team", [["Read at the source, every week.", "Papers, releases, security findings and practices in your field."],
-                            ["Judged from your point of view.", "Adopt, learn, correct, defend, watch or decline, each with its reason."],
-                            ["Work proposed where it belongs.", "Each finding goes to the part of your project it concerns, dated and followed."],
-                            ["A record that lasts.", "Every entry keeps its sources and corrections, and is never deleted."]]),
-    vgroup("For your apps and sites", [["A signed feed.", "JSON any program reads, checked against your own key."],
-                            ["Readable by agents.", "llms.txt and llms-full.txt give agents and language models the whole watch as text."],
-                            ["Askable by agents.", "An MCP server lets Claude Code or any MCP agent ask the radar while it works (docs/MCP.md)."],
-                            ["A site like this one.", "The week on a radar, your project layer by layer, every signal filtered, the trends."],
-                            ["A bar for your pages.", "One script line shows the newest notice at the top of any page."]]),
-    vgroup("For your users", [["One sentence for their role.", "A developer, a maintainer, a learner and a user each read what concerns them."],
-                            ["Checked before it is shown.", "Their browser verifies the signature before it shows a word."],
-                            ["Never in their way.", "In the page's flow, plain text, and gone once dismissed."]]));
-  v.append(vg); frag.append(v);
+  /* one calm list, read top to bottom (author, 2026-11-09: three columns of bold labels "contain many squares, each
+     attracting attention"): who receives it on the left, plain short points on the right, thin lines between rows */
+  const vg = el("dl","vlist");
+  const row = (who, items) => { const ul = el("ul"); for (const t of items) ul.append(el("li",null,t)); const dd = el("dd"); dd.append(ul); vg.append(el("dt",null,who), dd); };
+  row("Your team", ["Your field read at its source every week: papers, releases, security findings, practices.",
+                    "Each finding judged from your point of view: adopt, learn, correct, defend, watch or decline.",
+                    "Work proposed to the part of your project it concerns, dated and followed.",
+                    "A record that lasts, with its sources and corrections."]);
+  row("Your apps and sites", ["A signed JSON feed any program can read and check.",
+                    "A site like this one: the week on a radar, your project layer by layer, the trends.",
+                    "A bar for your pages, in your project's name and colours.",
+                    "llms.txt and an MCP server, so agents can read the watch and ask it."]);
+  row("Your users", ["One plain sentence for their role: developer, maintainer, learner or user.",
+                    "Checked in their browser before it is shown.",
+                    "In the page's flow, and gone once dismissed."]);  v.append(vg); frag.append(v);
 
   const s = el("section","block wrap");
   s.append(el("h2",null,"How it works"));
