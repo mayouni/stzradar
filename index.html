@@ -83,19 +83,25 @@ nav.views a[aria-current="page"]{border-bottom-color:var(--accent);color:var(--d
 @media (max-width:520px){#readers{display:none}#readerSel{display:inline-block}.row2{flex-wrap:nowrap}
   .facts{display:grid;grid-template-columns:1fr 1fr}.fact{min-width:0}}
 
-/* the front page: a taller head with a larger title, then one reading column */
-.hero .wrap{padding-block:56px 48px}
-.hero h1{font-size:clamp(2.1rem,4.6vw,3.4rem);max-width:28ch;margin-bottom:18px}
-.hero .lede{max-width:72ch}
-.hero .cta{margin:26px 0 0;display:flex;flex-wrap:wrap;align-items:center;gap:12px 28px}
-.hero .cta a.out{color:var(--deep);font-size:1.1875rem;text-decoration:underline}
+/* the front page: the hero in two halves (text, live radar), then one row of three columns */
+.hero .wrap{padding-block:48px 44px}
+.herogrid{display:grid;grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr);gap:56px;align-items:center}
+.hero h1{font-size:clamp(2.1rem,3.6vw,3.4rem);max-width:20ch;margin-bottom:18px}
+.hero .lede{max-width:60ch}
+.hero .cta{margin:28px 0 0;display:flex;flex-wrap:wrap;align-items:center;gap:12px 28px}
 .hero .cta a{text-decoration:none;display:inline-block}   /* the border marks it as the way in; no underline on top (one emphasis) */
-.hero .herofact{margin:14px 0 0;font-size:1.125rem;color:var(--ink2)}
-.home{max-width:64rem;padding-block:8px 24px}   /* inside .wrap, so it keeps the hero's left edge */
-.home h2{font:700 1.6rem/1.2 var(--f-title);margin:34px 0 12px}
-.home p{margin:0;max-width:72ch;font-size:1.25rem;line-height:1.55}
-.home ul{margin:0;padding-left:26px;display:flex;flex-direction:column;gap:10px;max-width:72ch;font-size:1.25rem;line-height:1.5}
-/* page heads */
+.hero .cta a.out{color:var(--deep);font-size:1.1875rem;text-decoration:underline}
+.hero .herofact{text-wrap:balance;margin:26px 0 0;font:600 1.125rem var(--f-mono);letter-spacing:.04em;text-transform:uppercase;color:var(--deep)}
+.hero .herofacts{margin-top:8px;max-width:40rem}
+.heroradar h2{font:700 1.4rem/1.2 var(--f-title);margin:0 0 6px}
+.heroradar .radarstage{position:relative;aspect-ratio:6/5}
+.homecols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:48px;padding-block:40px 28px}
+.homecol{border-top:3px solid var(--accent);padding-top:16px}
+.homecol h2{font:700 1.6rem/1.2 var(--f-title);margin:0 0 14px}
+.homecol p{margin:0;font-size:1.25rem;line-height:1.55}
+.homecol ul{margin:0;padding-left:24px;display:flex;flex-direction:column;gap:12px;font-size:1.25rem;line-height:1.5}
+@media (max-width:1100px){.herogrid{grid-template-columns:minmax(0,1fr);gap:32px}.hero h1{max-width:24ch}.heroradar{max-width:46rem}}
+@media (max-width:900px){.homecols{grid-template-columns:minmax(0,1fr);gap:32px}}/* page heads */
 .head{background:var(--tint);border-bottom:1px solid var(--line)}
 .head .wrap{padding-block:28px 26px}
 .eyebrow{font:600 1.125rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--deep);margin:0 0 8px}
@@ -150,6 +156,8 @@ section.block{padding-block:28px 8px}
    (author, 2026-11-09: labels are not links) */
 .radarstage .sl{position:absolute;display:flex;align-items:center;gap:.4em;font-size:1.125rem;line-height:1.25;color:var(--lab)}
 .radarstage .sl.one span{max-width:none;white-space:nowrap}
+.radarstage .sl[hidden]{display:none}
+.radarstage .sl.numonly span{display:none}   /* display:flex above would otherwise show a label the code has hidden */
 .radarstage .sl.left{flex-direction:row-reverse;text-align:right}
 /* the number stands on the line nearest the circle, so a second line of the name runs away from it, never into it */
 .radarstage .sl.up{align-items:flex-end}.radarstage .sl.down{align-items:flex-start}
@@ -558,28 +566,36 @@ function head(eyebrow, title, ledes){
 }
 
 /* ------------------------------------------------------------ view: the front page
-   What the watch is for, before any week: a hero with the promise and one way in (this week's radar), then why it
-   exists, what it answers and what it gives, read top to bottom in one column. Every word comes from lookout.yaml's
-   home section, so each project's front page speaks for that project. */
+   What the watch is for, before any week. The hero holds two halves (author, 2026-11-09: "use the space"): on the
+   left the promise, the two ways in and this week's key figures; on the right this week's radar itself, live, so a
+   reader can hover a signal and open it from the first screen. Below, why it exists, what it answers and what it
+   gives stand as one row of three columns. Every word comes from lookout.yaml's home section. */
 function viewHome(){
   const H = CONFIG.home, frag = document.createDocumentFragment();
-  const hero = el("div","head hero"), w = el("div","wrap");
   const weeks = weeksAll(), wk = weeks.find(x => DIGESTS.includes(x)) || weeks[0];
-  const n = FEED.items.filter(i => weekOf(i.date) === wk && i.status !== "superseded").length;
+  const items = FEED.items.filter(i => weekOf(i.date) === wk && i.status !== "superseded").sort(byLevel);
+  const hero = el("div","head hero"), w = el("div","wrap herogrid"), txt = el("div","herotext");
   const go = el("a","btn big","See this week on the radar →"); go.href = "#/week";
-  w.append(el("h1",null,H.headline), el("p","lede",H.promise), el("p","cta"), el("p","herofact","Week " + wk + ", " + weekSpan(wk) + ": " + plural(n, "signal") + " read and placed."));
   const site = link("Visit the " + NAME() + " website ↗", CONFIG.project.site); site.className = "out";   /* ↗: it leaves this site */
-  w.querySelector(".cta").append(go, site);
-  hero.append(w); frag.append(hero);
-  const outer = el("div","wrap"), body = el("div","home"); outer.append(body);
-  const list = items => { const ul = el("ul"); for (const t of items) ul.append(el("li",null,t)); return ul; };
-  body.append(el("h2",null,"Why it exists"), el("p",null,H.why),
-              el("h2",null,"What it answers"), list(H.need),
-              el("h2",null,"What it gives"), list(H.value));
+  const cta = el("p","cta"); cta.append(go, site);
+  const facts = el("div","facts herofacts");
+  const fact = (n, t) => { const f = el("div","fact"); f.append(el("b",null,String(n)), document.createTextNode(t)); facts.append(f); };
+  fact(items.length, items.length === 1 ? "signal this week" : "signals this week");
+  fact(items.filter(i => i.level === "action" || i.level === "urgent").length, "to do");
+  fact(new Set(items.flatMap(projectsOf)).size, "projects touched");
+  txt.append(el("h1",null,H.headline), el("p","lede",H.promise), cta, el("p","herofact","Week " + wk + ", " + weekSpan(wk)), facts);
+  const pane = el("div","scope heroradar");
+  pane.append(el("h2",null,"This week across " + NAME()), radar(items.slice(0, radarLimit()), items.length));
+  w.append(txt, pane); hero.append(w); frag.append(hero);
+  const outer = el("div","wrap"), cols = el("div","homecols"); outer.append(cols);
+  const list = xs => { const ul = el("ul"); for (const t of xs) ul.append(el("li",null,t)); return ul; };
+  const col = (t, ...kids) => { const c = el("section","homecol"); c.append(el("h2",null,t), ...kids); cols.append(c); };
+  col("Why it exists", el("p",null,H.why));
+  col("What it answers", list(H.need));
+  col("What it gives", list(H.value));
   frag.append(outer);
   return frag;
 }
-
 /* ------------------------------------------------------------ view: this week */
 /* every week that holds an entry, newest first; a past week keeps its entries even after their review date */
 const weeksAll = () => [...new Set(FEED.items.map(i => weekOf(i.date)))].sort().reverse();
@@ -693,14 +709,14 @@ function radar(items, total = items.length){
      narrow for names beside a radar worth reading (a phone), the names go in a short list under it instead. */
   const labs = layers.map((l, i) => {
     const m = ((i + .5) * step) * Math.PI / 180, s = el("div", "sl" + (Math.sin(m) < 0 ? " left" : "") + (Math.cos(m) > 0 ? " up" : " down") + (Math.abs(Math.sin(m)) > .7 ? " side" : ""));
-    s.append(el("b",null,String(i + 1)), el("span",null,l.name)); stage.append(s);
+    s.append(el("b",null,String(i + 1)), el("span",null,l.name)); s.hidden = true; stage.append(s);   /* shown once place() has put it */
     return { s, m, b: s.firstChild, pole: Math.abs(Math.cos(m)) > .7 };   /* pole: above or below the circle */
   });
   const order = el("ol","slices"); layers.forEach(l => order.append(el("li",null,l.name)));
   const place = () => {
     const W = stage.clientWidth, H0 = stage.clientHeight; let H = H0; if (!W || !H) return;
     if (!order.hidden && getComputedStyle(stage).flexGrow === "1") H += order.offsetHeight + 10;   /* judge with the list gone, as it will be */
-    labs.forEach(o => o.s.hidden = false);
+    labs.forEach(o => { o.s.hidden = false; o.s.classList.remove("numonly"); });   /* measure every label at its full size */
     /* the largest rim at which every label, at its own width and height, stays inside the stage. The labels above and
        below the circle sit clear of its top and bottom (the author's drawing, 2026-11-09) and keep their name on one
        line while the radar stays a readable size; only a narrow card lets them wrap. */
@@ -716,10 +732,15 @@ function radar(items, total = items.length){
     let rim = fit();
     if (rim < 110){ labs.forEach(o => o.s.classList.remove("one")); rim = fit(); }
     const beside = rim >= 80;
-    order.hidden = beside; labs.forEach(o => o.s.hidden = !beside);
+    order.hidden = beside;
+    labs.forEach(o => { o.s.hidden = false; o.s.classList.toggle("numonly", !beside); });   /* too narrow for names: the numbers stay, the names go in the list */
     if (!beside) rim = Math.min(W, H0) / 2 * 186 / 220;
     const D = rim * 2 * 220 / 186, cx = W / 2, cy = H / 2;
     Object.assign(svg.style, { inset:"auto", position:"absolute", width: D + "px", height: D + "px", left: (cx - D / 2) + "px", top: (cy - D / 2) + "px" });
+    if (!beside) for (const o of labs){
+      const g = rim * 34 / 186 / 2, x = cx + (rim + g) * Math.sin(o.m), y = cy - (rim + g) * Math.cos(o.m);
+      Object.assign(o.s.style, { left: x + "px", top: y + "px", right: "auto", transform: "translate(-50%,-50%)" });
+    }
     if (beside) for (const o of labs){
       const sx = Math.sin(o.m), cyy = Math.cos(o.m), x = cx + (rim + gap) * sx, half = o.b.offsetWidth / 2;
       /* above the circle a label's foot rests just over its top; below, its head just under its bottom; beside it, the
