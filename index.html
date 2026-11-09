@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<!-- the page stays hidden until its first view is drawn, so no other page shows for a moment; without scripts it is never hidden -->
+<script>document.documentElement.classList.add("booting");setTimeout(function(){document.documentElement.classList.remove("booting")},4000)</script>
+<style>html.booting body{visibility:hidden}</style>
 <title>Softanza Radar</title>
 <!-- for agents and language models: the same content as data and plain text (the llms.txt convention) -->
 <link rel="alternate" type="text/plain" href="llms.txt" title="For agents and language models">
@@ -1796,6 +1799,7 @@ async function start(){
     FEED = f; MAP = m; LESSONS = l.entries || {};
   } catch (e) {
 
+    document.documentElement.classList.remove("booting");
     $("#view").replaceChildren(head("", "The feed did not pass its check in this browser", ["Radar shows a feed only after its signature checks: " + e.message + ". Reload the page, or open it in a current browser."]));
     return;
   }
@@ -1809,6 +1813,7 @@ async function start(){
   addEventListener("hashchange", () => route(false));
   matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", () => route(true));
   route(true);
+  requestAnimationFrame(() => document.documentElement.classList.remove("booting")); setTimeout(() => document.documentElement.classList.remove("booting"), 60);
   if (!store.get("helped", false)) { store.set("helped", true); openHelp(); }
 }
 start();
