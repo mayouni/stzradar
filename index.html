@@ -98,9 +98,15 @@ section.block{padding-block:28px 8px}
    the list fills the right half and is what moves. The page keeps ONE scroll bar: the radar is sticky, so the page's
    own scroll moves only the list. On a narrow screen the radar sits above the list. */
 .week{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:32px;align-items:start}
-.week .scope{position:sticky;top:calc(var(--head,150px) + 16px);display:flex;flex-direction:column;max-height:calc(100vh - var(--head,150px) - 32px)}
-.week .scope svg{flex:1 1 auto;min-height:0;max-height:calc(100vh - var(--head,150px) - 330px);width:100%}
-@media (max-width:900px){.week{grid-template-columns:minmax(0,1fr)}.week .scope{position:static;max-height:none}.week .scope svg{max-height:none}}
+.week .scope{position:sticky;top:calc(var(--head,150px) + 16px);display:flex;flex-direction:column;height:calc(100vh - var(--head,150px) - 32px)}
+/* inside the pinned card, the radar takes the height that is left once the line above, the info bar, the legend and
+   the slice names have theirs, so everything stays inside the card at any window height */
+.week .scope > div{display:flex;flex-direction:column;flex:1 1 auto;min-height:0}
+.week .radarstage{flex:1 1 0;min-height:9rem;position:relative}
+.week .scope svg{position:absolute;inset:0;width:100%;height:100%}
+@media (max-width:900px){.week{grid-template-columns:minmax(0,1fr)}.week .scope{position:static;height:auto}.week .radarstage{flex:none;aspect-ratio:1/1;min-height:0}}
+/* a window too short to hold the whole card pinned: the card stays at full size and scrolls with the page */
+@media (max-height:759px){.week .scope{position:static;height:auto}.week .radarstage{flex:none;aspect-ratio:1/1;min-height:0}}
 .scope{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:0 1px 3px rgba(16,38,42,.06)}
 .scope svg{width:100%;height:auto;display:block}
 .scope .lbl{font:700 22px var(--f-body);fill:var(--ink2)}
@@ -114,6 +120,7 @@ section.block{padding-block:28px 8px}
 .infobar.on{border-left-color:var(--accent)}
 .infobar .ihint{color:var(--ink2);font-size:1.0625rem}
 .infobar .ititle{font:700 1.0625rem/1.35 var(--f-title);flex:1 1 14rem;min-width:0}
+.radarhint{margin:0 0 6px;font-size:1.0625rem;line-height:1.4;color:var(--ink2)}
 .scope .slices{margin:6px 2px 0;font-size:1rem;color:var(--ink2);line-height:1.5}
 .scope .slices a{white-space:nowrap}
 .group{margin-bottom:22px}
@@ -610,8 +617,7 @@ function radar(items, total = items.length){
   }
   stage.append(svg);
   const box = el("div");
-  box.append(el("p","radarhint","Click a signal on the radar to open its page in All signals." +
-    (total > items.length ? " The radar highlights the " + items.length + " that ask most of this week's " + total + "; the list holds them all." : "")), stage);
+  box.append(el("p","radarhint","Click a signal to open its page." + (total > items.length ? " Showing the " + items.length + " that ask most, of " + total + "." : "")), stage);
   const key = el("div","key");
   for (const lv of ["urgent","action","advice","info"]){ const s = el("span"); const d = el("i"); d.style.background = css("--lv-"+lv); s.append(d, document.createTextNode(WORD[lv])); key.append(s); }
   key.append(el("span",null,"centre: most relevant"));
