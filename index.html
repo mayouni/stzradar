@@ -92,8 +92,11 @@ nav.views a[aria-current="page"]{border-bottom-color:var(--accent);color:var(--d
 #readerSel{display:none}
 /* on a phone the pinned header and the help keep their compact size, so the reading text has the screen */
 @media (max-width:520px){nav.views a,.help,.row2,.row2 .lab,#readerSel,.seg a,.seg button{font-size:1rem}
-  nav.views{display:grid;grid-template-columns:repeat(3,auto);justify-content:start;gap:2px 18px}   /* five entries as 3 + 2, never one alone */
-  nav.views a:nth-child(3n+1)::before{display:none}   /* no rule before the first entry of a row */
+  /* six entries as two rows of three, never one alone: a full-width break after the third, each rule beside its entry */
+  nav.views{display:flex;flex-wrap:wrap;gap:2px 20px}
+  nav.views::before{content:"";flex-basis:100%;order:1;height:0}
+  nav.views a:nth-child(n+4){order:2}
+  nav.views a:nth-child(4)::before{display:none}
   .helpbox dl{font-size:1rem}.helpbox dd{font-size:1rem}
   #aboutLab{display:none}.seg a{padding:5px 11px}}
 @media (max-width:520px){#readers{display:none}#readerSel{display:inline-block}.row2{flex-wrap:nowrap}
@@ -128,7 +131,25 @@ ul.points{margin:0 0 12px;padding-left:22px;display:flex;flex-direction:column;g
   .outline ul{border-left:0;padding-left:0}
   .railtools .filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 18px}}
 @media (max-width:560px){.railtools .filters{grid-template-columns:repeat(2,minmax(0,1fr))}}
-/* the front page: the hero in two halves (text, live radar), then one row of three columns */
+/* For your project: what you get, by who receives it, as three aligned columns under a teal rule (as the front page) */
+.vgroups{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:36px;margin-top:8px}
+.vgroup{border-top:3px solid var(--accent);padding-top:12px}
+.vgroup h3{margin:0 0 10px;font:700 1.3rem/1.2 var(--f-title)}
+@media (max-width:900px){.vgroups{grid-template-columns:minmax(0,1fr);gap:24px}}
+/* the bar's preview drawn as another site: a browser frame at a site's width, a mock page under the bar */
+.pvlab{color:var(--ink2)}
+.browser{max-width:760px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 6px 24px rgba(16,38,42,.12);margin:6px 0 18px}
+.browser .bbar{display:flex;align-items:center;gap:6px;padding:8px 12px;background:#E9ECEC;border-bottom:1px solid #D5DADA}
+.browser .bbar i{width:10px;height:10px;border-radius:50%;background:#C5CCCC}
+.browser .burl{margin-left:10px;flex:1;background:#fff;border-radius:6px;padding:2px 10px;font-size:1rem;color:#5B6B6E}
+.browser .bpage{padding:18px 20px 22px;display:flex;flex-direction:column;gap:10px;background:#fff}
+.browser .bh{height:18px;width:45%;border-radius:4px;background:#DDE3E3}
+.browser .bl{height:10px;border-radius:4px;background:#ECEFEF}.browser .bl.short{width:60%}
+/* the front page's way in for adopters */
+.homeadopt{margin:8px 0 40px;padding:24px 0 0;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;align-items:center;gap:14px 28px}
+.homeadopt h2{margin:0;font:700 1.6rem/1.2 var(--f-title)}
+.homeadopt p{margin:0;flex:1 1 30rem;font-size:1.25rem;color:var(--ink2)}
+.homeadopt a.btn{text-decoration:none}/* the front page: the hero in two halves (text, live radar), then one row of three columns */
 /* the whole hero -- promise and radar -- fits the window under the header at 100% zoom (author, 2026-11-09): its
    height is the window's, the radar takes what its pane has left, and the type steps with the window's height */
 .hero .wrap{padding-block:clamp(16px,3vh,40px)}
@@ -457,8 +478,8 @@ pre.yfile .ln.hl{background:color-mix(in srgb,var(--accent) 20%,var(--panel));bo
 .seg a + a{border-left:1px solid var(--line)}
 .seg a[aria-current="page"]{background:var(--accent);color:var(--accent-ink)}
 /* the About bar's four pages on a phone: two full rows of two, never one alone and never cut off */
-@media (max-width:560px){#aboutNav .seg{display:grid;grid-template-columns:1fr 1fr;width:100%}
-  #aboutNav .seg a{text-align:center}#aboutNav .seg a:nth-child(odd){border-left:0}#aboutNav .seg a:nth-child(n+3){border-top:1px solid var(--line)}}
+@media (max-width:560px){#aboutNav .seg{display:grid;grid-template-columns:repeat(3,1fr);width:100%}
+  #aboutNav .seg a{text-align:center}}   /* three pages in one row of three */
 .doc code{overflow-wrap:anywhere}
 
 
@@ -512,6 +533,7 @@ footer .made{color:var(--ink2);font-weight:400;font-size:1.125rem}   /* auxiliar
       <a href="#/softanza" data-view="softanza" id="navIn">In Softanza</a>
       <a href="#/signals" data-view="signals">All signals</a>
       <a href="#/trends" data-view="trends">Trends</a>
+      <a href="#/yours" data-view="yours">For your project</a>
       <a href="#/about/why" data-view="about">About</a>
     </nav>
     <div class="tools">
@@ -532,7 +554,7 @@ footer .made{color:var(--ink2);font-weight:400;font-size:1.125rem}   /* auxiliar
   <nav class="row2" id="aboutNav" aria-labelledby="aboutLab" hidden>
     <span class="lab" id="aboutLab">About</span>
     <div class="seg">
-      <a href="#/about/why" data-sub="why">Why</a><a href="#/about/method" data-sub="method">Method</a><a href="#/about/feed" data-sub="feed">The feed</a><a href="#/yours" data-sub="yours">Make your own</a>
+      <a href="#/about/why" data-sub="why">Why</a><a href="#/about/method" data-sub="method">Method</a><a href="#/about/feed" data-sub="feed">The feed</a>
     </div>
     <span class="why" id="aboutWhy"></span>
   </nav>
@@ -716,6 +738,10 @@ function viewHome(){
   col("Why it exists", Array.isArray(H.why) ? list(H.why) : el("p",null,H.why));   /* short points, not a dense paragraph (author, 2026-11-09) */
   col("What it answers", list(H.need));
   col("What it gives", list(H.value));
+  /* a way in for a project that wants its own radar (author, 2026-11-09: adopting must be a clear message) */
+  const ad = el("div","homeadopt"), go2 = el("a","btn big","See what you get →"); go2.href = "#/yours";
+  ad.append(el("h2",null,"A radar for your own project"), el("p",null,"The same weekly watch, signed feed and bar, for your team, your apps and your users, from one file."), go2);
+  outer.append(ad);
   frag.append(outer);
   return frag;
 }
@@ -1226,27 +1252,25 @@ const BAR_VERSION = "1.2.0", BAR_SRI = "sha384-41Km1SPZGI7Qg1kYW6NYIVash8x+kLEzS
 /* the bar, as two sections of the Make your own view */
 function barSections(){
   const s = el("section","block wrap");
-  s.append(el("h2",null,"Step 5: put the notices on your sites"),
-    points([["What it shows.", "The newest notice for a site's readers, at the top of any page: one sentence, its level, and a link to the full entry."],
-            ["Checked first.", "It checks the feed's signature in the browser before it shows a word."],
-            ["Plain and in the flow.", "Plain text only, in the page's flow, so it never covers content."]]),
-    el("p",null,"Try it on this watch's feed:"));
+  s.append(el("h2",null,"Put the bar on your sites"),
+    points([["What it shows.", "The newest notice from your feed for a site's readers: one sentence, its level, a link to the full entry."],
+            ["Checked first.", "It checks your feed's signature in the browser before it shows a word."],
+            ["Plain and in the flow.", "Plain text only, in the page's flow, so it never covers content."],
+            ["Only some parts?", "Add data-projects with ids from your own map, and the bar keeps to the signals that touch them."]]),
+    el("p","pvlab","Preview: a page of your site with the bar at its top. It shows " + poss(RADAR()) + " feed as the example; yours shows your own notices."));
   const cfg = el("div","cfg");
   const mkSel = (label, opts, val) => { const l = el("label"); l.append(document.createTextNode(label)); const sl = el("select"); for (const [v,t] of opts) sl.append(new Option(t,v)); sl.value = val; l.append(sl); cfg.append(l); return sl; };
   const aud = mkSel("Your readers are", Object.keys(READERS).map(r => [r, READERS[r].label + "s"]), reader === "user" ? "user" : reader);
   const lev = mkSel("Show from level", LEVELS.map(v => [v, WORD[v]]), "advice");
-  /* projects as toggle chips, in the order of the stack; none chosen means every project */
-  const pl = el("div","picks"); const plab = el("span","plab","Only signals touching"); plab.id = "picksLab"; pl.append(plab);
-  const row = el("div","toggles"); row.setAttribute("role","group"); row.setAttribute("aria-labelledby","picksLab");
+  /* no project picker here: a project's parts belong to its own map, and an adopter has its own (author, 2026-11-09) */
   const picks = [];
-  for (const l of MAP.layers) for (const p of MAP.projects.filter(p => p.layer === l.id)){
-    const b = el("button","tog",p.name); b.type = "button"; b.value = p.id; b.setAttribute("aria-pressed","false");
-    b.addEventListener("click", () => { b.setAttribute("aria-pressed", String(b.getAttribute("aria-pressed") !== "true")); update(); });
-    picks.push(b); row.append(b);
-  }
-  pl.append(row, el("span","hint","None chosen: every project.")); cfg.append(pl);
   s.append(cfg);
-  const pv = el("div","preview"), host = el("div"); host.setAttribute("data-lookout-bar",""); pv.append(host, el("div","fake","Your page starts here."));
+  /* the preview is drawn as another site -- a browser frame of its own, at a site's width -- so it reads as something
+     to add to a page, not as part of this one */
+  const pv = el("div","browser"), bar = el("div","bbar"); bar.append(el("i"), el("i"), el("i"), el("span","burl","your-site.example/docs"));
+  const host = el("div"); host.setAttribute("data-lookout-bar","");
+  const fakePage = el("div","bpage"); fakePage.append(el("div","bh"), el("div","bl"), el("div","bl"), el("div","bl short"));
+  pv.append(bar, host, fakePage);
   s.append(pv);
   const code = el("div","code withcopy"), pre = el("pre"); code.append(pre);
   const cp = el("button","copy","Copy"); cp.type = "button"; code.append(cp);
@@ -1285,8 +1309,26 @@ const yq = s => '"' + String(s).replace(/\\/g,"\\\\").replace(/"/g,'\\"') + '"';
 function viewYours(){
   const frag = document.createDocumentFragment();
   const repo = CONFIG.watch.repository;
-  frag.append(head("", "A watch like this one, for your own project",
-    [RADAR() + " is built with " + WATCH() + ", an open tool any project can run for its own. Each week an agent reads the news of your field at its source, places every piece on your project's map, writes one sentence for each of your readers, and proposes the work it calls for. You get the same signed feed, this site with its trends, and the bar for your pages, from one file you write: lookout.yaml."]));
+  frag.append(head("", "A radar like this one, for your own project",
+    [RADAR() + " is built with " + WATCH() + ", an open tool. Run it for your project and your team gets a weekly watch on your field, your apps get a signed feed, and your users get one plain notice for their role -- all from one file you write, lookout.yaml."]));
+
+  /* the value, said first and by who receives it (author, 2026-11-09: "the value proposition for the adopter and its
+     apps and users is not clear") */
+  const v = el("section","block wrap"); v.append(el("h2",null,"What you get"));
+  const vgroup = (t, rows) => { const g = el("div","vgroup"); g.append(el("h3",null,t), points(rows)); return g; };
+  const vg = el("div","vgroups");
+  vg.append(
+    vgroup("For your team", [["Read at the source, every week.", "Papers, releases, security findings and practices in your field."],
+                            ["Judged from your point of view.", "Adopt, learn, correct, defend, watch or decline, each with its reason."],
+                            ["Work proposed where it belongs.", "Each finding goes to the part of your project it concerns, dated and followed."],
+                            ["A record that lasts.", "Every entry keeps its sources and corrections, and is never deleted."]]),
+    vgroup("For your apps and sites", [["A signed feed.", "JSON any program reads, checked against your own key."],
+                            ["A site like this one.", "The week on a radar, your project layer by layer, every signal filtered, the trends."],
+                            ["A bar for your pages.", "One script line shows the newest notice at the top of any page."]]),
+    vgroup("For your users", [["One sentence for their role.", "A developer, a maintainer, a learner and a user each read what concerns them."],
+                            ["Checked before it is shown.", "Their browser verifies the signature before it shows a word."],
+                            ["Never in their way.", "In the page's flow, plain text, and gone once dismissed."]]));
+  v.append(vg); frag.append(v);
 
   const s = el("section","block wrap");
   s.append(el("h2",null,"How it works"));
@@ -1476,7 +1518,8 @@ function dress(){
     ["In " + NAME(), NAME() + " layer by layer; every number opens its signals."],
     ["All signals", "Filter by project, layer, domain, concern, level or week."],
     ["Trends", "The weeks together, each chart with its table."],
-    ["About", "Why this watch exists, its method, and how to make your own."]
+    ["For your project", "The same radar for your own project: what your team, apps and users get, and how."],
+    ["About", "Why this watch exists, its method, and how the feed is checked."]
   ]) dl.append(el("dt",null,t), el("dd",null,d));
   dl.append(el("dt",null,"Levels")); const lv = el("dd"); LEVELS.forEach((k, i) => { if (i) lv.append(document.createTextNode(", ")); lv.append(el("b",null,WORD[k])); }); lv.append(document.createTextNode(".")); dl.append(lv);
 }
@@ -1677,7 +1720,7 @@ function route(keepScroll){
   else if (v === "softanza" || v === "estate"){ node = viewEstate(); title = "In " + NAME() + " · " + RADAR(); }
   else if (v === "signals"){ node = viewSignals(new URLSearchParams(qs || "")); title = "All signals · " + RADAR(); }
   else if (v === "signal"){ node = viewSignal(decodeURIComponent(parts[1] || "")); title = (FEED.items.find(i => i.id === parts[1])?.title || "Signal") + " · " + RADAR(); }
-  else if (v === "yours" || v === "bar"){ node = viewYours(); title = "Make your own · " + RADAR(); }
+  else if (v === "yours" || v === "bar"){ node = viewYours(); title = "For your project · " + RADAR(); }
   else if (v === "about" && parts[1] === "method"){ node = viewDoc("method"); title = "Method · " + RADAR(); }
   else if (v === "about" && parts[1] === "feed"){ node = viewFeed(); title = "The feed · " + RADAR(); }
   else if (v === "about"){ node = viewDoc("why"); title = "Why · " + RADAR(); }
@@ -1685,12 +1728,12 @@ function route(keepScroll){
   else { node = viewWeek(parts[1]); if (parts[1]) title = "Week " + parts[1] + " · " + RADAR(); }
   main.append(node); document.title = title;
   /* the About section: its three pages share the pinned second row, where the reader choice stands elsewhere */
-  const about = v === "about" || v === "yours" || v === "bar", sub = v === "about" ? (["method","feed"].includes(parts[1]) ? parts[1] : "why") : "yours";
-  $("#aboutNav").hidden = !about; $("#readerRow").hidden = about || v === "home";   /* the front page is read the same by every reader */
+  const about = v === "about", sub = ["method","feed"].includes(parts[1]) ? parts[1] : "why";
+  $("#aboutNav").hidden = !about; $("#readerRow").hidden = about || v === "home" || v === "yours" || v === "bar";   /* pages read the same by every reader */
   document.querySelectorAll("#aboutNav a").forEach(a => { if (about && a.dataset.sub === sub) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
-  $("#aboutWhy").textContent = {why:"what this watch answers, and the requirements behind it.", method:"how a signal is read, judged, written and published.", feed:"how the feed is signed, and how to check it yourself.", yours:"the same watch for your own project, and the bar for your pages."}[sub];
+  $("#aboutWhy").textContent = {why:"what this watch answers, and the requirements behind it.", method:"how a signal is read, judged, written and published.", feed:"how the feed is signed, and how to check it yourself."}[sub];
   window.headH?.();
-  const navv = v === "signal" ? "signals" : v === "estate" ? "softanza" : about ? "about" : v;
+  const navv = v === "signal" ? "signals" : v === "estate" ? "softanza" : v === "bar" ? "yours" : about ? "about" : v;
   document.querySelectorAll("nav.views a").forEach(a => a.toggleAttribute("aria-current", a.dataset.view === navv));
   document.querySelectorAll("nav.views a[aria-current]").forEach(a => a.setAttribute("aria-current","page"));
   if (!keepScroll) window.scrollTo(0, 0);
