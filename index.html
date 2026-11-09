@@ -157,9 +157,10 @@ section.block{padding-block:28px 8px}
 a.proj:hover{border-color:var(--accent)}
 .proj b{font-family:var(--f-title);font-size:1.15rem}
 .proj p{margin:4px 0 0;color:var(--ink2);font-size:1rem}
-.proj .n{display:inline-block;margin-top:6px;font-weight:700;color:var(--deep)}
-:root[data-theme="dark"] .proj .n{color:var(--accent)}
-@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .proj .n{color:var(--accent)} }
+.proj.has{border:2px solid var(--accent);background:var(--panel);cursor:pointer}
+.concern .n{display:inline-block;margin-top:8px;padding:5px 14px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:1rem}
+.proj .n{display:inline-block;align-self:flex-start;margin-top:10px;padding:5px 14px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-weight:700;font-size:1rem}
+a.proj.has:hover .n{filter:brightness(1.12)}
 .beside{background:var(--tint);border:1px dashed var(--accent);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
 .beside .proj{flex:none}
 table.grid{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;font-size:1rem}
@@ -642,7 +643,8 @@ function viewEstate(){
     const n = count(p.id), t = n ? el("a","proj") : el("div","proj");
     if (n) t.href = "#/signals?p=" + p.id;
     t.append(el("b",null,p.name), el("p",null,p.line));
-    if (n) t.append(el("span","n",plural(n,"signal")));
+    /* a part with signals is a link, and says so: a teal border on the tile and a button-like call at its foot */
+    if (n){ t.classList.add("has"); t.setAttribute("aria-label", p.name + ": read its " + plural(n, "signal")); t.append(el("span","n","Read " + plural(n,"signal") + " →")); }
     return t;
   };
   const s = el("section","block wrap"); s.append(el("h2",null,"The stack"));
@@ -683,7 +685,7 @@ function viewEstate(){
   for (const c of MAP.concerns){
     const n = live.filter(it => (it.concerns||[]).includes(c.id)).length;
     const b = n ? el("a","concern") : el("div","concern"); if (n) b.href = "#/signals?c=" + c.id;
-    b.append(el("h3",null,c.name), el("p",null,c.line)); if (n) b.append(el("span","new",plural(n,"signal")));
+    b.append(el("h3",null,c.name), el("p",null,c.line)); if (n){ b.classList.add("has"); b.append(el("span","n","Read " + plural(n,"signal") + " →")); }
     cs.append(b);
   }
   s3.append(cs); frag.append(s3);
