@@ -27,7 +27,7 @@ those blocks, and nobody edits them by hand.
   "version": 1,
   "updated": "2026-11-08T11:30:00Z",
   "home": "https://github.com/mayouni/lookout",
-  "title": "Softanza AI Radar",
+  "title": "Softanza Radar",
   "items": [ { "...": "one entry, as below, plus its url" } ]
 }
 ```

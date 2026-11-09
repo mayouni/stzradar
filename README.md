@@ -2,7 +2,7 @@
 
 **A public watch on what is changing in AI, read from Softanza's point of view, with a feed that any program can read.**
 
-**Open it: [Softanza AI Radar](https://mayouni.github.io/lookout/)**, the site Lookout builds for Softanza. It shows the week on a radar whose slices are the
+**Open it: [Softanza Radar](https://mayouni.github.io/lookout/)**, the site Lookout builds for Softanza. It shows the week on a radar whose slices are the
 layers of Softanza, and, under In Softanza, the whole platform as a stack of layers and a grid of domains. Every earlier week
 stays one click away, and Trends follows the weeks together: what was read, where Softanza stands, what it
 proposed and how far that went, and what it wrote down to learn. Every signal reads

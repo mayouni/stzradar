@@ -1,6 +1,6 @@
 # The Lookout bar
 
-The Lookout bar puts the newest notice of Softanza AI Radar for a site's readers at the top of any page, from one
+The Lookout bar puts the newest notice of Softanza Radar for a site's readers at the top of any page, from one
 script line. It is the same reader the radar site uses, so a site and the radar show the same checked feed.
 
 ```html
@@ -20,7 +20,7 @@ own feed and key, so the page pins the key it trusts:
 ```
 
 Versions 1.0.0 and 1.1.0 stay where they were, with their own integrity values, for the pages that already carry
-them. Version 1.2.0 names the watch by its feed's `title` (here, Softanza AI Radar), and its links are underlined at
+them. Version 1.2.0 names the watch by its feed's `title` (here, Softanza Radar), and its links are underlined at
 normal weight.
 
 The radar site builds this line for you, with a live preview: [Make your own](https://mayouni.github.io/lookout/#/yours).

@@ -29,6 +29,8 @@
         "owner": { "type": "string", "minLength": 1 },
         "licence": { "type": "string", "minLength": 1 },
         "licence_url": { "type": "string", "pattern": "^https://" },
+        "logo": { "type": "string", "pattern": "^assets/[a-z0-9_.-]+$" },
+        "logo_dark": { "type": "string", "pattern": "^assets/[a-z0-9_.-]+$" },
         "pitch": { "type": "string", "minLength": 1 }
       }
     },

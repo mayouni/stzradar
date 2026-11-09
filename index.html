@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Softanza AI Radar</title>
-<meta name="description" content="Softanza AI Radar: what changed in AI this week, and what it means for what we build in Softanza.">
+<title>Softanza Radar</title>
+<meta name="description" content="Softanza Radar: what changed in AI this week, and what it means for what we build in Softanza.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Source+Sans+3:wght@400;600;700&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
 <style>
-/* Softanza AI Radar, built with Lookout. The reading laws of the estate's sites, applied:
+/* Softanza Radar, built with Lookout. The reading laws of the estate's sites, applied:
    - one reading size (19 px) and nothing below 16 px; secondary text is a readable tone, never small-and-grey;
    - one scroll bar on screen (Zane Rules 14 and 92), nothing scrolls sideways at 375 px;
    - no motion while navigating; a bar never covers content; no tabs that hide content (Rule 12).
@@ -62,6 +62,16 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background
 .brand{font:700 1.5rem/1 var(--f-title);color:var(--ink);text-decoration:none;white-space:nowrap}
 .brand span{color:var(--accent)}
 .brand .bn{color:var(--ink)}
+/* the brand with a wordmark: Softanza's own logo, then "Radar" set in the same spaced capitals */
+#brand{display:flex;align-items:center;gap:.55em}
+#brand .logo{display:none;height:22px;width:auto}
+#brand.haslogo .logo.lt{display:block}#brand.haslogo .bn{display:none}
+#brand.haslogo .rest{font:500 1.375rem/1 var(--f-body);letter-spacing:.2em;text-transform:uppercase;color:var(--deep)}
+:root[data-theme="dark"] #brand.haslogo .logo.lt{display:none}:root[data-theme="dark"] #brand.haslogo .logo.dk{display:block}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) #brand.haslogo .logo.lt{display:none} :root:not([data-theme="light"]) #brand.haslogo .logo.dk{display:block} }
+:root[data-theme="dark"] #brand.haslogo .rest{color:var(--accent)}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) #brand.haslogo .rest{color:var(--accent)} }
+@media (max-width:520px){#brand .logo{height:16px}#brand.haslogo .rest{font-size:1rem}}
 nav.views{display:flex;flex-wrap:wrap;gap:4px 20px}
 nav.views a{font-weight:600;color:var(--ink);text-decoration:none;padding:4px 0;border-bottom:3px solid transparent;font-size:1.1875rem}
 nav.views a[aria-current="page"]{border-bottom-color:var(--accent);color:var(--deep)}
@@ -440,7 +450,7 @@ dialog.helpbox::backdrop{background:rgba(16,38,42,.45)}
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .btn{color:var(--accent)} }
 footer{border-top:1px solid var(--line);margin-top:36px}
 footer .wrap{padding-block:20px 32px;display:flex;flex-direction:column;gap:8px;font-size:1.1875rem;color:var(--ink2)}
-footer .made{color:var(--ink);font-weight:600}
+footer .made{color:var(--ink2);font-weight:400;font-size:1.125rem}   /* auxiliary data: plain weight (author, 2026-11-09) */
 /* the feed's check lives on its own About page, not in the footer (author, 2026-11-09: "dense and worth writing elsewhere") */
 .feedok{font-weight:600;color:var(--deep)}
 .ok{color:var(--deep);font-weight:700}
@@ -452,7 +462,7 @@ footer .made{color:var(--ink);font-weight:600}
 
 <header class="top"><div class="wrap">
   <div class="row1">
-    <a class="brand" href="#/"><span class="bn" id="brandName">Softanza AI</span> <span>Radar</span></a>
+    <a class="brand" href="#/" id="brand"><img class="logo lt" id="logoLt" alt="Softanza"><img class="logo dk" id="logoDk" alt=""><span class="bn" id="brandName">Softanza</span><span class="rest" id="brandRest">Radar</span></a>
     <nav class="views" aria-label="Views">
       <a href="#/week" data-view="week">This week</a>
       <a href="#/softanza" data-view="softanza" id="navIn">In Softanza</a>
@@ -1339,13 +1349,18 @@ function dress(){
   for (const r of CONFIG.readers){ READERS[r.id].label = r.label; READERS[r.id].why = r.first; }
   if (!READERS[reader]) reader = CONFIG.readers[0].id;
   readerRow();
-  { const t = RADAR().split(" "), last = t.pop(); $("#brandName").textContent = t.join(" "); $("#brandName").nextElementSibling.textContent = last; }
+  { /* the brand: the project's own wordmark when lookout.yaml names one, then the rest of the title ("Radar") */
+    const rest = RADAR().startsWith(NAME()) ? RADAR().slice(NAME().length).trim() : RADAR();
+    const P = CONFIG.project, b = $("#brand");
+    b.classList.toggle("haslogo", !!P.logo); $("#brandName").textContent = NAME(); $("#brandRest").textContent = rest;
+    if (P.logo){ $("#logoLt").src = P.logo; $("#logoLt").alt = NAME(); $("#logoDk").src = P.logo_dark || P.logo; }
+    b.setAttribute("aria-label", RADAR()); }
   $("#ghLink").href = CONFIG.watch.repository;                    /* each watch links its own repository */
   $("#navIn").textContent = "In " + NAME();
   document.querySelector('meta[name="description"]').content = RADAR() + ": " + CONFIG.watch.tagline.charAt(0).toLowerCase() + CONFIG.watch.tagline.slice(1) + ".";   /* the project's own words, for a share or a search */
   const year = Math.min(...FEED.items.map(i => +i.date.slice(0,4)));
   $("#made").replaceChildren(document.createTextNode(RADAR() + " is a "), link(NAME(), CONFIG.project.site),
-    document.createTextNode(" project, built with " + WATCH() + ". © " + year + " " + CONFIG.project.owner + ". Released under the "),
+    document.createTextNode(" project. © " + year + " " + CONFIG.project.owner + ". Released under the "),
     link(CONFIG.project.licence + " licence", CONFIG.project.licence_url || CONFIG.watch.repository), document.createTextNode("."));
 
   const dl = $("#helpList"); dl.replaceChildren();

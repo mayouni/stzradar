@@ -13,6 +13,8 @@ project:                          # the project the watch serves
   owner: Mansour Ayouni
   licence: MIT
   licence_url: https://github.com/mayouni/lookout/blob/main/LICENSE
+  logo: assets/wordmark.png       # the project's wordmark, shown in place of its name in the site's brand
+  logo_dark: assets/wordmark-dark.png
   pitch: >
     The governed software platform of the AI age: a library and its Zig engine, a declared machine
     (Harobanda), a language of languages (Haro), and the projects built on them.
@@ -22,7 +24,7 @@ project:                          # the project the watch serves
 
 watch:                            # the watch itself
   name: Lookout                   # the tool's name: the repository, the feed format, the bar's script
-  title: "{project} {topic} Radar"  # what readers see: the site's title, the feed's title, the bar's link
+  title: "{project} Radar"          # what readers see: the site's title, the feed's title, the bar's link
   topic: AI
   repository: https://github.com/mayouni/lookout
   pages: https://mayouni.github.io/lookout/
