@@ -462,6 +462,47 @@
           "No: the main model keeps only the tokens it would have written itself, so only the speed changes."
         ]
       ]
+    },
+    "2026-11-11-liquid-lfm3": {
+      "build": [
+        {
+          "why": "Run the 1 GB text model locally with llama.cpp. This downloads the model.",
+          "cmd": "llama cli -hf LiquidAI/LFM3-1.7B-GGUF:Q4_K_M"
+        },
+        {
+          "why": "Ask a choice question by probability, not by generation: score each option's tokens after the prompt and keep the most likely.",
+          "cmd": "for option in [\"billing\", \"shipping\", \"technical\"]: score[option] = logprob(prompt + option)"
+        },
+        {
+          "why": "Several questions about one long input: read the input once and keep its cache, then ask each question from that cache.",
+          "cmd": "state = model.prefill(ticket); answers = [state.ask(q) for q in questions]"
+        }
+      ],
+      "lesson": "A small model can be asked to write an answer, or to say how likely each allowed answer is. The second is often more reliable, because the model cannot wander off the list. Liquid AI's d1 models take this further: they read one input once and answer a whole list of questions about it, each with a probability you can trust as a probability. LFM3 is also built for small devices: most of its layers are cheap convolutions, with attention kept for long context.",
+      "terms": [
+        [
+          "forward pass",
+          "one run of the model over its input, the unit of its cost"
+        ],
+        [
+          "calibrated probability",
+          "a probability that matches how often the answer is right: 0.8 means right about 8 times in 10"
+        ],
+        [
+          "prefill",
+          "reading the input before answering, often the largest cost for a long input"
+        ]
+      ],
+      "quiz": [
+        [
+          "Why can reading by probability beat generation for a choice question?",
+          "The model only ranks the allowed options, so it cannot answer outside the list or phrase the answer in a way the program misreads."
+        ],
+        [
+          "What does a shared prefill save when you ask five questions about one ticket?",
+          "The ticket is read once instead of five times; only the short questions are read again."
+        ]
+      ]
     }
   }
 }
