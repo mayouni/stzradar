@@ -6,6 +6,81 @@
   "title": "Softanza Radar",
   "items": [
     {
+      "id": "2026-11-11-liquid-lfm3",
+      "date": "2026-11-11",
+      "title": "Liquid AI's LFM3: six 2B-class models on one backbone, built for the device; Softanza learns from its decision models",
+      "kind": "release",
+      "summary": "On October 27, 2026 Liquid AI released LFM3, six open-weight models of about 2 billion parameters each (text, vision with video, audio with speech output, omni, and two d1 decision models), all branched from one 1.7B base. The base mixes 13 gated short-convolution layers with 5 sliding-window and 6 global attention layers, fits in about 1 GB at 4 bits, reads 256K tokens and covers 16 languages, Arabic and French among them. The d1 models answer a list of questions about one input in a single forward pass, each answer with a calibrated probability.",
+      "stance": "learn",
+      "relevance": "high",
+      "level": "advice",
+      "audiences": [
+        "developer",
+        "maintainer"
+      ],
+      "notice": {
+        "developer": "A 1 GB open model for local agents now reads Arabic and French with a 256K context, and its d1 sibling answers several yes/no, choice and score questions about one input in one pass.",
+        "maintainer": "Softanza already reads answers by probability, which beat generation on its golden sets; it measures LFM3's d1 shape, many questions over one shared prefill, and weighs the LFM3 decoder family beside Gemma 4."
+      },
+      "areas": [
+        "softanza",
+        "aicha"
+      ],
+      "domains": [
+        "models",
+        "agents"
+      ],
+      "concerns": [
+        "speed",
+        "cost",
+        "correctness"
+      ],
+      "actions": [
+        {
+          "area": "stzlib.intelligence",
+          "do": "measure answering several option questions over one shared prefill of the same input, the shape of LFM3's d1 models, against one StzOptionProbabilities call per question, on the support-desk golden sets: same answers, fewer prefill tokens",
+          "state": "proposed",
+          "dates": {
+            "proposed": "2026-11-11"
+          }
+        },
+        {
+          "area": "stzlib.intelligence",
+          "do": "weigh the LFM3 decoder family (gated short convolutions, sliding-window and gated global attention, partial RoPE) beside Gemma 4 for the engine's next decoder port, then put LFM3-1.7B before the model court against Granite-4.0-1b with its speeds recorded",
+          "state": "proposed",
+          "dates": {
+            "proposed": "2026-11-11"
+          }
+        }
+      ],
+      "status": "analysed",
+      "confidence": "claimed",
+      "sources": [
+        {
+          "title": "Build specialized multimodal models with LFM3",
+          "url": "https://huggingface.co/blog/LiquidAI/lfm3",
+          "by": "Liquid AI",
+          "read": "2026-11-11"
+        },
+        {
+          "title": "LiquidAI/LFM3-1.7B (model card)",
+          "url": "https://huggingface.co/LiquidAI/LFM3-1.7B",
+          "by": "Liquid AI",
+          "read": "2026-11-11"
+        }
+      ],
+      "review_by": "2027-01-11",
+      "tags": [
+        "liquid-ai",
+        "lfm3",
+        "slm",
+        "on-device",
+        "decision-models",
+        "multilingual"
+      ],
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-11-liquid-lfm3.md"
+    },
+    {
       "id": "2026-11-11-nemotron-bolt-e4b",
       "date": "2026-11-11",
       "title": "NVIDIA's Nemotron 3.5 Bolt E4B: a 4 GB model for local agents; Softanza adds its Gemma 4 family and takes it to the model court",

@@ -7,6 +7,25 @@
   "language": "en",
   "items": [
     {
+      "id": "2026-11-11-liquid-lfm3",
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-11-liquid-lfm3.md",
+      "title": "Liquid AI's LFM3: six 2B-class models on one backbone, built for the device; Softanza learns from its decision models",
+      "summary": "On October 27, 2026 Liquid AI released LFM3, six open-weight models of about 2 billion parameters each (text, vision with video, audio with speech output, omni, and two d1 decision models), all branched from one 1.7B base. The base mixes 13 gated short-convolution layers with 5 sliding-window and 6 global attention layers, fits in about 1 GB at 4 bits, reads 256K tokens and covers 16 languages, Arabic and French among them. The d1 models answer a list of questions about one input in a single forward pass, each answer with a calibrated probability.",
+      "content_text": "On October 27, 2026 Liquid AI released LFM3, six open-weight models of about 2 billion parameters each (text, vision with video, audio with speech output, omni, and two d1 decision models), all branched from one 1.7B base. The base mixes 13 gated short-convolution layers with 5 sliding-window and 6 global attention layers, fits in about 1 GB at 4 bits, reads 256K tokens and covers 16 languages, Arabic and French among them. The d1 models answer a list of questions about one input in a single forward pass, each answer with a calibrated probability.",
+      "date_published": "2026-11-11T00:00:00Z",
+      "tags": [
+        "release",
+        "learn",
+        "advice",
+        "liquid-ai",
+        "lfm3",
+        "slm",
+        "on-device",
+        "decision-models",
+        "multilingual"
+      ]
+    },
+    {
       "id": "2026-11-11-nemotron-bolt-e4b",
       "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-11-nemotron-bolt-e4b.md",
       "title": "NVIDIA's Nemotron 3.5 Bolt E4B: a 4 GB model for local agents; Softanza adds its Gemma 4 family and takes it to the model court",
