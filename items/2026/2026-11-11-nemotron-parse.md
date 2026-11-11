@@ -19,9 +19,9 @@
   "domains": ["models", "data"],
   "concerns": ["correctness", "cost", "sovereignty"],
   "actions": [
-    { "area": "stzlib", "do": "run Nemotron 3.5 Parse once by its published reference path on the OCR plane's golden pages, single and triple pass, and enter the result in the OCR court beside the PP-OCR pipeline and Granite-Docling, with the languages and scripts each one reads", "state": "proposed", "dates": { "proposed": "2026-11-11" } }
+    { "area": "stzlib", "do": "run Nemotron 3.5 Parse once by its published reference path on the OCR plane's golden pages, single and triple pass, and enter the result in the OCR court beside the PP-OCR pipeline and Granite-Docling, with the languages and scripts each one reads", "state": "routed", "dates": { "proposed": "2026-11-11", "routed": "2026-11-11" } }
   ],
-  "status": "analysed",
+  "status": "routed",
   "confidence": "claimed",
   "sources": [
     { "title": "Nemotron-3.5-Parse (model card)", "url": "https://huggingface.co/nvidia/Nemotron-3.5-Parse", "by": "NVIDIA", "read": "2026-11-11" }

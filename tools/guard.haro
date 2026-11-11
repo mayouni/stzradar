@@ -41,11 +41,11 @@ class Guard
         Yaml()
         Config()
 
-    func Pass tName
+    func Pass(tName)
         nPass++
         see "  ok    " + tName + Char(10)
 
-    func Fail tName, tWhy
+    func Fail(tName, tWhy)
         nFail++
         see "  FAIL  " + tName + ": " + tWhy + Char(10)
 
@@ -58,38 +58,38 @@ class Guard
 
     # The good entry with exactly one change. Returns "" if the change did not apply, so a case
     # whose text drifted from the entry fails instead of testing nothing.
-    func Broken tOld, tNew
-        if SubStr(tGood, tOld) = 0 return "" ok
+    func Broken(tOld, tNew)
+        if SubStr(tGood, tOld) = 0 return "" end
         return SubStr(tGood, tOld, tNew)
 
-    func Joined aProblems
+    func Joined(aProblems)
         tC = ""
         nN = Len(aProblems)
         for i = 1 to nN
             tC += aProblems[i] + " | "
-        next
+        end
         return tC
 
     # One entry text, one expected reason.
-    func Refuses tName, tText, tYear, tFileName, tReason
+    func Refuses(tName, tText, tYear, tFileName, tReason)
         if tText = ""
             Fail(tName, "the change did not apply to the entry's text")
             return
-        ok
+        end
         oRun = NewRun()
         oRun.AddEntryText("items/" + tYear + "/" + tFileName, tYear, tFileName, tText)
         oRun.Finish("none")
         if Len(oRun.aProblems) = 0
             Fail(tName, "the check accepted it")
             return
-        ok
+        end
         if SubStr(Joined(oRun.aProblems), tReason) = 0
             Fail(tName, "refused, but not for this reason: " + Joined(oRun.aProblems))
             return
-        ok
+        end
         Pass(tName)
 
-    func RefusesOne tName, tOld, tNew, tReason
+    func RefusesOne(tName, tOld, tNew, tReason)
         Refuses(tName, Broken(tOld, tNew), "2026", tFile, tReason)
 
     # ------------------------------------------------------------ the control
@@ -100,7 +100,7 @@ class Guard
         if Len(oRun.aProblems) > 0
             Fail("control: the real entry passes", Joined(oRun.aProblems))
             return
-        ok
+        end
         Pass("control: the real entry passes")
 
         # every entry in items/, built in memory, must give the committed bytes
@@ -110,18 +110,18 @@ class Guard
         if Len(oRun.aProblems) > 0
             Fail("control: every entry in items/ passes", Joined(oRun.aProblems))
             return
-        ok
+        end
         Pass("control: every entry in items/ passes (" + String(oRun.nEntries) + ")")
         if oRun.tIndex = Read(tRoot + "/feed/index.json")
             Pass("control: in memory, index.json is the committed bytes")
         else
             Fail("control: in memory, index.json is the committed bytes", "they differ")
-        ok
+        end
         if oRun.tFeed = Read(tRoot + "/feed/feed.json")
             Pass("control: in memory, feed.json is the committed bytes")
         else
             Fail("control: in memory, feed.json is the committed bytes", "they differ")
-        ok
+        end
 
     # ------------------------------------------------------------ one entry, one defect
     func Refusals
@@ -211,10 +211,10 @@ class Guard
             Pass("two entries with one id")
         else
             Fail("two entries with one id", "not refused for that: " + Joined(oRun.aProblems))
-        ok
+        end
 
     # ------------------------------------------------------------ the bytes written
-    func Second tDate, tUpdated
+    func Second(tDate, tUpdated)
         tQ = '"'
         tId = tDate + "-second"
         tC = SubStr(tGood, tQ + "2026-11-08-lookout-opens" + tQ, tQ + tId + tQ)
@@ -236,7 +236,7 @@ class Guard
             Pass("\u escapes are written as UTF-8, a tab as \t")
         else
             Fail("\u escapes are written as UTF-8, a tab as \t", Joined(oRun.aProblems))
-        ok
+        end
 
         # newest date first; updated is the newest day; date_modified only when it differs
         oRun = NewRun()
@@ -247,24 +247,24 @@ class Guard
         if Len(oRun.aProblems) > 0
             Fail("two entries build", Joined(oRun.aProblems))
             return
-        ok
+        end
         nNew = SubStr(oRun.tIndex, tQ + "2026-11-09-second" + tQ)
         nOld = SubStr(oRun.tIndex, tQ + "2026-11-08-lookout-opens" + tQ)
         if nNew > 0 and nNew < nOld
             Pass("the newer entry comes first")
         else
             Fail("the newer entry comes first", "it does not")
-        ok
+        end
         if SubStr(oRun.tIndex, tQ + "updated" + tQ + ": " + tQ + "2026-11-10T00:00:00Z" + tQ) > 0
             Pass("the index's updated is the newest updated, at midnight UTC")
         else
             Fail("the index's updated is the newest updated, at midnight UTC", "it is not")
-        ok
+        end
         if SubStr(oRun.tFeed, tQ + "date_modified" + tQ + ": " + tQ + "2026-11-10T00:00:00Z" + tQ) > 0
             Pass("feed.json writes date_modified when updated differs from date")
         else
             Fail("feed.json writes date_modified when updated differs from date", "it does not")
-        ok
+        end
         aOne = NewRun()
         aOne.AddEntryText("items/2026/" + tFile, "2026", tFile, tGood)
         aOne.Finish("none")
@@ -272,7 +272,7 @@ class Guard
             Pass("feed.json writes no date_modified when updated equals date")
         else
             Fail("feed.json writes no date_modified when updated equals date", "it does")
-        ok
+        end
 
         # the same day: by id
         oRun = NewRun()
@@ -286,7 +286,7 @@ class Guard
             Pass("on one day, entries go by id")
         else
             Fail("on one day, entries go by id", Joined(oRun.aProblems))
-        ok
+        end
 
     # ------------------------------------------------------------ the pattern matcher
     func Patterns
@@ -315,9 +315,9 @@ class Guard
             if bFound != aCases[i][3]
                 nBad++
                 Fail("pattern " + aCases[i][1], "on " + q2(aCases[i][2]) + " answered " + BoolText(bFound))
-            ok
-        next
-        if nBad = 0 Pass("the pattern matcher, " + String(nN) + " cases") ok
+            end
+        end
+        if nBad = 0 Pass("the pattern matcher, " + String(nN) + " cases") end
 
     # ------------------------------------------------------------ public pages speak affirmatively
     func Affirm
@@ -327,7 +327,7 @@ class Guard
             Pass("a public line saying what is missing is refused")
         else
             Fail("a public line saying what is missing is refused", "it was accepted")
-        ok
+        end
 
         oRun = NewRun()
         oRun.AffirmLine("README.md", 1, "A reader command does not exist yet.", [["README.md", "a reader command"]])
@@ -335,7 +335,7 @@ class Guard
             Pass("an allowed line passes")
         else
             Fail("an allowed line passes", Joined(oRun.aProblems))
-        ok
+        end
 
         oRun = NewRun()
         oRun.AffirmLine("docs/FEED.md", 1, "Softanza reads the feed and shows each notice.", [])
@@ -343,7 +343,7 @@ class Guard
             Pass("an affirmative line passes")
         else
             Fail("an affirmative line passes", Joined(oRun.aProblems))
-        ok
+        end
 
         # the real allow list loads, and every entry in it gives a reason
         oRun = NewRun()
@@ -352,7 +352,7 @@ class Guard
             Pass("tools/affirm-allow.txt loads, every line with its reason (" + String(Len(aAllow)) + ")")
         else
             Fail("tools/affirm-allow.txt loads, every line with its reason", Joined(oRun.aProblems))
-        ok
+        end
 
     # ------------------------------------------------------------ every entry sits on the estate map
     # The real map/estate.json, and the frozen entry with its areas line changed in memory.
@@ -392,36 +392,36 @@ class Guard
             xV = oY.Parse(tDoc, "t.yaml")
             tGot = Compact(JWrite(xV, 0))
             if tGot = tWant Pass("YAML: maps, lists, lists of maps, quotes, [lists], booleans, > and | text")
-            else Fail("YAML: the sample reads as expected", tGot) ok
+            else Fail("YAML: the sample reads as expected", tGot) end
         catch e
             Fail("YAML: the sample reads as expected", e.Message())
-        done
+        end
         YamlRefuses("YAML: a tab in the indent is refused", "a:" + tNL + Char(9) + "b: 1" + tNL, "a tab indents")
         YamlRefuses("YAML: a key written twice is refused", "a: 1" + tNL + "a: 2" + tNL, "written twice")
         YamlRefuses("YAML: a feature this reader does not take is refused", "a: &anchor 1" + tNL, "does not read here")
         YamlRefuses("YAML: an unclosed quote is refused", 'a: "open' + tNL, "not closed")
         YamlRefuses("YAML: a key indented deeper than its siblings is refused", "a: 1" + tNL + "   b: 2" + tNL, "indented more")
 
-    func YamlRefuses tName, tDoc, tReason
+    func YamlRefuses(tName, tDoc, tReason)
         oY = new YamlReader
         try
             oY.Parse(tDoc, "t.yaml")
             Fail(tName, "it was accepted")
         catch e
-            if SubStr(e.Message(), tReason) > 0 Pass(tName) else Fail(tName, "refused for another reason: " + e.Message()) ok
-        done
+            if SubStr(e.Message(), tReason) > 0 Pass(tName) else Fail(tName, "refused for another reason: " + e.Message()) end
+        end
 
     # JSON written by JWrite, with the layout spaces outside strings removed, to compare with a literal.
-    func Compact tC
+    func Compact(tC)
         tOut = ""
         bIn = false
         nN = Len(tC)
         for i = 1 to nN
             xCh = tC[i]
-            if xCh = '"' and (i = 1 or tC[i - 1] != "\") bIn = not bIn ok
-            if not bIn and (xCh = " " or Ascii(xCh) = 10) loop ok
+            if xCh = '"' and (i = 1 or tC[i - 1] != "\") bIn = not bIn end
+            if not bIn and (xCh = " " or Ascii(xCh) = 10) loop end
             tOut += xCh
-        next
+        end
         return tOut
 
     # ------------------------------------------------------------ radar.yaml is checked before anything runs
@@ -436,7 +436,7 @@ class Guard
         ConfigCase("a key the configuration does not define is refused", tReal + "colour: teal" + Char(10), "colour")
         ConfigCase("a pages address without its closing slash is refused", SubStr(tReal, "https://mayouni.github.io/stzradar/" + Char(10), "https://mayouni.github.io/stzradar" + Char(10)), "pages")
 
-    func ConfigCase tName, tText, tReason
+    func ConfigCase(tName, tText, tReason)
         oRun = new FeedRun
         oRun.tRoot = tRoot
         oRun.bQuiet = true
@@ -445,35 +445,35 @@ class Guard
         bOk = oRun.LoadConfigText(tText)
         tSaid = Joined(oRun.aProblems)
         if tReason = ""
-            if bOk and tSaid = "" Pass(tName) else Fail(tName, tSaid) ok
+            if bOk and tSaid = "" Pass(tName) else Fail(tName, tSaid) end
             return
-        ok
+        end
         if bOk
             Fail(tName, "it was accepted")
-        but SubStr(tSaid, tReason) > 0
+        elseif SubStr(tSaid, tReason) > 0
             Pass(tName)
         else
             Fail(tName, "refused for another reason: " + tSaid)
-        ok
+        end
 
-    func MapCase tName, tText, tReason
+    func MapCase(tName, tText, tReason)
         if tText = ""
             Fail(tName, "the change did not apply to the entry's text")
             return
-        ok
+        end
         oRun = NewRun()
         oRun.AddEntryText("items/2026/" + tFile, "2026", tFile, tText)
         oRun.MapCheck()
         tSaid = Joined(oRun.aProblems)
         if tReason = ""
-            if tSaid = "" Pass(tName) else Fail(tName, tSaid) ok
+            if tSaid = "" Pass(tName) else Fail(tName, tSaid) end
             return
-        ok
-        if SubStr(tSaid, tReason) > 0 Pass(tName) else Fail(tName, "not refused for this reason: " + tSaid) ok
+        end
+        if SubStr(tSaid, tReason) > 0 Pass(tName) else Fail(tName, "not refused for this reason: " + tSaid) end
 
-    func q2 xS
+    func q2(xS)
         return '"' + xS + '"'
 
-func BoolText bV
-    if bV return "true" ok
+func BoolText(bV)
+    if bV return "true" end
     return "false"

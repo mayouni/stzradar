@@ -19,9 +19,9 @@
   "domains": ["models", "data"],
   "concerns": ["correctness", "sovereignty"],
   "actions": [
-    { "area": "stzlib.intelligence", "do": "add Arabic and French items to the retrieval golden set, so the model court can judge a multilingual embedding challenger against all-MiniLM-L6-v2 on text and SigLIP2 on page images", "state": "proposed", "dates": { "proposed": "2026-11-11" } }
+    { "area": "stzlib.intelligence", "do": "add Arabic and French items to the retrieval golden set, so the model court can judge a multilingual embedding challenger against all-MiniLM-L6-v2 on text and SigLIP2 on page images", "state": "routed", "dates": { "proposed": "2026-11-11", "routed": "2026-11-11" } }
   ],
-  "status": "analysed",
+  "status": "routed",
   "confidence": "claimed",
   "sources": [
     { "title": "Nemotron-3.5-Embed-1B-BF16 (model card)", "url": "https://huggingface.co/nvidia/Nemotron-3.5-Embed-1B-BF16", "by": "NVIDIA", "read": "2026-11-11" }

@@ -23,16 +23,16 @@ tTrust = ""            # "" when the signature checked; otherwise why it did not
 
 func main
     $tRoot = CurrentDir()
-    if Len(sysargv) >= 3 $tRoot = sysargv[3] ok
+    if Len(sysargv) >= 3 $tRoot = sysargv[3] end
     LoadRadar()
     nEmpty = 0
     while true
         give tLine
         if tLine = ""
             nEmpty++
-            if nEmpty > 3 exit ok          # the client closed our input
+            if nEmpty > 3 exit end          # the client closed our input
             loop
-        ok
+        end
         nEmpty = 0
         Handle(tLine)
     end
@@ -48,116 +48,116 @@ func LoadRadar
     catch e
         $tTrust = "the radar's files could not be read from " + $tRoot + ": " + e.Message()
         return
-    done
+    end
     try
         $aMap = oReader.Parse(Read($tRoot + "/" + Cf("map")), "map")
     catch
         $tTrust = "the map " + Cf("map") + " could not be read"
         return
-    done
+    end
     if FExists($tRoot + "/app/digests.json")
         try
             $aDigests = JItems(oReader.Parse(Read($tRoot + "/app/digests.json"), "digests"))
         catch
             $aDigests = []
-        done
-    ok
+        end
+    end
     $tTrust = CheckSignature()
 
 # The feed is trusted only when its signature checks; ssh-keygen's own words are kept off our output,
 # which carries the protocol.
 func CheckSignature
     tIdx = $tRoot + "/feed/index.json"
-    if not FExists(tIdx + ".sig") return "feed/index.json has no signature (feed/index.json.sig)" ok
-    if not FExists($tRoot + "/keys/allowed_signers") return "there is no key to check the feed against (keys/allowed_signers)" ok
+    if not FExists(tIdx + ".sig") return "feed/index.json has no signature (feed/index.json.sig)" end
+    if not FExists($tRoot + "/keys/allowed_signers") return "there is no key to check the feed against (keys/allowed_signers)" end
     tQuiet = " >/dev/null 2>&1"
-    if IsWindows() tQuiet = " >nul 2>&1" ok
+    if IsWindows() tQuiet = " >nul 2>&1" end
     tCmd = "ssh-keygen -Y verify -f " + Q($tRoot + "/keys/allowed_signers") + " -I " + Cf("feed.signer") +
            " -n " + Cf("feed.namespace") + " -s " + Q(tIdx + ".sig") + " < " + Q(tIdx) + tQuiet
-    if System(tCmd) != 0 return "feed/index.json's signature does not check against keys/allowed_signers (or ssh-keygen is missing)" ok
+    if System(tCmd) != 0 return "feed/index.json's signature does not check against keys/allowed_signers (or ssh-keygen is missing)" end
     return ""
 
-func Q tC
+func Q(tC)
     return '"' + tC + '"'
 
 # one value of app/config.json by its dotted path
-func Cf tPath
+func Cf(tPath)
     xV = $aCfg
     tPart = ""
     tP = tPath + "."
     nP = Len(tP)
     for i = 1 to nP
         if tP[i] = "."
-            if JKind(xV) != "object" or not JHas(xV, tPart) return "" ok
+            if JKind(xV) != "object" or not JHas(xV, tPart) return "" end
             xV = JGet(xV, tPart)
             tPart = ""
         else
             tPart += tP[i]
-        ok
-    next
-    if IsString(xV) return xV ok
+        end
+    end
+    if IsString(xV) return xV end
     return ""
 
-func S xO, tKey
-    if JKind(xO) != "object" return "" ok
+func S(xO, tKey)
+    if JKind(xO) != "object" return "" end
     xV = JGet(xO, tKey)
-    if IsString(xV) return xV ok
+    if IsString(xV) return xV end
     return ""
 
-func Word tLevel
-    if tLevel = "info" return "To know" ok
-    if tLevel = "advice" return "To consider" ok
-    if tLevel = "action" return "To do" ok
-    if tLevel = "urgent" return "To do now" ok
+func Word(tLevel)
+    if tLevel = "info" return "To know" end
+    if tLevel = "advice" return "To consider" end
+    if tLevel = "action" return "To do" end
+    if tLevel = "urgent" return "To do now" end
     return tLevel
 
-func LevelRank tLevel
+func LevelRank(tLevel)
     return Find(["info", "advice", "action", "urgent"], tLevel)
 
-func RelRank tC
+func RelRank(tC)
     return Find(["low", "medium", "high"], tC)
 
 # ISO week of a "YYYY-MM-DD" date, as "YYYY-Www"
-func IsoWeek tDate
+func IsoWeek(tDate)
     nY = Number(Left(tDate, 4)) nMo = Number(SubStr(tDate, 6, 2)) nDa = Number(SubStr(tDate, 9, 2))
     aCum = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334]
     nOrd = aCum[nMo] + nDa
-    if nMo > 2 and Leap(nY) nOrd++ ok
+    if nMo > 2 and Leap(nY) nOrd++ end
     nW = Floor((nOrd - Dow(nY, nMo, nDa) + 10) / 7)
     if nW < 1
         nY--
         nW = WeeksIn(nY)
-    but nW > WeeksIn(nY)
+    elseif nW > WeeksIn(nY)
         nY++
         nW = 1
-    ok
+    end
     tW = "" + String(nW)
-    if nW < 10 tW = "0" + tW ok
+    if nW < 10 tW = "0" + tW end
     return "" + String(nY) + "-W" + tW
 
-func Leap xY
+func Leap(xY)
     return (xY % 4 = 0 and xY % 100 != 0) or xY % 400 = 0
 
 # Monday 1 .. Sunday 7
-func Dow xY, nM, xD
+func Dow(xY, nM, xD)
     aT = [0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4]
-    if nM < 3 xY-- ok
+    if nM < 3 xY-- end
     xN = (xY + Floor(xY / 4) - Floor(xY / 100) + Floor(xY / 400) + aT[nM] + xD) % 7
-    if xN = 0 return 7 ok
+    if xN = 0 return 7 end
     return xN
 
-func WeeksIn xY
-    if P(xY) = 4 or P(xY - 1) = 3 return 53 ok
+func WeeksIn(xY)
+    if P(xY) = 4 or P(xY - 1) = 3 return 53 end
     return 52
 
-func P xY
+func P(xY)
     return (xY + Floor(xY / 4) - Floor(xY / 100) + Floor(xY / 400)) % 7
 
 # the project ids an entry touches: its areas through the map's ids and aliases
-func ProjectsOf xO
+func ProjectsOf(xO)
     aOut = []
     xA = JGet(xO, "areas")
-    if JKind(xA) != "array" return aOut ok
+    if JKind(xA) != "array" return aOut end
     aA = JItems(xA)
     aP = JItems(JGet($aMap, "projects"))
     nA = Len(aA) nP = Len(aP)
@@ -165,24 +165,24 @@ func ProjectsOf xO
         tA = Lower(aA[i])
         tHead = tA
         nDot = SubStr(tA, ".")
-        if nDot > 0 tHead = Left(tA, nDot - 1) ok
+        if nDot > 0 tHead = Left(tA, nDot - 1) end
         tHit = ""
         for k = 1 to nP
             tId = S(aP[k], "id")
-            if tA = tId or tHead = tId tHit = tId exit ok
+            if tA = tId or tHead = tId tHit = tId exit end
             xAl = JGet(aP[k], "aliases")
             if JKind(xAl) = "array"
                 aAl = JItems(xAl) nAl = Len(aAl)
                 for j = 1 to nAl
-                    if Lower(aAl[j]) = tA or Lower(aAl[j]) = tHead tHit = tId exit 2 ok
-                next
-            ok
-        next
-        if tHit != "" and Find(aOut, tHit) = 0 aOut + tHit ok
-    next
+                    if Lower(aAl[j]) = tA or Lower(aAl[j]) = tHead tHit = tId exit 2 end
+                end
+            end
+        end
+        if tHit != "" and Find(aOut, tHit) = 0 aOut + tHit end
+    end
     return aOut
 
-func LayersOf xO
+func LayersOf(xO)
     aOut = []
     aPr = ProjectsOf(xO)
     aP = JItems(JGet($aMap, "projects"))
@@ -191,23 +191,23 @@ func LayersOf xO
         for k = 1 to nP
             if S(aP[k], "id") = aPr[i]
                 tL = S(aP[k], "layer")
-                if Find(aOut, tL) = 0 aOut + tL ok
-            ok
-        next
-    next
+                if Find(aOut, tL) = 0 aOut + tL end
+            end
+        end
+    end
     return aOut
 
-func NameOf tList, tId
+func NameOf(tList, tId)
     aX = JItems(JGet($aMap, tList))
     nN = Len(aX)
     for i = 1 to nN
-        if S(aX[i], "id") = tId return S(aX[i], "name") ok
-    next
+        if S(aX[i], "id") = tId return S(aX[i], "name") end
+    end
     return tId
 
-func HasIn xO, tKey, tId
+func HasIn(xO, tKey, tId)
     xV = JGet(xO, tKey)
-    if JKind(xV) != "array" return false ok
+    if JKind(xV) != "array" return false end
     return Find(JItems(xV), tId) > 0
 
 # newest week the survey closed (it has a digest), else the newest week that holds an entry
@@ -215,18 +215,18 @@ func LatestWeek
     tBest = ""
     nN = Len($aDigests)
     for i = 1 to nN
-        if IsString($aDigests[i]) and $aDigests[i] > tBest tBest = $aDigests[i] ok
-    next
-    if tBest != "" return tBest ok
+        if IsString($aDigests[i]) and $aDigests[i] > tBest tBest = $aDigests[i] end
+    end
+    if tBest != "" return tBest end
     nN = Len($aItems)
     for i = 1 to nN
         xW = IsoWeek(S($aItems[i], "date"))
-        if xW > tBest tBest = xW ok
-    next
+        if xW > tBest tBest = xW end
+    end
     return tBest
 
 # most pressing first: level, then relevance, then newest
-func SortItems aIn
+func SortItems(aIn)
     aA = aIn
     nN = Len(aA)
     for i = 2 to nN
@@ -235,41 +235,41 @@ func SortItems aIn
             xT = aA[xJ] aA[xJ] = aA[xJ - 1] aA[xJ - 1] = xT
             xJ--
         end
-    next
+    end
     return aA
 
-func Before xA, xB
+func Before(xA, xB)
     xLa = LevelRank(S(xA, "level")) xLb = LevelRank(S(xB, "level"))
-    if xLa != xLb return xLa > xLb ok
+    if xLa != xLb return xLa > xLb end
     xRa = RelRank(S(xA, "relevance")) xRb = RelRank(S(xB, "relevance"))
-    if xRa != xRb return xRa > xRb ok
+    if xRa != xRb return xRa > xRb end
     return S(xA, "date") > S(xB, "date")
 
-func ReaderOk tC
+func ReaderOk(tC)
     return Find(["developer", "maintainer", "learner", "user"], tC) > 0
 
 # one signal in a few lines, for a list
-func Brief xO, tReader, nNo
+func Brief(xO, tReader, nNo)
     tC = "" + String(nNo) + ". [" + Word(S(xO, "level")) + "] " + S(xO, "title") + Char(10)
     tLine = ""
     xN = JGet(xO, "notice")
-    if JKind(xN) = "object" tLine = S(xN, tReader) ok
-    if tLine = "" tLine = S(xO, "summary") ok
+    if JKind(xN) = "object" tLine = S(xN, tReader) end
+    if tLine = "" tLine = S(xO, "summary") end
     tC += "   " + tLine + Char(10)
     aPr = ProjectsOf(xO)
     aNames = []
     nN = Len(aPr)
-    for i = 1 to nN aNames + NameOf("projects", aPr[i]) next
+    for i = 1 to nN aNames + NameOf("projects", aPr[i]) end
     tC += "   touches: " + Joined(aNames, ", ") + " | id: " + S(xO, "id") + " | " + S(xO, "date") + Char(10)
     return tC
 
-func Joined xA, tSep
+func Joined(xA, tSep)
     tC = ""
     nN = Len(xA)
     for i = 1 to nN
-        if i > 1 tC += tSep ok
+        if i > 1 tC += tSep end
         tC += xA[i]
-    next
+    end
     return tC
 
 # ---------------------------------------------------------------- the tools
@@ -288,39 +288,39 @@ func ToolList
       '"inputSchema":{"type":"object","properties":{}}}' +
       ']}'
 
-func Arg aArgs, tKey
-    if JKind(aArgs) != "object" return "" ok
+func Arg(aArgs, tKey)
+    if JKind(aArgs) != "object" return "" end
     return S(aArgs, tKey)
 
-func CallTool tName, aArgs
-    if $tTrust != "" return [true, "The radar did not answer: " + $tTrust + ". Its feed is trusted only when its signature checks."] ok
+func CallTool(tName, aArgs)
+    if $tTrust != "" return [true, "The radar did not answer: " + $tTrust + ". Its feed is trusted only when its signature checks."] end
     tReader = Lower(Arg(aArgs, "reader"))
-    if not ReaderOk(tReader) tReader = "developer" ok
-    if tName = "radar_week" return [false, ToolWeek(Arg(aArgs, "week"), tReader)] ok
-    if tName = "radar_search" return [false, ToolSearch(aArgs, tReader)] ok
-    if tName = "radar_signal" return ToolSignal(Arg(aArgs, "id")) ok
-    if tName = "radar_map" return [false, ToolMap()] ok
+    if not ReaderOk(tReader) tReader = "developer" end
+    if tName = "radar_week" return [false, ToolWeek(Arg(aArgs, "week"), tReader)] end
+    if tName = "radar_search" return [false, ToolSearch(aArgs, tReader)] end
+    if tName = "radar_signal" return ToolSignal(Arg(aArgs, "id")) end
+    if tName = "radar_map" return [false, ToolMap()] end
     return [true, "There is no tool named " + tName + "; the tools are radar_week, radar_search, radar_signal and radar_map."]
 
-func ToolWeek tWeek, tReader
-    if tWeek = "" tWeek = LatestWeek() ok
+func ToolWeek(tWeek, tReader)
+    if tWeek = "" tWeek = LatestWeek() end
     aW = []
     nN = Len($aItems)
     for i = 1 to nN
         xO = $aItems[i]
-        if IsoWeek(S(xO, "date")) = tWeek and S(xO, "status") != "superseded" aW + xO ok
-    next
-    if Len(aW) = 0 return Cf("watch.title") + " holds no signal for week " + tWeek + "." ok
+        if IsoWeek(S(xO, "date")) = tWeek and S(xO, "status") != "superseded" aW + xO end
+    end
+    if Len(aW) = 0 return Cf("watch.title") + " holds no signal for week " + tWeek + "." end
     aW = SortItems(aW)
     tN = "" + String(Len(aW)) + " signals"
-    if Len(aW) = 1 tN = "1 signal" ok
+    if Len(aW) = 1 tN = "1 signal" end
     tC = Cf("watch.title") + ", week " + tWeek + ": " + tN + ", written for a " + tReader + "." + Char(10) + Char(10)
     nN = Len(aW)
-    for i = 1 to nN tC += Brief(aW[i], tReader, i) next
+    for i = 1 to nN tC += Brief(aW[i], tReader, i) end
     tC += Char(10) + "Ask radar_signal with an id for the whole signal."
     return tC
 
-func ToolSearch aArgs, tReader
+func ToolSearch(aArgs, tReader)
     tP = Lower(Arg(aArgs, "project")) tL = Lower(Arg(aArgs, "layer")) tD = Lower(Arg(aArgs, "domain"))
     tC = Lower(Arg(aArgs, "concern")) tV = Lower(Arg(aArgs, "level_at_least")) tW = Arg(aArgs, "week")
     tT = Lower(Arg(aArgs, "text"))
@@ -328,26 +328,26 @@ func ToolSearch aArgs, tReader
     nN = Len($aItems)
     for i = 1 to nN
         xO = $aItems[i]
-        if S(xO, "status") = "superseded" loop ok
-        if tP != "" and Find(ProjectsOf(xO), tP) = 0 loop ok
-        if tL != "" and Find(LayersOf(xO), tL) = 0 loop ok
-        if tD != "" and not HasIn(xO, "domains", tD) loop ok
-        if tC != "" and not HasIn(xO, "concerns", tC) loop ok
-        if tV != "" and LevelRank(S(xO, "level")) < LevelRank(tV) loop ok
-        if tW != "" and IsoWeek(S(xO, "date")) != tW loop ok
-        if tT != "" and SubStr(Lower(S(xO, "title") + " " + S(xO, "summary")), tT) = 0 loop ok
+        if S(xO, "status") = "superseded" loop end
+        if tP != "" and Find(ProjectsOf(xO), tP) = 0 loop end
+        if tL != "" and Find(LayersOf(xO), tL) = 0 loop end
+        if tD != "" and not HasIn(xO, "domains", tD) loop end
+        if tC != "" and not HasIn(xO, "concerns", tC) loop end
+        if tV != "" and LevelRank(S(xO, "level")) < LevelRank(tV) loop end
+        if tW != "" and IsoWeek(S(xO, "date")) != tW loop end
+        if tT != "" and SubStr(Lower(S(xO, "title") + " " + S(xO, "summary")), tT) = 0 loop end
         aHit + xO
-    next
-    if Len(aHit) = 0 return "No signal matches these filters. radar_map lists the ids the filters take." ok
+    end
+    if Len(aHit) = 0 return "No signal matches these filters. radar_map lists the ids the filters take." end
     aHit = SortItems(aHit)
     tN = "" + String(Len(aHit)) + " signals match"
-    if Len(aHit) = 1 tN = "1 signal matches" ok
+    if Len(aHit) = 1 tN = "1 signal matches" end
     xC = tN + ", most pressing first, written for a " + tReader + "." + Char(10) + Char(10)
     nN = Len(aHit)
-    for i = 1 to nN xC += Brief(aHit[i], tReader, i) next
+    for i = 1 to nN xC += Brief(aHit[i], tReader, i) end
     return xC
 
-func ToolSignal tId
+func ToolSignal(tId)
     nN = Len($aItems)
     for i = 1 to nN
         xO = $aItems[i]
@@ -362,25 +362,25 @@ func ToolSignal tId
                 tC += tNL + "For each reader:" + tNL
                 aP = xN[2] nP = Len(aP)
                 for k = 1 to nP
-                    if IsString(aP[k][2]) tC += "- " + aP[k][1] + ": " + aP[k][2] + tNL ok
-                next
-            ok
+                    if IsString(aP[k][2]) tC += "- " + aP[k][1] + ": " + aP[k][2] + tNL end
+                end
+            end
             xA = JGet(xO, "actions")
             if JKind(xA) = "array" and Len(JItems(xA)) > 0
                 tC += tNL + "Proposed:" + tNL
                 aA = JItems(xA) nA = Len(aA)
-                for k = 1 to nA tC += "- " + S(aA[k], "area") + ": " + S(aA[k], "do") + " (" + S(aA[k], "state") + ")" + tNL next
-            ok
+                for k = 1 to nA tC += "- " + S(aA[k], "area") + ": " + S(aA[k], "do") + " (" + S(aA[k], "state") + ")" + tNL end
+            end
             xS = JGet(xO, "sources")
             if JKind(xS) = "array"
                 tC += tNL + "Sources:" + tNL
                 aS = JItems(xS) nS = Len(aS)
-                for k = 1 to nS tC += "- " + S(aS[k], "title") + ": " + S(aS[k], "url") + tNL next
-            ok
+                for k = 1 to nS tC += "- " + S(aS[k], "title") + ": " + S(aS[k], "url") + tNL end
+            end
             tC += tNL + "Page: " + Cf("watch.pages") + "items/" + Left(tId, 4) + "/" + tId + ".md"
             return [false, tC]
-        ok
-    next
+        end
+    end
     return [true, "There is no signal " + tId + "; radar_week and radar_search give the ids."]
 
 func ToolMap
@@ -394,52 +394,52 @@ func ToolMap
         nN = Len(aX)
         for i = 1 to nN
             tC += "- " + S(aX[i], "id") + ": " + S(aX[i], "name")
-            if aList[1] = "projects" tC += " (layer " + S(aX[i], "layer") + ")" ok
+            if aList[1] = "projects" tC += " (layer " + S(aX[i], "layer") + ")" end
             tC += tNL
-        next
-    next
+        end
+    end
     return tC
 
 # ---------------------------------------------------------------- the protocol
 
-func Handle tLine
+func Handle(tLine)
     oReader = new JsonReader
     try
         aMsg = oReader.Parse(tLine, "message")
     catch
         Send('{"jsonrpc":"2.0","id":null,"error":{"code":-32700,"message":"Parse error"}}')
         return
-    done
-    if JKind(aMsg) != "object" return ok
-    if not JHas(aMsg, "id") return ok                       # a notification: nothing to answer
+    end
+    if JKind(aMsg) != "object" return end
+    if not JHas(aMsg, "id") return end                       # a notification: nothing to answer
     tId = JLine(JGet(aMsg, "id"))
     tMethod = S(aMsg, "method")
     aParams = JGet(aMsg, "params")
     if tMethod = "initialize"
         tVer = S(aParams, "protocolVersion")
-        if tVer = "" tVer = "2025-06-18" ok
+        if tVer = "" tVer = "2025-06-18" end
         Result(tId, '{"protocolVersion":' + JQuote(tVer) + ',"capabilities":{"tools":{}},' +
             '"serverInfo":{"name":"softanza-radar","title":' + JQuote(Cf("watch.title")) + ',"version":"1.0.0"},' +
             '"instructions":' + JQuote(Cf("watch.title") + ": " + Cf("watch.tagline") + ". Start with radar_week; use radar_map for the ids radar_search takes.") + '}')
         return
-    ok
-    if tMethod = "ping" Result(tId, "{}") return ok
-    if tMethod = "tools/list" Result(tId, ToolList()) return ok
+    end
+    if tMethod = "ping" Result(tId, "{}") return end
+    if tMethod = "tools/list" Result(tId, ToolList()) return end
     if tMethod = "tools/call"
         aArgs = ["n"]
-        if JKind(aParams) = "object" aArgs = JGet(aParams, "arguments") ok
+        if JKind(aParams) = "object" aArgs = JGet(aParams, "arguments") end
         aR = CallTool(S(aParams, "name"), aArgs)
         tErr = "false"
-        if aR[1] tErr = "true" ok
+        if aR[1] tErr = "true" end
         Result(tId, '{"content":[{"type":"text","text":' + JQuote(aR[2]) + '}],"isError":' + tErr + '}')
         return
-    ok
+    end
     Send('{"jsonrpc":"2.0","id":' + tId + ',"error":{"code":-32601,"message":' + JQuote("Method not found: " + tMethod) + '}}')
 
-func Result tId, tJson
+func Result(tId, tJson)
     Send('{"jsonrpc":"2.0","id":' + tId + ',"result":' + tJson + '}')
 
-func Send tC
+func Send(tC)
     see tC + Char(10)
     Flush()
 
@@ -448,24 +448,24 @@ func Send tC
 # so without this nothing would arrive until the program ended. Reported to the Haro desk (HARO-STDIOFLUSH-01):
 # give should flush before it waits for input, as C's stdio does, or Haro should offer flush().
 func Flush
-    if IsWindows() System("rem") else System(":") ok
+    if IsWindows() System("rem") else System(":") end
 
 # a JSON value on one line (the stdio transport carries one message per line)
-func JLine xV
+func JLine(xV)
     xK = JKind(xV)
-    if xK = "string" return JQuote(xV) ok
-    if xK = "number" return xV[2] ok
+    if xK = "string" return JQuote(xV) end
+    if xK = "number" return xV[2] end
     if xK = "boolean"
-        if xV[1] = "t" return "true" ok
+        if xV[1] = "t" return "true" end
         return "false"
-    ok
-    if xK = "null" return "null" ok
+    end
+    if xK = "null" return "null" end
     tC = ""
     aI = xV[2]
     nN = Len(aI)
     for i = 1 to nN
-        if i > 1 tC += "," ok
-        if xK = "array" tC += JLine(aI[i]) else tC += JQuote(aI[i][1]) + ":" + JLine(aI[i][2]) ok
-    next
-    if xK = "array" return "[" + tC + "]" ok
+        if i > 1 tC += "," end
+        if xK = "array" tC += JLine(aI[i]) else tC += JQuote(aI[i][1]) + ":" + JLine(aI[i][2]) end
+    end
+    if xK = "array" return "[" + tC + "]" end
     return "{" + tC + "}"

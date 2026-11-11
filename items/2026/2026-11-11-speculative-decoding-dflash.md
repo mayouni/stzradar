@@ -18,10 +18,10 @@
   "domains": ["models", "code"],
   "concerns": ["speed", "sovereignty", "cost"],
   "actions": [
-    { "area": "stzlib", "do": "measure speculative decoding in the engine's Zig decoder (a small drafter proposes several tokens, the main model checks them in one pass), with a drafter that shares the main model's tokenizer, against the recorded Qwen2.5-Coder-1.5B decode of 17.6 tokens per second on the CPU", "state": "proposed", "dates": { "proposed": "2026-11-11" } },
-    { "area": "stzlib", "do": "record the upstream ggml commit Softanza's vendored copy came from, so each later ggml improvement can be judged against it", "state": "proposed", "dates": { "proposed": "2026-11-11" } }
+    { "area": "stzlib", "do": "measure speculative decoding in the engine's Zig decoder (a small drafter proposes several tokens, the main model checks them in one pass), with a drafter that shares the main model's tokenizer, against the recorded Qwen2.5-Coder-1.5B decode of 17.6 tokens per second on the CPU", "state": "routed", "dates": { "proposed": "2026-11-11", "routed": "2026-11-11" } },
+    { "area": "stzlib", "do": "record the upstream ggml commit Softanza's vendored copy came from, so each later ggml improvement can be judged against it", "state": "routed", "dates": { "proposed": "2026-11-11", "routed": "2026-11-11" } }
   ],
-  "status": "analysed",
+  "status": "routed",
   "confidence": "claimed",
   "sources": [
     { "title": "Sparks Fly: NVIDIA Accelerates Local AI at IFA 2026", "url": "https://blogs.nvidia.com/blog/local-ai-ifa-next-gen-agents-nv-pair-rtx-spark/", "by": "NVIDIA", "read": "2026-11-11" },

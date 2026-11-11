@@ -18,17 +18,17 @@ func main
     tMode = "generate"
     if Len(sysargv) >= 3
         tMode = Lower(sysargv[3])
-    ok
+    end
     if tMode != "generate" and tMode != "check" and tMode != "verify"
         see "usage: haro tools/feed.haro [check | verify]" + Char(10)
         Shutdown(1)
-    ok
+    end
     if tMode = "verify"
         oConf = new FeedRun
         oConf.tRoot = CurrentDir()
-        if not oConf.Prepare() Shutdown(1) ok
+        if not oConf.Prepare() Shutdown(1) end
         Shutdown(Verify(oConf.Conf("feed.signer"), oConf.Conf("feed.namespace")))
-    ok
+    end
 
     oRun = new FeedRun
     oRun.tRoot = CurrentDir()
@@ -42,13 +42,13 @@ func main
 # Both feed files must carry a good SSH signature by the key in keys/allowed_signers, for the
 # signer and namespace radar.yaml names (feed.signer, feed.namespace). ssh-keygen does the
 # cryptography; this only asks it, file by file, and counts what it refuses. Returns the number of problems.
-func Verify tSigner, tNamespace
+func Verify(tSigner, tNamespace)
     aFiles = ["feed/index.json", "feed/feed.json"]
     nBad = 0
     if not FExists("keys/allowed_signers")
         see "REFUSED keys/allowed_signers: there is no key to check against" + Char(10)
         return 1
-    ok
+    end
     nF = Len(aFiles)
     for i = 1 to nF
         tF = aFiles[i]
@@ -56,13 +56,13 @@ func Verify tSigner, tNamespace
             see "REFUSED " + tF + ": it has no signature, " + tF + ".sig" + Char(10)
             nBad++
             loop
-        ok
+        end
         tCmd = "ssh-keygen -Y verify -f keys/allowed_signers -I " + tSigner + " -n " + tNamespace + " -s " +
                tF + ".sig < " + tF
         if System(tCmd) != 0
             see "REFUSED " + tF + ": its signature does not verify; sign it again after any change" + Char(10)
             nBad++
-        ok
-    next
+        end
+    end
     see "signatures checked " + String(nF) + ", problems " + String(nBad) + Char(10)
     return nBad

@@ -19,10 +19,10 @@
   "domains": ["models", "agents"],
   "concerns": ["cost", "speed", "sovereignty"],
   "actions": [
-    { "area": "stzlib", "do": "add the Gemma 4 decoder family (Gemma 4 E4B and its per-layer embeddings) to the engine's own Zig decoder, checked token by token against a reference run of the same GGUF file", "state": "proposed", "dates": { "proposed": "2026-11-11" } },
-    { "area": "stzlib.intelligence", "do": "put Nemotron 3.5 Bolt E4B (Q4_K_M) before the model court as a challenger to Granite-4.0-1b on the support-desk golden sets, read by probability as the incumbent is, and record CPU and wgpu speeds on the 6 GB laptop GPU beside the scores", "state": "proposed", "dates": { "proposed": "2026-11-11" } }
+    { "area": "stzlib", "do": "add the Gemma 4 decoder family (Gemma 4 E4B and its per-layer embeddings) to the engine's own Zig decoder, checked token by token against a reference run of the same GGUF file", "state": "routed", "dates": { "proposed": "2026-11-11", "routed": "2026-11-11" } },
+    { "area": "stzlib.intelligence", "do": "put Nemotron 3.5 Bolt E4B (Q4_K_M) before the model court as a challenger to Granite-4.0-1b on the support-desk golden sets, read by probability as the incumbent is, and record CPU and wgpu speeds on the 6 GB laptop GPU beside the scores", "state": "routed", "dates": { "proposed": "2026-11-11", "routed": "2026-11-11" } }
   ],
-  "status": "analysed",
+  "status": "routed",
   "confidence": "claimed",
   "sources": [
     { "title": "NVIDIA-Nemotron-3.5-Bolt-E4B-4GB (model card)", "url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB", "by": "NVIDIA", "read": "2026-11-11" },
