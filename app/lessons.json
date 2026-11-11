@@ -544,6 +544,47 @@
           "It loads in about a second with nothing to compile, so the slow part left is reading long prompts."
         ]
       ]
+    },
+    "2026-11-11-nvidia-openshell": {
+      "build": [
+        {
+          "why": "Find secrets your agent's code can read directly: every one of them can end up in a log or a prompt.",
+          "cmd": "grep -rnE \"(API_KEY|TOKEN|SECRET|PASSWORD)\\s*=\" --include=*.py --include=*.ts ."
+        },
+        {
+          "why": "Try OpenShell on Linux or macOS: it installs a command line and a local gateway, then creates an empty sandbox. This installs software.",
+          "cmd": "curl -LsSf https://raw.githubusercontent.com/NVIDIA/OpenShell/main/install.sh | sh && openshell sandbox create --name demo"
+        },
+        {
+          "why": "List what your agent may reach today: files, hosts, tools. A policy starts from that list, with everything else denied.",
+          "cmd": "grep -rnE \"https?://\" agent/ | sort -u"
+        }
+      ],
+      "lesson": "An AI agent is useful because it can act: read files, run code, call services. The danger is that a model's output decides what it does, and that output can be manipulated. OpenShell puts the rules outside the agent: the operating system limits what files and network it can touch, a supervisor checks each request, and real passwords are added only when a request goes to an approved place, so the agent never holds them. A prover can show what a change of rules would newly allow before anyone accepts it.",
+      "terms": [
+        [
+          "sandbox",
+          "a confined place where a program runs without reaching the rest of the machine"
+        ],
+        [
+          "deny by default",
+          "nothing is allowed unless a rule allows it"
+        ],
+        [
+          "credential brokering",
+          "a trusted part adds the secret to a request, so the program never sees it"
+        ]
+      ],
+      "quiz": [
+        [
+          "Why enforce rules outside the agent's process rather than inside it?",
+          "Code inside the process, including code a model wrote, could change or skip the checks; a boundary outside it cannot be reached."
+        ],
+        [
+          "What does an agent gain from never holding a real credential?",
+          "Nothing it writes, logs or is tricked into saying can contain the secret, because it never had it."
+        ]
+      ]
     }
   }
 }

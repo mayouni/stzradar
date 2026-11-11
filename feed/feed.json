@@ -81,6 +81,25 @@
       ]
     },
     {
+      "id": "2026-11-11-nvidia-openshell",
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-11-nvidia-openshell.md",
+      "title": "NVIDIA OpenShell governs an agent from outside its process; Softanza adds that boundary to the rules it already decides in code",
+      "summary": "NVIDIA OpenShell is an open-source (Apache 2.0) runtime for AI agents, at v0.1.8 on November 10, 2026, and moving to the CNCF. Each agent runs in a sandbox whose files, system calls and network are confined by the kernel, a supervisor outside the agent checks every outbound request against a deny-by-default policy and adds real credentials only to requests bound for approved endpoints, and a prover uses formal logic to show what new access a policy change would grant before it is applied. It runs on Linux, on macOS with Apple Silicon, and on Windows through WSL 2 or Microsoft MXC.",
+      "content_text": "NVIDIA OpenShell is an open-source (Apache 2.0) runtime for AI agents, at v0.1.8 on November 10, 2026, and moving to the CNCF. Each agent runs in a sandbox whose files, system calls and network are confined by the kernel, a supervisor outside the agent checks every outbound request against a deny-by-default policy and adds real credentials only to requests bound for approved endpoints, and a prover uses formal logic to show what new access a policy change would grant before it is applied. It runs on Linux, on macOS with Apple Silicon, and on Windows through WSL 2 or Microsoft MXC.",
+      "date_published": "2026-11-11T00:00:00Z",
+      "tags": [
+        "release",
+        "learn",
+        "advice",
+        "nvidia",
+        "openshell",
+        "agents",
+        "sandbox",
+        "credentials",
+        "policy"
+      ]
+    },
+    {
       "id": "2026-11-11-nvidia-snapshot",
       "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-11-nvidia-snapshot.md",
       "title": "NVIDIA Snapshot restores a warmed-up GPU inference worker in seconds; Softanza saves the warm state it pays for, a read prompt",

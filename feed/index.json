@@ -279,6 +279,95 @@
       "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-11-nemotron-parse.md"
     },
     {
+      "id": "2026-11-11-nvidia-openshell",
+      "date": "2026-11-11",
+      "title": "NVIDIA OpenShell governs an agent from outside its process; Softanza adds that boundary to the rules it already decides in code",
+      "kind": "release",
+      "summary": "NVIDIA OpenShell is an open-source (Apache 2.0) runtime for AI agents, at v0.1.8 on November 10, 2026, and moving to the CNCF. Each agent runs in a sandbox whose files, system calls and network are confined by the kernel, a supervisor outside the agent checks every outbound request against a deny-by-default policy and adds real credentials only to requests bound for approved endpoints, and a prover uses formal logic to show what new access a policy change would grant before it is applied. It runs on Linux, on macOS with Apple Silicon, and on Windows through WSL 2 or Microsoft MXC.",
+      "stance": "learn",
+      "relevance": "high",
+      "level": "advice",
+      "audiences": [
+        "developer",
+        "maintainer"
+      ],
+      "notice": {
+        "developer": "An agent that never holds a real credential cannot leak it: OpenShell adds the secret only to a request bound for an approved endpoint, outside the agent's reach.",
+        "maintainer": "Softanza already decides in code which functions an agent may call and under which posture; it adds the boundary OpenShell shows, enforcement outside the agent's process, for secrets first and for model-written code next."
+      },
+      "areas": [
+        "softanza",
+        "aicha",
+        "harobanda"
+      ],
+      "domains": [
+        "agents",
+        "security"
+      ],
+      "concerns": [
+        "trust",
+        "sovereignty"
+      ],
+      "actions": [
+        {
+          "area": "stzlib.security",
+          "do": "broker credentials for agents: an agent's outbound call names a secret held in stzSecretStore, and the engine attaches its value only to a request bound for an endpoint the governance approves, so neither the agent's code nor the model ever holds the value",
+          "state": "proposed",
+          "dates": {
+            "proposed": "2026-11-11"
+          }
+        },
+        {
+          "area": "stzlib.security",
+          "do": "run model-written code and an agent's child processes inside an operating-system boundary outside the agent's process, deny by default on files and network (on Windows a job object or AppContainer, on Linux namespaces with seccomp or Landlock), and measure what each platform enforces natively",
+          "state": "proposed",
+          "dates": {
+            "proposed": "2026-11-11"
+          }
+        },
+        {
+          "area": "stzlib.intelligence",
+          "do": "show, before a governance change is accepted, the access it adds: the functions, postures, endpoints and secrets an agent could reach after the change and not before, computed from the rules themselves",
+          "state": "proposed",
+          "dates": {
+            "proposed": "2026-11-11"
+          }
+        }
+      ],
+      "status": "analysed",
+      "confidence": "read",
+      "sources": [
+        {
+          "title": "NVIDIA OpenShell",
+          "url": "https://build.nvidia.com/openshell",
+          "by": "NVIDIA",
+          "read": "2026-11-11"
+        },
+        {
+          "title": "NVIDIA/OpenShell (README)",
+          "url": "https://github.com/NVIDIA/OpenShell",
+          "by": "NVIDIA",
+          "read": "2026-11-11"
+        },
+        {
+          "title": "OpenShell v0.1.8 release notes",
+          "url": "https://github.com/NVIDIA/OpenShell/releases/tag/v0.1.8",
+          "by": "NVIDIA",
+          "read": "2026-11-11"
+        }
+      ],
+      "review_by": "2027-01-11",
+      "tags": [
+        "nvidia",
+        "openshell",
+        "agents",
+        "sandbox",
+        "credentials",
+        "policy"
+      ],
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-11-nvidia-openshell.md"
+    },
+    {
       "id": "2026-11-11-nvidia-snapshot",
       "date": "2026-11-11",
       "title": "NVIDIA Snapshot restores a warmed-up GPU inference worker in seconds; Softanza saves the warm state it pays for, a read prompt",
