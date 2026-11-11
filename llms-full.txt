@@ -2,6 +2,32 @@
 
 > What changed in AI and the tech field this week, and what it means for what we build in Softanza. Generated from the signed feed (https://mayouni.github.io/stzradar/feed/index.json); the feed is the reference.
 
+## A2UI 1.0: an open protocol for agents to answer with a native screen; Zane gives it intent and law, and a projection to it
+
+- id: 2026-11-11-a2ui-1-0
+- date: 2026-11-11
+- level: advice
+- kind: release
+- stance: correct
+- relevance: high
+- page: https://mayouni.github.io/stzradar/items/2026/2026-11-11-a2ui-1-0.md
+
+On November 11, 2026 the A2UI project, started at Google, released A2UI 1.0 under Apache 2.0: a streaming protocol in which an agent sends a screen as data, built only from components the app registered in a locked catalog, and each app draws it with its own native components in React, Angular, Lit, Flutter, SwiftUI and soon Jetpack Compose. Version 1.0 adds typed function calls in both directions, components from several catalogs on one screen, and A2UI Express, which its authors say describes the same screen in about three times fewer output tokens than JSON. Gemini, Atlassian and ByteDance ship it.
+
+For each reader:
+- developer: An agent can now answer with a form, a chart or a choice that every app draws natively, sent as data and never as code; A2UI 1.0 is the open protocol for it.
+- maintainer: Zane declares what the human is doing and checks it against its constitution; an A2UI projection lets a checked Zane declaration reach every A2UI renderer, and an A2UI check lets Zane judge screens other agents send.
+
+Proposed:
+- zane: add an A2UI v1.0 projection: compile a checked Zane declaration into createSurface, updateComponents and updateDataModel messages over a Zane catalog, so a screen the constitution passed renders natively in every A2UI renderer (proposed)
+- zane: read an A2UI message stream an agent produced and check it against the constitution's structural rules before it renders, citing rule numbers, as the verifier does for .zane files (proposed)
+- stzlib.intelligence: measure which screen format a small local model writes validly under the engine's constrained decoding: a Zane declaration, A2UI JSON or A2UI Express, counting valid screens and output tokens with Granite-4.0-1b on a fixed set of requests (proposed)
+
+Sources:
+- A2UI: https://a2ui.org/
+- A2UI v1.0 Protocol Specification: https://a2ui.org/specification/v1.0-a2ui/
+- a2ui-project/a2ui (README and releases): https://github.com/a2ui-project/a2ui
+
 ## Liquid AI's LFM3: six 2B-class models on one backbone, built for the device; Softanza learns from its decision models
 
 - id: 2026-11-11-liquid-lfm3

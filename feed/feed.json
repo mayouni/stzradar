@@ -7,6 +7,24 @@
   "language": "en",
   "items": [
     {
+      "id": "2026-11-11-a2ui-1-0",
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-11-a2ui-1-0.md",
+      "title": "A2UI 1.0: an open protocol for agents to answer with a native screen; Zane gives it intent and law, and a projection to it",
+      "summary": "On November 11, 2026 the A2UI project, started at Google, released A2UI 1.0 under Apache 2.0: a streaming protocol in which an agent sends a screen as data, built only from components the app registered in a locked catalog, and each app draws it with its own native components in React, Angular, Lit, Flutter, SwiftUI and soon Jetpack Compose. Version 1.0 adds typed function calls in both directions, components from several catalogs on one screen, and A2UI Express, which its authors say describes the same screen in about three times fewer output tokens than JSON. Gemini, Atlassian and ByteDance ship it.",
+      "content_text": "On November 11, 2026 the A2UI project, started at Google, released A2UI 1.0 under Apache 2.0: a streaming protocol in which an agent sends a screen as data, built only from components the app registered in a locked catalog, and each app draws it with its own native components in React, Angular, Lit, Flutter, SwiftUI and soon Jetpack Compose. Version 1.0 adds typed function calls in both directions, components from several catalogs on one screen, and A2UI Express, which its authors say describes the same screen in about three times fewer output tokens than JSON. Gemini, Atlassian and ByteDance ship it.",
+      "date_published": "2026-11-11T00:00:00Z",
+      "tags": [
+        "release",
+        "correct",
+        "advice",
+        "a2ui",
+        "generative-ui",
+        "agents",
+        "protocol",
+        "zane"
+      ]
+    },
+    {
       "id": "2026-11-11-liquid-lfm3",
       "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-11-liquid-lfm3.md",
       "title": "Liquid AI's LFM3: six 2B-class models on one backbone, built for the device; Softanza learns from its decision models",

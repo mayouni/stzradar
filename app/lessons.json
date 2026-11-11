@@ -585,6 +585,47 @@
           "Nothing it writes, logs or is tricked into saying can contain the secret, because it never had it."
         ]
       ]
+    },
+    "2026-11-11-a2ui-1-0": {
+      "build": [
+        {
+          "why": "Add the A2UI skills to your coding agent, so it can write A2UI screens. This installs files in your project.",
+          "cmd": "npx skills add a2ui-project/a2ui"
+        },
+        {
+          "why": "List the components your app would let an agent use: that list is your locked catalog, and anything outside it is refused.",
+          "cmd": "grep -rhoE \"export (function|const) [A-Z][A-Za-z]+\" src/components | sort -u"
+        },
+        {
+          "why": "Check a screen before a user sees it: does every button say what it does?",
+          "cmd": "jq -r '.. | objects | select(.component? == \"Button\") | .label' screen.json"
+        }
+      ],
+      "lesson": "Most AI agents answer with text, even when a form or a chart would serve the user better. A2UI lets an agent answer with a screen. The agent does not send code: it sends a description built only from components the app has approved, and the app draws them with its own buttons, charts and fields. A protocol makes the screen possible; whether the screen is clear and usable still has to be checked, which is what a design law like Zane's is for.",
+      "terms": [
+        [
+          "generative UI",
+          "a user interface composed by an AI for one request, instead of designed in advance"
+        ],
+        [
+          "catalog",
+          "the list of components an app allows an agent to use"
+        ],
+        [
+          "renderer",
+          "the part of an app that turns a description into what is drawn on screen"
+        ]
+      ],
+      "quiz": [
+        [
+          "Why does A2UI send data and not code?",
+          "Data can only use the components the app approved; code could do anything the app can do."
+        ],
+        [
+          "What does a locked catalog leave unchecked?",
+          "Whether the screen built from approved parts is clear: a button without a verb or a confusing flow is still made of approved parts."
+        ]
+      ]
     }
   }
 }
