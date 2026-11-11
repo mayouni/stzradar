@@ -310,6 +310,158 @@
           "The page's owner decides which watch they trust. If the key came with the feed, anyone serving a feed could also serve a matching key."
         ]
       ]
+    },
+    "2026-11-11-nemotron-bolt-e4b": {
+      "build": [
+        {
+          "why": "Run the 4 GB model locally with llama.cpp and talk to it in the terminal. This downloads about 4 GB.",
+          "cmd": "llama cli -hf nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB:Q4_K_M"
+        },
+        {
+          "why": "Serve it on your machine with an OpenAI-compatible endpoint, so your own agent can call it.",
+          "cmd": "llama serve -hf nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB:Q4_K_M"
+        },
+        {
+          "why": "Judge it on your own questions, not on the vendor's table: keep a file of cases with the answers you expect, and score both models on it.",
+          "cmd": "python score.py --model bolt-e4b --cases my_cases.jsonl"
+        }
+      ],
+      "lesson": "A small language model is one that fits on an ordinary computer. Bolt E4B is about 4 GB once its numbers are stored in 4 bits instead of 16, which is called quantization. NVIDIA took Google's Gemma 4 model and trained it further with reinforcement learning, rewarding it when it called tools correctly and followed instructions. Its scores are NVIDIA's own; a project that wants to use it measures it on its own work first.",
+      "terms": [
+        [
+          "quantization",
+          "storing a model's numbers with fewer bits, so it takes less memory"
+        ],
+        [
+          "GGUF",
+          "the file format llama.cpp and similar runtimes load models from"
+        ],
+        [
+          "post-training",
+          "training a finished model further, for a particular kind of work"
+        ]
+      ],
+      "quiz": [
+        [
+          "Why are Bolt E4B's benchmark scores marked as claimed?",
+          "They were measured by NVIDIA, which made the model; a user's own test on their own work is the measurement that counts for them."
+        ],
+        [
+          "What does 8B parameters, 4B effective mean?",
+          "The file holds 8 billion numbers, but the model uses about 4 billion of them for each token, so it runs at the cost of a 4B model."
+        ]
+      ]
+    },
+    "2026-11-11-nemotron-parse": {
+      "build": [
+        {
+          "why": "Render each PDF page to an image first: the model reads pages as pictures. This writes PNG files.",
+          "cmd": "pdftoppm -r 150 -png document.pdf pages/page"
+        },
+        {
+          "why": "Keep a few pages whose correct text you typed yourself, and compare any reader's output with them.",
+          "cmd": "diff <(cat expected/page-1.md) <(cat output/page-1.md)"
+        }
+      ],
+      "lesson": "OCR turns the picture of a page into text. Older pipelines do it in steps: find the lines, read each one, then guess the order. Nemotron 3.5 Parse does all of it in one small model and also says which block is a table, a chart or a title, and where it sits. It can look a second time at tables and charts to read them better, which costs time and gains accuracy.",
+      "terms": [
+        [
+          "OCR",
+          "optical character recognition: reading the text in an image"
+        ],
+        [
+          "reading order",
+          "the order in which a person would read the blocks of a page"
+        ],
+        [
+          "bounding box",
+          "the rectangle that encloses one block on the page"
+        ]
+      ],
+      "quiz": [
+        [
+          "Why does a triple pass read tables better than a single pass?",
+          "It finds the tables and charts first, then reads each one again at higher detail, and merges the result back."
+        ],
+        [
+          "What should you compare a new OCR model against?",
+          "Pages from your own documents whose correct text you know, in the languages and scripts your users write."
+        ]
+      ]
+    },
+    "2026-11-11-nemotron-embed-1b": {
+      "build": [
+        {
+          "why": "Measure retrieval with your own questions: for each question, list the page that answers it, then count how often the model ranks it first.",
+          "cmd": "python eval_retrieval.py --queries my_queries.jsonl --pages my_pages/"
+        },
+        {
+          "why": "A shorter vector costs less to store. Truncate, then normalise again, then measure again.",
+          "cmd": "v = v[:512]; v = v / np.linalg.norm(v)"
+        }
+      ],
+      "lesson": "An embedding model turns a text or an image into a list of numbers, a vector, so that things with similar meaning get similar vectors. Search then means finding the vectors closest to the question's vector. Nemotron 3.5 Embed can embed the picture of a page, so a typed question can find a chart or a table, and it was trained for many languages.",
+      "terms": [
+        [
+          "embedding",
+          "a vector of numbers that stands for the meaning of a text or an image"
+        ],
+        [
+          "retrieval",
+          "finding the documents that answer a question"
+        ],
+        [
+          "normalise",
+          "scale a vector to length one, so only its direction counts"
+        ]
+      ],
+      "quiz": [
+        [
+          "Why test a multilingual model on Arabic and French items, not only English?",
+          "A model that ranks first in English can rank lower in other languages; only items in those languages show it."
+        ],
+        [
+          "What changes when you keep only the first 512 dimensions of a vector?",
+          "It takes less memory and search is faster, at some cost in accuracy, which you measure."
+        ]
+      ]
+    },
+    "2026-11-11-speculative-decoding-dflash": {
+      "build": [
+        {
+          "why": "Run a model with its small drafter in llama.cpp and compare tokens per second with and without it.",
+          "cmd": "llama-server -m model.gguf --spec-draft-model drafter.gguf --spec-type draft-dflash -ngl 999"
+        },
+        {
+          "why": "Check the answers are identical with the drafter on and off, at temperature 0: speculative decoding must change speed only.",
+          "cmd": "diff answers_without_drafter.txt answers_with_drafter.txt"
+        }
+      ],
+      "lesson": "A language model writes one token at a time, and each token costs a full pass through the model. Speculative decoding lets a much smaller model guess the next few tokens quickly; the big model then checks all the guesses in one pass and keeps the ones it agrees with. The text is the same as without the guesser, and it arrives sooner when the guesses are often right.",
+      "terms": [
+        [
+          "token",
+          "a piece of a word, the unit a language model reads and writes"
+        ],
+        [
+          "drafter",
+          "the small model that guesses tokens for the large one to check"
+        ],
+        [
+          "prefill",
+          "reading the prompt before the first token is written"
+        ]
+      ],
+      "quiz": [
+        [
+          "Why does the drafter need the same tokenizer as the main model?",
+          "The main model checks the drafter's tokens directly, so both must cut text into the same pieces."
+        ],
+        [
+          "Does speculative decoding change the answer?",
+          "No: the main model keeps only the tokens it would have written itself, so only the speed changes."
+        ]
+      ]
     }
   }
 }

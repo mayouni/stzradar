@@ -1,10 +1,281 @@
 {
   "feed": "radar",
   "version": 1,
-  "updated": "2026-11-09T00:00:00Z",
+  "updated": "2026-11-11T00:00:00Z",
   "home": "https://github.com/mayouni/stzradar",
   "title": "Softanza Radar",
   "items": [
+    {
+      "id": "2026-11-11-nemotron-bolt-e4b",
+      "date": "2026-11-11",
+      "title": "NVIDIA's Nemotron 3.5 Bolt E4B: a 4 GB model for local agents; Softanza adds its Gemma 4 family and takes it to the model court",
+      "kind": "release",
+      "summary": "On October 23, 2026 NVIDIA released Nemotron 3.5 Bolt E4B, a small language model post-trained by reinforcement learning from Google's Gemma 4 E4B for multi-turn tool use, instruction following and grounding. It has 8 billion parameters, 4 billion of them effective, a 64K-token context, and ships as a 4 GB Q4_K_M GGUF file for llama.cpp with a companion DFlash drafter for speculative decoding. Its weights, training data and recipes are published under the OpenMDW-1.1 licence, and NVIDIA's own benchmark table puts it ahead of Gemma 4 E4B on most of 21 agent and instruction tests.",
+      "stance": "adopt",
+      "relevance": "high",
+      "level": "advice",
+      "audiences": [
+        "developer",
+        "maintainer"
+      ],
+      "notice": {
+        "developer": "A 4 GB open model tuned for tool calls and short answers now runs locally through llama.cpp; Softanza tests it on its own golden sets before it offers it.",
+        "maintainer": "Bolt E4B uses the Gemma 4 architecture, so Softanza's engine adds that decoder family first, then the model court compares Bolt with Granite-4.0-1b on extraction, classification and brief."
+      },
+      "areas": [
+        "softanza",
+        "aicha"
+      ],
+      "domains": [
+        "models",
+        "agents"
+      ],
+      "concerns": [
+        "cost",
+        "speed",
+        "sovereignty"
+      ],
+      "actions": [
+        {
+          "area": "stzlib",
+          "do": "add the Gemma 4 decoder family (Gemma 4 E4B and its per-layer embeddings) to the engine's own Zig decoder, checked token by token against a reference run of the same GGUF file",
+          "state": "proposed",
+          "dates": {
+            "proposed": "2026-11-11"
+          }
+        },
+        {
+          "area": "stzlib.intelligence",
+          "do": "put Nemotron 3.5 Bolt E4B (Q4_K_M) before the model court as a challenger to Granite-4.0-1b on the support-desk golden sets, read by probability as the incumbent is, and record CPU and wgpu speeds on the 6 GB laptop GPU beside the scores",
+          "state": "proposed",
+          "dates": {
+            "proposed": "2026-11-11"
+          }
+        }
+      ],
+      "status": "analysed",
+      "confidence": "claimed",
+      "sources": [
+        {
+          "title": "NVIDIA-Nemotron-3.5-Bolt-E4B-4GB (model card)",
+          "url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
+          "by": "NVIDIA",
+          "read": "2026-11-11"
+        },
+        {
+          "title": "NVIDIA's models on Hugging Face, Nemotron 3.5",
+          "url": "https://huggingface.co/models?author=nvidia&sort=created&search=nemotron-3.5",
+          "by": "Hugging Face",
+          "read": "2026-11-11"
+        }
+      ],
+      "review_by": "2027-01-11",
+      "tags": [
+        "nvidia",
+        "nemotron",
+        "slm",
+        "gguf",
+        "local-agents",
+        "gemma"
+      ],
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-11-nemotron-bolt-e4b.md"
+    },
+    {
+      "id": "2026-11-11-nemotron-embed-1b",
+      "date": "2026-11-11",
+      "title": "NVIDIA's Nemotron 3.5 Embed 1B finds pages by text or by image in 34 languages; Softanza measures it on Arabic and French retrieval",
+      "kind": "release",
+      "summary": "On October 20, 2026 NVIDIA released Nemotron 3.5 Embed 1B, an embedding model that turns a query, a passage or the image of a document page into one vector, for retrieval across text, tables, charts and infographics. NVIDIA evaluated text retrieval in 34 languages, Arabic, French and Persian among them, and image retrieval in 18; its vectors can be cut to 1024 or 512 dimensions and stay usable once normalised. It is published under OpenMDW-1.1, with an NVFP4 variant for recent NVIDIA GPUs.",
+      "stance": "watch",
+      "relevance": "medium",
+      "level": "advice",
+      "audiences": [
+        "developer",
+        "maintainer"
+      ],
+      "notice": {
+        "developer": "A 1B open model now retrieves document pages from their images as well as their text, in many languages; Softanza keeps its own embedding model until a multilingual test says otherwise.",
+        "maintainer": "Softanza adds Arabic and French retrieval items to its embedding golden set, so the court can judge multilingual challengers such as Nemotron 3.5 Embed against MiniLM and SigLIP2."
+      },
+      "areas": [
+        "softanza",
+        "aicha"
+      ],
+      "domains": [
+        "models",
+        "data"
+      ],
+      "concerns": [
+        "correctness",
+        "sovereignty"
+      ],
+      "actions": [
+        {
+          "area": "stzlib.intelligence",
+          "do": "add Arabic and French items to the retrieval golden set, so the model court can judge a multilingual embedding challenger against all-MiniLM-L6-v2 on text and SigLIP2 on page images",
+          "state": "proposed",
+          "dates": {
+            "proposed": "2026-11-11"
+          }
+        }
+      ],
+      "status": "analysed",
+      "confidence": "claimed",
+      "sources": [
+        {
+          "title": "Nemotron-3.5-Embed-1B-BF16 (model card)",
+          "url": "https://huggingface.co/nvidia/Nemotron-3.5-Embed-1B-BF16",
+          "by": "NVIDIA",
+          "read": "2026-11-11"
+        }
+      ],
+      "review_by": "2027-02-11",
+      "tags": [
+        "nvidia",
+        "nemotron",
+        "embeddings",
+        "retrieval",
+        "multilingual"
+      ],
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-11-nemotron-embed-1b.md"
+    },
+    {
+      "id": "2026-11-11-nemotron-parse",
+      "date": "2026-11-11",
+      "title": "NVIDIA's Nemotron 3.5 Parse reads a page into text, tables and layout with 0.63 billion parameters; Softanza's OCR court hears it",
+      "kind": "release",
+      "summary": "On October 17, 2026 NVIDIA released Nemotron 3.5 Parse, a 0.631-billion-parameter model that turns a page image into text, tables, chart data, reading order, semantic classes and bounding boxes, exported as Markdown, HTML or JSON. NVIDIA reports 75.20 on the ParseBench benchmark in its three-pass mode, the best of the systems it compares, and multilingual OCR evaluated over 163 language and script entries. On November 4 it added a native 89.3-million-parameter DFlash2 drafter for speculative decoding; the model is published under OpenMDW-1.1.",
+      "stance": "learn",
+      "relevance": "high",
+      "level": "advice",
+      "audiences": [
+        "developer",
+        "maintainer"
+      ],
+      "notice": {
+        "developer": "An open 0.63B model now reads whole pages, tables and charts included, into Markdown or JSON; Softanza measures it against its own OCR pipeline before choosing.",
+        "maintainer": "Softanza's OCR court measures Nemotron 3.5 Parse on its golden pages, by a reference run, before any port of its encoder and decoder is planned."
+      },
+      "areas": [
+        "softanza",
+        "aicha"
+      ],
+      "domains": [
+        "models",
+        "data"
+      ],
+      "concerns": [
+        "correctness",
+        "cost",
+        "sovereignty"
+      ],
+      "actions": [
+        {
+          "area": "stzlib",
+          "do": "run Nemotron 3.5 Parse once by its published reference path on the OCR plane's golden pages, single and triple pass, and enter the result in the OCR court beside the PP-OCR pipeline and Granite-Docling, with the languages and scripts each one reads",
+          "state": "proposed",
+          "dates": {
+            "proposed": "2026-11-11"
+          }
+        }
+      ],
+      "status": "analysed",
+      "confidence": "claimed",
+      "sources": [
+        {
+          "title": "Nemotron-3.5-Parse (model card)",
+          "url": "https://huggingface.co/nvidia/Nemotron-3.5-Parse",
+          "by": "NVIDIA",
+          "read": "2026-11-11"
+        }
+      ],
+      "review_by": "2027-01-11",
+      "tags": [
+        "nvidia",
+        "nemotron",
+        "ocr",
+        "document-parsing",
+        "slm"
+      ],
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-11-nemotron-parse.md"
+    },
+    {
+      "id": "2026-11-11-speculative-decoding-dflash",
+      "date": "2026-11-11",
+      "title": "NVIDIA ships a small drafter with each new model and speeds up llama.cpp; Softanza takes the algorithm into its own decoder",
+      "kind": "practice",
+      "summary": "On September 3, 2026 NVIDIA said its work with the llama.cpp and vLLM communities gives up to 1.9 times higher local throughput on a GeForce RTX 5090, from GPU kernel work, better speculative decoding and faster prefill. Since then its new models ship with a small DFlash drafter, which llama.cpp's official server runs, and its open-source C++ runtime TensorRT Edge-LLM (0.11.1, October 28) added the Bolt E4B drafter and TensorRT for RTX on Windows. Most of the speed comes from CUDA code for NVIDIA's newest GPUs; the speculative-decoding algorithm itself is portable.",
+      "stance": "correct",
+      "relevance": "high",
+      "level": "advice",
+      "audiences": [
+        "maintainer"
+      ],
+      "notice": {
+        "maintainer": "Softanza's decoder keeps its CPU and wgpu paths and measures speculative decoding with a small drafter of the same tokenizer, against its recorded 17.6 tokens per second decode."
+      },
+      "areas": [
+        "softanza"
+      ],
+      "domains": [
+        "models",
+        "code"
+      ],
+      "concerns": [
+        "speed",
+        "sovereignty",
+        "cost"
+      ],
+      "actions": [
+        {
+          "area": "stzlib",
+          "do": "measure speculative decoding in the engine's Zig decoder (a small drafter proposes several tokens, the main model checks them in one pass), with a drafter that shares the main model's tokenizer, against the recorded Qwen2.5-Coder-1.5B decode of 17.6 tokens per second on the CPU",
+          "state": "proposed",
+          "dates": {
+            "proposed": "2026-11-11"
+          }
+        },
+        {
+          "area": "stzlib",
+          "do": "record the upstream ggml commit Softanza's vendored copy came from, so each later ggml improvement can be judged against it",
+          "state": "proposed",
+          "dates": {
+            "proposed": "2026-11-11"
+          }
+        }
+      ],
+      "status": "analysed",
+      "confidence": "claimed",
+      "sources": [
+        {
+          "title": "Sparks Fly: NVIDIA Accelerates Local AI at IFA 2026",
+          "url": "https://blogs.nvidia.com/blog/local-ai-ifa-next-gen-agents-nv-pair-rtx-spark/",
+          "by": "NVIDIA",
+          "read": "2026-11-11"
+        },
+        {
+          "title": "TensorRT Edge-LLM releases (0.11.0 and 0.11.1)",
+          "url": "https://github.com/NVIDIA/TensorRT-Edge-LLM/releases",
+          "by": "NVIDIA",
+          "read": "2026-11-11"
+        },
+        {
+          "title": "NVIDIA-Nemotron-3.5-Bolt-E4B-4GB (model card, quick start with the DFlash drafter)",
+          "url": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
+          "by": "NVIDIA",
+          "read": "2026-11-11"
+        }
+      ],
+      "review_by": "2027-01-11",
+      "tags": [
+        "nvidia",
+        "llama-cpp",
+        "ggml",
+        "speculative-decoding",
+        "inference"
+      ],
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-11-speculative-decoding-dflash.md"
+    },
     {
       "id": "2026-11-09-lookout-for-any-project",
       "date": "2026-11-09",
