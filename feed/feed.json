@@ -81,6 +81,25 @@
       ]
     },
     {
+      "id": "2026-11-11-nvidia-snapshot",
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-11-nvidia-snapshot.md",
+      "title": "NVIDIA Snapshot restores a warmed-up GPU inference worker in seconds; Softanza saves the warm state it pays for, a read prompt",
+      "summary": "On November 8, 2026 NVIDIA released Snapshot v0.3.0, an open-source (Apache 2.0) Kubernetes system that checkpoints a fully initialised GPU inference pod, CPU and GPU memory together, and restores it on another node instead of starting it again. It combines CRIU for the process with NVIDIA's cuda-checkpoint for the GPU, and works with vLLM, SGLang and TensorRT-LLM. On NVIDIA's own B200 tests, restore was 8.1 to 35.9 times faster than a cold start across 22 configurations, for example 4.7 seconds against 104 seconds for Qwen3-0.6B on vLLM.",
+      "content_text": "On November 8, 2026 NVIDIA released Snapshot v0.3.0, an open-source (Apache 2.0) Kubernetes system that checkpoints a fully initialised GPU inference pod, CPU and GPU memory together, and restores it on another node instead of starting it again. It combines CRIU for the process with NVIDIA's cuda-checkpoint for the GPU, and works with vLLM, SGLang and TensorRT-LLM. On NVIDIA's own B200 tests, restore was 8.1 to 35.9 times faster than a cold start across 22 configurations, for example 4.7 seconds against 104 seconds for Qwen3-0.6B on vLLM.",
+      "date_published": "2026-11-11T00:00:00Z",
+      "tags": [
+        "release",
+        "correct",
+        "advice",
+        "nvidia",
+        "snapshot",
+        "cold-start",
+        "checkpoint",
+        "kv-cache",
+        "inference"
+      ]
+    },
+    {
       "id": "2026-11-11-speculative-decoding-dflash",
       "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-11-speculative-decoding-dflash.md",
       "title": "NVIDIA ships a small drafter with each new model and speeds up llama.cpp; Softanza takes the algorithm into its own decoder",

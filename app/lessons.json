@@ -503,6 +503,47 @@
           "The ticket is read once instead of five times; only the short questions are read again."
         ]
       ]
+    },
+    "2026-11-11-nvidia-snapshot": {
+      "build": [
+        {
+          "why": "Measure how long your model takes to read a fixed prompt before it answers: that is the prefill a saved state would skip.",
+          "cmd": "llama-cli -m model.gguf -f system_prompt.txt -n 1 --verbose-prompt"
+        },
+        {
+          "why": "llama.cpp can save the state after a prompt and load it next time. This writes a state file.",
+          "cmd": "llama-cli -m model.gguf -f system_prompt.txt --prompt-cache prompt.state -n 1"
+        },
+        {
+          "why": "Check the restored state gives the same answer as reading the prompt again, at temperature 0.",
+          "cmd": "diff answer_prefilled.txt answer_restored.txt"
+        }
+      ],
+      "lesson": "Before a language model can answer, it must read its prompt, and it stores what it read in a KV cache. Reading a long prompt is slow on an ordinary computer. NVIDIA Snapshot saves a whole warmed-up GPU process and restores it in seconds instead of minutes. The same idea works on a laptop at a smaller scale: save the KV cache of a prompt you always use, and load it next time instead of reading the prompt again.",
+      "terms": [
+        [
+          "cold start",
+          "starting a program from nothing, paying for every step of its setup"
+        ],
+        [
+          "checkpoint",
+          "a saved copy of a running program's state, from which it can resume"
+        ],
+        [
+          "KV cache",
+          "what a language model keeps of the text it has read, so it does not read it again"
+        ]
+      ],
+      "quiz": [
+        [
+          "Why must a restored KV cache be keyed by the model and the exact prompt tokens?",
+          "A cache is only valid for the model that made it and the text it read; any change in either makes it wrong."
+        ],
+        [
+          "Why does a small local model gain less from saving a whole process than a GPU server does?",
+          "It loads in about a second with nothing to compile, so the slow part left is reading long prompts."
+        ]
+      ]
     }
   }
 }
