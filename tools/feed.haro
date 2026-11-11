@@ -20,7 +20,7 @@ func main
         tMode = Lower(sysargv[3])
     end
     if tMode != "generate" and tMode != "check" and tMode != "verify"
-        see "usage: haro tools/feed.haro [check | verify]" + Char(10)
+        FWrite(stdout, "usage: haro tools/feed.haro [check | verify]" + Char(10))
         Shutdown(1)
     end
     if tMode = "verify"
@@ -35,9 +35,9 @@ func main
     oRun.Go(tMode)
 
     nMs = Floor((Clock() - nStart) * 1000 / ClocksPerSecond())
-    see "entries accepted " + String(oRun.nEntries) + ", problems " + String(Len(oRun.aProblems)) + ", " + String(nMs) + " ms" + Char(10)
+    FWrite(stdout, "entries accepted " + String(oRun.nEntries) + ", problems " + String(Len(oRun.aProblems)) + ", " + String(nMs) + " ms" + Char(10))
     Shutdown(Len(oRun.aProblems))
-
+end
 
 # Both feed files must carry a good SSH signature by the key in keys/allowed_signers, for the
 # signer and namespace radar.yaml names (feed.signer, feed.namespace). ssh-keygen does the
@@ -46,23 +46,24 @@ func Verify(tSigner, tNamespace)
     aFiles = ["feed/index.json", "feed/feed.json"]
     nBad = 0
     if not FExists("keys/allowed_signers")
-        see "REFUSED keys/allowed_signers: there is no key to check against" + Char(10)
+        FWrite(stdout, "REFUSED keys/allowed_signers: there is no key to check against" + Char(10))
         return 1
     end
     nF = Len(aFiles)
     for i = 1 to nF
         tF = aFiles[i]
         if not FExists(tF + ".sig")
-            see "REFUSED " + tF + ": it has no signature, " + tF + ".sig" + Char(10)
+            FWrite(stdout, "REFUSED " + tF + ": it has no signature, " + tF + ".sig" + Char(10))
             nBad++
             loop
         end
         tCmd = "ssh-keygen -Y verify -f keys/allowed_signers -I " + tSigner + " -n " + tNamespace + " -s " +
                tF + ".sig < " + tF
         if System(tCmd) != 0
-            see "REFUSED " + tF + ": its signature does not verify; sign it again after any change" + Char(10)
+            FWrite(stdout, "REFUSED " + tF + ": its signature does not verify; sign it again after any change" + Char(10))
             nBad++
         end
     end
-    see "signatures checked " + String(nF) + ", problems " + String(nBad) + Char(10)
+    FWrite(stdout, "signatures checked " + String(nF) + ", problems " + String(nBad) + Char(10))
     return nBad
+end

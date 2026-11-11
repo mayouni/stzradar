@@ -20,7 +20,7 @@ func JKind(xV)
     if xT = "#" return "number" end
     if xT = "t" or xT = "f" return "boolean" end
     return "null"
-
+end
 func JHas(aObj, tKey)
     aP = aObj[2]
     nN = Len(aP)
@@ -28,7 +28,7 @@ func JHas(aObj, tKey)
         if aP[i][1] = tKey return true end
     end
     return false
-
+end
 func JGet(aObj, tKey)
     aP = aObj[2]
     nN = Len(aP)
@@ -36,7 +36,7 @@ func JGet(aObj, tKey)
         if aP[i][1] = tKey return aP[i][2] end
     end
     return ["n"]
-
+end
 func JKeys(aObj)
     aK = []
     aP = aObj[2]
@@ -45,10 +45,10 @@ func JKeys(aObj)
         aK + aP[i][1]
     end
     return aK
-
+end
 func JItems(aArr)
     return aArr[2]
-
+end
 func JEqual(xA, xB)
     xKa = JKind(xA)
     if xKa != JKind(xB) return false end
@@ -73,10 +73,10 @@ func JEqual(xA, xB)
         if not JEqual(xA[2][i][2], JGet(xB, tK)) return false end
     end
     return true
-
+end
 func JIsString(xV)
     return IsString(xV)
-
+end
 # ---------------------------------------------------------------- JSON writer
 #
 # The bytes docs/FEED.md fixes: two-space indentation, ": " after a key, "," at the end of a
@@ -113,7 +113,7 @@ func JWrite(xV, nDepth)
     end
     tOut += Copy(" ", 2 * nDepth) + tClose
     return tOut
-
+end
 func JQuote(xS)
     tOut = '"'
     nN = Len(xS)
@@ -141,12 +141,12 @@ func JQuote(xS)
         end
     end
     return tOut + '"'
-
+end
 func Hex2(nN)
     tH = Lower(Hex(nN))
     if Len(tH) < 2 tH = "0" + tH end
     return tH
-
+end
 # ---------------------------------------------------------------- small helpers
 
 func Utf8(nN)
@@ -159,7 +159,7 @@ func Utf8(nN)
     end
     return Char(240 + Floor(nN / 262144)) + Char(128 + (Floor(nN / 4096) % 64)) +
            Char(128 + (Floor(nN / 64) % 64)) + Char(128 + (nN % 64))
-
+end
 # The number of code points in a UTF-8 string: every byte that does not continue a character.
 func CodePoints(xS)
     nN = Len(xS)
@@ -169,7 +169,7 @@ func CodePoints(xS)
         if nB < 128 or nB >= 192 nCount++ end
     end
     return nCount
-
+end
 func IsDigits(xS)
     nN = Len(xS)
     if nN = 0 return false end
@@ -177,13 +177,13 @@ func IsDigits(xS)
         if not IsDigit(xS[i]) return false end
     end
     return true
-
+end
 func IsLeapYear(xY)
     if xY % 400 = 0 return true end
     if xY % 100 = 0 return false end
     if xY % 4 = 0 return true end
     return false
-
+end
 # YYYY-MM-DD, and a day that exists.
 func IsDate(xS)
     if Len(xS) != 10 return false end
@@ -197,7 +197,7 @@ func IsDate(xS)
     if nMo = 2 and IsLeapYear(nY) nMax = 29 end
     if nDa < 1 or nDa > nMax return false end
     return true
-
+end
 # RFC 3339: YYYY-MM-DDTHH:MM:SS, an optional fraction, then Z or +HH:MM / -HH:MM.
 func IsDateTime(xS)
     if Len(xS) < 20 return false end
@@ -223,14 +223,14 @@ func IsDateTime(xS)
     if tRest[4] != ":" return false end
     if not (IsDigits(SubStr(tRest, 2, 2)) and IsDigits(SubStr(tRest, 5, 2))) return false end
     return true
-
+end
 # Haro compares strings with strcmp; dates written YYYY-MM-DD compare as text.
 func Before(xA, xB)
     return StrCmp(xA, xB) < 0
-
+end
 func ReadText(tPath)
     return Read(tPath)
-
+end
 func StripCR(xS)
     if SubStr(xS, Char(13)) = 0 return xS end
     tOut = ""
@@ -239,7 +239,7 @@ func StripCR(xS)
         if Ascii(xS[i]) != 13 tOut += xS[i] end
     end
     return tOut
-
+end
 # ---------------------------------------------------------------- the run
 
 class FeedRun
@@ -258,13 +258,13 @@ class FeedRun
     tIndex = ""
     tFeed = ""
 
-    func Problem(tWhere, tMsg)
+    def Problem(tWhere, tMsg)
         aProblems + (tWhere + ": " + tMsg)
         Say("REFUSED " + tWhere + ": " + tMsg)
-
+    end
     # Haro stores a COPY of an object, so the schema check cannot call back into this run:
     # it keeps what it found, and the run takes it here.
-    func Drain
+    def Drain
         aSaid = oSchema.aSaid
         nN = Len(aSaid)
         for i = 1 to nN
@@ -272,9 +272,9 @@ class FeedRun
             Say("REFUSED " + aSaid[i])
         end
         oSchema.aSaid = []
-
+    end
     # The whole run over this repository: generate writes the feeds, check only compares them.
-    func Go(tMode)
+    def Go(tMode)
         if not Prepare() return end
         KeyCheck()
         if ConfOn("checks.affirm") AffirmScan() end
@@ -282,11 +282,11 @@ class FeedRun
         LessonsCheck()
         MapCheck()
         Finish(tMode)
-
+    end
     # map/estate.json is the estate as Radar reads it: layers, projects, domains, concerns. Every
     # entry's areas must name a project of the map (by id or alias, or a dotted sub-area of one), and
     # its domains and concerns must be ids of the map, so the site never places a signal nowhere.
-    func MapCheck
+    def MapCheck
         tMapRel = Conf("map")
         if tMapRel = "" tMapRel = "map/estate.json" end
         tPath = tRoot + "/" + tMapRel
@@ -358,9 +358,9 @@ class FeedRun
             MapField(tWhere, aData, "domains", aDomains)
             MapField(tWhere, aData, "concerns", aConcerns)
         end
-
+    end
     # The ids of one list of the map, refusing a list that is missing or an item with no id.
-    func MapIds(aM, tKey)
+    def MapIds(aM, tKey)
         aIds = []
         if not JHas(aM, tKey) or JKind(JGet(aM, tKey)) != "array"
             Problem("map/estate.json", 'holds a "' + tKey + '" array')
@@ -378,15 +378,15 @@ class FeedRun
             aIds + tId
         end
         return aIds
-
+    end
     # An area matches by its whole name, or by the project it is a dotted sub-area of.
-    func MapNames(aNames, tArea)
+    def MapNames(aNames, tArea)
         if Find(aNames, tArea) > 0 return true end
         nDot = SubStr(tArea, ".")
         if nDot > 1 and Find(aNames, Left(tArea, nDot - 1)) > 0 return true end
         return false
-
-    func MapField(tWhere, aData, tKey, aIds)
+    end
+    def MapField(tWhere, aData, tKey, aIds)
         if not JHas(aData, tKey) return end
         aV = JItems(JGet(aData, tKey))
         nV = Len(aV)
@@ -395,10 +395,10 @@ class FeedRun
                 Problem(tWhere, tKey + " value " + aV[j] + " is not an id of map/estate.json")
             end
         end
-
+    end
     # app/lessons.json is what the radar site shows under Build and Learn. It must be valid JSON, and
     # every key under "entries" must name an entry that exists, so the site never shows an orphan.
-    func LessonsCheck
+    def LessonsCheck
         tPath = tRoot + "/app/lessons.json"
         if not FExists(tPath) return end
         oReader = new JsonReader
@@ -429,20 +429,20 @@ class FeedRun
                 Problem("app/lessons.json", "has lessons for " + aKeys[i] + ", and there is no entry with that id")
             end
         end
-
+    end
     # ------------------------------------------------------------ public pages speak affirmatively
     #
     # A public page says what Softanza is and does; it never lists what has not been done, shown or
     # measured. Each line of README.md, docs/, digests/ and every entry is read for that class of
     # phrase. tools/affirm-allow.txt lists the lines that may keep one, each with its reason.
 
-    func AffirmPhrases
+    def AffirmPhrases
         return ["not yet", "nobody has", "never been", "limit:", "does not exist", "doesn't exist",
                 "not built", "is missing", "are missing", "what is missing", "still on ",
                 "only by one", "protected only by", "has no ", "have no ", "nothing in stzlib",
                 "nothing in softanza", "we have not", "not checked"]
-
-    func AffirmScan
+    end
+    def AffirmScan
         aAllow = AffirmAllow()
         aFiles = ["README.md"]
         aDirs = ["docs", "digests"]
@@ -477,9 +477,9 @@ class FeedRun
                 AffirmLine(aFiles[f], i, aLines[i], aAllow)
             end
         end
-
+    end
     # One line of one public page. The guard calls this directly with lines it wrote.
-    func AffirmLine(tFile, nLine, tLine, aAllow)
+    def AffirmLine(tFile, nLine, tLine, aAllow)
         tLow = Lower(tLine)
         aP = AffirmPhrases()
         nP = Len(aP)
@@ -489,17 +489,17 @@ class FeedRun
                         "); say what holds or what is proposed, or allow the line in tools/affirm-allow.txt with its reason")
             end
         end
-
-    func AffirmAllowed(tFile, tLow, aAllow)
+    end
+    def AffirmAllowed(tFile, tLow, aAllow)
         nA = Len(aAllow)
         for a = 1 to nA
             if aAllow[a][1] = tFile and SubStr(tLow, aAllow[a][2]) > 0 return true end
         end
         return false
-
+    end
     # tools/affirm-allow.txt: one line each, "file | words from the line | reason". A line with no
     # reason is refused, so nothing is allowed without saying why.
-    func AffirmAllow
+    def AffirmAllow
         aOut = []
         tPath = tRoot + "/tools/affirm-allow.txt"
         if not FExists(tPath) return aOut end
@@ -523,9 +523,9 @@ class FeedRun
             aOut + [tFile, Lower(Trim(Left(tRest, nN2 - 1)))]
         end
         return aOut
-
+    end
     # Loads the item schema. Returns 0 when the run cannot start.
-    func Prepare
+    def Prepare
         oSchema = new SchemaCheck
         oSchema.tDir = tRoot + "/schema"
         if not FExists(oSchema.tDir + "/item.schema.json")
@@ -536,20 +536,20 @@ class FeedRun
         Drain()
         if not IsList(aItemSchema) return false end
         return LoadConfig()
-
+    end
     # radar.yaml: everything that belongs to the project this watch serves (docs/ADOPT.md). It is
     # read with the YAML reader below and checked against schema/config.schema.json; the run does not
     # start without it, because every URL and name the feed carries comes from it.
-    func LoadConfig
+    def LoadConfig
         tPath = tRoot + "/radar.yaml"
         if not FExists(tPath)
             Problem("radar.yaml", "is this watch's configuration, and the run reads it first (docs/ADOPT.md)")
             return false
         end
         return LoadConfigText(Read(tPath))
-
+    end
     # The same, from a text: the guard hands it configurations broken on purpose.
-    func LoadConfigText(tText)
+    def LoadConfigText(tText)
         oY = new YamlReader
         try
             aConfig = oY.Parse(tText, "radar.yaml")
@@ -568,17 +568,17 @@ class FeedRun
         if Len(aProblems) > nBefore return false end
         tConfig = JWrite(aConfig, 0) + Char(10)
         return true
-
+    end
     # The project's own voice: a text of radar.yaml may say {project}, {topic}, {watch} or {title},
     # and is published with the configuration's values in their place, so a file copied to another
     # project speaks for that project once its names change. {week} is left for the site, which
     # fills it on the page of an earlier week. Any other {name} is refused, so a typo never reaches a reader.
-    func Voice
+    def Voice
         aVoice = [["{project}", Conf("project.name")], ["{topic}", Conf("watch.topic")], ["{watch}", Conf("watch.name")]]
         aVoice + ["{title}", VoiceText(Conf("watch.title"), ".watch.title")]
         aConfig = VoiceWalk(aConfig, "")
-
-    func VoiceWalk(xV, tWhere)
+    end
+    def VoiceWalk(xV, tWhere)
         if IsString(xV) return VoiceText(xV, tWhere) end
         if not IsList(xV) return xV end
         if Len(xV) = 2 and IsString(xV[1]) and xV[1] = "{"
@@ -598,8 +598,8 @@ class FeedRun
             return ["[", aI]
         end
         return xV
-
-    func VoiceText(tC, tWhere)
+    end
+    def VoiceText(tC, tWhere)
         if SubStr(tC, "{") = 0 return tC end
         nV = Len(aVoice)
         for k = 1 to nV
@@ -614,9 +614,9 @@ class FeedRun
             end
         end
         return tC
-
+    end
     # One value of the configuration by its dotted path, "watch.repository".
-    func Conf(tPath)
+    def Conf(tPath)
         xV = aConfig
         tPart = ""
         tP = tPath + "."
@@ -631,10 +631,10 @@ class FeedRun
             end
         end
         return xV
-
+    end
     # The key radar.yaml publishes for the site and the bar must be the key the feed is checked
     # against, keys/allowed_signers, for the signer it names.
-    func KeyCheck
+    def KeyCheck
         tPath = tRoot + "/keys/allowed_signers"
         if not FExists(tPath)
             Problem("keys/allowed_signers", "holds the public key the feed is signed with (docs/ADOPT.md, step 4)")
@@ -647,9 +647,9 @@ class FeedRun
             if Trim(aLines[i]) = tWant return end
         end
         Problem("radar.yaml", "feed.key, feed.signer and feed.namespace must match a line of keys/allowed_signers: " + tWant)
-
+    end
     # digests/<YYYY-Www>.md, as a sorted JSON list of weeks: the weeks a survey has closed.
-    func DigestWeeks
+    def DigestWeeks
         aW = []
         aIn = Dir(tRoot + "/digests")
         nIn = Len(aIn)
@@ -661,14 +661,14 @@ class FeedRun
         end
         aW = Sort(aW)
         return JWrite(["[", aW], 0) + Char(10)
-
-    func ConfOn(tPath)
+    end
+    def ConfOn(tPath)
         xV = Conf(tPath)
         return IsList(xV) and Len(xV) = 1 and xV[1] = "t"
-
+    end
     # Cross-checks the entries read so far, builds both feeds and checks them. cMode "generate"
     # writes changed files, "check" compares them with what is committed, "none" touches no file.
-    func Finish(tMode)
+    def Finish(tMode)
         nEntries = Len(aEntries)
         if nEntries = 0
             Problem("items/", "there is no entry, so the feed has no date to carry")
@@ -704,13 +704,13 @@ class FeedRun
         Settle(tMode, "app/digests.json", DigestWeeks())  # the weeks surveyed: the site opens on the newest
         Settle(tMode, "llms.txt", BuildLlms())             # the site for agents and language models
         Settle(tMode, "llms-full.txt", BuildLlmsFull())
-
-    func Say(tLine)
-        if not bQuiet see tLine + Char(10) end
-
+    end
+    def Say(tLine)
+        if not bQuiet FWrite(stdout, tLine + Char(10)) end
+    end
     # In check mode, a committed feed that differs from what the entries generate is a problem.
     # In generate mode, the file is written only when its bytes change.
-    func Settle(tMode, tRel, tBytes)
+    def Settle(tMode, tRel, tBytes)
         tPath = tRoot + "/" + tRel
         tOld = ""
         if FExists(tPath) tOld = Read(tPath) end
@@ -724,8 +724,8 @@ class FeedRun
         end
         Write(tPath, tBytes)
         Say("written   " + tRel + " (" + String(Len(tBytes)) + " bytes)")
-
-    func ReadEntries
+    end
+    def ReadEntries
         tItems = tRoot + "/items"
         aTop = Dir(tItems)
         nTop = Len(aTop)
@@ -757,9 +757,9 @@ class FeedRun
                 AddEntryText(tRel, tName, tFile, Read(tRoot + "/" + tRel))
             end
         end
-
+    end
     # One entry, given as the text of its file: the guard calls this with texts it has broken.
-    func AddEntryText(tRel, tYear, tFile, tFileText)
+    def AddEntryText(tRel, tYear, tFile, tFileText)
         tText = StripCR(tFileText)
         aLines = Str2List(tText)
         nLines = Len(aLines)
@@ -805,9 +805,9 @@ class FeedRun
         EntryRules(tRel, tYear, tFile, aData)
         if Len(aProblems) > nBefore return end
         aEntries + [tRel, aData]
-
+    end
     # What the schema cannot say, docs/FEED.md does.
-    func EntryRules(tRel, tYear, tFile, aData)
+    def EntryRules(tRel, tYear, tFile, aData)
         tId = JGet(aData, "id")
         tDate = JGet(aData, "date")
         if tFile != tId + ".md"
@@ -851,11 +851,11 @@ class FeedRun
             end
         end
         ActionDates(tRel, aData)
-
+    end
     # Every action carries the day it reached each stage, so the radar site can say how fast Softanza
     # reacts. A stage is dated between the entry's date and the day the entry was last written, the
     # stages run in order, the current state has its date, and no stage beyond it is dated.
-    func ActionDates(tRel, aData)
+    def ActionDates(tRel, aData)
         if not JHas(aData, "actions") return end
         aStages = ["proposed", "routed", "in-progress", "done"]
         tDate = JGet(aData, "date")
@@ -917,8 +917,8 @@ class FeedRun
                 tPrev = tD
             end
         end
-
-    func CrossChecks
+    end
+    def CrossChecks
         nN = Len(aEntries)
         aIds = []
         for i = 1 to nN
@@ -942,9 +942,9 @@ class FeedRun
                 end
             end
         end
-
+    end
     # Newest date first, then by id.
-    func SortEntries
+    def SortEntries
         nN = Len(aEntries)
         for i = 2 to nN
             xJ = i
@@ -955,30 +955,30 @@ class FeedRun
                 xJ--
             end
         end
-
-    func ComesFirst(xA, xB)
+    end
+    def ComesFirst(xA, xB)
         xDa = JGet(xA, "date") xDb = JGet(xB, "date")
         if xDa != xDb return Before(xDb, xDa) end
         return Before(JGet(xA, "id"), JGet(xB, "id"))
-
-    func EntryUrl(aData)
+    end
+    def EntryUrl(aData)
         tId = JGet(aData, "id")
         return Conf("watch.repository") + "/blob/main/items/" + Left(tId, 4) + "/" + tId + ".md"
-
+    end
     # The site for agents and language models (the llms.txt convention): the site itself is drawn by a
     # script, so an agent that fetches its address reads almost nothing. llms.txt says what the watch is
     # and where its data lives -- the signed feeds, one Markdown file per signal, the documents -- and
     # llms-full.txt carries every signal in plain text. Both are generated from the entries, like the feed.
-    func Str(aObj, tKey)
+    def Str(aObj, tKey)
         xV = JGet(aObj, tKey)
         if IsString(xV) return xV end
         return ""
-
-    func PageUrl(aData)
+    end
+    def PageUrl(aData)
         tId = JGet(aData, "id")
         return Conf("watch.pages") + "items/" + Left(tId, 4) + "/" + tId + ".md"
-
-    func BuildLlms
+    end
+    def BuildLlms
         tNL = Char(10)
         tP = Conf("watch.pages")
         tC = "# " + Conf("watch.title") + tNL + tNL
@@ -1007,8 +1007,8 @@ class FeedRun
         tC += "## Optional" + tNL
         tC += "- [Full text](" + tP + "llms-full.txt): every signal, with its notices for each reader, its actions and its sources" + tNL
         return tC
-
-    func BuildLlmsFull
+    end
+    def BuildLlmsFull
         tNL = Char(10)
         tC = "# " + Conf("watch.title") + ": every signal, in full" + tNL + tNL
         tC += "> " + Conf("watch.tagline") + ". Generated from the signed feed (" + Conf("watch.pages") + "feed/index.json); the feed is the reference." + tNL
@@ -1049,10 +1049,10 @@ class FeedRun
             end
         end
         return tC
-
+    end
     # The newest date or updated among the entries, at midnight UTC: an unchanged feed
     # regenerates to the same bytes.
-    func NewestDay
+    def NewestDay
         tMax = ""
         nN = Len(aEntries)
         for i = 1 to nN
@@ -1065,8 +1065,8 @@ class FeedRun
             end
         end
         return tMax + "T00:00:00Z"
-
-    func BuildIndex
+    end
+    def BuildIndex
         aItems = []
         nN = Len(aEntries)
         for i = 1 to nN
@@ -1083,9 +1083,9 @@ class FeedRun
             ["title", Conf("watch.title")],
             ["items", ["[", aItems]]
         ]]
-
+    end
     # The same entries as a JSON Feed 1.1 (docs/FEED.md, "The JSON Feed").
-    func BuildJsonFeed
+    def BuildJsonFeed
         aItems = []
         nN = Len(aEntries)
         for i = 1 to nN
@@ -1125,9 +1125,9 @@ class FeedRun
             ["language", Conf("watch.language")],
             ["items", ["[", aItems]]
         ]]
-
+    end
     # What JSON Feed 1.1 requires of a feed and of each item.
-    func CheckJsonFeed(aFeed)
+    def CheckJsonFeed(aFeed)
         tW = "feed/feed.json"
         if JGet(aFeed, "version") != "https://jsonfeed.org/version/1.1"
             Problem(tW, "version is not https://jsonfeed.org/version/1.1")
@@ -1157,7 +1157,8 @@ class FeedRun
                 Problem(tW, tId + ": date_modified is not an RFC 3339 date-time")
             end
         end
-
+end
+    end
 # ---------------------------------------------------------------- JSON reader
 
 class JsonReader
@@ -1166,7 +1167,7 @@ class JsonReader
     nSize = 0
     tWhere = ""
 
-    func Parse(tSrc, tName)
+    def Parse(tSrc, tName)
         tText = tSrc
         nSize = Len(tSrc)
         nPos = 1
@@ -1175,16 +1176,16 @@ class JsonReader
         SkipSpace()
         if nPos <= nSize Fail("there is text after the JSON value") end
         return xV
-
-    func Fail(tMsg)
+    end
+    def Fail(tMsg)
         # the line, counted from the start of the block
         nLine = 1
         for i = 1 to nPos - 1
             if i <= nSize and Ascii(tText[i]) = 10 nLine++ end
         end
         Raise("line " + String(nLine) + " of the block: " + tMsg)
-
-    func SkipSpace
+    end
+    def SkipSpace
         while nPos <= nSize
             nB = Ascii(tText[nPos])
             if nB = 32 or nB = 9 or nB = 10 or nB = 13
@@ -1193,8 +1194,8 @@ class JsonReader
                 exit
             end
         end
-
-    func ReadValue
+    end
+    def ReadValue
         SkipSpace()
         if nPos > nSize Fail("the value ends early") end
         tC = tText[nPos]
@@ -1215,12 +1216,12 @@ class JsonReader
         end
         if tC = "-" or IsDigit(tC) return ReadNumber() end
         Fail("unexpected character " + tC)
-
-    func Word(tWord)
+    end
+    def Word(tWord)
         if SubStr(tText, nPos, Len(tWord)) != tWord Fail("expected " + tWord) end
         nPos += Len(tWord)
-
-    func ReadObject
+    end
+    def ReadObject
         nPos++
         aPairs = []
         aSeen = []
@@ -1247,8 +1248,8 @@ class JsonReader
             if tC = "}" return ["{", aPairs] end
             if tC != "," Fail("expected , or } after the value of " + tKey) end
         end
-
-    func ReadArray
+    end
+    def ReadArray
         nPos++
         aItems = []
         SkipSpace()
@@ -1266,8 +1267,8 @@ class JsonReader
             if tC = "]" return ["[", aItems] end
             if tC != "," Fail("expected , or ] in an array") end
         end
-
-    func ReadString
+    end
+    def ReadString
         nPos++
         tOut = ""
         while true
@@ -1312,8 +1313,8 @@ class JsonReader
                 Fail("unknown escape \" + tE)
             end
         end
-
-    func Hex4
+    end
+    def Hex4
         if nPos + 3 > nSize Fail("\u needs four hex digits") end
         tH = SubStr(tText, nPos, 4)
         for i = 1 to 4
@@ -1321,8 +1322,8 @@ class JsonReader
         end
         nPos += 4
         return Dec(tH)
-
-    func ReadNumber
+    end
+    def ReadNumber
         nStart = nPos
         if tText[nPos] = "-" nPos++ end
         if nPos > nSize or not IsDigit(tText[nPos]) Fail("a number needs a digit") end
@@ -1343,7 +1344,8 @@ class JsonReader
             while nPos <= nSize and IsDigit(tText[nPos]) nPos++ end
         end
         return ["#", SubStr(tText, nStart, nPos - nStart)]
-
+end
+    end
 # ---------------------------------------------------------------- schema check
 #
 # The part of JSON Schema 2020-12 that schema/ uses. A keyword this check does not implement is
@@ -1354,7 +1356,7 @@ class SchemaCheck
     aSaid = []       # what this check found, taken by FeedRun.Drain
     aCache = []      # [ [cName, oSchema], ... ]
 
-    func SchemaFile(tName)
+    def SchemaFile(tName)
         nN = Len(aCache)
         for i = 1 to nN
             if aCache[i][1] = tName return aCache[i][2] end
@@ -1373,15 +1375,15 @@ class SchemaCheck
         end
         aCache + [tName, aJS]
         return aJS
-
-    func Say(tWhere, tPath, tMsg)
+    end
+    def Say(tWhere, tPath, tMsg)
         if tPath = ""
             aSaid + (tWhere + ": " + tMsg)
         else
             aSaid + (tWhere + ": " + tPath + ": " + tMsg)
         end
-
-    func Check(xV, aJS, tWhere, tPath)
+    end
+    def Check(xV, aJS, tWhere, tPath)
         if JKind(aJS) = "boolean"
             if aJS[1] = "f" Say(tWhere, tPath, "is not allowed here") end
             return
@@ -1554,7 +1556,8 @@ class SchemaCheck
                 end
             end
         end
-
+end
+    end
 # ---------------------------------------------------------------- patterns
 #
 # The regular expressions schema/ uses: literals, ., \d \w \s and escaped punctuation,
@@ -1566,7 +1569,7 @@ class Pattern
     tPat = ""
     nAt = 1
 
-    func Search(tPattern, tSubject)
+    def Search(tPattern, tSubject)
         tPat = tPattern
         nAt = 1
         aSeq = ParseSeq()
@@ -1578,8 +1581,8 @@ class Pattern
         end
         aEnd = Run(aSeq, tSubject, aStart)
         return Len(aEnd) > 0
-
-    func ParseSeq
+    end
+    def ParseSeq
         aSeq = []
         nP = Len(tPat)
         while nAt <= nP
@@ -1621,9 +1624,9 @@ class Pattern
             aSeq + aNode
         end
         return aSeq
-
+    end
     # After a backslash: a class letter or a literal character. Returns [negate, ranges].
-    func EscapeSet
+    def EscapeSet
         if nAt > Len(tPat) Raise("the pattern ends on a backslash") end
         tE = tPat[nAt]
         nAt++
@@ -1632,8 +1635,8 @@ class Pattern
         if tE = "s" return [0, [[9, 10], [13, 13], [32, 32]]] end
         nB = Ascii(tE)
         return [0, [[nB, nB]]]
-
-    func ParseClass
+    end
+    def ParseClass
         nAt++
         nNeg = 0
         aR = []
@@ -1671,8 +1674,8 @@ class Pattern
             end
         end
         return [nNeg, aR]
-
-    func ParseQuantifier
+    end
+    def ParseQuantifier
         nP = Len(tPat)
         if nAt > nP return [1, 1] end
         tC = tPat[nAt]
@@ -1710,17 +1713,17 @@ class Pattern
         if tHi = "" return [Number(tLo), -1] end
         if not IsDigits(tHi) Raise("{" + tIn + "} is not a count") end
         return [Number(tLo), Number(tHi)]
-
+    end
     # Every position reachable after matching the sequence from any of the given positions.
-    func Run(aSeq, tS, aPos)
+    def Run(aSeq, tS, aPos)
         nN = Len(aSeq)
         for i = 1 to nN
             aPos = Repeat(aSeq[i], tS, aPos)
             if Len(aPos) = 0 return [] end
         end
         return aPos
-
-    func Repeat(aNode, tS, aPos)
+    end
+    def Repeat(aNode, tS, aPos)
         nMin = aNode[3]
         nMax = aNode[4]
         aOut = []
@@ -1737,8 +1740,8 @@ class Pattern
             if nK > nGuard and nK > nMin exit end
         end
         return aOut
-
-    func StepOnce(aNode, tS, aPos)
+    end
+    def StepOnce(aNode, tS, aPos)
         tKind = aNode[1]
         nS = Len(tS)
         aOut = []
@@ -1755,8 +1758,8 @@ class Pattern
             end
         end
         return aOut
-
-    func InSet(aSet, xB)
+    end
+    def InSet(aSet, xB)
         aR = aSet[2]
         nN = Len(aR)
         bIn = false
@@ -1768,16 +1771,16 @@ class Pattern
         end
         if aSet[1] = 1 return not bIn end
         return bIn
-
-    func Union(xA, xB)
+    end
+    def Union(xA, xB)
         aOut = xA
         nN = Len(xB)
         for i = 1 to nN
             if Find(aOut, xB[i]) = 0 aOut + xB[i] end
         end
         return aOut
-
-
+    end
+end
 # ---------------------------------------------------------------- the YAML reader
 #
 # radar.yaml is read with a small, strict subset of YAML, enough for a configuration a person
@@ -1795,7 +1798,7 @@ class YamlReader
     nAt = 1
     tDoc = ""
 
-    func Parse(tText, tWhere)
+    def Parse(tText, tWhere)
         tDoc = tWhere
         aSrc = YamlLines(StripCR(tText))
         nAt = 1
@@ -1805,27 +1808,27 @@ class YamlReader
         SkipEmpty()
         if nAt <= Len(aSrc) Fail("this line is indented less than its block and more than its parent") end
         return xV
-
-    func Fail(tMsg)
+    end
+    def Fail(tMsg)
         Raise(tDoc + ", line " + String(nAt) + ": " + tMsg)
-
-    func Indent(tL)
+    end
+    def Indent(tL)
         nN = 0
         nL = Len(tL)
         while nN < nL and tL[nN + 1] = " " nN++ end
         if nN < nL and Ascii(tL[nN + 1]) = 9 Fail("a tab indents this line; indent with spaces") end
         return nN
-
-    func IsEmpty(tL)
+    end
+    def IsEmpty(tL)
         xC = Uncomment(tL)
         return Trim(xC) = ""
-
-    func SkipEmpty
+    end
+    def SkipEmpty
         while nAt <= Len(aSrc) and IsEmpty(aSrc[nAt]) nAt++ end
-
+    end
     # The text of a line with its comment removed: # starts a comment at the line's start or after a
     # space, outside quotes.
-    func Uncomment(tL)
+    def Uncomment(tL)
         tQ = ""
         nL = Len(tL)
         for i = 1 to nL
@@ -1839,14 +1842,14 @@ class YamlReader
             end
         end
         return tL
-
+    end
     # A block: every line at this indent is one key of a map, or one item of a list.
-    func Block(nInd)
+    def Block(nInd)
         tFirst = Trim(Uncomment(aSrc[nAt]))
         if tFirst = "-" or Left(tFirst, 2) = "- " return Seq(nInd) end
         return Mapping(nInd)
-
-    func Mapping(nInd)
+    end
+    def Mapping(nInd)
         aPairs = []
         aKeys = []
         while true
@@ -1864,8 +1867,8 @@ class YamlReader
             aPairs + [tK, Value(aKV[2], nInd)]
         end
         return ["{", aPairs]
-
-    func Seq(nInd)
+    end
+    def Seq(nInd)
         aItems = []
         while true
             SkipEmpty()
@@ -1892,15 +1895,15 @@ class YamlReader
             end
         end
         return ["[", aItems]
-
-    func IsKeyLine(tL)
+    end
+    def IsKeyLine(tL)
         if Left(tL, 1) = '"' or Left(tL, 1) = "'" or Left(tL, 1) = "[" return false end
         nC = SubStr(tL, ":")
         if nC < 2 return false end
         if nC < Len(tL) and tL[nC + 1] != " " return false end
         return KeyName(Left(tL, nC - 1))
-
-    func KeyName(tK)
+    end
+    def KeyName(tK)
         nK = Len(tK)
         if nK = 0 return false end
         for i = 1 to nK
@@ -1908,17 +1911,17 @@ class YamlReader
             if not (IsAlnum(tC) or tC = "_" or tC = "-") return false end
         end
         return true
-
-    func SplitKey(tL)
+    end
+    def SplitKey(tL)
         nC = SubStr(tL, ":")
         if nC < 2 Fail("a line of a map is key: value, and this one has no key") end
         tK = Left(tL, nC - 1)
         if not KeyName(tK) Fail("the key " + tK + " uses a character other than letters, digits, _ and -") end
         if nC < Len(tL) and tL[nC + 1] != " " Fail("a key is followed by a colon and a space") end
         return [tK, Trim(SubStr(tL, nC + 1, Len(tL)))]
-
+    end
     # The value after "key:", which may be on the following lines.
-    func Value(tRest, nInd)
+    def Value(tRest, nInd)
         if tRest = "|" or tRest = ">"
             nAt++
             return TextBlock(nInd, tRest = ">")
@@ -1935,8 +1938,8 @@ class YamlReader
             return ["n"]
         end
         return Block(xN)
-
-    func TextBlock(nInd, bFold)
+    end
+    def TextBlock(nInd, bFold)
         aOut = []
         nBody = -1
         while nAt <= Len(aSrc)
@@ -1967,8 +1970,8 @@ class YamlReader
             tText += aOut[i]
         end
         return tText
-
-    func Scalar(tS)
+    end
+    def Scalar(tS)
         tS = Trim(tS)
         if Left(tS, 1) = "[" return FlowList(tS) end
         if Left(tS, 1) = '"' or Left(tS, 1) = "'"
@@ -1983,9 +1986,9 @@ class YamlReader
             Fail("this file uses a YAML feature Radar does not read here (" + Left(tS, 1) + "); write the value in quotes")
         end
         return tS
-
+    end
     # A quoted string starting at nFrom; returns [text, the position after the closing quote].
-    func Quoted(tS, nFrom)
+    def Quoted(tS, nFrom)
         tQ = tS[nFrom]
         tOut = ""
         nI = nFrom + 1
@@ -2013,8 +2016,8 @@ class YamlReader
             nI++
         end
         Fail("a quoted string is not closed on its line")
-
-    func FlowList(tS)
+    end
+    def FlowList(tS)
         if Right(tS, 1) != "]" Fail("a [ list is closed with ] on the same line") end
         tIn = Trim(SubStr(tS, 2, Len(tS) - 2))
         aItems = []
@@ -2040,9 +2043,9 @@ class YamlReader
             end
         end
         return ["[", aItems]
-
+    end
 # The lines of a text, split on line feeds.
-func YamlLines(tText)
+def YamlLines(tText)
     aOut = []
     tCur = ""
     nT = Len(tText)
@@ -2057,3 +2060,5 @@ func YamlLines(tText)
     end
     if tCur != "" aOut + tCur end
     return aOut
+end
+end

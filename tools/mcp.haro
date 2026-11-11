@@ -36,7 +36,7 @@ func main
         nEmpty = 0
         Handle(tLine)
     end
-
+end
 # ---------------------------------------------------------------- the radar's data
 
 func LoadRadar
@@ -63,7 +63,7 @@ func LoadRadar
         end
     end
     $tTrust = CheckSignature()
-
+end
 # The feed is trusted only when its signature checks; ssh-keygen's own words are kept off our output,
 # which carries the protocol.
 func CheckSignature
@@ -76,10 +76,10 @@ func CheckSignature
            " -n " + Cf("feed.namespace") + " -s " + Q(tIdx + ".sig") + " < " + Q(tIdx) + tQuiet
     if System(tCmd) != 0 return "feed/index.json's signature does not check against keys/allowed_signers (or ssh-keygen is missing)" end
     return ""
-
+end
 func Q(tC)
     return '"' + tC + '"'
-
+end
 # one value of app/config.json by its dotted path
 func Cf(tPath)
     xV = $aCfg
@@ -97,26 +97,26 @@ func Cf(tPath)
     end
     if IsString(xV) return xV end
     return ""
-
+end
 func S(xO, tKey)
     if JKind(xO) != "object" return "" end
     xV = JGet(xO, tKey)
     if IsString(xV) return xV end
     return ""
-
+end
 func Word(tLevel)
     if tLevel = "info" return "To know" end
     if tLevel = "advice" return "To consider" end
     if tLevel = "action" return "To do" end
     if tLevel = "urgent" return "To do now" end
     return tLevel
-
+end
 func LevelRank(tLevel)
     return Find(["info", "advice", "action", "urgent"], tLevel)
-
+end
 func RelRank(tC)
     return Find(["low", "medium", "high"], tC)
-
+end
 # ISO week of a "YYYY-MM-DD" date, as "YYYY-Www"
 func IsoWeek(tDate)
     nY = Number(Left(tDate, 4)) nMo = Number(SubStr(tDate, 6, 2)) nDa = Number(SubStr(tDate, 9, 2))
@@ -134,10 +134,10 @@ func IsoWeek(tDate)
     tW = "" + String(nW)
     if nW < 10 tW = "0" + tW end
     return "" + String(nY) + "-W" + tW
-
+end
 func Leap(xY)
     return (xY % 4 = 0 and xY % 100 != 0) or xY % 400 = 0
-
+end
 # Monday 1 .. Sunday 7
 func Dow(xY, nM, xD)
     aT = [0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4]
@@ -145,14 +145,14 @@ func Dow(xY, nM, xD)
     xN = (xY + Floor(xY / 4) - Floor(xY / 100) + Floor(xY / 400) + aT[nM] + xD) % 7
     if xN = 0 return 7 end
     return xN
-
+end
 func WeeksIn(xY)
     if P(xY) = 4 or P(xY - 1) = 3 return 53 end
     return 52
-
+end
 func P(xY)
     return (xY + Floor(xY / 4) - Floor(xY / 100) + Floor(xY / 400)) % 7
-
+end
 # the project ids an entry touches: its areas through the map's ids and aliases
 func ProjectsOf(xO)
     aOut = []
@@ -181,7 +181,7 @@ func ProjectsOf(xO)
         if tHit != "" and Find(aOut, tHit) = 0 aOut + tHit end
     end
     return aOut
-
+end
 func LayersOf(xO)
     aOut = []
     aPr = ProjectsOf(xO)
@@ -196,7 +196,7 @@ func LayersOf(xO)
         end
     end
     return aOut
-
+end
 func NameOf(tList, tId)
     aX = JItems(JGet($aMap, tList))
     nN = Len(aX)
@@ -204,12 +204,12 @@ func NameOf(tList, tId)
         if S(aX[i], "id") = tId return S(aX[i], "name") end
     end
     return tId
-
+end
 func HasIn(xO, tKey, tId)
     xV = JGet(xO, tKey)
     if JKind(xV) != "array" return false end
     return Find(JItems(xV), tId) > 0
-
+end
 # newest week the survey closed (it has a digest), else the newest week that holds an entry
 func LatestWeek
     tBest = ""
@@ -224,7 +224,7 @@ func LatestWeek
         if xW > tBest tBest = xW end
     end
     return tBest
-
+end
 # most pressing first: level, then relevance, then newest
 func SortItems(aIn)
     aA = aIn
@@ -237,17 +237,17 @@ func SortItems(aIn)
         end
     end
     return aA
-
+end
 func Before(xA, xB)
     xLa = LevelRank(S(xA, "level")) xLb = LevelRank(S(xB, "level"))
     if xLa != xLb return xLa > xLb end
     xRa = RelRank(S(xA, "relevance")) xRb = RelRank(S(xB, "relevance"))
     if xRa != xRb return xRa > xRb end
     return S(xA, "date") > S(xB, "date")
-
+end
 func ReaderOk(tC)
     return Find(["developer", "maintainer", "learner", "user"], tC) > 0
-
+end
 # one signal in a few lines, for a list
 func Brief(xO, tReader, nNo)
     tC = "" + String(nNo) + ". [" + Word(S(xO, "level")) + "] " + S(xO, "title") + Char(10)
@@ -262,7 +262,7 @@ func Brief(xO, tReader, nNo)
     for i = 1 to nN aNames + NameOf("projects", aPr[i]) end
     tC += "   touches: " + Joined(aNames, ", ") + " | id: " + S(xO, "id") + " | " + S(xO, "date") + Char(10)
     return tC
-
+end
 func Joined(xA, tSep)
     tC = ""
     nN = Len(xA)
@@ -271,7 +271,7 @@ func Joined(xA, tSep)
         tC += xA[i]
     end
     return tC
-
+end
 # ---------------------------------------------------------------- the tools
 
 func ToolList
@@ -287,11 +287,11 @@ func ToolList
       '{"name":"radar_map","description":"The project map signals are placed on: layers, parts (projects), domains and concerns, with the ids the other tools take.",' +
       '"inputSchema":{"type":"object","properties":{}}}' +
       ']}'
-
+end
 func Arg(aArgs, tKey)
     if JKind(aArgs) != "object" return "" end
     return S(aArgs, tKey)
-
+end
 func CallTool(tName, aArgs)
     if $tTrust != "" return [true, "The radar did not answer: " + $tTrust + ". Its feed is trusted only when its signature checks."] end
     tReader = Lower(Arg(aArgs, "reader"))
@@ -301,7 +301,7 @@ func CallTool(tName, aArgs)
     if tName = "radar_signal" return ToolSignal(Arg(aArgs, "id")) end
     if tName = "radar_map" return [false, ToolMap()] end
     return [true, "There is no tool named " + tName + "; the tools are radar_week, radar_search, radar_signal and radar_map."]
-
+end
 func ToolWeek(tWeek, tReader)
     if tWeek = "" tWeek = LatestWeek() end
     aW = []
@@ -319,7 +319,7 @@ func ToolWeek(tWeek, tReader)
     for i = 1 to nN tC += Brief(aW[i], tReader, i) end
     tC += Char(10) + "Ask radar_signal with an id for the whole signal."
     return tC
-
+end
 func ToolSearch(aArgs, tReader)
     tP = Lower(Arg(aArgs, "project")) tL = Lower(Arg(aArgs, "layer")) tD = Lower(Arg(aArgs, "domain"))
     tC = Lower(Arg(aArgs, "concern")) tV = Lower(Arg(aArgs, "level_at_least")) tW = Arg(aArgs, "week")
@@ -346,7 +346,7 @@ func ToolSearch(aArgs, tReader)
     nN = Len(aHit)
     for i = 1 to nN xC += Brief(aHit[i], tReader, i) end
     return xC
-
+end
 func ToolSignal(tId)
     nN = Len($aItems)
     for i = 1 to nN
@@ -382,7 +382,7 @@ func ToolSignal(tId)
         end
     end
     return [true, "There is no signal " + tId + "; radar_week and radar_search give the ids."]
-
+end
 func ToolMap
     tNL = Char(10)
     tC = "The map of " + Cf("project.name") + " (id: name)." + tNL
@@ -399,7 +399,7 @@ func ToolMap
         end
     end
     return tC
-
+end
 # ---------------------------------------------------------------- the protocol
 
 func Handle(tLine)
@@ -435,21 +435,21 @@ func Handle(tLine)
         return
     end
     Send('{"jsonrpc":"2.0","id":' + tId + ',"error":{"code":-32601,"message":' + JQuote("Method not found: " + tMethod) + '}}')
-
+end
 func Result(tId, tJson)
     Send('{"jsonrpc":"2.0","id":' + tId + ',"result":' + tJson + '}')
-
+end
 func Send(tC)
-    see tC + Char(10)
+    FWrite(stdout, tC + Char(10))
     Flush()
-
+end
 # Haro buffers a program's output when it goes to a pipe, and has no flush for it yet; system() flushes
 # it before running its command, so an empty command sends each reply now. The client waits on every reply,
 # so without this nothing would arrive until the program ended. Reported to the Haro desk (HARO-STDIOFLUSH-01):
 # give should flush before it waits for input, as C's stdio does, or Haro should offer flush().
 func Flush
     if IsWindows() System("rem") else System(":") end
-
+end
 # a JSON value on one line (the stdio transport carries one message per line)
 func JLine(xV)
     xK = JKind(xV)
@@ -469,3 +469,4 @@ func JLine(xV)
     end
     if xK = "array" return "[" + tC + "]" end
     return "{" + tC + "}"
+end

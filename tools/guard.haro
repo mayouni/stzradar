@@ -19,9 +19,9 @@ func main
     oG.tGood = Read(oG.tRoot + "/tools/fixtures/entry.md")
     oG.All()
     nMs = Floor((Clock() - nStart) * 1000 / ClocksPerSecond())
-    see "guard: " + String(oG.nPass) + " passed, " + String(oG.nFail) + " failed, " + String(nMs) + " ms" + Char(10)
+    FWrite(stdout, "guard: " + String(oG.nPass) + " passed, " + String(oG.nFail) + " failed, " + String(nMs) + " ms" + Char(10))
     Shutdown(oG.nFail)
-
+end
 class Guard
     tRoot = ""
     tGood = ""
@@ -29,7 +29,7 @@ class Guard
     nPass = 0
     nFail = 0
 
-    func All
+    def All
         Controls()
         Refusals()
         CrossFile()
@@ -40,38 +40,38 @@ class Guard
         Dates()
         Yaml()
         Config()
-
-    func Pass(tName)
+    end
+    def Pass(tName)
         nPass++
-        see "  ok    " + tName + Char(10)
-
-    func Fail(tName, tWhy)
+        FWrite(stdout, "  ok    " + tName + Char(10))
+    end
+    def Fail(tName, tWhy)
         nFail++
-        see "  FAIL  " + tName + ": " + tWhy + Char(10)
-
-    func NewRun
+        FWrite(stdout, "  FAIL  " + tName + ": " + tWhy + Char(10))
+    end
+    def NewRun
         oRun = new FeedRun
         oRun.tRoot = tRoot
         oRun.bQuiet = true
         oRun.Prepare()
         return oRun
-
+    end
     # The good entry with exactly one change. Returns "" if the change did not apply, so a case
     # whose text drifted from the entry fails instead of testing nothing.
-    func Broken(tOld, tNew)
+    def Broken(tOld, tNew)
         if SubStr(tGood, tOld) = 0 return "" end
         return SubStr(tGood, tOld, tNew)
-
-    func Joined(aProblems)
+    end
+    def Joined(aProblems)
         tC = ""
         nN = Len(aProblems)
         for i = 1 to nN
             tC += aProblems[i] + " | "
         end
         return tC
-
+    end
     # One entry text, one expected reason.
-    func Refuses(tName, tText, tYear, tFileName, tReason)
+    def Refuses(tName, tText, tYear, tFileName, tReason)
         if tText = ""
             Fail(tName, "the change did not apply to the entry's text")
             return
@@ -88,12 +88,12 @@ class Guard
             return
         end
         Pass(tName)
-
-    func RefusesOne(tName, tOld, tNew, tReason)
+    end
+    def RefusesOne(tName, tOld, tNew, tReason)
         Refuses(tName, Broken(tOld, tNew), "2026", tFile, tReason)
-
+    end
     # ------------------------------------------------------------ the control
-    func Controls
+    def Controls
         oRun = NewRun()
         oRun.AddEntryText("items/2026/" + tFile, "2026", tFile, tGood)
         oRun.Finish("none")
@@ -122,9 +122,9 @@ class Guard
         else
             Fail("control: in memory, feed.json is the committed bytes", "they differ")
         end
-
+    end
     # ------------------------------------------------------------ one entry, one defect
-    func Refusals
+    def Refusals
         tQ = '"'
         tNL = Char(10)
 
@@ -200,9 +200,9 @@ class Guard
             tQ + "review_by" + tQ + ": ",
             tQ + "supersedes" + tQ + ": " + tQ + "2026-01-01-nothing" + tQ + "," + tNL + "  " + tQ + "review_by" + tQ + ": ",
             "there is no entry with that id")
-
+    end
     # ------------------------------------------------------------ across files
-    func CrossFile
+    def CrossFile
         oRun = NewRun()
         oRun.AddEntryText("items/2026/" + tFile, "2026", tFile, tGood)
         oRun.AddEntryText("items/2026/" + tFile, "2026", tFile, tGood)
@@ -212,9 +212,9 @@ class Guard
         else
             Fail("two entries with one id", "not refused for that: " + Joined(oRun.aProblems))
         end
-
+    end
     # ------------------------------------------------------------ the bytes written
-    func Second(tDate, tUpdated)
+    def Second(tDate, tUpdated)
         tQ = '"'
         tId = tDate + "-second"
         tC = SubStr(tGood, tQ + "2026-11-08-lookout-opens" + tQ, tQ + tId + tQ)
@@ -222,8 +222,8 @@ class Guard
         tC = SubStr(tC, tQ + "updated" + tQ + ": " + tQ + "2026-11-08" + tQ, tQ + "updated" + tQ + ": " + tQ + tUpdated + tQ)
         tC = SubStr(tC, tQ + "proposed" + tQ + ": " + tQ + "2026-11-08" + tQ, tQ + "proposed" + tQ + ": " + tQ + tDate + tQ)
         return tC
-
-    func Writing
+    end
+    def Writing
         tQ = '"'
         # escapes in, UTF-8 out; a tab goes back out escaped
         tText = Broken(tQ + "summary" + tQ + ": " + tQ + "Softanza opened",
@@ -287,9 +287,9 @@ class Guard
         else
             Fail("on one day, entries go by id", Joined(oRun.aProblems))
         end
-
+    end
     # ------------------------------------------------------------ the pattern matcher
-    func Patterns
+    def Patterns
         aCases = [
             ["^[0-9]{4}-[0-9]{2}-[0-9]{2}-[a-z0-9]+(-[a-z0-9]+)*$", "2026-11-08-lookout-opens", true],
             ["^[0-9]{4}-[0-9]{2}-[0-9]{2}-[a-z0-9]+(-[a-z0-9]+)*$", "2026-11-08-lookout-", false],
@@ -318,9 +318,9 @@ class Guard
             end
         end
         if nBad = 0 Pass("the pattern matcher, " + String(nN) + " cases") end
-
+    end
     # ------------------------------------------------------------ public pages speak affirmatively
-    func Affirm
+    def Affirm
         oRun = NewRun()
         oRun.AffirmLine("README.md", 1, "A reader command does not exist yet.", [])
         if SubStr(Joined(oRun.aProblems), "a public page lists what is missing") > 0
@@ -353,10 +353,10 @@ class Guard
         else
             Fail("tools/affirm-allow.txt loads, every line with its reason", Joined(oRun.aProblems))
         end
-
+    end
     # ------------------------------------------------------------ every entry sits on the estate map
     # The real map/estate.json, and the frozen entry with its areas line changed in memory.
-    func Map
+    def Map
         tAct = '"actions": ['
         MapCase("an area that names no project is refused", Broken('"softanza"', '"nowhere"'), "area nowhere names no project")
         MapCase("a domain the map does not list is refused", Broken(tAct, '"domains": ["spaceships"], ' + tAct), "domains value spaceships")
@@ -364,10 +364,10 @@ class Guard
         tText = Broken(tAct, '"domains": ["agents", "security"], "concerns": ["trust"], ' + tAct)
         tText = SubStr(tText, '"areas": [', '"areas": ["stzlib", "stzlib.security", "haro", ')
         MapCase("an alias and a dotted sub-area pass, with known domains and concerns", tText, "")
-
+    end
     # ------------------------------------------------------------ every proposal dates its stages
     # The fixture's actions are proposed on 2026-11-08 (dated on 2026-11-09, when the rule came in).
-    func Dates
+    def Dates
         tP = '"dates": { "proposed": "2026-11-08" }'
         RefusesOne("an action with no dates is refused", ", " + tP, "", "has no dates")
         RefusesOne("a stage dated before the entry is refused", tP, '"dates": { "proposed": "2026-11-07" }', "before the entry's date")
@@ -379,9 +379,9 @@ class Guard
         tOrder = SubStr(tOrder, '"updated": "2026-11-08"', '"updated": "2026-11-10"')
         tOrder = SubStr(tOrder, '"proposed": "2026-11-08", "routed": "2026-11-08"', '"proposed": "2026-11-10", "routed": "2026-11-09"')
         Refuses("stages out of order are refused", tOrder, "2026", tFile, "before an earlier stage")
-
+    end
     # ------------------------------------------------------------ the YAML reader
-    func Yaml
+    def Yaml
         tNL = Char(10)
         tDoc = "# a comment" + tNL + "name: Radar  # after a value" + tNL + "list:" + tNL + "  - a" + tNL + '  - "b: c"' + tNL +
                "people:" + tNL + "  - id: x" + tNL + "    n: '1'" + tNL + "  - id: y" + tNL + "flow: [one, " + '"two, three"' + "]" + tNL +
@@ -401,8 +401,8 @@ class Guard
         YamlRefuses("YAML: a feature this reader does not take is refused", "a: &anchor 1" + tNL, "does not read here")
         YamlRefuses("YAML: an unclosed quote is refused", 'a: "open' + tNL, "not closed")
         YamlRefuses("YAML: a key indented deeper than its siblings is refused", "a: 1" + tNL + "   b: 2" + tNL, "indented more")
-
-    func YamlRefuses(tName, tDoc, tReason)
+    end
+    def YamlRefuses(tName, tDoc, tReason)
         oY = new YamlReader
         try
             oY.Parse(tDoc, "t.yaml")
@@ -410,9 +410,9 @@ class Guard
         catch e
             if SubStr(e.Message(), tReason) > 0 Pass(tName) else Fail(tName, "refused for another reason: " + e.Message()) end
         end
-
+    end
     # JSON written by JWrite, with the layout spaces outside strings removed, to compare with a literal.
-    func Compact(tC)
+    def Compact(tC)
         tOut = ""
         bIn = false
         nN = Len(tC)
@@ -423,9 +423,9 @@ class Guard
             tOut += xCh
         end
         return tOut
-
+    end
     # ------------------------------------------------------------ radar.yaml is checked before anything runs
-    func Config
+    def Config
         tReal = Read(tRoot + "/radar.yaml")
         ConfigCase("the real radar.yaml passes", tReal, "")
         ConfigCase("a configuration with no project name is refused", SubStr(tReal, "  name: Softanza" + Char(10), ""), "name")
@@ -435,8 +435,8 @@ class Guard
         ConfigCase("a reader the feed does not know is refused", SubStr(tReal, "  - id: user", "  - id: investor"), "investor")
         ConfigCase("a key the configuration does not define is refused", tReal + "colour: teal" + Char(10), "colour")
         ConfigCase("a pages address without its closing slash is refused", SubStr(tReal, "https://mayouni.github.io/stzradar/" + Char(10), "https://mayouni.github.io/stzradar" + Char(10)), "pages")
-
-    func ConfigCase(tName, tText, tReason)
+    end
+    def ConfigCase(tName, tText, tReason)
         oRun = new FeedRun
         oRun.tRoot = tRoot
         oRun.bQuiet = true
@@ -455,8 +455,8 @@ class Guard
         else
             Fail(tName, "refused for another reason: " + tSaid)
         end
-
-    func MapCase(tName, tText, tReason)
+    end
+    def MapCase(tName, tText, tReason)
         if tText = ""
             Fail(tName, "the change did not apply to the entry's text")
             return
@@ -470,10 +470,12 @@ class Guard
             return
         end
         if SubStr(tSaid, tReason) > 0 Pass(tName) else Fail(tName, "not refused for this reason: " + tSaid) end
-
-    func q2(xS)
+    end
+    def q2(xS)
         return '"' + xS + '"'
-
-func BoolText(bV)
+    end
+def BoolText(bV)
     if bV return "true" end
     return "false"
+end
+end
