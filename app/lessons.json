@@ -589,6 +589,10 @@
     "2026-11-11-a2ui-1-0": {
       "build": [
         {
+          "why": "Scan the skill before you install it: a skill runs with your agent's trust. This reads the repository and installs nothing.",
+          "cmd": "skillspector scan https://github.com/a2ui-project/a2ui --no-llm"
+        },
+        {
           "why": "Add the A2UI skills to your coding agent, so it can write A2UI screens. This installs files in your project.",
           "cmd": "npx skills add a2ui-project/a2ui"
         },
@@ -624,6 +628,47 @@
         [
           "What does a locked catalog leave unchecked?",
           "Whether the screen built from approved parts is clear: a button without a verb or a confusing flow is still made of approved parts."
+        ]
+      ]
+    },
+    "2026-11-12-nvidia-skillspector": {
+      "build": [
+        {
+          "why": "Install SkillSpector as a command-line tool. This installs software.",
+          "cmd": "uv tool install git+https://github.com/NVIDIA/skillspector.git"
+        },
+        {
+          "why": "Scan a skill before installing it, with the static checks only: no model and no key needed.",
+          "cmd": "skillspector scan https://github.com/user/some-skill --no-llm"
+        },
+        {
+          "why": "Scan the skills already in your project, and keep the report for review or continuous integration. This writes a file.",
+          "cmd": "skillspector scan ./.claude/skills/ --recursive --no-llm --format sarif --output skills.sarif"
+        }
+      ],
+      "lesson": "A skill is a set of instructions, sometimes with scripts, that a coding agent installs and then follows as if you had written it. A skill can hide instructions that make the agent leak files, call unknown servers or ignore its rules. SkillSpector reads a skill before you install it and looks for 71 known risky patterns, then gives a risk score. Scanning first is the same habit as reading a package before you depend on it.",
+      "terms": [
+        [
+          "agent skill",
+          "a folder of instructions and scripts that a coding agent loads and follows"
+        ],
+        [
+          "prompt injection",
+          "text written to make a model follow the writer's instructions instead of yours"
+        ],
+        [
+          "SARIF",
+          "a standard format for the findings of code scanners, read by CI systems and editors"
+        ]
+      ],
+      "quiz": [
+        [
+          "Why is a skill riskier than an ordinary document?",
+          "The agent acts on it with your permissions: running commands, reading files, calling services."
+        ],
+        [
+          "What does the --no-llm option keep and what does it drop?",
+          "It keeps the fast static checks, which need no model or key, and drops the model's judgement of meaning."
         ]
       ]
     }

@@ -2,6 +2,30 @@
 
 > What changed in AI and the tech field this week, and what it means for what we build in Softanza. Generated from the signed feed (https://mayouni.github.io/stzradar/feed/index.json); the feed is the reference.
 
+## NVIDIA SkillSpector scans an agent skill before it is installed; Softanza checks its agent files the same way
+
+- id: 2026-11-12-nvidia-skillspector
+- date: 2026-11-12
+- level: advice
+- kind: release
+- stance: learn
+- relevance: medium
+- page: https://mayouni.github.io/stzradar/items/2026/2026-11-12-nvidia-skillspector.md
+
+NVIDIA SkillSpector is an open-source (Apache 2.0) scanner for the skills that coding agents such as Claude Code, Codex CLI and Gemini CLI install, at v2.13.4 on November 4, 2026. It checks a skill from a directory, a file, a zip, a URL or a Git repository against 71 patterns in 17 categories, among them prompt injection, data exfiltration, excessive agency, memory poisoning and MCP tool poisoning, first by static analysis and optionally by a language model, and reports a 0-100 risk score in terminal, JSON, Markdown or SARIF. Its README cites a study of 31,132 marketplace skills in which 26.1% held at least one vulnerability and 5.2% showed likely malicious intent.
+
+For each reader:
+- developer: A skill your coding agent installs runs with its trust; scan it first with SkillSpector's static mode, which needs no model and no key.
+- maintainer: A Softanza agent file is data that may come from a colleague or a model; Softanza checks its text for the same risks SkillSpector names, and Radar shows the scan before any install it suggests.
+
+Proposed:
+- stzlib.security: check a .pia agent file at load for the risks SkillSpector names that apply to it (instructions that override the agent's role, endpoints that could carry data out, tools beyond the declared task, MCP servers with broader rights than needed), reported in the unified rule shape through stzRuleReport beside the existing function and posture refusals (proposed)
+- radar: show a SkillSpector static scan before every skill install a Radar lesson suggests (done)
+
+Sources:
+- NVIDIA/SkillSpector (README): https://github.com/NVIDIA/SkillSpector
+- SkillSpector releases (v2.13.4): https://github.com/NVIDIA/SkillSpector/releases
+
 ## A2UI 1.0: an open protocol for agents to answer with a native screen; Zane gives it intent and law, and a projection to it
 
 - id: 2026-11-11-a2ui-1-0

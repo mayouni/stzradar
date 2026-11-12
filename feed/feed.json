@@ -7,6 +7,24 @@
   "language": "en",
   "items": [
     {
+      "id": "2026-11-12-nvidia-skillspector",
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-12-nvidia-skillspector.md",
+      "title": "NVIDIA SkillSpector scans an agent skill before it is installed; Softanza checks its agent files the same way",
+      "summary": "NVIDIA SkillSpector is an open-source (Apache 2.0) scanner for the skills that coding agents such as Claude Code, Codex CLI and Gemini CLI install, at v2.13.4 on November 4, 2026. It checks a skill from a directory, a file, a zip, a URL or a Git repository against 71 patterns in 17 categories, among them prompt injection, data exfiltration, excessive agency, memory poisoning and MCP tool poisoning, first by static analysis and optionally by a language model, and reports a 0-100 risk score in terminal, JSON, Markdown or SARIF. Its README cites a study of 31,132 marketplace skills in which 26.1% held at least one vulnerability and 5.2% showed likely malicious intent.",
+      "content_text": "NVIDIA SkillSpector is an open-source (Apache 2.0) scanner for the skills that coding agents such as Claude Code, Codex CLI and Gemini CLI install, at v2.13.4 on November 4, 2026. It checks a skill from a directory, a file, a zip, a URL or a Git repository against 71 patterns in 17 categories, among them prompt injection, data exfiltration, excessive agency, memory poisoning and MCP tool poisoning, first by static analysis and optionally by a language model, and reports a 0-100 risk score in terminal, JSON, Markdown or SARIF. Its README cites a study of 31,132 marketplace skills in which 26.1% held at least one vulnerability and 5.2% showed likely malicious intent.",
+      "date_published": "2026-11-12T00:00:00Z",
+      "tags": [
+        "release",
+        "learn",
+        "advice",
+        "nvidia",
+        "skillspector",
+        "agent-skills",
+        "supply-chain",
+        "scanner"
+      ]
+    },
+    {
       "id": "2026-11-11-a2ui-1-0",
       "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-11-a2ui-1-0.md",
       "title": "A2UI 1.0: an open protocol for agents to answer with a native screen; Zane gives it intent and law, and a projection to it",
