@@ -25,6 +25,25 @@
       ]
     },
     {
+      "id": "2026-11-12-rayline-arc",
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-12-rayline-arc.md",
+      "title": "Rayline's ARC: an open 0.8B model that picks the model for each step of an agent; Softanza learns its local-first escalation",
+      "summary": "On November 11, 2026 Rayline Labs announced ARC 1.0, an open-weight (Apache 2.0) routing model built on Qwen3.5-0.8B. For each step of an agent it predicts, per candidate model, the probability of success and the tokens the step will bill, then a policy weighs that success against the prices the application supplies; a question head answers developer-defined yes/no, choice and score questions with probabilities. On six benchmarks Rayline reports that ARC, routing between Opus 5.5 and a locally served DeepSeek model, keeps 97.5% of Opus 5.5's quality at 92.9% lower cost.",
+      "content_text": "On November 11, 2026 Rayline Labs announced ARC 1.0, an open-weight (Apache 2.0) routing model built on Qwen3.5-0.8B. For each step of an agent it predicts, per candidate model, the probability of success and the tokens the step will bill, then a policy weighs that success against the prices the application supplies; a question head answers developer-defined yes/no, choice and score questions with probabilities. On six benchmarks Rayline reports that ARC, routing between Opus 5.5 and a locally served DeepSeek model, keeps 97.5% of Opus 5.5's quality at 92.9% lower cost.",
+      "date_published": "2026-11-12T00:00:00Z",
+      "tags": [
+        "release",
+        "learn",
+        "advice",
+        "rayline",
+        "arc",
+        "model-routing",
+        "decision-models",
+        "slm",
+        "local-first"
+      ]
+    },
+    {
       "id": "2026-11-11-a2ui-1-0",
       "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-11-a2ui-1-0.md",
       "title": "A2UI 1.0: an open protocol for agents to answer with a native screen; Zane gives it intent and law, and a projection to it",

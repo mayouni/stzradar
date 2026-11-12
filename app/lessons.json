@@ -671,6 +671,47 @@
           "It keeps the fast static checks, which need no model or key, and drops the model's judgement of meaning."
         ]
       ]
+    },
+    "2026-11-12-rayline-arc": {
+      "build": [
+        {
+          "why": "Fetch ARC's open weights to read its configuration and heads. This downloads about a gigabyte.",
+          "cmd": "hf download rayline-ai/ARC-1.0 --local-dir arc-1.0"
+        },
+        {
+          "why": "The utility policy in one line: value a success, subtract what the step will cost, keep the best candidate.",
+          "cmd": "best = max(models, key=lambda m: V * p_success[m] - expected_cost[m])"
+        },
+        {
+          "why": "Local first: stay on your own model when it is confident, escalate only the hard steps.",
+          "cmd": "answer = small(q) if small.top_probability(q) >= 0.85 else large(q)"
+        }
+      ],
+      "lesson": "An agent makes many calls, and they are not equally hard. A router is a small model that looks at each step and predicts which of the available models will succeed at it and what that will cost; a policy then picks the cheapest model likely to succeed. ARC does this with an open 0.8B model. Its prefer-local policy keeps a step on your own machine whenever the local model is predicted to succeed, and sends only the rest to a larger model. The same idea works between two local models when the small one says how sure it is.",
+      "terms": [
+        [
+          "router",
+          "a component that chooses which model handles a request"
+        ],
+        [
+          "escalation",
+          "sending a step to a stronger model only when the first one is likely to fail"
+        ],
+        [
+          "calibrated",
+          "a confidence that matches how often the answer is right"
+        ]
+      ],
+      "quiz": [
+        [
+          "Why does a router predict cost separately from success?",
+          "Prices differ between applications, so the same prediction of tokens can be priced with each application's own rates."
+        ],
+        [
+          "What must be true before a small model's confidence can decide escalation?",
+          "Its confidence must be calibrated: when it says 0.9 it must be right about nine times in ten, which a golden set can check."
+        ]
+      ]
     }
   }
 }
