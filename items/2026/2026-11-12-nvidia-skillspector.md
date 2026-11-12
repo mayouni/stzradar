@@ -19,10 +19,10 @@
   "domains": ["agents", "security"],
   "concerns": ["trust"],
   "actions": [
-    { "area": "stzlib.security", "do": "check a .pia agent file at load for the risks SkillSpector names that apply to it (instructions that override the agent's role, endpoints that could carry data out, tools beyond the declared task, MCP servers with broader rights than needed), reported in the unified rule shape through stzRuleReport beside the existing function and posture refusals", "state": "proposed", "dates": { "proposed": "2026-11-12" } },
+    { "area": "stzlib.security", "do": "check a .pia agent file at load for the risks SkillSpector names that apply to it (instructions that override the agent's role, endpoints that could carry data out, tools beyond the declared task, MCP servers with broader rights than needed), reported in the unified rule shape through stzRuleReport beside the existing function and posture refusals", "state": "routed", "dates": { "proposed": "2026-11-12", "routed": "2026-11-12" } },
     { "area": "radar", "do": "show a SkillSpector static scan before every skill install a Radar lesson suggests", "state": "done", "dates": { "proposed": "2026-11-12", "done": "2026-11-12" } }
   ],
-  "status": "analysed",
+  "status": "routed",
   "confidence": "read",
   "sources": [
     { "title": "NVIDIA/SkillSpector (README)", "url": "https://github.com/NVIDIA/SkillSpector", "by": "NVIDIA", "read": "2026-11-12" },

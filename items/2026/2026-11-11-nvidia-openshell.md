@@ -4,6 +4,7 @@
 {
   "id": "2026-11-11-nvidia-openshell",
   "date": "2026-11-11",
+  "updated": "2026-11-12",
   "title": "NVIDIA OpenShell governs an agent from outside its process; Softanza adds that boundary to the rules it already decides in code",
   "kind": "release",
   "summary": "NVIDIA OpenShell is an open-source (Apache 2.0) runtime for AI agents, at v0.1.8 on November 10, 2026, and moving to the CNCF. Each agent runs in a sandbox whose files, system calls and network are confined by the kernel, a supervisor outside the agent checks every outbound request against a deny-by-default policy and adds real credentials only to requests bound for approved endpoints, and a prover uses formal logic to show what new access a policy change would grant before it is applied. It runs on Linux, on macOS with Apple Silicon, and on Windows through WSL 2 or Microsoft MXC.",
@@ -19,11 +20,11 @@
   "domains": ["agents", "security"],
   "concerns": ["trust", "sovereignty"],
   "actions": [
-    { "area": "stzlib.security", "do": "broker credentials for agents: an agent's outbound call names a secret held in stzSecretStore, and the engine attaches its value only to a request bound for an endpoint the governance approves, so neither the agent's code nor the model ever holds the value", "state": "proposed", "dates": { "proposed": "2026-11-11" } },
-    { "area": "stzlib.security", "do": "run model-written code and an agent's child processes inside an operating-system boundary outside the agent's process, deny by default on files and network (on Windows a job object or AppContainer, on Linux namespaces with seccomp or Landlock), and measure what each platform enforces natively", "state": "proposed", "dates": { "proposed": "2026-11-11" } },
-    { "area": "stzlib.intelligence", "do": "show, before a governance change is accepted, the access it adds: the functions, postures, endpoints and secrets an agent could reach after the change and not before, computed from the rules themselves", "state": "proposed", "dates": { "proposed": "2026-11-11" } }
+    { "area": "stzlib.security", "do": "broker credentials for agents: an agent's outbound call names a secret held in stzSecretStore, and the engine attaches its value only to a request bound for an endpoint the governance approves, so neither the agent's code nor the model ever holds the value", "state": "routed", "dates": { "proposed": "2026-11-11", "routed": "2026-11-12" } },
+    { "area": "stzlib.security", "do": "run model-written code and an agent's child processes inside an operating-system boundary outside the agent's process, deny by default on files and network (on Windows a job object or AppContainer, on Linux namespaces with seccomp or Landlock), and measure what each platform enforces natively", "state": "routed", "dates": { "proposed": "2026-11-11", "routed": "2026-11-12" } },
+    { "area": "stzlib.intelligence", "do": "show, before a governance change is accepted, the access it adds: the functions, postures, endpoints and secrets an agent could reach after the change and not before, computed from the rules themselves", "state": "routed", "dates": { "proposed": "2026-11-11", "routed": "2026-11-12" } }
   ],
-  "status": "analysed",
+  "status": "routed",
   "confidence": "read",
   "sources": [
     { "title": "NVIDIA OpenShell", "url": "https://build.nvidia.com/openshell", "by": "NVIDIA", "read": "2026-11-11" },
@@ -77,3 +78,7 @@ from rules that are already data.
 - NVIDIA, [OpenShell](https://build.nvidia.com/openshell), read 2026-11-11.
 - NVIDIA, [NVIDIA/OpenShell](https://github.com/NVIDIA/OpenShell) and its
   [v0.1.8 release notes](https://github.com/NVIDIA/OpenShell/releases/tag/v0.1.8), read 2026-11-11.
+
+## Corrections
+
+- 2026-11-12: the proposals are routed to their desks; the facts are unchanged.

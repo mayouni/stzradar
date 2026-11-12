@@ -38,9 +38,10 @@
         {
           "area": "stzlib.security",
           "do": "check a .pia agent file at load for the risks SkillSpector names that apply to it (instructions that override the agent's role, endpoints that could carry data out, tools beyond the declared task, MCP servers with broader rights than needed), reported in the unified rule shape through stzRuleReport beside the existing function and posture refusals",
-          "state": "proposed",
+          "state": "routed",
           "dates": {
-            "proposed": "2026-11-12"
+            "proposed": "2026-11-12",
+            "routed": "2026-11-12"
           }
         },
         {
@@ -53,7 +54,7 @@
           }
         }
       ],
-      "status": "analysed",
+      "status": "routed",
       "confidence": "read",
       "sources": [
         {
@@ -82,6 +83,7 @@
     {
       "id": "2026-11-11-a2ui-1-0",
       "date": "2026-11-11",
+      "updated": "2026-11-12",
       "title": "A2UI 1.0: an open protocol for agents to answer with a native screen; Zane gives it intent and law, and a projection to it",
       "kind": "release",
       "summary": "On November 11, 2026 the A2UI project, started at Google, released A2UI 1.0 under Apache 2.0: a streaming protocol in which an agent sends a screen as data, built only from components the app registered in a locked catalog, and each app draws it with its own native components in React, Angular, Lit, Flutter, SwiftUI and soon Jetpack Compose. Version 1.0 adds typed function calls in both directions, components from several catalogs on one screen, and A2UI Express, which its authors say describes the same screen in about three times fewer output tokens than JSON. Gemini, Atlassian and ByteDance ship it.",
@@ -114,29 +116,32 @@
         {
           "area": "zane",
           "do": "add an A2UI v1.0 projection: compile a checked Zane declaration into createSurface, updateComponents and updateDataModel messages over a Zane catalog, so a screen the constitution passed renders natively in every A2UI renderer",
-          "state": "proposed",
+          "state": "routed",
           "dates": {
-            "proposed": "2026-11-11"
+            "proposed": "2026-11-11",
+            "routed": "2026-11-12"
           }
         },
         {
           "area": "zane",
           "do": "read an A2UI message stream an agent produced and check it against the constitution's structural rules before it renders, citing rule numbers, as the verifier does for .zane files",
-          "state": "proposed",
+          "state": "routed",
           "dates": {
-            "proposed": "2026-11-11"
+            "proposed": "2026-11-11",
+            "routed": "2026-11-12"
           }
         },
         {
           "area": "stzlib.intelligence",
           "do": "measure which screen format a small local model writes validly under the engine's constrained decoding: a Zane declaration, A2UI JSON or A2UI Express, counting valid screens and output tokens with Granite-4.0-1b on a fixed set of requests",
-          "state": "proposed",
+          "state": "routed",
           "dates": {
-            "proposed": "2026-11-11"
+            "proposed": "2026-11-11",
+            "routed": "2026-11-12"
           }
         }
       ],
-      "status": "analysed",
+      "status": "routed",
       "confidence": "read",
       "sources": [
         {
@@ -171,6 +176,7 @@
     {
       "id": "2026-11-11-liquid-lfm3",
       "date": "2026-11-11",
+      "updated": "2026-11-12",
       "title": "Liquid AI's LFM3: six 2B-class models on one backbone, built for the device; Softanza learns from its decision models",
       "kind": "release",
       "summary": "On October 27, 2026 Liquid AI released LFM3, six open-weight models of about 2 billion parameters each (text, vision with video, audio with speech output, omni, and two d1 decision models), all branched from one 1.7B base. The base mixes 13 gated short-convolution layers with 5 sliding-window and 6 global attention layers, fits in about 1 GB at 4 bits, reads 256K tokens and covers 16 languages, Arabic and French among them. The d1 models answer a list of questions about one input in a single forward pass, each answer with a calibrated probability.",
@@ -202,21 +208,23 @@
         {
           "area": "stzlib.intelligence",
           "do": "measure answering several option questions over one shared prefill of the same input, the shape of LFM3's d1 models, against one StzOptionProbabilities call per question, on the support-desk golden sets: same answers, fewer prefill tokens",
-          "state": "proposed",
+          "state": "routed",
           "dates": {
-            "proposed": "2026-11-11"
+            "proposed": "2026-11-11",
+            "routed": "2026-11-12"
           }
         },
         {
           "area": "stzlib.intelligence",
           "do": "weigh the LFM3 decoder family (gated short convolutions, sliding-window and gated global attention, partial RoPE) beside Gemma 4 for the engine's next decoder port, then put LFM3-1.7B before the model court against Granite-4.0-1b with its speeds recorded",
-          "state": "proposed",
+          "state": "routed",
           "dates": {
-            "proposed": "2026-11-11"
+            "proposed": "2026-11-11",
+            "routed": "2026-11-12"
           }
         }
       ],
-      "status": "analysed",
+      "status": "routed",
       "confidence": "claimed",
       "sources": [
         {
@@ -444,6 +452,7 @@
     {
       "id": "2026-11-11-nvidia-openshell",
       "date": "2026-11-11",
+      "updated": "2026-11-12",
       "title": "NVIDIA OpenShell governs an agent from outside its process; Softanza adds that boundary to the rules it already decides in code",
       "kind": "release",
       "summary": "NVIDIA OpenShell is an open-source (Apache 2.0) runtime for AI agents, at v0.1.8 on November 10, 2026, and moving to the CNCF. Each agent runs in a sandbox whose files, system calls and network are confined by the kernel, a supervisor outside the agent checks every outbound request against a deny-by-default policy and adds real credentials only to requests bound for approved endpoints, and a prover uses formal logic to show what new access a policy change would grant before it is applied. It runs on Linux, on macOS with Apple Silicon, and on Windows through WSL 2 or Microsoft MXC.",
@@ -475,29 +484,32 @@
         {
           "area": "stzlib.security",
           "do": "broker credentials for agents: an agent's outbound call names a secret held in stzSecretStore, and the engine attaches its value only to a request bound for an endpoint the governance approves, so neither the agent's code nor the model ever holds the value",
-          "state": "proposed",
+          "state": "routed",
           "dates": {
-            "proposed": "2026-11-11"
+            "proposed": "2026-11-11",
+            "routed": "2026-11-12"
           }
         },
         {
           "area": "stzlib.security",
           "do": "run model-written code and an agent's child processes inside an operating-system boundary outside the agent's process, deny by default on files and network (on Windows a job object or AppContainer, on Linux namespaces with seccomp or Landlock), and measure what each platform enforces natively",
-          "state": "proposed",
+          "state": "routed",
           "dates": {
-            "proposed": "2026-11-11"
+            "proposed": "2026-11-11",
+            "routed": "2026-11-12"
           }
         },
         {
           "area": "stzlib.intelligence",
           "do": "show, before a governance change is accepted, the access it adds: the functions, postures, endpoints and secrets an agent could reach after the change and not before, computed from the rules themselves",
-          "state": "proposed",
+          "state": "routed",
           "dates": {
-            "proposed": "2026-11-11"
+            "proposed": "2026-11-11",
+            "routed": "2026-11-12"
           }
         }
       ],
-      "status": "analysed",
+      "status": "routed",
       "confidence": "read",
       "sources": [
         {
@@ -533,6 +545,7 @@
     {
       "id": "2026-11-11-nvidia-snapshot",
       "date": "2026-11-11",
+      "updated": "2026-11-12",
       "title": "NVIDIA Snapshot restores a warmed-up GPU inference worker in seconds; Softanza saves the warm state it pays for, a read prompt",
       "kind": "release",
       "summary": "On November 8, 2026 NVIDIA released Snapshot v0.3.0, an open-source (Apache 2.0) Kubernetes system that checkpoints a fully initialised GPU inference pod, CPU and GPU memory together, and restores it on another node instead of starting it again. It combines CRIU for the process with NVIDIA's cuda-checkpoint for the GPU, and works with vLLM, SGLang and TensorRT-LLM. On NVIDIA's own B200 tests, restore was 8.1 to 35.9 times faster than a cold start across 22 configurations, for example 4.7 seconds against 104 seconds for Qwen3-0.6B on vLLM.",
@@ -563,13 +576,14 @@
         {
           "area": "stzlib.intelligence",
           "do": "save the KV cache of a prefilled fixed prompt (system instructions, examples, a document) to disk, keyed by the model's sha256 and the prompt's tokens, and restore it instead of prefilling; measure restore time against the recorded 38.5 tokens per second CPU prefill, and check the next-token probabilities are identical",
-          "state": "proposed",
+          "state": "routed",
           "dates": {
-            "proposed": "2026-11-11"
+            "proposed": "2026-11-11",
+            "routed": "2026-11-12"
           }
         }
       ],
-      "status": "analysed",
+      "status": "routed",
       "confidence": "claimed",
       "sources": [
         {

@@ -31,6 +31,7 @@
       "summary": "On November 11, 2026 the A2UI project, started at Google, released A2UI 1.0 under Apache 2.0: a streaming protocol in which an agent sends a screen as data, built only from components the app registered in a locked catalog, and each app draws it with its own native components in React, Angular, Lit, Flutter, SwiftUI and soon Jetpack Compose. Version 1.0 adds typed function calls in both directions, components from several catalogs on one screen, and A2UI Express, which its authors say describes the same screen in about three times fewer output tokens than JSON. Gemini, Atlassian and ByteDance ship it.",
       "content_text": "On November 11, 2026 the A2UI project, started at Google, released A2UI 1.0 under Apache 2.0: a streaming protocol in which an agent sends a screen as data, built only from components the app registered in a locked catalog, and each app draws it with its own native components in React, Angular, Lit, Flutter, SwiftUI and soon Jetpack Compose. Version 1.0 adds typed function calls in both directions, components from several catalogs on one screen, and A2UI Express, which its authors say describes the same screen in about three times fewer output tokens than JSON. Gemini, Atlassian and ByteDance ship it.",
       "date_published": "2026-11-11T00:00:00Z",
+      "date_modified": "2026-11-12T00:00:00Z",
       "tags": [
         "release",
         "correct",
@@ -49,6 +50,7 @@
       "summary": "On October 27, 2026 Liquid AI released LFM3, six open-weight models of about 2 billion parameters each (text, vision with video, audio with speech output, omni, and two d1 decision models), all branched from one 1.7B base. The base mixes 13 gated short-convolution layers with 5 sliding-window and 6 global attention layers, fits in about 1 GB at 4 bits, reads 256K tokens and covers 16 languages, Arabic and French among them. The d1 models answer a list of questions about one input in a single forward pass, each answer with a calibrated probability.",
       "content_text": "On October 27, 2026 Liquid AI released LFM3, six open-weight models of about 2 billion parameters each (text, vision with video, audio with speech output, omni, and two d1 decision models), all branched from one 1.7B base. The base mixes 13 gated short-convolution layers with 5 sliding-window and 6 global attention layers, fits in about 1 GB at 4 bits, reads 256K tokens and covers 16 languages, Arabic and French among them. The d1 models answer a list of questions about one input in a single forward pass, each answer with a calibrated probability.",
       "date_published": "2026-11-11T00:00:00Z",
+      "date_modified": "2026-11-12T00:00:00Z",
       "tags": [
         "release",
         "learn",
@@ -123,6 +125,7 @@
       "summary": "NVIDIA OpenShell is an open-source (Apache 2.0) runtime for AI agents, at v0.1.8 on November 10, 2026, and moving to the CNCF. Each agent runs in a sandbox whose files, system calls and network are confined by the kernel, a supervisor outside the agent checks every outbound request against a deny-by-default policy and adds real credentials only to requests bound for approved endpoints, and a prover uses formal logic to show what new access a policy change would grant before it is applied. It runs on Linux, on macOS with Apple Silicon, and on Windows through WSL 2 or Microsoft MXC.",
       "content_text": "NVIDIA OpenShell is an open-source (Apache 2.0) runtime for AI agents, at v0.1.8 on November 10, 2026, and moving to the CNCF. Each agent runs in a sandbox whose files, system calls and network are confined by the kernel, a supervisor outside the agent checks every outbound request against a deny-by-default policy and adds real credentials only to requests bound for approved endpoints, and a prover uses formal logic to show what new access a policy change would grant before it is applied. It runs on Linux, on macOS with Apple Silicon, and on Windows through WSL 2 or Microsoft MXC.",
       "date_published": "2026-11-11T00:00:00Z",
+      "date_modified": "2026-11-12T00:00:00Z",
       "tags": [
         "release",
         "learn",
@@ -142,6 +145,7 @@
       "summary": "On November 8, 2026 NVIDIA released Snapshot v0.3.0, an open-source (Apache 2.0) Kubernetes system that checkpoints a fully initialised GPU inference pod, CPU and GPU memory together, and restores it on another node instead of starting it again. It combines CRIU for the process with NVIDIA's cuda-checkpoint for the GPU, and works with vLLM, SGLang and TensorRT-LLM. On NVIDIA's own B200 tests, restore was 8.1 to 35.9 times faster than a cold start across 22 configurations, for example 4.7 seconds against 104 seconds for Qwen3-0.6B on vLLM.",
       "content_text": "On November 8, 2026 NVIDIA released Snapshot v0.3.0, an open-source (Apache 2.0) Kubernetes system that checkpoints a fully initialised GPU inference pod, CPU and GPU memory together, and restores it on another node instead of starting it again. It combines CRIU for the process with NVIDIA's cuda-checkpoint for the GPU, and works with vLLM, SGLang and TensorRT-LLM. On NVIDIA's own B200 tests, restore was 8.1 to 35.9 times faster than a cold start across 22 configurations, for example 4.7 seconds against 104 seconds for Qwen3-0.6B on vLLM.",
       "date_published": "2026-11-11T00:00:00Z",
+      "date_modified": "2026-11-12T00:00:00Z",
       "tags": [
         "release",
         "correct",

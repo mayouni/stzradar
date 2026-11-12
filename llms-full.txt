@@ -19,7 +19,7 @@ For each reader:
 - maintainer: A Softanza agent file is data that may come from a colleague or a model; Softanza checks its text for the same risks SkillSpector names, and Radar shows the scan before any install it suggests.
 
 Proposed:
-- stzlib.security: check a .pia agent file at load for the risks SkillSpector names that apply to it (instructions that override the agent's role, endpoints that could carry data out, tools beyond the declared task, MCP servers with broader rights than needed), reported in the unified rule shape through stzRuleReport beside the existing function and posture refusals (proposed)
+- stzlib.security: check a .pia agent file at load for the risks SkillSpector names that apply to it (instructions that override the agent's role, endpoints that could carry data out, tools beyond the declared task, MCP servers with broader rights than needed), reported in the unified rule shape through stzRuleReport beside the existing function and posture refusals (routed)
 - radar: show a SkillSpector static scan before every skill install a Radar lesson suggests (done)
 
 Sources:
@@ -43,9 +43,9 @@ For each reader:
 - maintainer: Zane declares what the human is doing and checks it against its constitution; an A2UI projection lets a checked Zane declaration reach every A2UI renderer, and an A2UI check lets Zane judge screens other agents send.
 
 Proposed:
-- zane: add an A2UI v1.0 projection: compile a checked Zane declaration into createSurface, updateComponents and updateDataModel messages over a Zane catalog, so a screen the constitution passed renders natively in every A2UI renderer (proposed)
-- zane: read an A2UI message stream an agent produced and check it against the constitution's structural rules before it renders, citing rule numbers, as the verifier does for .zane files (proposed)
-- stzlib.intelligence: measure which screen format a small local model writes validly under the engine's constrained decoding: a Zane declaration, A2UI JSON or A2UI Express, counting valid screens and output tokens with Granite-4.0-1b on a fixed set of requests (proposed)
+- zane: add an A2UI v1.0 projection: compile a checked Zane declaration into createSurface, updateComponents and updateDataModel messages over a Zane catalog, so a screen the constitution passed renders natively in every A2UI renderer (routed)
+- zane: read an A2UI message stream an agent produced and check it against the constitution's structural rules before it renders, citing rule numbers, as the verifier does for .zane files (routed)
+- stzlib.intelligence: measure which screen format a small local model writes validly under the engine's constrained decoding: a Zane declaration, A2UI JSON or A2UI Express, counting valid screens and output tokens with Granite-4.0-1b on a fixed set of requests (routed)
 
 Sources:
 - A2UI: https://a2ui.org/
@@ -69,8 +69,8 @@ For each reader:
 - maintainer: Softanza already reads answers by probability, which beat generation on its golden sets; it measures LFM3's d1 shape, many questions over one shared prefill, and weighs the LFM3 decoder family beside Gemma 4.
 
 Proposed:
-- stzlib.intelligence: measure answering several option questions over one shared prefill of the same input, the shape of LFM3's d1 models, against one StzOptionProbabilities call per question, on the support-desk golden sets: same answers, fewer prefill tokens (proposed)
-- stzlib.intelligence: weigh the LFM3 decoder family (gated short convolutions, sliding-window and gated global attention, partial RoPE) beside Gemma 4 for the engine's next decoder port, then put LFM3-1.7B before the model court against Granite-4.0-1b with its speeds recorded (proposed)
+- stzlib.intelligence: measure answering several option questions over one shared prefill of the same input, the shape of LFM3's d1 models, against one StzOptionProbabilities call per question, on the support-desk golden sets: same answers, fewer prefill tokens (routed)
+- stzlib.intelligence: weigh the LFM3 decoder family (gated short convolutions, sliding-window and gated global attention, partial RoPE) beside Gemma 4 for the engine's next decoder port, then put LFM3-1.7B before the model court against Granite-4.0-1b with its speeds recorded (routed)
 
 Sources:
 - Build specialized multimodal models with LFM3: https://huggingface.co/blog/LiquidAI/lfm3
@@ -161,9 +161,9 @@ For each reader:
 - maintainer: Softanza already decides in code which functions an agent may call and under which posture; it adds the boundary OpenShell shows, enforcement outside the agent's process, for secrets first and for model-written code next.
 
 Proposed:
-- stzlib.security: broker credentials for agents: an agent's outbound call names a secret held in stzSecretStore, and the engine attaches its value only to a request bound for an endpoint the governance approves, so neither the agent's code nor the model ever holds the value (proposed)
-- stzlib.security: run model-written code and an agent's child processes inside an operating-system boundary outside the agent's process, deny by default on files and network (on Windows a job object or AppContainer, on Linux namespaces with seccomp or Landlock), and measure what each platform enforces natively (proposed)
-- stzlib.intelligence: show, before a governance change is accepted, the access it adds: the functions, postures, endpoints and secrets an agent could reach after the change and not before, computed from the rules themselves (proposed)
+- stzlib.security: broker credentials for agents: an agent's outbound call names a secret held in stzSecretStore, and the engine attaches its value only to a request bound for an endpoint the governance approves, so neither the agent's code nor the model ever holds the value (routed)
+- stzlib.security: run model-written code and an agent's child processes inside an operating-system boundary outside the agent's process, deny by default on files and network (on Windows a job object or AppContainer, on Linux namespaces with seccomp or Landlock), and measure what each platform enforces natively (routed)
+- stzlib.intelligence: show, before a governance change is accepted, the access it adds: the functions, postures, endpoints and secrets an agent could reach after the change and not before, computed from the rules themselves (routed)
 
 Sources:
 - NVIDIA OpenShell: https://build.nvidia.com/openshell
@@ -187,7 +187,7 @@ For each reader:
 - maintainer: Softanza loads a small model in 0.2 to 1.3 seconds, so its cost is reading long fixed prompts; it measures saving a prefilled KV cache and restoring it against prefilling again.
 
 Proposed:
-- stzlib.intelligence: save the KV cache of a prefilled fixed prompt (system instructions, examples, a document) to disk, keyed by the model's sha256 and the prompt's tokens, and restore it instead of prefilling; measure restore time against the recorded 38.5 tokens per second CPU prefill, and check the next-token probabilities are identical (proposed)
+- stzlib.intelligence: save the KV cache of a prefilled fixed prompt (system instructions, examples, a document) to disk, keyed by the model's sha256 and the prompt's tokens, and restore it instead of prefilling; measure restore time against the recorded 38.5 tokens per second CPU prefill, and check the next-token probabilities are identical (routed)
 
 Sources:
 - ai-dynamo/snapshot (README): https://github.com/ai-dynamo/snapshot

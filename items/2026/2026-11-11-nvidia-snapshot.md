@@ -4,6 +4,7 @@
 {
   "id": "2026-11-11-nvidia-snapshot",
   "date": "2026-11-11",
+  "updated": "2026-11-12",
   "title": "NVIDIA Snapshot restores a warmed-up GPU inference worker in seconds; Softanza saves the warm state it pays for, a read prompt",
   "kind": "release",
   "summary": "On November 8, 2026 NVIDIA released Snapshot v0.3.0, an open-source (Apache 2.0) Kubernetes system that checkpoints a fully initialised GPU inference pod, CPU and GPU memory together, and restores it on another node instead of starting it again. It combines CRIU for the process with NVIDIA's cuda-checkpoint for the GPU, and works with vLLM, SGLang and TensorRT-LLM. On NVIDIA's own B200 tests, restore was 8.1 to 35.9 times faster than a cold start across 22 configurations, for example 4.7 seconds against 104 seconds for Qwen3-0.6B on vLLM.",
@@ -19,9 +20,9 @@
   "domains": ["models", "agents"],
   "concerns": ["speed", "cost"],
   "actions": [
-    { "area": "stzlib.intelligence", "do": "save the KV cache of a prefilled fixed prompt (system instructions, examples, a document) to disk, keyed by the model's sha256 and the prompt's tokens, and restore it instead of prefilling; measure restore time against the recorded 38.5 tokens per second CPU prefill, and check the next-token probabilities are identical", "state": "proposed", "dates": { "proposed": "2026-11-11" } }
+    { "area": "stzlib.intelligence", "do": "save the KV cache of a prefilled fixed prompt (system instructions, examples, a document) to disk, keyed by the model's sha256 and the prompt's tokens, and restore it instead of prefilling; measure restore time against the recorded 38.5 tokens per second CPU prefill, and check the next-token probabilities are identical", "state": "routed", "dates": { "proposed": "2026-11-11", "routed": "2026-11-12" } }
   ],
-  "status": "analysed",
+  "status": "routed",
   "confidence": "claimed",
   "sources": [
     { "title": "ai-dynamo/snapshot (README)", "url": "https://github.com/ai-dynamo/snapshot", "by": "NVIDIA", "read": "2026-11-11" },
@@ -82,3 +83,7 @@ process, and measure it.
   [performance page](https://github.com/ai-dynamo/snapshot/blob/main/docs/overview/performance.md), read 2026-11-11.
 - NVIDIA, [NVIDIA Dynamo Snapshot: Fast Startup for Inference Workloads on Kubernetes](https://developer.nvidia.com/blog/nvidia-dynamo-snapshot-fast-startup-for-inference-workloads-on-kubernetes/),
   May 27, 2026, read 2026-11-11.
+
+## Corrections
+
+- 2026-11-12: the proposals are routed to their desks; the facts are unchanged.
