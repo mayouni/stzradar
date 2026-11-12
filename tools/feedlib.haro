@@ -22,29 +22,29 @@ func JKind(xV)
     return "null"
 end
 func JHas(xObj, tKey)
-    aP = xObj[2]
-    nN = Len(aP)
+    xPs = xObj[2]
+    nN = Len(xPs)
     for i = 1 to nN
-        if aP[i][1] = tKey return true end
+        if xPs[i][1] = tKey return true end
     end
     return false
 end
 func JGet(xObj, tKey)
-    aP = xObj[2]
-    nN = Len(aP)
+    xPs = xObj[2]
+    nN = Len(xPs)
     for i = 1 to nN
-        if aP[i][1] = tKey return aP[i][2] end
+        if xPs[i][1] = tKey return xPs[i][2] end
     end
     return ["n"]
 end
 func JKeys(xObj)
-    aK = []
-    aP = xObj[2]
-    nN = Len(aP)
+    xKs = []
+    xPs = xObj[2]
+    nN = Len(xPs)
     for i = 1 to nN
-        aK + aP[i][1]
+        xKs + xPs[i][1]
     end
-    return aK
+    return xKs
 end
 func JItems(xArr)
     return xArr[2]
@@ -192,8 +192,8 @@ func IsDate(xS)
     if not (IsDigits(tY) and IsDigits(tM) and IsDigits(tD)) return false end
     nY = Number(tY) nMo = Number(tM) nDa = Number(tD)
     if nMo < 1 or nMo > 12 return false end
-    vDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-    nMax = vDays[nMo]
+    xDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    nMax = xDays[nMo]
     if nMo = 2 and IsLeapYear(nY) nMax = 29 end
     if nDa < 1 or nDa > nMax return false end
     return true
@@ -244,14 +244,14 @@ end
 
 class FeedRun
     tRoot = ""
-    vProblems = []
+    xProblems = []
     nEntries = 0
     oSchema = ""
     xItemSchema = ""
     xConfig = ""      # radar.yaml, read and checked by LoadConfig
     tConfig = ""        # the same, as the bytes of app/config.json
-    vVoice = []         # the names a text of radar.yaml may use, with their values (Voice)
-    vEntries = []       # [ [cFile, aData], ... ]
+    xVoice = []         # the names a text of radar.yaml may use, with their values (Voice)
+    xEntries = []       # [ [cFile, aData], ... ]
     bQuiet = false          # the guard sets it: problems are kept and not printed
     xIndex = ""       # what the last Finish built, for the guard to read
     xFeed = ""
@@ -259,7 +259,7 @@ class FeedRun
     tFeed = ""
 
     def Problem(tWhere, tMsg)
-        vProblems + (tWhere + ": " + tMsg)
+        xProblems + (tWhere + ": " + tMsg)
         Say("REFUSED " + tWhere + ": " + tMsg)
     end
     # Haro stores a COPY of an object, so the schema check cannot call back into this run:
@@ -268,7 +268,7 @@ class FeedRun
         xSaid = oSchema.xSaid
         nN = Len(xSaid)
         for i = 1 to nN
-            vProblems + xSaid[i]
+            xProblems + xSaid[i]
             Say("REFUSED " + xSaid[i])
         end
         oSchema.xSaid = []
@@ -308,22 +308,22 @@ class FeedRun
         xLayers = MapIds(xM, "layers")
         xDomains = MapIds(xM, "domains")
         xConcerns = MapIds(xM, "concerns")
-        vNames = []
+        xNames = []
         if not JHas(xM, "projects") or JKind(JGet(xM, "projects")) != "array"
             Problem("map/estate.json", 'holds a "projects" array')
             return
         end
-        aP = JItems(JGet(xM, "projects"))
-        nP = Len(aP)
+        xPs = JItems(JGet(xM, "projects"))
+        nP = Len(xPs)
         for i = 1 to nP
-            xJP = aP[i]
+            xJP = xPs[i]
             if JKind(xJP) != "object" or not JHas(xJP, "id") or not JHas(xJP, "name") or not JHas(xJP, "layer") or not JHas(xJP, "line")
                 Problem("map/estate.json", "project " + String(i) + " has an id, a name, a layer and a line")
                 loop
             end
             tId = JGet(xJP, "id")
-            if Find(vNames, tId) > 0 Problem("map/estate.json", "names " + tId + " twice") end
-            vNames + tId
+            if Find(xNames, tId) > 0 Problem("map/estate.json", "names " + tId + " twice") end
+            xNames + tId
             if Find(xLayers, JGet(xJP, "layer")) = 0
                 Problem("map/estate.json", "project " + tId + " sits on layer " + JGet(xJP, "layer") + ", and the map has no layer with that id")
             end
@@ -334,24 +334,24 @@ class FeedRun
                 end
             end
             if JHas(xJP, "aliases")
-                aA = JItems(JGet(xJP, "aliases"))
-                nA = Len(aA)
+                xAs = JItems(JGet(xJP, "aliases"))
+                nA = Len(xAs)
                 for j = 1 to nA
-                    if Find(vNames, aA[j]) > 0 Problem("map/estate.json", "names " + aA[j] + " twice") end
-                    vNames + aA[j]
+                    if Find(xNames, xAs[j]) > 0 Problem("map/estate.json", "names " + xAs[j] + " twice") end
+                    xNames + xAs[j]
                 end
             end
         end
-        nE = Len(vEntries)
+        nE = Len(xEntries)
         for i = 1 to nE
-            xData = vEntries[i][2]
-            tWhere = vEntries[i][1]
+            xData = xEntries[i][2]
+            tWhere = xEntries[i][1]
             if JHas(xData, "areas")
-                aV = JItems(JGet(xData, "areas"))
-                nV = Len(aV)
+                xVs = JItems(JGet(xData, "areas"))
+                nV = Len(xVs)
                 for j = 1 to nV
-                    if not MapNames(vNames, aV[j])
-                        Problem(tWhere, "area " + aV[j] + " names no project of map/estate.json")
+                    if not MapNames(xNames, xVs[j])
+                        Problem(tWhere, "area " + xVs[j] + " names no project of map/estate.json")
                     end
                 end
             end
@@ -361,10 +361,10 @@ class FeedRun
     end
     # The ids of one list of the map, refusing a list that is missing or an item with no id.
     def MapIds(xM, tKey)
-        vIds = []
+        xIds = []
         if not JHas(xM, tKey) or JKind(JGet(xM, tKey)) != "array"
             Problem("map/estate.json", 'holds a "' + tKey + '" array')
-            return vIds
+            return xIds
         end
         xI = JItems(JGet(xM, tKey))
         nI = Len(xI)
@@ -374,25 +374,25 @@ class FeedRun
                 loop
             end
             tId = JGet(xI[i], "id")
-            if Find(vIds, tId) > 0 Problem("map/estate.json", tKey + " names " + tId + " twice") end
-            vIds + tId
+            if Find(xIds, tId) > 0 Problem("map/estate.json", tKey + " names " + tId + " twice") end
+            xIds + tId
         end
-        return vIds
+        return xIds
     end
     # An area matches by its whole name, or by the project it is a dotted sub-area of.
-    def MapNames(vNames, tArea)
-        if Find(vNames, tArea) > 0 return true end
+    def MapNames(xNames, tArea)
+        if Find(xNames, tArea) > 0 return true end
         nDot = SubStr(tArea, ".")
-        if nDot > 1 and Find(vNames, Left(tArea, nDot - 1)) > 0 return true end
+        if nDot > 1 and Find(xNames, Left(tArea, nDot - 1)) > 0 return true end
         return false
     end
-    def MapField(tWhere, xData, tKey, vIds)
+    def MapField(tWhere, xData, tKey, xIds)
         if not JHas(xData, tKey) return end
-        aV = JItems(JGet(xData, tKey))
-        nV = Len(aV)
+        xVs = JItems(JGet(xData, tKey))
+        nV = Len(xVs)
         for j = 1 to nV
-            if Find(vIds, aV[j]) = 0
-                Problem(tWhere, tKey + " value " + aV[j] + " is not an id of map/estate.json")
+            if Find(xIds, xVs[j]) = 0
+                Problem(tWhere, tKey + " value " + xVs[j] + " is not an id of map/estate.json")
             end
         end
     end
@@ -417,15 +417,15 @@ class FeedRun
             Problem("app/lessons.json", '"entries" is an object keyed by entry id')
             return
         end
-        vIds = []
-        nE = Len(vEntries)
+        xIds = []
+        nE = Len(xEntries)
         for i = 1 to nE
-            vIds + JGet(vEntries[i][2], "id")
+            xIds + JGet(xEntries[i][2], "id")
         end
         xKeys = JKeys(xJE)
         nK = Len(xKeys)
         for i = 1 to nK
-            if Find(vIds, xKeys[i]) = 0
+            if Find(xIds, xKeys[i]) = 0
                 Problem("app/lessons.json", "has lessons for " + xKeys[i] + ", and there is no entry with that id")
             end
         end
@@ -444,15 +444,15 @@ class FeedRun
     end
     def AffirmScan
         xAllow = AffirmAllow()
-        vFiles = ["README.md"]
-        vDirs = ["docs", "digests"]
-        nD = Len(vDirs)
+        xFiles = ["README.md"]
+        xDirs = ["docs", "digests"]
+        nD = Len(xDirs)
         for d = 1 to nD
-            xIn = Dir(tRoot + "/" + vDirs[d])
+            xIn = Dir(tRoot + "/" + xDirs[d])
             nIn = Len(xIn)
             for i = 1 to nIn
                 if xIn[i][2] = 0 and Right(xIn[i][1], 3) = ".md"
-                    vFiles + (vDirs[d] + "/" + xIn[i][1])
+                    xFiles + (xDirs[d] + "/" + xIn[i][1])
                 end
             end
         end
@@ -464,28 +464,28 @@ class FeedRun
                 nIn = Len(xIn)
                 for i = 1 to nIn
                     if xIn[i][2] = 0 and Right(xIn[i][1], 3) = ".md"
-                        vFiles + ("items/" + xYears[y][1] + "/" + xIn[i][1])
+                        xFiles + ("items/" + xYears[y][1] + "/" + xIn[i][1])
                     end
                 end
             end
         end
-        nF = Len(vFiles)
+        nF = Len(xFiles)
         for f = 1 to nF
-            xLines = Str2List(StripCR(Read(tRoot + "/" + vFiles[f])))
+            xLines = Str2List(StripCR(Read(tRoot + "/" + xFiles[f])))
             nL1 = Len(xLines)
             for i = 1 to nL1
-                AffirmLine(vFiles[f], i, xLines[i], xAllow)
+                AffirmLine(xFiles[f], i, xLines[i], xAllow)
             end
         end
     end
     # One line of one public page. The guard calls this directly with lines it wrote.
     def AffirmLine(tFile, nLine, tLine, xAllow)
         tLow = Lower(tLine)
-        aP = AffirmPhrases()
-        nP = Len(aP)
+        xPs = AffirmPhrases()
+        nP = Len(xPs)
         for p = 1 to nP
-            if SubStr(tLow, aP[p]) > 0 and not AffirmAllowed(tFile, tLow, xAllow)
-                Problem(tFile + ":" + String(nLine), "a public page lists what is missing (" + aP[p] +
+            if SubStr(tLow, xPs[p]) > 0 and not AffirmAllowed(tFile, tLow, xAllow)
+                Problem(tFile + ":" + String(nLine), "a public page lists what is missing (" + xPs[p] +
                         "); say what holds or what is proposed, or allow the line in tools/affirm-allow.txt with its reason")
             end
         end
@@ -560,12 +560,12 @@ class FeedRun
         xConfigSchema = oSchema.SchemaFile("config.schema.json")
         Drain()
         if not IsList(xConfigSchema) return false end
-        nBefore = Len(vProblems)
+        nBefore = Len(xProblems)
         oSchema.Check(xConfig, xConfigSchema, "radar.yaml", "")
         Drain()
-        if Len(vProblems) > nBefore return false end
+        if Len(xProblems) > nBefore return false end
         Voice()
-        if Len(vProblems) > nBefore return false end
+        if Len(xProblems) > nBefore return false end
         tConfig = JWrite(xConfig, 0) + Char(10)
         return true
     end
@@ -574,20 +574,20 @@ class FeedRun
     # project speaks for that project once its names change. {week} is left for the site, which
     # fills it on the page of an earlier week. Any other {name} is refused, so a typo never reaches a reader.
     def Voice
-        vVoice = [["{project}", Conf("project.name")], ["{topic}", Conf("watch.topic")], ["{watch}", Conf("watch.name")]]
-        vVoice + ["{title}", VoiceText(Conf("watch.title"), ".watch.title")]
+        xVoice = [["{project}", Conf("project.name")], ["{topic}", Conf("watch.topic")], ["{watch}", Conf("watch.name")]]
+        xVoice + ["{title}", VoiceText(Conf("watch.title"), ".watch.title")]
         xConfig = VoiceWalk(xConfig, "")
     end
     def VoiceWalk(xV, tWhere)
         if IsString(xV) return VoiceText(xV, tWhere) end
         if not IsList(xV) return xV end
         if Len(xV) = 2 and IsString(xV[1]) and xV[1] = "{"
-            aP = xV[2]
-            nP = Len(aP)
+            xPs = xV[2]
+            nP = Len(xPs)
             for i = 1 to nP
-                aP[i][2] = VoiceWalk(aP[i][2], tWhere + "." + aP[i][1])
+                xPs[i][2] = VoiceWalk(xPs[i][2], tWhere + "." + xPs[i][1])
             end
-            return ["{", aP]
+            return ["{", xPs]
         end
         if Len(xV) = 2 and IsString(xV[1]) and xV[1] = "["
             xI = xV[2]
@@ -601,9 +601,9 @@ class FeedRun
     end
     def VoiceText(tC, tWhere)
         if SubStr(tC, "{") = 0 return tC end
-        nV = Len(vVoice)
+        nV = Len(xVoice)
         for k = 1 to nV
-            tC = SubStr(tC, vVoice[k][1], vVoice[k][2])
+            tC = SubStr(tC, xVoice[k][1], xVoice[k][2])
         end
         tRest = SubStr(tC, "{week}", "")
         nOpen = SubStr(tRest, "{")
@@ -650,17 +650,17 @@ class FeedRun
     end
     # digests/<YYYY-Www>.md, as a sorted JSON list of weeks: the weeks a survey has closed.
     def DigestWeeks
-        aW = []
+        xWs = []
         xIn = Dir(tRoot + "/digests")
         nIn = Len(xIn)
         for i = 1 to nIn
             tN = xIn[i][1]
             if xIn[i][2] = 0 and Len(tN) = 11 and Right(tN, 3) = ".md" and tN[5] = "-" and tN[6] = "W"
-                aW + Left(tN, 8)
+                xWs + Left(tN, 8)
             end
         end
-        aW = Sort(aW)
-        return JWrite(["[", aW], 0) + Char(10)
+        xWs = Sort(xWs)
+        return JWrite(["[", xWs], 0) + Char(10)
     end
     def ConfOn(tPath)
         xV = Conf(tPath)
@@ -669,13 +669,13 @@ class FeedRun
     # Cross-checks the entries read so far, builds both feeds and checks them. cMode "generate"
     # writes changed files, "check" compares them with what is committed, "none" touches no file.
     def Finish(tMode)
-        nEntries = Len(vEntries)
+        nEntries = Len(xEntries)
         if nEntries = 0
             Problem("items/", "there is no entry, so the feed has no date to carry")
             return
         end
         CrossChecks()
-        if Len(vProblems) > 0
+        if Len(xProblems) > 0
             Say("nothing written: the entries above must be corrected first")
             return
         end
@@ -690,7 +690,7 @@ class FeedRun
         oSchema.Check(xIndex, xIndexSchema, "feed/index.json", "")
         Drain()
         CheckJsonFeed(xFeed)
-        if Len(vProblems) > 0
+        if Len(xProblems) > 0
             Say("nothing written: the generated feed does not pass its own check")
             return
         end
@@ -798,13 +798,13 @@ class FeedRun
             return
         end
 
-        nBefore = Len(vProblems)
+        nBefore = Len(xProblems)
         oSchema.Check(xData, xItemSchema, tRel, "")
         Drain()
-        if Len(vProblems) > nBefore return end
+        if Len(xProblems) > nBefore return end
         EntryRules(tRel, tYear, tFile, xData)
-        if Len(vProblems) > nBefore return end
-        vEntries + [tRel, xData]
+        if Len(xProblems) > nBefore return end
+        xEntries + [tRel, xData]
     end
     # What the schema cannot say, docs/FEED.md does.
     def EntryRules(tRel, tYear, tFile, xData)
@@ -857,7 +857,7 @@ class FeedRun
     # stages run in order, the current state has its date, and no stage beyond it is dated.
     def ActionDates(tRel, xData)
         if not JHas(xData, "actions") return end
-        vStages = ["proposed", "routed", "in-progress", "done"]
+        xStages = ["proposed", "routed", "in-progress", "done"]
         tDate = JGet(xData, "date")
         tLast = tDate
         if JHas(xData, "updated") tLast = JGet(xData, "updated") end
@@ -871,20 +871,20 @@ class FeedRun
                 Problem(tRel, tWhere + " has no dates: give the day it reached each stage, at least proposed")
                 loop
             end
-            aD = JGet(xJA, "dates")
-            if JKind(aD) != "object"
+            xDs = JGet(xJA, "dates")
+            if JKind(xDs) != "object"
                 Problem(tRel, tWhere + " dates is an object of stage: day")
                 loop
             end
-            aK = JKeys(aD)
-            nK = Len(aK)
+            xKs = JKeys(xDs)
+            nK = Len(xKs)
             for j = 1 to nK
-                tK = aK[j]
-                if Find(vStages, tK) = 0 and tK != "declined"
+                tK = xKs[j]
+                if Find(xStages, tK) = 0 and tK != "declined"
                     Problem(tRel, tWhere + " dates a stage named " + tK + ", and the stages are proposed, routed, in-progress, done, declined")
                     loop
                 end
-                tD = JGet(aD, tK)
+                tD = JGet(xDs, tK)
                 if not IsString(tD) or not IsDate(tD)
                     Problem(tRel, tWhere + " dates " + tK + " with something that is not a YYYY-MM-DD day")
                     loop
@@ -896,62 +896,62 @@ class FeedRun
                     Problem(tRel, tWhere + " reached " + tK + " on " + tD + ", after the entry was last written (" + tLast + "): set updated")
                 end
             end
-            if not JHas(aD, "proposed")
+            if not JHas(xDs, "proposed")
                 Problem(tRel, tWhere + " dates the day it was proposed")
             end
-            if not JHas(aD, tState)
+            if not JHas(xDs, tState)
                 Problem(tRel, tWhere + " is " + tState + " and does not date that stage")
             end
-            nNow = Find(vStages, tState)
+            nNow = Find(xStages, tState)
             tPrev = ""
-            nS = Len(vStages)
+            nS = Len(xStages)
             for j = 1 to nS
-                if not JHas(aD, vStages[j]) loop end
+                if not JHas(xDs, xStages[j]) loop end
                 if nNow > 0 and j > nNow
-                    Problem(tRel, tWhere + " is " + tState + " and dates a later stage, " + vStages[j])
+                    Problem(tRel, tWhere + " is " + tState + " and dates a later stage, " + xStages[j])
                 end
-                tD = JGet(aD, vStages[j])
+                tD = JGet(xDs, xStages[j])
                 if tPrev != "" and Before(tD, tPrev)
-                    Problem(tRel, tWhere + " reached " + vStages[j] + " on " + tD + ", before an earlier stage (" + tPrev + ")")
+                    Problem(tRel, tWhere + " reached " + xStages[j] + " on " + tD + ", before an earlier stage (" + tPrev + ")")
                 end
                 tPrev = tD
             end
         end
     end
     def CrossChecks
-        nN = Len(vEntries)
-        vIds = []
+        nN = Len(xEntries)
+        xIds = []
         for i = 1 to nN
-            vIds + JGet(vEntries[i][2], "id")
+            xIds + JGet(xEntries[i][2], "id")
         end
         for i = 1 to nN
             for j = i + 1 to nN
-                if vIds[i] = vIds[j]
-                    Problem(vEntries[j][1], "its id " + vIds[j] + " is already used by " + vEntries[i][1])
+                if xIds[i] = xIds[j]
+                    Problem(xEntries[j][1], "its id " + xIds[j] + " is already used by " + xEntries[i][1])
                 end
             end
         end
         for i = 1 to nN
-            xData = vEntries[i][2]
+            xData = xEntries[i][2]
             if JHas(xData, "supersedes")
                 tTarget = JGet(xData, "supersedes")
-                if tTarget = vIds[i]
-                    Problem(vEntries[i][1], "an entry cannot supersede itself")
-                elseif Find(vIds, tTarget) = 0
-                    Problem(vEntries[i][1], "supersedes " + tTarget + ", and there is no entry with that id")
+                if tTarget = xIds[i]
+                    Problem(xEntries[i][1], "an entry cannot supersede itself")
+                elseif Find(xIds, tTarget) = 0
+                    Problem(xEntries[i][1], "supersedes " + tTarget + ", and there is no entry with that id")
                 end
             end
         end
     end
     # Newest date first, then by id.
     def SortEntries
-        nN = Len(vEntries)
+        nN = Len(xEntries)
         for i = 2 to nN
             xJ = i
-            while xJ > 1 and ComesFirst(vEntries[xJ][2], vEntries[xJ - 1][2])
-                xTmp = vEntries[xJ]
-                vEntries[xJ] = vEntries[xJ - 1]
-                vEntries[xJ - 1] = xTmp
+            while xJ > 1 and ComesFirst(xEntries[xJ][2], xEntries[xJ - 1][2])
+                xTmp = xEntries[xJ]
+                xEntries[xJ] = xEntries[xJ - 1]
+                xEntries[xJ - 1] = xTmp
                 xJ--
             end
         end
@@ -992,9 +992,9 @@ class FeedRun
         tC += "- [Configuration](" + tP + "app/config.json): the project, its readers, its stances and where its map is" + tNL
         tC += "- [Map](" + tP + Conf("map") + "): the project's layers, parts, domains and concerns" + tNL + tNL
         tC += "## Signals, newest first" + tNL
-        nN = Len(vEntries)
+        nN = Len(xEntries)
         for i = 1 to nN
-            xO = vEntries[i][2]
+            xO = xEntries[i][2]
             tC += "- [" + Str(xO, "title") + "](" + PageUrl(xO) + "): " + Str(xO, "level") + ", " + Str(xO, "kind") + ", " +
                  Str(xO, "stance") + ", " + Str(xO, "date") + ". " + Str(xO, "summary") + tNL
         end
@@ -1012,9 +1012,9 @@ class FeedRun
         tNL = Char(10)
         tC = "# " + Conf("watch.title") + ": every signal, in full" + tNL + tNL
         tC += "> " + Conf("watch.tagline") + ". Generated from the signed feed (" + Conf("watch.pages") + "feed/index.json); the feed is the reference." + tNL
-        nN = Len(vEntries)
+        nN = Len(xEntries)
         for i = 1 to nN
-            xO = vEntries[i][2]
+            xO = xEntries[i][2]
             tC += tNL + "## " + Str(xO, "title") + tNL + tNL
             tC += "- id: " + Str(xO, "id") + tNL + "- date: " + Str(xO, "date") + tNL + "- level: " + Str(xO, "level") + tNL +
                  "- kind: " + Str(xO, "kind") + tNL + "- stance: " + Str(xO, "stance") + tNL + "- relevance: " + Str(xO, "relevance") + tNL +
@@ -1023,28 +1023,28 @@ class FeedRun
             xN = JGet(xO, "notice")
             if JKind(xN) = "object"
                 tC += tNL + "For each reader:" + tNL
-                aP = xN[2]
-                nP = Len(aP)
+                xPs = xN[2]
+                nP = Len(xPs)
                 for k = 1 to nP
-                    if IsString(aP[k][2]) tC += "- " + aP[k][1] + ": " + aP[k][2] + tNL end
+                    if IsString(xPs[k][2]) tC += "- " + xPs[k][1] + ": " + xPs[k][2] + tNL end
                 end
             end
             xA = JGet(xO, "actions")
             if JKind(xA) = "array"
-                aA = JItems(xA)
-                nA = Len(aA)
+                xAs = JItems(xA)
+                nA = Len(xAs)
                 if nA > 0 tC += tNL + "Proposed:" + tNL end
                 for k = 1 to nA
-                    tC += "- " + Str(aA[k], "area") + ": " + Str(aA[k], "do") + " (" + Str(aA[k], "state") + ")" + tNL
+                    tC += "- " + Str(xAs[k], "area") + ": " + Str(xAs[k], "do") + " (" + Str(xAs[k], "state") + ")" + tNL
                 end
             end
             xS = JGet(xO, "sources")
             if JKind(xS) = "array"
-                aS = JItems(xS)
-                nS = Len(aS)
+                xSs = JItems(xS)
+                nS = Len(xSs)
                 if nS > 0 tC += tNL + "Sources:" + tNL end
                 for k = 1 to nS
-                    tC += "- " + Str(aS[k], "title") + ": " + Str(aS[k], "url") + tNL
+                    tC += "- " + Str(xSs[k], "title") + ": " + Str(xSs[k], "url") + tNL
                 end
             end
         end
@@ -1054,9 +1054,9 @@ class FeedRun
     # regenerates to the same bytes.
     def NewestDay
         tMax = ""
-        nN = Len(vEntries)
+        nN = Len(xEntries)
         for i = 1 to nN
-            xData = vEntries[i][2]
+            xData = xEntries[i][2]
             tD = JGet(xData, "date")
             if tMax = "" or Before(tMax, tD) tMax = tD end
             if JHas(xData, "updated")
@@ -1068,9 +1068,9 @@ class FeedRun
     end
     def BuildIndex
         xItems = []
-        nN = Len(vEntries)
+        nN = Len(xEntries)
         for i = 1 to nN
-            xData = vEntries[i][2]
+            xData = xEntries[i][2]
             xPairs = xData[2]
             xPairs + ["url", EntryUrl(xData)]
             xItems + ["{", xPairs]
@@ -1087,15 +1087,15 @@ class FeedRun
     # The same entries as a JSON Feed 1.1 (docs/FEED.md, "The JSON Feed").
     def BuildJsonFeed
         xItems = []
-        nN = Len(vEntries)
+        nN = Len(xEntries)
         for i = 1 to nN
-            xData = vEntries[i][2]
-            vTags = [JGet(xData, "kind"), JGet(xData, "stance"), JGet(xData, "level")]
+            xData = xEntries[i][2]
+            xTags = [JGet(xData, "kind"), JGet(xData, "stance"), JGet(xData, "level")]
             if JHas(xData, "tags")
                 xOwn = JItems(JGet(xData, "tags"))
                 nT = Len(xOwn)
                 for t = 1 to nT
-                    vTags + xOwn[t]
+                    xTags + xOwn[t]
                 end
             end
             tDate = JGet(xData, "date")
@@ -1113,7 +1113,7 @@ class FeedRun
                     xPairs + ["date_modified", tUp + "T00:00:00Z"]
                 end
             end
-            xPairs + ["tags", ["[", vTags]]
+            xPairs + ["tags", ["[", xTags]]
             xItems + ["{", xPairs]
         end
         return ["{", [
@@ -1224,7 +1224,7 @@ class JsonReader
     def ReadObject
         nPos++
         xPairs = []
-        vSeen = []
+        xSeen = []
         SkipSpace()
         if nPos <= nSize and tText[nPos] = "}"
             nPos++
@@ -1234,8 +1234,8 @@ class JsonReader
             SkipSpace()
             if nPos > nSize or tText[nPos] != '"' Fail("expected a key in double quotes") end
             tKey = ReadString()
-            if Find(vSeen, tKey) > 0 Fail("the key " + tKey + " is written twice") end
-            vSeen + tKey
+            if Find(xSeen, tKey) > 0 Fail("the key " + tKey + " is written twice") end
+            xSeen + tKey
             SkipSpace()
             if nPos > nSize or tText[nPos] != ":" Fail("expected : after the key " + tKey) end
             nPos++
@@ -1354,12 +1354,12 @@ end
 class SchemaCheck
     tDir = ""
     xSaid = []       # what this check found, taken by FeedRun.Drain
-    vCache = []      # [ [cName, oSchema], ... ]
+    xCache = []      # [ [cName, oSchema], ... ]
 
     def SchemaFile(tName)
-        nN = Len(vCache)
+        nN = Len(xCache)
         for i = 1 to nN
-            if vCache[i][1] = tName return vCache[i][2] end
+            if xCache[i][1] = tName return xCache[i][2] end
         end
         tPath = tDir + "/" + tName
         if not FExists(tPath)
@@ -1373,7 +1373,7 @@ class SchemaCheck
             xSaid + ("schema/" + tName + ": is not valid JSON: " + e.Message())
             return ""
         end
-        vCache + [tName, xJS]
+        xCache + [tName, xJS]
         return xJS
     end
     def Say(tWhere, tPath, tMsg)
@@ -1388,13 +1388,13 @@ class SchemaCheck
             if xJS[1] = "f" Say(tWhere, tPath, "is not allowed here") end
             return
         end
-        vKnown = ["$schema", "$id", "title", "description", "$ref", "allOf", "type", "const", "enum",
+        xKnown = ["$schema", "$id", "title", "description", "$ref", "allOf", "type", "const", "enum",
                   "required", "properties", "additionalProperties", "propertyNames", "minProperties",
                   "items", "minItems", "uniqueItems", "minLength", "pattern", "format"]
         xKeys = JKeys(xJS)
         nK = Len(xKeys)
         for i = 1 to nK
-            if Find(vKnown, xKeys[i]) = 0
+            if Find(xKnown, xKeys[i]) = 0
                 Say(tWhere, tPath, "the schema uses " + xKeys[i] + ", which tools/feed.haro does not check yet")
             end
         end
@@ -1446,16 +1446,16 @@ class SchemaCheck
             xE = JItems(JGet(xJS, "enum"))
             nE = Len(xE)
             bFound = false
-            vShow = []
+            xShow = []
             for i = 1 to nE
                 if JEqual(xV, xE[i]) bFound = true end
-                vShow + JWrite(xE[i], 0)
+                xShow + JWrite(xE[i], 0)
             end
             if not bFound
                 tList = ""
                 for i = 1 to nE
                     if i > 1 tList += ", " end
-                    tList += vShow[i]
+                    tList += xShow[i]
                 end
                 tGot = "this value"
                 if xK = "string" tGot = JQuote(xV) end
@@ -1503,9 +1503,9 @@ class SchemaCheck
                     Say(tWhere, tShown, "needs at least " + xMin[2] + " item(s)")
                 end
             end
-            vUniq = ["f"]
-            if JHas(xJS, "uniqueItems") vUniq = JGet(xJS, "uniqueItems") end
-            if vUniq[1] = "t"
+            xUniq = ["f"]
+            if JHas(xJS, "uniqueItems") xUniq = JGet(xJS, "uniqueItems") end
+            if xUniq[1] = "t"
                 for i = 1 to nI
                     for j = i + 1 to nI
                         if JEqual(xI[i], xI[j])
@@ -1540,8 +1540,8 @@ class SchemaCheck
                     Say(tWhere, tShown, "needs at least " + xMin[2] + " key(s)")
                 end
             end
-            vProps = ["{", []]
-            if JHas(xJS, "properties") vProps = JGet(xJS, "properties") end
+            xProps = ["{", []]
+            if JHas(xJS, "properties") xProps = JGet(xJS, "properties") end
             for i = 1 to nO
                 tK = xOwn[i]
                 tSub = tK
@@ -1549,8 +1549,8 @@ class SchemaCheck
                 if JHas(xJS, "propertyNames")
                     Check(tK, JGet(xJS, "propertyNames"), tWhere, tSub + " (as a key)")
                 end
-                if JHas(vProps, tK)
-                    Check(JGet(xV, tK), JGet(vProps, tK), tWhere, tSub)
+                if JHas(xProps, tK)
+                    Check(JGet(xV, tK), JGet(xProps, tK), tWhere, tSub)
                 elseif JHas(xJS, "additionalProperties")
                     Check(JGet(xV, tK), JGet(xJS, "additionalProperties"), tWhere, tSub)
                 end
@@ -1575,11 +1575,11 @@ class Pattern
         xSeq = ParseSeq()
         if nAt <= Len(tPat) Raise("an unmatched ) at " + String(nAt)) end
         nS = Len(tSubject)
-        vStart = []
+        xStart = []
         for p = 1 to nS + 1
-            vStart + p
+            xStart + p
         end
-        xEnd = Run(xSeq, tSubject, vStart)
+        xEnd = Run(xSeq, tSubject, xStart)
         return Len(xEnd) > 0
     end
     def ParseSeq
@@ -1604,24 +1604,24 @@ class Pattern
                 xInner = ParseSeq()
                 if nAt > nP or tPat[nAt] != ")" Raise("a ( is never closed") end
                 nAt++
-                vNode = ["grp", xInner, 1, 1]
+                xNode = ["grp", xInner, 1, 1]
             elseif tC = "["
-                vNode = ["set", ParseClass(), 1, 1]
+                xNode = ["set", ParseClass(), 1, 1]
             elseif tC = "."
                 nAt++
-                vNode = ["set", [0, [[0, 9], [11, 255]]], 1, 1]     # any byte but a line feed
+                xNode = ["set", [0, [[0, 9], [11, 255]]], 1, 1]     # any byte but a line feed
             elseif tC = "\"
                 nAt++
-                vNode = ["set", EscapeSet(), 1, 1]
+                xNode = ["set", EscapeSet(), 1, 1]
             else
                 nAt++
                 nB = Ascii(tC)
-                vNode = ["set", [0, [[nB, nB]]], 1, 1]
+                xNode = ["set", [0, [[nB, nB]]], 1, 1]
             end
             xQ = ParseQuantifier()
-            vNode[3] = xQ[1]
-            vNode[4] = xQ[2]
-            xSeq + vNode
+            xNode[3] = xQ[1]
+            xNode[4] = xQ[2]
+            xSeq + xNode
         end
         return xSeq
     end
@@ -1723,9 +1723,9 @@ class Pattern
         end
         return xPos
     end
-    def Repeat(vNode, tS, xPos)
-        nMin = vNode[3]
-        nMax = vNode[4]
+    def Repeat(xNode, tS, xPos)
+        nMin = xNode[3]
+        nMax = xNode[4]
         xOut = []
         if nMin = 0 xOut = xPos end
         xCur = xPos
@@ -1733,7 +1733,7 @@ class Pattern
         nK = 0
         while true
             nK++
-            xCur = StepOnce(vNode, tS, xCur)
+            xCur = StepOnce(xNode, tS, xCur)
             if Len(xCur) = 0 exit end
             if nK >= nMin xOut = Union(xOut, xCur) end
             if nMax != -1 and nK >= nMax exit end
@@ -1741,12 +1741,12 @@ class Pattern
         end
         return xOut
     end
-    def StepOnce(vNode, tS, xPos)
-        tKind = vNode[1]
+    def StepOnce(xNode, tS, xPos)
+        tKind = xNode[1]
         nS = Len(tS)
         xOut = []
         nN = Len(xPos)
-        if tKind = "grp" return Run(vNode[2], tS, xPos) end
+        if tKind = "grp" return Run(xNode[2], tS, xPos) end
         for i = 1 to nN
             xP = xPos[i]
             if tKind = "bol"
@@ -1754,7 +1754,7 @@ class Pattern
             elseif tKind = "eol"
                 if xP = nS + 1 xOut + xP end
             else
-                if xP <= nS and InSet(vNode[2], Ascii(tS[xP])) xOut + (xP + 1) end
+                if xP <= nS and InSet(xNode[2], Ascii(tS[xP])) xOut + (xP + 1) end
             end
         end
         return xOut

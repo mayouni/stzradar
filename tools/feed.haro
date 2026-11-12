@@ -35,23 +35,23 @@ func main
     oRun.Go(tMode)
 
     nMs = Floor((Clock() - nStart) * 1000 / ClocksPerSecond())
-    FWrite(stdout, "entries accepted " + String(oRun.nEntries) + ", problems " + String(Len(oRun.vProblems)) + ", " + String(nMs) + " ms" + Char(10))
-    Shutdown(Len(oRun.vProblems))
+    FWrite(stdout, "entries accepted " + String(oRun.nEntries) + ", problems " + String(Len(oRun.xProblems)) + ", " + String(nMs) + " ms" + Char(10))
+    Shutdown(Len(oRun.xProblems))
 end
 
 # Both feed files must carry a good SSH signature by the key in keys/allowed_signers, for the
 # signer and namespace radar.yaml names (feed.signer, feed.namespace). ssh-keygen does the
 # cryptography; this only asks it, file by file, and counts what it refuses. Returns the number of problems.
 func Verify(tSigner, tNamespace)
-    vFiles = ["feed/index.json", "feed/feed.json"]
+    xFiles = ["feed/index.json", "feed/feed.json"]
     nBad = 0
     if not FExists("keys/allowed_signers")
         FWrite(stdout, "REFUSED keys/allowed_signers: there is no key to check against" + Char(10))
         return 1
     end
-    nF = Len(vFiles)
+    nF = Len(xFiles)
     for i = 1 to nF
-        tF = vFiles[i]
+        tF = xFiles[i]
         if not FExists(tF + ".sig")
             FWrite(stdout, "REFUSED " + tF + ": it has no signature, " + tF + ".sig" + Char(10))
             nBad++

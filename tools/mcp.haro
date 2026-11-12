@@ -18,7 +18,7 @@ tRoot = ""
 xCfg = ""
 xMap = ""
 xItems = []
-vDigests = []
+xDigests = []
 tTrust = ""            # "" when the signature checked; otherwise why it did not
 
 func main
@@ -120,8 +120,8 @@ end
 # ISO week of a "YYYY-MM-DD" date, as "YYYY-Www"
 func IsoWeek(tDate)
     nY = Number(Left(tDate, 4)) nMo = Number(SubStr(tDate, 6, 2)) nDa = Number(SubStr(tDate, 9, 2))
-    vCum = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334]
-    nOrd = vCum[nMo] + nDa
+    xCum = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334]
+    nOrd = xCum[nMo] + nDa
     if nMo > 2 and Leap(nY) nOrd++ end
     nW = Floor((nOrd - Dow(nY, nMo, nDa) + 10) / 7)
     if nW < 1
@@ -158,23 +158,23 @@ func ProjectsOf(xO)
     xOut = []
     xA = JGet(xO, "areas")
     if JKind(xA) != "array" return xOut end
-    aA = JItems(xA)
-    aP = JItems(JGet($xMap, "projects"))
-    nA = Len(aA) nP = Len(aP)
+    xAs = JItems(xA)
+    xPs = JItems(JGet($xMap, "projects"))
+    nA = Len(xAs) nP = Len(xPs)
     for i = 1 to nA
-        tA = Lower(aA[i])
+        tA = Lower(xAs[i])
         tHead = tA
         nDot = SubStr(tA, ".")
         if nDot > 0 tHead = Left(tA, nDot - 1) end
         tHit = ""
         for k = 1 to nP
-            tId = S(aP[k], "id")
+            tId = S(xPs[k], "id")
             if tA = tId or tHead = tId tHit = tId exit end
-            xAl = JGet(aP[k], "aliases")
+            xAl = JGet(xPs[k], "aliases")
             if JKind(xAl) = "array"
-                aAl = JItems(xAl) nAl = Len(aAl)
+                xAls = JItems(xAl) nAl = Len(xAls)
                 for j = 1 to nAl
-                    if Lower(aAl[j]) = tA or Lower(aAl[j]) = tHead tHit = tId exit 2 end
+                    if Lower(xAls[j]) = tA or Lower(xAls[j]) = tHead tHit = tId exit 2 end
                 end
             end
         end
@@ -185,12 +185,12 @@ end
 func LayersOf(xO)
     xOut = []
     xPr = ProjectsOf(xO)
-    aP = JItems(JGet($xMap, "projects"))
-    nN = Len(xPr) nP = Len(aP)
+    xPs = JItems(JGet($xMap, "projects"))
+    nN = Len(xPr) nP = Len(xPs)
     for i = 1 to nN
         for k = 1 to nP
-            if S(aP[k], "id") = xPr[i]
-                tL = S(aP[k], "layer")
+            if S(xPs[k], "id") = xPr[i]
+                tL = S(xPs[k], "layer")
                 if Find(xOut, tL) = 0 xOut + tL end
             end
         end
@@ -227,16 +227,16 @@ func LatestWeek
 end
 # most pressing first: level, then relevance, then newest
 func SortItems(xIn)
-    aA = xIn
-    nN = Len(aA)
+    xAs = xIn
+    nN = Len(xAs)
     for i = 2 to nN
         xJ = i
-        while xJ > 1 and Before(aA[xJ], aA[xJ - 1])
-            xT = aA[xJ] aA[xJ] = aA[xJ - 1] aA[xJ - 1] = xT
+        while xJ > 1 and Before(xAs[xJ], xAs[xJ - 1])
+            xT = xAs[xJ] xAs[xJ] = xAs[xJ - 1] xAs[xJ - 1] = xT
             xJ--
         end
     end
-    return aA
+    return xAs
 end
 func Before(xA, xB)
     xLa = LevelRank(S(xA, "level")) xLb = LevelRank(S(xB, "level"))
@@ -257,10 +257,10 @@ func Brief(xO, tReader, nNo)
     if tLine = "" tLine = S(xO, "summary") end
     tC += "   " + tLine + Char(10)
     xPr = ProjectsOf(xO)
-    vNames = []
+    xNames = []
     nN = Len(xPr)
-    for i = 1 to nN vNames + NameOf("projects", xPr[i]) end
-    tC += "   touches: " + Joined(vNames, ", ") + " | id: " + S(xO, "id") + " | " + S(xO, "date") + Char(10)
+    for i = 1 to nN xNames + NameOf("projects", xPr[i]) end
+    tC += "   touches: " + Joined(xNames, ", ") + " | id: " + S(xO, "id") + " | " + S(xO, "date") + Char(10)
     return tC
 end
 func Joined(xA, tSep)
@@ -288,42 +288,42 @@ func ToolList
       '"inputSchema":{"type":"object","properties":{}}}' +
       ']}'
 end
-func Arg(vArgs, tKey)
-    if JKind(vArgs) != "object" return "" end
-    return S(vArgs, tKey)
+func Arg(xArgs, tKey)
+    if JKind(xArgs) != "object" return "" end
+    return S(xArgs, tKey)
 end
-func CallTool(tName, vArgs)
+func CallTool(tName, xArgs)
     if $tTrust != "" return [true, "The radar did not answer: " + $tTrust + ". Its feed is trusted only when its signature checks."] end
-    tReader = Lower(Arg(vArgs, "reader"))
+    tReader = Lower(Arg(xArgs, "reader"))
     if not ReaderOk(tReader) tReader = "developer" end
-    if tName = "radar_week" return [false, ToolWeek(Arg(vArgs, "week"), tReader)] end
-    if tName = "radar_search" return [false, ToolSearch(vArgs, tReader)] end
-    if tName = "radar_signal" return ToolSignal(Arg(vArgs, "id")) end
+    if tName = "radar_week" return [false, ToolWeek(Arg(xArgs, "week"), tReader)] end
+    if tName = "radar_search" return [false, ToolSearch(xArgs, tReader)] end
+    if tName = "radar_signal" return ToolSignal(Arg(xArgs, "id")) end
     if tName = "radar_map" return [false, ToolMap()] end
     return [true, "There is no tool named " + tName + "; the tools are radar_week, radar_search, radar_signal and radar_map."]
 end
 func ToolWeek(tWeek, tReader)
     if tWeek = "" tWeek = LatestWeek() end
-    aW = []
+    xWs = []
     nN = Len($xItems)
     for i = 1 to nN
         xO = $xItems[i]
-        if IsoWeek(S(xO, "date")) = tWeek and S(xO, "status") != "superseded" aW + xO end
+        if IsoWeek(S(xO, "date")) = tWeek and S(xO, "status") != "superseded" xWs + xO end
     end
-    if Len(aW) = 0 return Cf("watch.title") + " holds no signal for week " + tWeek + "." end
-    aW = SortItems(aW)
-    tN = "" + String(Len(aW)) + " signals"
-    if Len(aW) = 1 tN = "1 signal" end
+    if Len(xWs) = 0 return Cf("watch.title") + " holds no signal for week " + tWeek + "." end
+    xWs = SortItems(xWs)
+    tN = "" + String(Len(xWs)) + " signals"
+    if Len(xWs) = 1 tN = "1 signal" end
     tC = Cf("watch.title") + ", week " + tWeek + ": " + tN + ", written for a " + tReader + "." + Char(10) + Char(10)
-    nN = Len(aW)
-    for i = 1 to nN tC += Brief(aW[i], tReader, i) end
+    nN = Len(xWs)
+    for i = 1 to nN tC += Brief(xWs[i], tReader, i) end
     tC += Char(10) + "Ask radar_signal with an id for the whole signal."
     return tC
 end
-func ToolSearch(vArgs, tReader)
-    tP = Lower(Arg(vArgs, "project")) tL = Lower(Arg(vArgs, "layer")) tD = Lower(Arg(vArgs, "domain"))
-    tC = Lower(Arg(vArgs, "concern")) tV = Lower(Arg(vArgs, "level_at_least")) tW = Arg(vArgs, "week")
-    tT = Lower(Arg(vArgs, "text"))
+func ToolSearch(xArgs, tReader)
+    tP = Lower(Arg(xArgs, "project")) tL = Lower(Arg(xArgs, "layer")) tD = Lower(Arg(xArgs, "domain"))
+    tC = Lower(Arg(xArgs, "concern")) tV = Lower(Arg(xArgs, "level_at_least")) tW = Arg(xArgs, "week")
+    tT = Lower(Arg(xArgs, "text"))
     xHit = []
     nN = Len($xItems)
     for i = 1 to nN
@@ -360,22 +360,22 @@ func ToolSignal(tId)
             xN = JGet(xO, "notice")
             if JKind(xN) = "object"
                 tC += tNL + "For each reader:" + tNL
-                aP = xN[2] nP = Len(aP)
+                xPs = xN[2] nP = Len(xPs)
                 for k = 1 to nP
-                    if IsString(aP[k][2]) tC += "- " + aP[k][1] + ": " + aP[k][2] + tNL end
+                    if IsString(xPs[k][2]) tC += "- " + xPs[k][1] + ": " + xPs[k][2] + tNL end
                 end
             end
             xA = JGet(xO, "actions")
             if JKind(xA) = "array" and Len(JItems(xA)) > 0
                 tC += tNL + "Proposed:" + tNL
-                aA = JItems(xA) nA = Len(aA)
-                for k = 1 to nA tC += "- " + S(aA[k], "area") + ": " + S(aA[k], "do") + " (" + S(aA[k], "state") + ")" + tNL end
+                xAs = JItems(xA) nA = Len(xAs)
+                for k = 1 to nA tC += "- " + S(xAs[k], "area") + ": " + S(xAs[k], "do") + " (" + S(xAs[k], "state") + ")" + tNL end
             end
             xS = JGet(xO, "sources")
             if JKind(xS) = "array"
                 tC += tNL + "Sources:" + tNL
-                aS = JItems(xS) nS = Len(aS)
-                for k = 1 to nS tC += "- " + S(aS[k], "title") + ": " + S(aS[k], "url") + tNL end
+                xSs = JItems(xS) nS = Len(xSs)
+                for k = 1 to nS tC += "- " + S(xSs[k], "title") + ": " + S(xSs[k], "url") + tNL end
             end
             tC += tNL + "Page: " + Cf("watch.pages") + "items/" + Left(tId, 4) + "/" + tId + ".md"
             return [false, tC]
@@ -386,9 +386,9 @@ end
 func ToolMap
     tNL = Char(10)
     tC = "The map of " + Cf("project.name") + " (id: name)." + tNL
-    vLists = [["layers", "Layers"], ["projects", "Parts"], ["domains", "Domains"], ["concerns", "Concerns"]]
+    xLists = [["layers", "Layers"], ["projects", "Parts"], ["domains", "Domains"], ["concerns", "Concerns"]]
     for q = 1 to 4
-        xList = vLists[q]
+        xList = xLists[q]
         tC += tNL + xList[2] + ":" + tNL
         xX = JItems(JGet($xMap, xList[1]))
         nN = Len(xX)
@@ -426,9 +426,9 @@ func Handle(tLine)
     if tMethod = "ping" Result(tId, "{}") return end
     if tMethod = "tools/list" Result(tId, ToolList()) return end
     if tMethod = "tools/call"
-        vArgs = ["n"]
-        if JKind(xParams) = "object" vArgs = JGet(xParams, "arguments") end
-        xR = CallTool(S(xParams, "name"), vArgs)
+        xArgs = ["n"]
+        if JKind(xParams) = "object" xArgs = JGet(xParams, "arguments") end
+        xR = CallTool(S(xParams, "name"), xArgs)
         tErr = "false"
         if xR[1] tErr = "true" end
         Result(tId, '{"content":[{"type":"text","text":' + JQuote(xR[2]) + '}],"isError":' + tErr + '}')
