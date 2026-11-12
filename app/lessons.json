@@ -712,6 +712,47 @@
           "Its confidence must be calibrated: when it says 0.9 it must be right about nine times in ten, which a golden set can check."
         ]
       ]
+    },
+    "2026-11-12-samsung-littlebit": {
+      "build": [
+        {
+          "why": "See what a model costs at each precision: parameters times bits per weight, divided by eight, gives bytes.",
+          "cmd": "python -c \"p=13e9; [print(b, round(p*b/8/1e9,2), 'GB') for b in (16, 4, 1, 0.1)]\""
+        },
+        {
+          "why": "Make a smaller GGUF file from a larger one with llama.cpp, then compare both on your own test set before you switch.",
+          "cmd": "llama-quantize model-Q8_0.gguf model-Q2_K.gguf Q2_K"
+        },
+        {
+          "why": "LittleBit's layer in one line: two matrices of signs, scaled per row, per rank and per column.",
+          "cmd": "y = ((((x * g) @ V_sign) * l) @ U_sign.T) * h"
+        }
+      ],
+      "lesson": "A model's size in memory is its number of weights times the bits used for each. Ordinary compression stores each weight in 4 or 8 bits. LittleBit goes below one bit per weight: it rewrites each weight matrix as two thin matrices of plus and minus signs with a few scales, then retrains them to imitate the original model. The model becomes many times smaller, and it answers less well, more so for small models. Whether a smaller file is good enough is a question your own tests must answer.",
+      "terms": [
+        [
+          "bits per weight",
+          "the average storage for one model parameter; 16 for the usual format, 4 for common compressed files"
+        ],
+        [
+          "quantization",
+          "storing weights with fewer bits than they were trained with"
+        ],
+        [
+          "perplexity",
+          "how surprised a model is by real text; lower is better"
+        ]
+      ],
+      "quiz": [
+        [
+          "Why does a 0.1-bit model need retraining while a 4-bit file does not?",
+          "At 4 bits the rounded weights stay close to the originals; below one bit the matrix must be rebuilt, and only training can make the new one behave like the old."
+        ],
+        [
+          "Which loses more from aggressive compression, a 1B model or a 13B model?",
+          "Usually the 1B model, because each of its fewer weights carries more of what it knows."
+        ]
+      ]
     }
   }
 }

@@ -44,6 +44,25 @@
       ]
     },
     {
+      "id": "2026-11-12-samsung-littlebit",
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-12-samsung-littlebit.md",
+      "title": "Samsung's LittleBit stores a model's weights in under one bit each; Softanza weighs memory against quality on its small models",
+      "summary": "LittleBit, from Samsung Research (NeurIPS 2025; fifth version February 5, 2026), compresses a language model's weights to between 0.1 and 1 bit per weight by factoring each weight matrix into two low-rank matrices of signs with three scaling vectors, plus a residual path of the same shape, trained against the original model. The paper reports Llama2-13B in under 0.9 GB at 0.1 bits per weight, about 31 times smaller than 16-bit, and a speedup of up to 11.6 times on one layer with its GPU kernel. Its code, with the follow-up LittleBit-2 (ICML 2026), is published under the non-commercial CC BY-NC 4.0 licence.",
+      "content_text": "LittleBit, from Samsung Research (NeurIPS 2025; fifth version February 5, 2026), compresses a language model's weights to between 0.1 and 1 bit per weight by factoring each weight matrix into two low-rank matrices of signs with three scaling vectors, plus a residual path of the same shape, trained against the original model. The paper reports Llama2-13B in under 0.9 GB at 0.1 bits per weight, about 31 times smaller than 16-bit, and a speedup of up to 11.6 times on one layer with its GPU kernel. Its code, with the follow-up LittleBit-2 (ICML 2026), is published under the non-commercial CC BY-NC 4.0 licence.",
+      "date_published": "2026-11-12T00:00:00Z",
+      "tags": [
+        "paper",
+        "watch",
+        "advice",
+        "samsung",
+        "littlebit",
+        "quantization",
+        "sub-1-bit",
+        "compression",
+        "slm"
+      ]
+    },
+    {
       "id": "2026-11-11-a2ui-1-0",
       "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-11-a2ui-1-0.md",
       "title": "A2UI 1.0: an open protocol for agents to answer with a native screen; Zane gives it intent and law, and a projection to it",

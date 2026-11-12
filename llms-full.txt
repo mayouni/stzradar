@@ -50,6 +50,28 @@ Sources:
 - ARC: Learned Model Routing for Long-Horizon Agentic Workflows: https://rayline.ai/research/report
 - Rayline: https://rayline.ai/
 
+## Samsung's LittleBit stores a model's weights in under one bit each; Softanza weighs memory against quality on its small models
+
+- id: 2026-11-12-samsung-littlebit
+- date: 2026-11-12
+- level: advice
+- kind: paper
+- stance: watch
+- relevance: low
+- page: https://mayouni.github.io/stzradar/items/2026/2026-11-12-samsung-littlebit.md
+
+LittleBit, from Samsung Research (NeurIPS 2025; fifth version February 5, 2026), compresses a language model's weights to between 0.1 and 1 bit per weight by factoring each weight matrix into two low-rank matrices of signs with three scaling vectors, plus a residual path of the same shape, trained against the original model. The paper reports Llama2-13B in under 0.9 GB at 0.1 bits per weight, about 31 times smaller than 16-bit, and a speedup of up to 11.6 times on one layer with its GPU kernel. Its code, with the follow-up LittleBit-2 (ICML 2026), is published under the non-commercial CC BY-NC 4.0 licence.
+
+For each reader:
+- maintainer: Below one bit per weight, a 13B model fits in under a gigabyte, at a measurable cost in quality; Softanza's own question is how low its small models can go and still win their court hearings.
+
+Proposed:
+- stzlib.intelligence: measure Nemotron 3.5 Bolt E4B in the lowest-bit GGUF formats the engine's ggml reads, against its Q4_K_M file on the support-desk golden sets: memory, CPU speed and court score at each format, to find the smallest file that keeps its triage-extract win (routed)
+
+Sources:
+- LittleBit: Ultra Low-Bit Quantization via Latent Factorization (arXiv 2506.13771v5): https://arxiv.org/html/2506.13771v5
+- SamsungLabs/LittleBit (README and licence): https://github.com/SamsungLabs/LittleBit
+
 ## A2UI 1.0: an open protocol for agents to answer with a native screen; Zane gives it intent and law, and a projection to it
 
 - id: 2026-11-11-a2ui-1-0
