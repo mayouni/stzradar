@@ -15,10 +15,10 @@
 load "feedlib.haro"
 
 tRoot = ""
-aCfg = null
-aMap = null
-aItems = []
-aDigests = []
+xCfg = ""
+xMap = ""
+xItems = []
+vDigests = []
 tTrust = ""            # "" when the signature checked; otherwise why it did not
 
 func main
@@ -42,24 +42,24 @@ end
 func LoadRadar
     oReader = new JsonReader
     try
-        aIndex = oReader.Parse(Read($tRoot + "/feed/index.json"), "feed/index.json")
-        $aItems = JItems(JGet(aIndex, "items"))
-        $aCfg = oReader.Parse(Read($tRoot + "/app/config.json"), "app/config.json")
+        xIndex = oReader.Parse(Read($tRoot + "/feed/index.json"), "feed/index.json")
+        $xItems = JItems(JGet(xIndex, "items"))
+        $xCfg = oReader.Parse(Read($tRoot + "/app/config.json"), "app/config.json")
     catch e
         $tTrust = "the radar's files could not be read from " + $tRoot + ": " + e.Message()
         return
     end
     try
-        $aMap = oReader.Parse(Read($tRoot + "/" + Cf("map")), "map")
+        $xMap = oReader.Parse(Read($tRoot + "/" + Cf("map")), "map")
     catch
         $tTrust = "the map " + Cf("map") + " could not be read"
         return
     end
     if FExists($tRoot + "/app/digests.json")
         try
-            $aDigests = JItems(oReader.Parse(Read($tRoot + "/app/digests.json"), "digests"))
+            $xDigests = JItems(oReader.Parse(Read($tRoot + "/app/digests.json"), "digests"))
         catch
-            $aDigests = []
+            $xDigests = []
         end
     end
     $tTrust = CheckSignature()
@@ -82,7 +82,7 @@ func Q(tC)
 end
 # one value of app/config.json by its dotted path
 func Cf(tPath)
-    xV = $aCfg
+    xV = $xCfg
     tPart = ""
     tP = tPath + "."
     nP = Len(tP)
@@ -120,8 +120,8 @@ end
 # ISO week of a "YYYY-MM-DD" date, as "YYYY-Www"
 func IsoWeek(tDate)
     nY = Number(Left(tDate, 4)) nMo = Number(SubStr(tDate, 6, 2)) nDa = Number(SubStr(tDate, 9, 2))
-    aCum = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334]
-    nOrd = aCum[nMo] + nDa
+    vCum = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334]
+    nOrd = vCum[nMo] + nDa
     if nMo > 2 and Leap(nY) nOrd++ end
     nW = Floor((nOrd - Dow(nY, nMo, nDa) + 10) / 7)
     if nW < 1
@@ -140,9 +140,9 @@ func Leap(xY)
 end
 # Monday 1 .. Sunday 7
 func Dow(xY, nM, xD)
-    aT = [0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4]
+    vT = [0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4]
     if nM < 3 xY-- end
-    xN = (xY + Floor(xY / 4) - Floor(xY / 100) + Floor(xY / 400) + aT[nM] + xD) % 7
+    xN = (xY + Floor(xY / 4) - Floor(xY / 100) + Floor(xY / 400) + vT[nM] + xD) % 7
     if xN = 0 return 7 end
     return xN
 end
@@ -155,11 +155,11 @@ func P(xY)
 end
 # the project ids an entry touches: its areas through the map's ids and aliases
 func ProjectsOf(xO)
-    aOut = []
+    xOut = []
     xA = JGet(xO, "areas")
-    if JKind(xA) != "array" return aOut end
+    if JKind(xA) != "array" return xOut end
     aA = JItems(xA)
-    aP = JItems(JGet($aMap, "projects"))
+    aP = JItems(JGet($xMap, "projects"))
     nA = Len(aA) nP = Len(aP)
     for i = 1 to nA
         tA = Lower(aA[i])
@@ -178,30 +178,30 @@ func ProjectsOf(xO)
                 end
             end
         end
-        if tHit != "" and Find(aOut, tHit) = 0 aOut + tHit end
+        if tHit != "" and Find(xOut, tHit) = 0 xOut + tHit end
     end
-    return aOut
+    return xOut
 end
 func LayersOf(xO)
-    aOut = []
-    aPr = ProjectsOf(xO)
-    aP = JItems(JGet($aMap, "projects"))
-    nN = Len(aPr) nP = Len(aP)
+    xOut = []
+    xPr = ProjectsOf(xO)
+    aP = JItems(JGet($xMap, "projects"))
+    nN = Len(xPr) nP = Len(aP)
     for i = 1 to nN
         for k = 1 to nP
-            if S(aP[k], "id") = aPr[i]
+            if S(aP[k], "id") = xPr[i]
                 tL = S(aP[k], "layer")
-                if Find(aOut, tL) = 0 aOut + tL end
+                if Find(xOut, tL) = 0 xOut + tL end
             end
         end
     end
-    return aOut
+    return xOut
 end
 func NameOf(tList, tId)
-    aX = JItems(JGet($aMap, tList))
-    nN = Len(aX)
+    xX = JItems(JGet($xMap, tList))
+    nN = Len(xX)
     for i = 1 to nN
-        if S(aX[i], "id") = tId return S(aX[i], "name") end
+        if S(xX[i], "id") = tId return S(xX[i], "name") end
     end
     return tId
 end
@@ -213,21 +213,21 @@ end
 # newest week the survey closed (it has a digest), else the newest week that holds an entry
 func LatestWeek
     tBest = ""
-    nN = Len($aDigests)
+    nN = Len($xDigests)
     for i = 1 to nN
-        if IsString($aDigests[i]) and $aDigests[i] > tBest tBest = $aDigests[i] end
+        if IsString($xDigests[i]) and $xDigests[i] > tBest tBest = $xDigests[i] end
     end
     if tBest != "" return tBest end
-    nN = Len($aItems)
+    nN = Len($xItems)
     for i = 1 to nN
-        xW = IsoWeek(S($aItems[i], "date"))
+        xW = IsoWeek(S($xItems[i], "date"))
         if xW > tBest tBest = xW end
     end
     return tBest
 end
 # most pressing first: level, then relevance, then newest
-func SortItems(aIn)
-    aA = aIn
+func SortItems(xIn)
+    aA = xIn
     nN = Len(aA)
     for i = 2 to nN
         xJ = i
@@ -256,11 +256,11 @@ func Brief(xO, tReader, nNo)
     if JKind(xN) = "object" tLine = S(xN, tReader) end
     if tLine = "" tLine = S(xO, "summary") end
     tC += "   " + tLine + Char(10)
-    aPr = ProjectsOf(xO)
-    aNames = []
-    nN = Len(aPr)
-    for i = 1 to nN aNames + NameOf("projects", aPr[i]) end
-    tC += "   touches: " + Joined(aNames, ", ") + " | id: " + S(xO, "id") + " | " + S(xO, "date") + Char(10)
+    xPr = ProjectsOf(xO)
+    vNames = []
+    nN = Len(xPr)
+    for i = 1 to nN vNames + NameOf("projects", xPr[i]) end
+    tC += "   touches: " + Joined(vNames, ", ") + " | id: " + S(xO, "id") + " | " + S(xO, "date") + Char(10)
     return tC
 end
 func Joined(xA, tSep)
@@ -288,26 +288,26 @@ func ToolList
       '"inputSchema":{"type":"object","properties":{}}}' +
       ']}'
 end
-func Arg(aArgs, tKey)
-    if JKind(aArgs) != "object" return "" end
-    return S(aArgs, tKey)
+func Arg(vArgs, tKey)
+    if JKind(vArgs) != "object" return "" end
+    return S(vArgs, tKey)
 end
-func CallTool(tName, aArgs)
+func CallTool(tName, vArgs)
     if $tTrust != "" return [true, "The radar did not answer: " + $tTrust + ". Its feed is trusted only when its signature checks."] end
-    tReader = Lower(Arg(aArgs, "reader"))
+    tReader = Lower(Arg(vArgs, "reader"))
     if not ReaderOk(tReader) tReader = "developer" end
-    if tName = "radar_week" return [false, ToolWeek(Arg(aArgs, "week"), tReader)] end
-    if tName = "radar_search" return [false, ToolSearch(aArgs, tReader)] end
-    if tName = "radar_signal" return ToolSignal(Arg(aArgs, "id")) end
+    if tName = "radar_week" return [false, ToolWeek(Arg(vArgs, "week"), tReader)] end
+    if tName = "radar_search" return [false, ToolSearch(vArgs, tReader)] end
+    if tName = "radar_signal" return ToolSignal(Arg(vArgs, "id")) end
     if tName = "radar_map" return [false, ToolMap()] end
     return [true, "There is no tool named " + tName + "; the tools are radar_week, radar_search, radar_signal and radar_map."]
 end
 func ToolWeek(tWeek, tReader)
     if tWeek = "" tWeek = LatestWeek() end
     aW = []
-    nN = Len($aItems)
+    nN = Len($xItems)
     for i = 1 to nN
-        xO = $aItems[i]
+        xO = $xItems[i]
         if IsoWeek(S(xO, "date")) = tWeek and S(xO, "status") != "superseded" aW + xO end
     end
     if Len(aW) = 0 return Cf("watch.title") + " holds no signal for week " + tWeek + "." end
@@ -320,14 +320,14 @@ func ToolWeek(tWeek, tReader)
     tC += Char(10) + "Ask radar_signal with an id for the whole signal."
     return tC
 end
-func ToolSearch(aArgs, tReader)
-    tP = Lower(Arg(aArgs, "project")) tL = Lower(Arg(aArgs, "layer")) tD = Lower(Arg(aArgs, "domain"))
-    tC = Lower(Arg(aArgs, "concern")) tV = Lower(Arg(aArgs, "level_at_least")) tW = Arg(aArgs, "week")
-    tT = Lower(Arg(aArgs, "text"))
-    aHit = []
-    nN = Len($aItems)
+func ToolSearch(vArgs, tReader)
+    tP = Lower(Arg(vArgs, "project")) tL = Lower(Arg(vArgs, "layer")) tD = Lower(Arg(vArgs, "domain"))
+    tC = Lower(Arg(vArgs, "concern")) tV = Lower(Arg(vArgs, "level_at_least")) tW = Arg(vArgs, "week")
+    tT = Lower(Arg(vArgs, "text"))
+    xHit = []
+    nN = Len($xItems)
     for i = 1 to nN
-        xO = $aItems[i]
+        xO = $xItems[i]
         if S(xO, "status") = "superseded" loop end
         if tP != "" and Find(ProjectsOf(xO), tP) = 0 loop end
         if tL != "" and Find(LayersOf(xO), tL) = 0 loop end
@@ -336,21 +336,21 @@ func ToolSearch(aArgs, tReader)
         if tV != "" and LevelRank(S(xO, "level")) < LevelRank(tV) loop end
         if tW != "" and IsoWeek(S(xO, "date")) != tW loop end
         if tT != "" and SubStr(Lower(S(xO, "title") + " " + S(xO, "summary")), tT) = 0 loop end
-        aHit + xO
+        xHit + xO
     end
-    if Len(aHit) = 0 return "No signal matches these filters. radar_map lists the ids the filters take." end
-    aHit = SortItems(aHit)
-    tN = "" + String(Len(aHit)) + " signals match"
-    if Len(aHit) = 1 tN = "1 signal matches" end
+    if Len(xHit) = 0 return "No signal matches these filters. radar_map lists the ids the filters take." end
+    xHit = SortItems(xHit)
+    tN = "" + String(Len(xHit)) + " signals match"
+    if Len(xHit) = 1 tN = "1 signal matches" end
     xC = tN + ", most pressing first, written for a " + tReader + "." + Char(10) + Char(10)
-    nN = Len(aHit)
-    for i = 1 to nN xC += Brief(aHit[i], tReader, i) end
+    nN = Len(xHit)
+    for i = 1 to nN xC += Brief(xHit[i], tReader, i) end
     return xC
 end
 func ToolSignal(tId)
-    nN = Len($aItems)
+    nN = Len($xItems)
     for i = 1 to nN
-        xO = $aItems[i]
+        xO = $xItems[i]
         if S(xO, "id") = tId
             tNL = Char(10)
             tC = S(xO, "title") + tNL + tNL
@@ -386,15 +386,15 @@ end
 func ToolMap
     tNL = Char(10)
     tC = "The map of " + Cf("project.name") + " (id: name)." + tNL
-    aLists = [["layers", "Layers"], ["projects", "Parts"], ["domains", "Domains"], ["concerns", "Concerns"]]
+    vLists = [["layers", "Layers"], ["projects", "Parts"], ["domains", "Domains"], ["concerns", "Concerns"]]
     for q = 1 to 4
-        aList = aLists[q]
-        tC += tNL + aList[2] + ":" + tNL
-        aX = JItems(JGet($aMap, aList[1]))
-        nN = Len(aX)
+        xList = vLists[q]
+        tC += tNL + xList[2] + ":" + tNL
+        xX = JItems(JGet($xMap, xList[1]))
+        nN = Len(xX)
         for i = 1 to nN
-            tC += "- " + S(aX[i], "id") + ": " + S(aX[i], "name")
-            if aList[1] = "projects" tC += " (layer " + S(aX[i], "layer") + ")" end
+            tC += "- " + S(xX[i], "id") + ": " + S(xX[i], "name")
+            if xList[1] = "projects" tC += " (layer " + S(xX[i], "layer") + ")" end
             tC += tNL
         end
     end
@@ -405,18 +405,18 @@ end
 func Handle(tLine)
     oReader = new JsonReader
     try
-        aMsg = oReader.Parse(tLine, "message")
+        xMsg = oReader.Parse(tLine, "message")
     catch
         Send('{"jsonrpc":"2.0","id":null,"error":{"code":-32700,"message":"Parse error"}}')
         return
     end
-    if JKind(aMsg) != "object" return end
-    if not JHas(aMsg, "id") return end                       # a notification: nothing to answer
-    tId = JLine(JGet(aMsg, "id"))
-    tMethod = S(aMsg, "method")
-    aParams = JGet(aMsg, "params")
+    if JKind(xMsg) != "object" return end
+    if not JHas(xMsg, "id") return end                       # a notification: nothing to answer
+    tId = JLine(JGet(xMsg, "id"))
+    tMethod = S(xMsg, "method")
+    xParams = JGet(xMsg, "params")
     if tMethod = "initialize"
-        tVer = S(aParams, "protocolVersion")
+        tVer = S(xParams, "protocolVersion")
         if tVer = "" tVer = "2025-06-18" end
         Result(tId, '{"protocolVersion":' + JQuote(tVer) + ',"capabilities":{"tools":{}},' +
             '"serverInfo":{"name":"softanza-radar","title":' + JQuote(Cf("watch.title")) + ',"version":"1.0.0"},' +
@@ -426,12 +426,12 @@ func Handle(tLine)
     if tMethod = "ping" Result(tId, "{}") return end
     if tMethod = "tools/list" Result(tId, ToolList()) return end
     if tMethod = "tools/call"
-        aArgs = ["n"]
-        if JKind(aParams) = "object" aArgs = JGet(aParams, "arguments") end
-        aR = CallTool(S(aParams, "name"), aArgs)
+        vArgs = ["n"]
+        if JKind(xParams) = "object" vArgs = JGet(xParams, "arguments") end
+        xR = CallTool(S(xParams, "name"), vArgs)
         tErr = "false"
-        if aR[1] tErr = "true" end
-        Result(tId, '{"content":[{"type":"text","text":' + JQuote(aR[2]) + '}],"isError":' + tErr + '}')
+        if xR[1] tErr = "true" end
+        Result(tId, '{"content":[{"type":"text","text":' + JQuote(xR[2]) + '}],"isError":' + tErr + '}')
         return
     end
     Send('{"jsonrpc":"2.0","id":' + tId + ',"error":{"code":-32601,"message":' + JQuote("Method not found: " + tMethod) + '}}')
@@ -461,11 +461,11 @@ func JLine(xV)
     end
     if xK = "null" return "null" end
     tC = ""
-    aI = xV[2]
-    nN = Len(aI)
+    xI = xV[2]
+    nN = Len(xI)
     for i = 1 to nN
         if i > 1 tC += "," end
-        if xK = "array" tC += JLine(aI[i]) else tC += JQuote(aI[i][1]) + ":" + JLine(aI[i][2]) end
+        if xK = "array" tC += JLine(xI[i]) else tC += JQuote(xI[i][1]) + ":" + JLine(xI[i][2]) end
     end
     if xK = "array" return "[" + tC + "]" end
     return "{" + tC + "}"

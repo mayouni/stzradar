@@ -21,33 +21,33 @@ func JKind(xV)
     if xT = "t" or xT = "f" return "boolean" end
     return "null"
 end
-func JHas(aObj, tKey)
-    aP = aObj[2]
+func JHas(xObj, tKey)
+    aP = xObj[2]
     nN = Len(aP)
     for i = 1 to nN
         if aP[i][1] = tKey return true end
     end
     return false
 end
-func JGet(aObj, tKey)
-    aP = aObj[2]
+func JGet(xObj, tKey)
+    aP = xObj[2]
     nN = Len(aP)
     for i = 1 to nN
         if aP[i][1] = tKey return aP[i][2] end
     end
     return ["n"]
 end
-func JKeys(aObj)
+func JKeys(xObj)
     aK = []
-    aP = aObj[2]
+    aP = xObj[2]
     nN = Len(aP)
     for i = 1 to nN
         aK + aP[i][1]
     end
     return aK
 end
-func JItems(aArr)
-    return aArr[2]
+func JItems(xArr)
+    return xArr[2]
 end
 func JEqual(xA, xB)
     xKa = JKind(xA)
@@ -91,8 +91,8 @@ func JWrite(xV, nDepth)
         return "false"
     end
     if xK = "null" return "null" end
-    aI = xV[2]
-    nN = Len(aI)
+    xI = xV[2]
+    nN = Len(xI)
     if xK = "array"
         if nN = 0 return "[]" end
         tOpen = "[" tClose = "]"
@@ -104,9 +104,9 @@ func JWrite(xV, nDepth)
     tOut = tOpen + Char(10)
     for i = 1 to nN
         if xK = "array"
-            tOut += tPad + JWrite(aI[i], nDepth + 1)
+            tOut += tPad + JWrite(xI[i], nDepth + 1)
         else
-            tOut += tPad + JQuote(aI[i][1]) + ": " + JWrite(aI[i][2], nDepth + 1)
+            tOut += tPad + JQuote(xI[i][1]) + ": " + JWrite(xI[i][2], nDepth + 1)
         end
         if i < nN tOut += "," end
         tOut += Char(10)
@@ -192,8 +192,8 @@ func IsDate(xS)
     if not (IsDigits(tY) and IsDigits(tM) and IsDigits(tD)) return false end
     nY = Number(tY) nMo = Number(tM) nDa = Number(tD)
     if nMo < 1 or nMo > 12 return false end
-    aDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-    nMax = aDays[nMo]
+    vDays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    nMax = vDays[nMo]
     if nMo = 2 and IsLeapYear(nY) nMax = 29 end
     if nDa < 1 or nDa > nMax return false end
     return true
@@ -244,34 +244,34 @@ end
 
 class FeedRun
     tRoot = ""
-    aProblems = []
+    vProblems = []
     nEntries = 0
-    oSchema = null
-    aItemSchema = null
-    aConfig = null      # radar.yaml, read and checked by LoadConfig
+    oSchema = ""
+    xItemSchema = ""
+    xConfig = ""      # radar.yaml, read and checked by LoadConfig
     tConfig = ""        # the same, as the bytes of app/config.json
-    aVoice = []         # the names a text of radar.yaml may use, with their values (Voice)
-    aEntries = []       # [ [cFile, aData], ... ]
+    vVoice = []         # the names a text of radar.yaml may use, with their values (Voice)
+    vEntries = []       # [ [cFile, aData], ... ]
     bQuiet = false          # the guard sets it: problems are kept and not printed
-    aIndex = null       # what the last Finish built, for the guard to read
-    aFeed = null
+    xIndex = ""       # what the last Finish built, for the guard to read
+    xFeed = ""
     tIndex = ""
     tFeed = ""
 
     def Problem(tWhere, tMsg)
-        aProblems + (tWhere + ": " + tMsg)
+        vProblems + (tWhere + ": " + tMsg)
         Say("REFUSED " + tWhere + ": " + tMsg)
     end
     # Haro stores a COPY of an object, so the schema check cannot call back into this run:
     # it keeps what it found, and the run takes it here.
     def Drain
-        aSaid = oSchema.aSaid
-        nN = Len(aSaid)
+        xSaid = oSchema.xSaid
+        nN = Len(xSaid)
         for i = 1 to nN
-            aProblems + aSaid[i]
-            Say("REFUSED " + aSaid[i])
+            vProblems + xSaid[i]
+            Say("REFUSED " + xSaid[i])
         end
-        oSchema.aSaid = []
+        oSchema.xSaid = []
     end
     # The whole run over this repository: generate writes the feeds, check only compares them.
     def Go(tMode)
@@ -296,102 +296,102 @@ class FeedRun
         end
         oReader = new JsonReader
         try
-            aM = oReader.Parse(StripCR(Read(tPath)), tMapRel)
+            xM = oReader.Parse(StripCR(Read(tPath)), tMapRel)
         catch e
             Problem("map/estate.json", "is not valid JSON: " + e.Message())
             return
         end
-        if JKind(aM) != "object"
+        if JKind(xM) != "object"
             Problem("map/estate.json", "holds one object")
             return
         end
-        aLayers = MapIds(aM, "layers")
-        aDomains = MapIds(aM, "domains")
-        aConcerns = MapIds(aM, "concerns")
-        aNames = []
-        if not JHas(aM, "projects") or JKind(JGet(aM, "projects")) != "array"
+        xLayers = MapIds(xM, "layers")
+        xDomains = MapIds(xM, "domains")
+        xConcerns = MapIds(xM, "concerns")
+        vNames = []
+        if not JHas(xM, "projects") or JKind(JGet(xM, "projects")) != "array"
             Problem("map/estate.json", 'holds a "projects" array')
             return
         end
-        aP = JItems(JGet(aM, "projects"))
+        aP = JItems(JGet(xM, "projects"))
         nP = Len(aP)
         for i = 1 to nP
-            aJP = aP[i]
-            if JKind(aJP) != "object" or not JHas(aJP, "id") or not JHas(aJP, "name") or not JHas(aJP, "layer") or not JHas(aJP, "line")
+            xJP = aP[i]
+            if JKind(xJP) != "object" or not JHas(xJP, "id") or not JHas(xJP, "name") or not JHas(xJP, "layer") or not JHas(xJP, "line")
                 Problem("map/estate.json", "project " + String(i) + " has an id, a name, a layer and a line")
                 loop
             end
-            tId = JGet(aJP, "id")
-            if Find(aNames, tId) > 0 Problem("map/estate.json", "names " + tId + " twice") end
-            aNames + tId
-            if Find(aLayers, JGet(aJP, "layer")) = 0
-                Problem("map/estate.json", "project " + tId + " sits on layer " + JGet(aJP, "layer") + ", and the map has no layer with that id")
+            tId = JGet(xJP, "id")
+            if Find(vNames, tId) > 0 Problem("map/estate.json", "names " + tId + " twice") end
+            vNames + tId
+            if Find(xLayers, JGet(xJP, "layer")) = 0
+                Problem("map/estate.json", "project " + tId + " sits on layer " + JGet(xJP, "layer") + ", and the map has no layer with that id")
             end
-            if JHas(aJP, "link")
-                tLink = JGet(aJP, "link")
+            if JHas(xJP, "link")
+                tLink = JGet(xJP, "link")
                 if not IsString(tLink) or Left(tLink, 8) != "https://"
                     Problem("map/estate.json", "project " + tId + " links to an https:// address")
                 end
             end
-            if JHas(aJP, "aliases")
-                aA = JItems(JGet(aJP, "aliases"))
+            if JHas(xJP, "aliases")
+                aA = JItems(JGet(xJP, "aliases"))
                 nA = Len(aA)
                 for j = 1 to nA
-                    if Find(aNames, aA[j]) > 0 Problem("map/estate.json", "names " + aA[j] + " twice") end
-                    aNames + aA[j]
+                    if Find(vNames, aA[j]) > 0 Problem("map/estate.json", "names " + aA[j] + " twice") end
+                    vNames + aA[j]
                 end
             end
         end
-        nE = Len(aEntries)
+        nE = Len(vEntries)
         for i = 1 to nE
-            aData = aEntries[i][2]
-            tWhere = aEntries[i][1]
-            if JHas(aData, "areas")
-                aV = JItems(JGet(aData, "areas"))
+            xData = vEntries[i][2]
+            tWhere = vEntries[i][1]
+            if JHas(xData, "areas")
+                aV = JItems(JGet(xData, "areas"))
                 nV = Len(aV)
                 for j = 1 to nV
-                    if not MapNames(aNames, aV[j])
+                    if not MapNames(vNames, aV[j])
                         Problem(tWhere, "area " + aV[j] + " names no project of map/estate.json")
                     end
                 end
             end
-            MapField(tWhere, aData, "domains", aDomains)
-            MapField(tWhere, aData, "concerns", aConcerns)
+            MapField(tWhere, xData, "domains", xDomains)
+            MapField(tWhere, xData, "concerns", xConcerns)
         end
     end
     # The ids of one list of the map, refusing a list that is missing or an item with no id.
-    def MapIds(aM, tKey)
-        aIds = []
-        if not JHas(aM, tKey) or JKind(JGet(aM, tKey)) != "array"
+    def MapIds(xM, tKey)
+        vIds = []
+        if not JHas(xM, tKey) or JKind(JGet(xM, tKey)) != "array"
             Problem("map/estate.json", 'holds a "' + tKey + '" array')
-            return aIds
+            return vIds
         end
-        aI = JItems(JGet(aM, tKey))
-        nI = Len(aI)
+        xI = JItems(JGet(xM, tKey))
+        nI = Len(xI)
         for i = 1 to nI
-            if JKind(aI[i]) != "object" or not JHas(aI[i], "id") or not JHas(aI[i], "name")
+            if JKind(xI[i]) != "object" or not JHas(xI[i], "id") or not JHas(xI[i], "name")
                 Problem("map/estate.json", tKey + " item " + String(i) + " has an id and a name")
                 loop
             end
-            tId = JGet(aI[i], "id")
-            if Find(aIds, tId) > 0 Problem("map/estate.json", tKey + " names " + tId + " twice") end
-            aIds + tId
+            tId = JGet(xI[i], "id")
+            if Find(vIds, tId) > 0 Problem("map/estate.json", tKey + " names " + tId + " twice") end
+            vIds + tId
         end
-        return aIds
+        return vIds
     end
     # An area matches by its whole name, or by the project it is a dotted sub-area of.
-    def MapNames(aNames, tArea)
-        if Find(aNames, tArea) > 0 return true end
+    def MapNames(vNames, tArea)
+        if Find(vNames, tArea) > 0 return true end
         nDot = SubStr(tArea, ".")
-        if nDot > 1 and Find(aNames, Left(tArea, nDot - 1)) > 0 return true end
+        if nDot > 1 and Find(vNames, Left(tArea, nDot - 1)) > 0 return true end
         return false
     end
-    def MapField(tWhere, aData, tKey, aIds)
-        if not JHas(aData, tKey) return end
-        aV = JItems(JGet(aData, tKey))
+    def MapField(tWhere, xData, tKey, vIds)
+        if not JHas(xData, tKey) return end
+        aV = JItems(JGet(xData, tKey))
         nV = Len(aV)
         for j = 1 to nV
-            if Find(aIds, aV[j]) = 0
+            if Find(vIds, aV[j]) = 0
                 Problem(tWhere, tKey + " value " + aV[j] + " is not an id of map/estate.json")
             end
         end
@@ -403,30 +403,30 @@ class FeedRun
         if not FExists(tPath) return end
         oReader = new JsonReader
         try
-            aL = oReader.Parse(StripCR(Read(tPath)), "app/lessons.json")
+            xL = oReader.Parse(StripCR(Read(tPath)), "app/lessons.json")
         catch e
             Problem("app/lessons.json", "is not valid JSON: " + e.Message())
             return
         end
-        if JKind(aL) != "object" or not JHas(aL, "entries")
+        if JKind(xL) != "object" or not JHas(xL, "entries")
             Problem("app/lessons.json", 'holds an object with an "entries" object, keyed by entry id')
             return
         end
-        aJE = JGet(aL, "entries")
-        if JKind(aJE) != "object"
+        xJE = JGet(xL, "entries")
+        if JKind(xJE) != "object"
             Problem("app/lessons.json", '"entries" is an object keyed by entry id')
             return
         end
-        aIds = []
-        nE = Len(aEntries)
+        vIds = []
+        nE = Len(vEntries)
         for i = 1 to nE
-            aIds + JGet(aEntries[i][2], "id")
+            vIds + JGet(vEntries[i][2], "id")
         end
-        aKeys = JKeys(aJE)
-        nK = Len(aKeys)
+        xKeys = JKeys(xJE)
+        nK = Len(xKeys)
         for i = 1 to nK
-            if Find(aIds, aKeys[i]) = 0
-                Problem("app/lessons.json", "has lessons for " + aKeys[i] + ", and there is no entry with that id")
+            if Find(vIds, xKeys[i]) = 0
+                Problem("app/lessons.json", "has lessons for " + xKeys[i] + ", and there is no entry with that id")
             end
         end
     end
@@ -443,70 +443,70 @@ class FeedRun
                 "nothing in softanza", "we have not", "not checked"]
     end
     def AffirmScan
-        aAllow = AffirmAllow()
-        aFiles = ["README.md"]
-        aDirs = ["docs", "digests"]
-        nD = Len(aDirs)
+        xAllow = AffirmAllow()
+        vFiles = ["README.md"]
+        vDirs = ["docs", "digests"]
+        nD = Len(vDirs)
         for d = 1 to nD
-            aIn = Dir(tRoot + "/" + aDirs[d])
-            nIn = Len(aIn)
+            xIn = Dir(tRoot + "/" + vDirs[d])
+            nIn = Len(xIn)
             for i = 1 to nIn
-                if aIn[i][2] = 0 and Right(aIn[i][1], 3) = ".md"
-                    aFiles + (aDirs[d] + "/" + aIn[i][1])
+                if xIn[i][2] = 0 and Right(xIn[i][1], 3) = ".md"
+                    vFiles + (vDirs[d] + "/" + xIn[i][1])
                 end
             end
         end
-        aYears = Dir(tRoot + "/items")
-        nY = Len(aYears)
+        xYears = Dir(tRoot + "/items")
+        nY = Len(xYears)
         for y = 1 to nY
-            if aYears[y][2] = 1
-                aIn = Dir(tRoot + "/items/" + aYears[y][1])
-                nIn = Len(aIn)
+            if xYears[y][2] = 1
+                xIn = Dir(tRoot + "/items/" + xYears[y][1])
+                nIn = Len(xIn)
                 for i = 1 to nIn
-                    if aIn[i][2] = 0 and Right(aIn[i][1], 3) = ".md"
-                        aFiles + ("items/" + aYears[y][1] + "/" + aIn[i][1])
+                    if xIn[i][2] = 0 and Right(xIn[i][1], 3) = ".md"
+                        vFiles + ("items/" + xYears[y][1] + "/" + xIn[i][1])
                     end
                 end
             end
         end
-        nF = Len(aFiles)
+        nF = Len(vFiles)
         for f = 1 to nF
-            aLines = Str2List(StripCR(Read(tRoot + "/" + aFiles[f])))
-            nL1 = Len(aLines)
+            xLines = Str2List(StripCR(Read(tRoot + "/" + vFiles[f])))
+            nL1 = Len(xLines)
             for i = 1 to nL1
-                AffirmLine(aFiles[f], i, aLines[i], aAllow)
+                AffirmLine(vFiles[f], i, xLines[i], xAllow)
             end
         end
     end
     # One line of one public page. The guard calls this directly with lines it wrote.
-    def AffirmLine(tFile, nLine, tLine, aAllow)
+    def AffirmLine(tFile, nLine, tLine, xAllow)
         tLow = Lower(tLine)
         aP = AffirmPhrases()
         nP = Len(aP)
         for p = 1 to nP
-            if SubStr(tLow, aP[p]) > 0 and not AffirmAllowed(tFile, tLow, aAllow)
+            if SubStr(tLow, aP[p]) > 0 and not AffirmAllowed(tFile, tLow, xAllow)
                 Problem(tFile + ":" + String(nLine), "a public page lists what is missing (" + aP[p] +
                         "); say what holds or what is proposed, or allow the line in tools/affirm-allow.txt with its reason")
             end
         end
     end
-    def AffirmAllowed(tFile, tLow, aAllow)
-        nA = Len(aAllow)
+    def AffirmAllowed(tFile, tLow, xAllow)
+        nA = Len(xAllow)
         for a = 1 to nA
-            if aAllow[a][1] = tFile and SubStr(tLow, aAllow[a][2]) > 0 return true end
+            if xAllow[a][1] = tFile and SubStr(tLow, xAllow[a][2]) > 0 return true end
         end
         return false
     end
     # tools/affirm-allow.txt: one line each, "file | words from the line | reason". A line with no
     # reason is refused, so nothing is allowed without saying why.
     def AffirmAllow
-        aOut = []
+        xOut = []
         tPath = tRoot + "/tools/affirm-allow.txt"
-        if not FExists(tPath) return aOut end
-        aLines = Str2List(StripCR(Read(tPath)))
-        nL1 = Len(aLines)
+        if not FExists(tPath) return xOut end
+        xLines = Str2List(StripCR(Read(tPath)))
+        nL1 = Len(xLines)
         for i = 1 to nL1
-            tL = Trim(aLines[i])
+            tL = Trim(xLines[i])
             if tL = "" or Left(tL, 1) = "#" loop end
             nN1 = SubStr(tL, " | ")
             if nN1 = 0
@@ -520,9 +520,9 @@ class FeedRun
                 Problem("tools/affirm-allow.txt:" + String(i), "every allowed line gives its reason")
                 loop
             end
-            aOut + [tFile, Lower(Trim(Left(tRest, nN2 - 1)))]
+            xOut + [tFile, Lower(Trim(Left(tRest, nN2 - 1)))]
         end
-        return aOut
+        return xOut
     end
     # Loads the item schema. Returns 0 when the run cannot start.
     def Prepare
@@ -532,9 +532,9 @@ class FeedRun
             Problem("tools/feed.haro", "run it from the repository root: schema/item.schema.json is not here")
             return false
         end
-        aItemSchema = oSchema.SchemaFile("item.schema.json")
+        xItemSchema = oSchema.SchemaFile("item.schema.json")
         Drain()
-        if not IsList(aItemSchema) return false end
+        if not IsList(xItemSchema) return false end
         return LoadConfig()
     end
     # radar.yaml: everything that belongs to the project this watch serves (docs/ADOPT.md). It is
@@ -552,21 +552,21 @@ class FeedRun
     def LoadConfigText(tText)
         oY = new YamlReader
         try
-            aConfig = oY.Parse(tText, "radar.yaml")
+            xConfig = oY.Parse(tText, "radar.yaml")
         catch e
             Problem("radar.yaml", e.Message())
             return false
         end
-        aConfigSchema = oSchema.SchemaFile("config.schema.json")
+        xConfigSchema = oSchema.SchemaFile("config.schema.json")
         Drain()
-        if not IsList(aConfigSchema) return false end
-        nBefore = Len(aProblems)
-        oSchema.Check(aConfig, aConfigSchema, "radar.yaml", "")
+        if not IsList(xConfigSchema) return false end
+        nBefore = Len(vProblems)
+        oSchema.Check(xConfig, xConfigSchema, "radar.yaml", "")
         Drain()
-        if Len(aProblems) > nBefore return false end
+        if Len(vProblems) > nBefore return false end
         Voice()
-        if Len(aProblems) > nBefore return false end
-        tConfig = JWrite(aConfig, 0) + Char(10)
+        if Len(vProblems) > nBefore return false end
+        tConfig = JWrite(xConfig, 0) + Char(10)
         return true
     end
     # The project's own voice: a text of radar.yaml may say {project}, {topic}, {watch} or {title},
@@ -574,9 +574,9 @@ class FeedRun
     # project speaks for that project once its names change. {week} is left for the site, which
     # fills it on the page of an earlier week. Any other {name} is refused, so a typo never reaches a reader.
     def Voice
-        aVoice = [["{project}", Conf("project.name")], ["{topic}", Conf("watch.topic")], ["{watch}", Conf("watch.name")]]
-        aVoice + ["{title}", VoiceText(Conf("watch.title"), ".watch.title")]
-        aConfig = VoiceWalk(aConfig, "")
+        vVoice = [["{project}", Conf("project.name")], ["{topic}", Conf("watch.topic")], ["{watch}", Conf("watch.name")]]
+        vVoice + ["{title}", VoiceText(Conf("watch.title"), ".watch.title")]
+        xConfig = VoiceWalk(xConfig, "")
     end
     def VoiceWalk(xV, tWhere)
         if IsString(xV) return VoiceText(xV, tWhere) end
@@ -590,20 +590,20 @@ class FeedRun
             return ["{", aP]
         end
         if Len(xV) = 2 and IsString(xV[1]) and xV[1] = "["
-            aI = xV[2]
-            nI = Len(aI)
+            xI = xV[2]
+            nI = Len(xI)
             for i = 1 to nI
-                aI[i] = VoiceWalk(aI[i], tWhere + "[" + String(i) + "]")
+                xI[i] = VoiceWalk(xI[i], tWhere + "[" + String(i) + "]")
             end
-            return ["[", aI]
+            return ["[", xI]
         end
         return xV
     end
     def VoiceText(tC, tWhere)
         if SubStr(tC, "{") = 0 return tC end
-        nV = Len(aVoice)
+        nV = Len(vVoice)
         for k = 1 to nV
-            tC = SubStr(tC, aVoice[k][1], aVoice[k][2])
+            tC = SubStr(tC, vVoice[k][1], vVoice[k][2])
         end
         tRest = SubStr(tC, "{week}", "")
         nOpen = SubStr(tRest, "{")
@@ -617,7 +617,7 @@ class FeedRun
     end
     # One value of the configuration by its dotted path, "watch.repository".
     def Conf(tPath)
-        xV = aConfig
+        xV = xConfig
         tPart = ""
         tP = tPath + "."
         nP = Len(tP)
@@ -641,21 +641,21 @@ class FeedRun
             return
         end
         tWant = Conf("feed.signer") + " " + 'namespaces="' + Conf("feed.namespace") + '" ssh-ed25519 ' + Conf("feed.key")
-        aLines = Str2List(StripCR(Read(tPath)))
-        nL1 = Len(aLines)
+        xLines = Str2List(StripCR(Read(tPath)))
+        nL1 = Len(xLines)
         for i = 1 to nL1
-            if Trim(aLines[i]) = tWant return end
+            if Trim(xLines[i]) = tWant return end
         end
         Problem("radar.yaml", "feed.key, feed.signer and feed.namespace must match a line of keys/allowed_signers: " + tWant)
     end
     # digests/<YYYY-Www>.md, as a sorted JSON list of weeks: the weeks a survey has closed.
     def DigestWeeks
         aW = []
-        aIn = Dir(tRoot + "/digests")
-        nIn = Len(aIn)
+        xIn = Dir(tRoot + "/digests")
+        nIn = Len(xIn)
         for i = 1 to nIn
-            tN = aIn[i][1]
-            if aIn[i][2] = 0 and Len(tN) = 11 and Right(tN, 3) = ".md" and tN[5] = "-" and tN[6] = "W"
+            tN = xIn[i][1]
+            if xIn[i][2] = 0 and Len(tN) = 11 and Right(tN, 3) = ".md" and tN[5] = "-" and tN[6] = "W"
                 aW + Left(tN, 8)
             end
         end
@@ -669,34 +669,34 @@ class FeedRun
     # Cross-checks the entries read so far, builds both feeds and checks them. cMode "generate"
     # writes changed files, "check" compares them with what is committed, "none" touches no file.
     def Finish(tMode)
-        nEntries = Len(aEntries)
+        nEntries = Len(vEntries)
         if nEntries = 0
             Problem("items/", "there is no entry, so the feed has no date to carry")
             return
         end
         CrossChecks()
-        if Len(aProblems) > 0
+        if Len(vProblems) > 0
             Say("nothing written: the entries above must be corrected first")
             return
         end
 
         SortEntries()
-        aIndex = BuildIndex()
-        aFeed = BuildJsonFeed()
+        xIndex = BuildIndex()
+        xFeed = BuildJsonFeed()
 
-        aIndexSchema = oSchema.SchemaFile("feed.schema.json")
+        xIndexSchema = oSchema.SchemaFile("feed.schema.json")
         Drain()
-        if not IsList(aIndexSchema) return end
-        oSchema.Check(aIndex, aIndexSchema, "feed/index.json", "")
+        if not IsList(xIndexSchema) return end
+        oSchema.Check(xIndex, xIndexSchema, "feed/index.json", "")
         Drain()
-        CheckJsonFeed(aFeed)
-        if Len(aProblems) > 0
+        CheckJsonFeed(xFeed)
+        if Len(vProblems) > 0
             Say("nothing written: the generated feed does not pass its own check")
             return
         end
 
-        tIndex = JWrite(aIndex, 0) + Char(10)
-        tFeed = JWrite(aFeed, 0) + Char(10)
+        tIndex = JWrite(xIndex, 0) + Char(10)
+        tFeed = JWrite(xFeed, 0) + Char(10)
         if tMode = "none" return end
         Settle(tMode, "feed/index.json", tIndex)
         Settle(tMode, "feed/feed.json", tFeed)
@@ -727,11 +727,11 @@ class FeedRun
     end
     def ReadEntries
         tItems = tRoot + "/items"
-        aTop = Dir(tItems)
-        nTop = Len(aTop)
+        xTop = Dir(tItems)
+        nTop = Len(xTop)
         for i = 1 to nTop
-            tName = aTop[i][1]
-            if aTop[i][2] = 0
+            tName = xTop[i][1]
+            if xTop[i][2] = 0
                 if tName != "README.md"
                     Problem("items/" + tName, "an entry lives in a year folder, items/<year>/<id>.md")
                 end
@@ -741,12 +741,12 @@ class FeedRun
                 Problem("items/" + tName + "/", "a folder under items/ is a year, four digits")
                 loop
             end
-            aYear = Dir(tItems + "/" + tName)
-            nYear = Len(aYear)
+            xYear = Dir(tItems + "/" + tName)
+            nYear = Len(xYear)
             for j = 1 to nYear
-                tFile = aYear[j][1]
+                tFile = xYear[j][1]
                 tRel = "items/" + tName + "/" + tFile
-                if aYear[j][2] = 1
+                if xYear[j][2] = 1
                     Problem(tRel + "/", "a year folder holds entries only, no folders")
                     loop
                 end
@@ -761,12 +761,12 @@ class FeedRun
     # One entry, given as the text of its file: the guard calls this with texts it has broken.
     def AddEntryText(tRel, tYear, tFile, tFileText)
         tText = StripCR(tFileText)
-        aLines = Str2List(tText)
-        nLines = Len(aLines)
+        xLines = Str2List(tText)
+        nLines = Len(xLines)
         nOpen = 0
         nClose = 0
         for i = 1 to nLines
-            if Trim(aLines[i]) = "```json"
+            if Trim(xLines[i]) = "```json"
                 nOpen = i
                 exit
             end
@@ -776,7 +776,7 @@ class FeedRun
             return
         end
         for i = nOpen + 1 to nLines
-            if Trim(aLines[i]) = "```"
+            if Trim(xLines[i]) = "```"
                 nClose = i
                 exit
             end
@@ -787,29 +787,29 @@ class FeedRun
         end
         tJson = ""
         for i = nOpen + 1 to nClose - 1
-            tJson += aLines[i] + Char(10)
+            tJson += xLines[i] + Char(10)
         end
 
         oReader = new JsonReader
         try
-            aData = oReader.Parse(tJson, tRel)
+            xData = oReader.Parse(tJson, tRel)
         catch e
             Problem(tRel, "its json block is not valid JSON: " + e.Message())
             return
         end
 
-        nBefore = Len(aProblems)
-        oSchema.Check(aData, aItemSchema, tRel, "")
+        nBefore = Len(vProblems)
+        oSchema.Check(xData, xItemSchema, tRel, "")
         Drain()
-        if Len(aProblems) > nBefore return end
-        EntryRules(tRel, tYear, tFile, aData)
-        if Len(aProblems) > nBefore return end
-        aEntries + [tRel, aData]
+        if Len(vProblems) > nBefore return end
+        EntryRules(tRel, tYear, tFile, xData)
+        if Len(vProblems) > nBefore return end
+        vEntries + [tRel, xData]
     end
     # What the schema cannot say, docs/FEED.md does.
-    def EntryRules(tRel, tYear, tFile, aData)
-        tId = JGet(aData, "id")
-        tDate = JGet(aData, "date")
+    def EntryRules(tRel, tYear, tFile, xData)
+        tId = JGet(xData, "id")
+        tDate = JGet(xData, "date")
         if tFile != tId + ".md"
             Problem(tRel, "the file is named after its id, so it should be " + tId + ".md")
         end
@@ -819,59 +819,59 @@ class FeedRun
         if Left(tDate, 4) != tYear
             Problem(tRel, "an entry dated " + tDate + " lives in items/" + Left(tDate, 4) + "/")
         end
-        if SubStr(JGet(aData, "title"), Char(10)) > 0
+        if SubStr(JGet(xData, "title"), Char(10)) > 0
             Problem(tRel, "the title is one line")
         end
-        if JHas(aData, "url")
+        if JHas(xData, "url")
             Problem(tRel, "an entry does not write its url: the generator adds it to the index")
         end
-        if JHas(aData, "updated")
-            if Before(JGet(aData, "updated"), tDate)
-                Problem(tRel, "updated, " + JGet(aData, "updated") + ", is before the entry's date")
+        if JHas(xData, "updated")
+            if Before(JGet(xData, "updated"), tDate)
+                Problem(tRel, "updated, " + JGet(xData, "updated") + ", is before the entry's date")
             end
         end
-        if not Before(tDate, JGet(aData, "review_by"))
-            Problem(tRel, "review_by, " + JGet(aData, "review_by") + ", must come after the entry's date")
+        if not Before(tDate, JGet(xData, "review_by"))
+            Problem(tRel, "review_by, " + JGet(xData, "review_by") + ", must come after the entry's date")
         end
 
         # notice holds one sentence per audience listed, and only for those
-        aAud = JItems(JGet(aData, "audiences"))
-        aNotice = JGet(aData, "notice")
-        aKeys = JKeys(aNotice)
-        nK = Len(aKeys)
+        xAud = JItems(JGet(xData, "audiences"))
+        xNotice = JGet(xData, "notice")
+        xKeys = JKeys(xNotice)
+        nK = Len(xKeys)
         for i = 1 to nK
-            if Find(aAud, aKeys[i]) = 0
-                Problem(tRel, "notice has a sentence for " + aKeys[i] + ", which audiences does not list")
+            if Find(xAud, xKeys[i]) = 0
+                Problem(tRel, "notice has a sentence for " + xKeys[i] + ", which audiences does not list")
             end
         end
-        nA = Len(aAud)
+        nA = Len(xAud)
         for i = 1 to nA
-            if Find(aKeys, aAud[i]) = 0
-                Problem(tRel, "audiences lists " + aAud[i] + ", and notice has no sentence for it")
+            if Find(xKeys, xAud[i]) = 0
+                Problem(tRel, "audiences lists " + xAud[i] + ", and notice has no sentence for it")
             end
         end
-        ActionDates(tRel, aData)
+        ActionDates(tRel, xData)
     end
     # Every action carries the day it reached each stage, so the radar site can say how fast Softanza
     # reacts. A stage is dated between the entry's date and the day the entry was last written, the
     # stages run in order, the current state has its date, and no stage beyond it is dated.
-    def ActionDates(tRel, aData)
-        if not JHas(aData, "actions") return end
-        aStages = ["proposed", "routed", "in-progress", "done"]
-        tDate = JGet(aData, "date")
+    def ActionDates(tRel, xData)
+        if not JHas(xData, "actions") return end
+        vStages = ["proposed", "routed", "in-progress", "done"]
+        tDate = JGet(xData, "date")
         tLast = tDate
-        if JHas(aData, "updated") tLast = JGet(aData, "updated") end
-        aAct = JItems(JGet(aData, "actions"))
-        nAct = Len(aAct)
+        if JHas(xData, "updated") tLast = JGet(xData, "updated") end
+        xAct = JItems(JGet(xData, "actions"))
+        nAct = Len(xAct)
         for i = 1 to nAct
-            aJA = aAct[i]
-            tWhere = "action " + String(i) + " (" + JGet(aJA, "area") + ")"
-            tState = JGet(aJA, "state")
-            if not JHas(aJA, "dates")
+            xJA = xAct[i]
+            tWhere = "action " + String(i) + " (" + JGet(xJA, "area") + ")"
+            tState = JGet(xJA, "state")
+            if not JHas(xJA, "dates")
                 Problem(tRel, tWhere + " has no dates: give the day it reached each stage, at least proposed")
                 loop
             end
-            aD = JGet(aJA, "dates")
+            aD = JGet(xJA, "dates")
             if JKind(aD) != "object"
                 Problem(tRel, tWhere + " dates is an object of stage: day")
                 loop
@@ -880,7 +880,7 @@ class FeedRun
             nK = Len(aK)
             for j = 1 to nK
                 tK = aK[j]
-                if Find(aStages, tK) = 0 and tK != "declined"
+                if Find(vStages, tK) = 0 and tK != "declined"
                     Problem(tRel, tWhere + " dates a stage named " + tK + ", and the stages are proposed, routed, in-progress, done, declined")
                     loop
                 end
@@ -902,56 +902,56 @@ class FeedRun
             if not JHas(aD, tState)
                 Problem(tRel, tWhere + " is " + tState + " and does not date that stage")
             end
-            nNow = Find(aStages, tState)
+            nNow = Find(vStages, tState)
             tPrev = ""
-            nS = Len(aStages)
+            nS = Len(vStages)
             for j = 1 to nS
-                if not JHas(aD, aStages[j]) loop end
+                if not JHas(aD, vStages[j]) loop end
                 if nNow > 0 and j > nNow
-                    Problem(tRel, tWhere + " is " + tState + " and dates a later stage, " + aStages[j])
+                    Problem(tRel, tWhere + " is " + tState + " and dates a later stage, " + vStages[j])
                 end
-                tD = JGet(aD, aStages[j])
+                tD = JGet(aD, vStages[j])
                 if tPrev != "" and Before(tD, tPrev)
-                    Problem(tRel, tWhere + " reached " + aStages[j] + " on " + tD + ", before an earlier stage (" + tPrev + ")")
+                    Problem(tRel, tWhere + " reached " + vStages[j] + " on " + tD + ", before an earlier stage (" + tPrev + ")")
                 end
                 tPrev = tD
             end
         end
     end
     def CrossChecks
-        nN = Len(aEntries)
-        aIds = []
+        nN = Len(vEntries)
+        vIds = []
         for i = 1 to nN
-            aIds + JGet(aEntries[i][2], "id")
+            vIds + JGet(vEntries[i][2], "id")
         end
         for i = 1 to nN
             for j = i + 1 to nN
-                if aIds[i] = aIds[j]
-                    Problem(aEntries[j][1], "its id " + aIds[j] + " is already used by " + aEntries[i][1])
+                if vIds[i] = vIds[j]
+                    Problem(vEntries[j][1], "its id " + vIds[j] + " is already used by " + vEntries[i][1])
                 end
             end
         end
         for i = 1 to nN
-            aData = aEntries[i][2]
-            if JHas(aData, "supersedes")
-                tTarget = JGet(aData, "supersedes")
-                if tTarget = aIds[i]
-                    Problem(aEntries[i][1], "an entry cannot supersede itself")
-                elseif Find(aIds, tTarget) = 0
-                    Problem(aEntries[i][1], "supersedes " + tTarget + ", and there is no entry with that id")
+            xData = vEntries[i][2]
+            if JHas(xData, "supersedes")
+                tTarget = JGet(xData, "supersedes")
+                if tTarget = vIds[i]
+                    Problem(vEntries[i][1], "an entry cannot supersede itself")
+                elseif Find(vIds, tTarget) = 0
+                    Problem(vEntries[i][1], "supersedes " + tTarget + ", and there is no entry with that id")
                 end
             end
         end
     end
     # Newest date first, then by id.
     def SortEntries
-        nN = Len(aEntries)
+        nN = Len(vEntries)
         for i = 2 to nN
             xJ = i
-            while xJ > 1 and ComesFirst(aEntries[xJ][2], aEntries[xJ - 1][2])
-                aTmp = aEntries[xJ]
-                aEntries[xJ] = aEntries[xJ - 1]
-                aEntries[xJ - 1] = aTmp
+            while xJ > 1 and ComesFirst(vEntries[xJ][2], vEntries[xJ - 1][2])
+                xTmp = vEntries[xJ]
+                vEntries[xJ] = vEntries[xJ - 1]
+                vEntries[xJ - 1] = xTmp
                 xJ--
             end
         end
@@ -961,21 +961,21 @@ class FeedRun
         if xDa != xDb return Before(xDb, xDa) end
         return Before(JGet(xA, "id"), JGet(xB, "id"))
     end
-    def EntryUrl(aData)
-        tId = JGet(aData, "id")
+    def EntryUrl(xData)
+        tId = JGet(xData, "id")
         return Conf("watch.repository") + "/blob/main/items/" + Left(tId, 4) + "/" + tId + ".md"
     end
     # The site for agents and language models (the llms.txt convention): the site itself is drawn by a
     # script, so an agent that fetches its address reads almost nothing. llms.txt says what the watch is
     # and where its data lives -- the signed feeds, one Markdown file per signal, the documents -- and
     # llms-full.txt carries every signal in plain text. Both are generated from the entries, like the feed.
-    def Str(aObj, tKey)
-        xV = JGet(aObj, tKey)
+    def Str(xObj, tKey)
+        xV = JGet(xObj, tKey)
         if IsString(xV) return xV end
         return ""
     end
-    def PageUrl(aData)
-        tId = JGet(aData, "id")
+    def PageUrl(xData)
+        tId = JGet(xData, "id")
         return Conf("watch.pages") + "items/" + Left(tId, 4) + "/" + tId + ".md"
     end
     def BuildLlms
@@ -992,9 +992,9 @@ class FeedRun
         tC += "- [Configuration](" + tP + "app/config.json): the project, its readers, its stances and where its map is" + tNL
         tC += "- [Map](" + tP + Conf("map") + "): the project's layers, parts, domains and concerns" + tNL + tNL
         tC += "## Signals, newest first" + tNL
-        nN = Len(aEntries)
+        nN = Len(vEntries)
         for i = 1 to nN
-            xO = aEntries[i][2]
+            xO = vEntries[i][2]
             tC += "- [" + Str(xO, "title") + "](" + PageUrl(xO) + "): " + Str(xO, "level") + ", " + Str(xO, "kind") + ", " +
                  Str(xO, "stance") + ", " + Str(xO, "date") + ". " + Str(xO, "summary") + tNL
         end
@@ -1012,9 +1012,9 @@ class FeedRun
         tNL = Char(10)
         tC = "# " + Conf("watch.title") + ": every signal, in full" + tNL + tNL
         tC += "> " + Conf("watch.tagline") + ". Generated from the signed feed (" + Conf("watch.pages") + "feed/index.json); the feed is the reference." + tNL
-        nN = Len(aEntries)
+        nN = Len(vEntries)
         for i = 1 to nN
-            xO = aEntries[i][2]
+            xO = vEntries[i][2]
             tC += tNL + "## " + Str(xO, "title") + tNL + tNL
             tC += "- id: " + Str(xO, "id") + tNL + "- date: " + Str(xO, "date") + tNL + "- level: " + Str(xO, "level") + tNL +
                  "- kind: " + Str(xO, "kind") + tNL + "- stance: " + Str(xO, "stance") + tNL + "- relevance: " + Str(xO, "relevance") + tNL +
@@ -1054,26 +1054,26 @@ class FeedRun
     # regenerates to the same bytes.
     def NewestDay
         tMax = ""
-        nN = Len(aEntries)
+        nN = Len(vEntries)
         for i = 1 to nN
-            aData = aEntries[i][2]
-            tD = JGet(aData, "date")
+            xData = vEntries[i][2]
+            tD = JGet(xData, "date")
             if tMax = "" or Before(tMax, tD) tMax = tD end
-            if JHas(aData, "updated")
-                tU = JGet(aData, "updated")
+            if JHas(xData, "updated")
+                tU = JGet(xData, "updated")
                 if Before(tMax, tU) tMax = tU end
             end
         end
         return tMax + "T00:00:00Z"
     end
     def BuildIndex
-        aItems = []
-        nN = Len(aEntries)
+        xItems = []
+        nN = Len(vEntries)
         for i = 1 to nN
-            aData = aEntries[i][2]
-            aPairs = aData[2]
-            aPairs + ["url", EntryUrl(aData)]
-            aItems + ["{", aPairs]
+            xData = vEntries[i][2]
+            xPairs = xData[2]
+            xPairs + ["url", EntryUrl(xData)]
+            xItems + ["{", xPairs]
         end
         return ["{", [
             ["feed", "radar"],
@@ -1081,40 +1081,40 @@ class FeedRun
             ["updated", NewestDay()],
             ["home", Conf("watch.repository")],
             ["title", Conf("watch.title")],
-            ["items", ["[", aItems]]
+            ["items", ["[", xItems]]
         ]]
     end
     # The same entries as a JSON Feed 1.1 (docs/FEED.md, "The JSON Feed").
     def BuildJsonFeed
-        aItems = []
-        nN = Len(aEntries)
+        xItems = []
+        nN = Len(vEntries)
         for i = 1 to nN
-            aData = aEntries[i][2]
-            aTags = [JGet(aData, "kind"), JGet(aData, "stance"), JGet(aData, "level")]
-            if JHas(aData, "tags")
-                aOwn = JItems(JGet(aData, "tags"))
-                nT = Len(aOwn)
+            xData = vEntries[i][2]
+            vTags = [JGet(xData, "kind"), JGet(xData, "stance"), JGet(xData, "level")]
+            if JHas(xData, "tags")
+                xOwn = JItems(JGet(xData, "tags"))
+                nT = Len(xOwn)
                 for t = 1 to nT
-                    aTags + aOwn[t]
+                    vTags + xOwn[t]
                 end
             end
-            tDate = JGet(aData, "date")
-            aPairs = [
-                ["id", JGet(aData, "id")],
-                ["url", EntryUrl(aData)],
-                ["title", JGet(aData, "title")],
-                ["summary", JGet(aData, "summary")],
-                ["content_text", JGet(aData, "summary")],
+            tDate = JGet(xData, "date")
+            xPairs = [
+                ["id", JGet(xData, "id")],
+                ["url", EntryUrl(xData)],
+                ["title", JGet(xData, "title")],
+                ["summary", JGet(xData, "summary")],
+                ["content_text", JGet(xData, "summary")],
                 ["date_published", tDate + "T00:00:00Z"]
             ]
-            if JHas(aData, "updated")
-                tUp = JGet(aData, "updated")
+            if JHas(xData, "updated")
+                tUp = JGet(xData, "updated")
                 if tUp != tDate
-                    aPairs + ["date_modified", tUp + "T00:00:00Z"]
+                    xPairs + ["date_modified", tUp + "T00:00:00Z"]
                 end
             end
-            aPairs + ["tags", ["[", aTags]]
-            aItems + ["{", aPairs]
+            xPairs + ["tags", ["[", vTags]]
+            xItems + ["{", xPairs]
         end
         return ["{", [
             ["version", "https://jsonfeed.org/version/1.1"],
@@ -1123,42 +1123,42 @@ class FeedRun
             ["feed_url", SubStr(Conf("watch.repository"), "https://github.com/", "https://raw.githubusercontent.com/") + "/main/feed/feed.json"],
             ["description", "A public watch on what is changing in " + Conf("watch.topic") + ", read from " + Conf("project.name") + "'s point of view."],
             ["language", Conf("watch.language")],
-            ["items", ["[", aItems]]
+            ["items", ["[", xItems]]
         ]]
     end
     # What JSON Feed 1.1 requires of a feed and of each item.
-    def CheckJsonFeed(aFeed)
+    def CheckJsonFeed(xFeed)
         tW = "feed/feed.json"
-        if JGet(aFeed, "version") != "https://jsonfeed.org/version/1.1"
+        if JGet(xFeed, "version") != "https://jsonfeed.org/version/1.1"
             Problem(tW, "version is not https://jsonfeed.org/version/1.1")
         end
-        if not JIsString(JGet(aFeed, "title"))
+        if not JIsString(JGet(xFeed, "title"))
             Problem(tW, "has no title")
         end
-        aItems = JItems(JGet(aFeed, "items"))
-        nN = Len(aItems)
+        xItems = JItems(JGet(xFeed, "items"))
+        nN = Len(xItems)
         if nN != nEntries
             Problem(tW, "carries " + String(nN) + " items for " + String(nEntries) + " entries")
         end
         for i = 1 to nN
-            aJI = aItems[i]
-            tId = JGet(aJI, "id")
+            xJI = xItems[i]
+            tId = JGet(xJI, "id")
             if not JIsString(tId)
                 Problem(tW, "item " + String(i) + " has no id")
                 loop
             end
-            if not (JHas(aJI, "content_text") or JHas(aJI, "content_html"))
+            if not (JHas(xJI, "content_text") or JHas(xJI, "content_html"))
                 Problem(tW, tId + " has neither content_text nor content_html")
             end
-            if not IsDateTime(JGet(aJI, "date_published"))
+            if not IsDateTime(JGet(xJI, "date_published"))
                 Problem(tW, tId + ": date_published is not an RFC 3339 date-time")
             end
-            if JHas(aJI, "date_modified") and not IsDateTime(JGet(aJI, "date_modified"))
+            if JHas(xJI, "date_modified") and not IsDateTime(JGet(xJI, "date_modified"))
                 Problem(tW, tId + ": date_modified is not an RFC 3339 date-time")
             end
         end
-end
     end
+end
 # ---------------------------------------------------------------- JSON reader
 
 class JsonReader
@@ -1223,48 +1223,48 @@ class JsonReader
     end
     def ReadObject
         nPos++
-        aPairs = []
-        aSeen = []
+        xPairs = []
+        vSeen = []
         SkipSpace()
         if nPos <= nSize and tText[nPos] = "}"
             nPos++
-            return ["{", aPairs]
+            return ["{", xPairs]
         end
         while true
             SkipSpace()
             if nPos > nSize or tText[nPos] != '"' Fail("expected a key in double quotes") end
             tKey = ReadString()
-            if Find(aSeen, tKey) > 0 Fail("the key " + tKey + " is written twice") end
-            aSeen + tKey
+            if Find(vSeen, tKey) > 0 Fail("the key " + tKey + " is written twice") end
+            vSeen + tKey
             SkipSpace()
             if nPos > nSize or tText[nPos] != ":" Fail("expected : after the key " + tKey) end
             nPos++
             xV = ReadValue()
-            aPairs + [tKey, xV]
+            xPairs + [tKey, xV]
             SkipSpace()
             if nPos > nSize Fail("the object is never closed") end
             tC = tText[nPos]
             nPos++
-            if tC = "}" return ["{", aPairs] end
+            if tC = "}" return ["{", xPairs] end
             if tC != "," Fail("expected , or } after the value of " + tKey) end
         end
     end
     def ReadArray
         nPos++
-        aItems = []
+        xItems = []
         SkipSpace()
         if nPos <= nSize and tText[nPos] = "]"
             nPos++
-            return ["[", aItems]
+            return ["[", xItems]
         end
         while true
             xV = ReadValue()
-            aItems + xV
+            xItems + xV
             SkipSpace()
             if nPos > nSize Fail("the array is never closed") end
             tC = tText[nPos]
             nPos++
-            if tC = "]" return ["[", aItems] end
+            if tC = "]" return ["[", xItems] end
             if tC != "," Fail("expected , or ] in an array") end
         end
     end
@@ -1344,8 +1344,8 @@ class JsonReader
             while nPos <= nSize and IsDigit(tText[nPos]) nPos++ end
         end
         return ["#", SubStr(tText, nStart, nPos - nStart)]
-end
     end
+end
 # ---------------------------------------------------------------- schema check
 #
 # The part of JSON Schema 2020-12 that schema/ uses. A keyword this check does not implement is
@@ -1353,67 +1353,67 @@ end
 
 class SchemaCheck
     tDir = ""
-    aSaid = []       # what this check found, taken by FeedRun.Drain
-    aCache = []      # [ [cName, oSchema], ... ]
+    xSaid = []       # what this check found, taken by FeedRun.Drain
+    vCache = []      # [ [cName, oSchema], ... ]
 
     def SchemaFile(tName)
-        nN = Len(aCache)
+        nN = Len(vCache)
         for i = 1 to nN
-            if aCache[i][1] = tName return aCache[i][2] end
+            if vCache[i][1] = tName return vCache[i][2] end
         end
         tPath = tDir + "/" + tName
         if not FExists(tPath)
-            aSaid + ("schema/" + tName + ": is referred to and does not exist")
-            return null
+            xSaid + ("schema/" + tName + ": is referred to and does not exist")
+            return ""
         end
         oReader = new JsonReader
         try
-            aJS = oReader.Parse(StripCR(Read(tPath)), "schema/" + tName)
+            xJS = oReader.Parse(StripCR(Read(tPath)), "schema/" + tName)
         catch e
-            aSaid + ("schema/" + tName + ": is not valid JSON: " + e.Message())
-            return null
+            xSaid + ("schema/" + tName + ": is not valid JSON: " + e.Message())
+            return ""
         end
-        aCache + [tName, aJS]
-        return aJS
+        vCache + [tName, xJS]
+        return xJS
     end
     def Say(tWhere, tPath, tMsg)
         if tPath = ""
-            aSaid + (tWhere + ": " + tMsg)
+            xSaid + (tWhere + ": " + tMsg)
         else
-            aSaid + (tWhere + ": " + tPath + ": " + tMsg)
+            xSaid + (tWhere + ": " + tPath + ": " + tMsg)
         end
     end
-    def Check(xV, aJS, tWhere, tPath)
-        if JKind(aJS) = "boolean"
-            if aJS[1] = "f" Say(tWhere, tPath, "is not allowed here") end
+    def Check(xV, xJS, tWhere, tPath)
+        if JKind(xJS) = "boolean"
+            if xJS[1] = "f" Say(tWhere, tPath, "is not allowed here") end
             return
         end
-        aKnown = ["$schema", "$id", "title", "description", "$ref", "allOf", "type", "const", "enum",
+        vKnown = ["$schema", "$id", "title", "description", "$ref", "allOf", "type", "const", "enum",
                   "required", "properties", "additionalProperties", "propertyNames", "minProperties",
                   "items", "minItems", "uniqueItems", "minLength", "pattern", "format"]
-        aKeys = JKeys(aJS)
-        nK = Len(aKeys)
+        xKeys = JKeys(xJS)
+        nK = Len(xKeys)
         for i = 1 to nK
-            if Find(aKnown, aKeys[i]) = 0
-                Say(tWhere, tPath, "the schema uses " + aKeys[i] + ", which tools/feed.haro does not check yet")
+            if Find(vKnown, xKeys[i]) = 0
+                Say(tWhere, tPath, "the schema uses " + xKeys[i] + ", which tools/feed.haro does not check yet")
             end
         end
 
-        if JHas(aJS, "$ref")
-            tRef = JGet(aJS, "$ref")
+        if JHas(xJS, "$ref")
+            tRef = JGet(xJS, "$ref")
             nSlash = 0
             nRef = Len(tRef)
             for i = 1 to nRef
                 if tRef[i] = "/" nSlash = i end
             end
-            aRef = SchemaFile(SubStr(tRef, nSlash + 1, Len(tRef) - nSlash))
-            if IsList(aRef) Check(xV, aRef, tWhere, tPath) end
+            xRef = SchemaFile(SubStr(tRef, nSlash + 1, Len(tRef) - nSlash))
+            if IsList(xRef) Check(xV, xRef, tWhere, tPath) end
         end
-        if JHas(aJS, "allOf")
-            aAll = JItems(JGet(aJS, "allOf"))
-            nAll = Len(aAll)
+        if JHas(xJS, "allOf")
+            xAll = JItems(JGet(xJS, "allOf"))
+            nAll = Len(xAll)
             for i = 1 to nAll
-                Check(xV, aAll[i], tWhere, tPath)
+                Check(xV, xAll[i], tWhere, tPath)
             end
         end
 
@@ -1421,8 +1421,8 @@ class SchemaCheck
         tShown = tPath
         if tShown = "" tShown = "the entry" end
 
-        if JHas(aJS, "type")
-            tT = JGet(aJS, "type")
+        if JHas(xJS, "type")
+            tT = JGet(xJS, "type")
             if not IsString(tT)
                 Say(tWhere, tPath, "the schema gives a list of types, which tools/feed.haro does not check yet")
                 return
@@ -1437,25 +1437,25 @@ class SchemaCheck
                 return
             end
         end
-        if JHas(aJS, "const")
-            if not JEqual(xV, JGet(aJS, "const"))
-                Say(tWhere, tPath, "should be " + JWrite(JGet(aJS, "const"), 0))
+        if JHas(xJS, "const")
+            if not JEqual(xV, JGet(xJS, "const"))
+                Say(tWhere, tPath, "should be " + JWrite(JGet(xJS, "const"), 0))
             end
         end
-        if JHas(aJS, "enum")
-            aE = JItems(JGet(aJS, "enum"))
-            nE = Len(aE)
+        if JHas(xJS, "enum")
+            xE = JItems(JGet(xJS, "enum"))
+            nE = Len(xE)
             bFound = false
-            aShow = []
+            vShow = []
             for i = 1 to nE
-                if JEqual(xV, aE[i]) bFound = true end
-                aShow + JWrite(aE[i], 0)
+                if JEqual(xV, xE[i]) bFound = true end
+                vShow + JWrite(xE[i], 0)
             end
             if not bFound
                 tList = ""
                 for i = 1 to nE
                     if i > 1 tList += ", " end
-                    tList += aShow[i]
+                    tList += vShow[i]
                 end
                 tGot = "this value"
                 if xK = "string" tGot = JQuote(xV) end
@@ -1464,26 +1464,26 @@ class SchemaCheck
         end
 
         if xK = "string"
-            if JHas(aJS, "minLength")
-                aMin = JGet(aJS, "minLength")
-                if CodePoints(xV) < Number(aMin[2])
-                    Say(tWhere, tShown, "is shorter than " + aMin[2] + " characters")
+            if JHas(xJS, "minLength")
+                xMin = JGet(xJS, "minLength")
+                if CodePoints(xV) < Number(xMin[2])
+                    Say(tWhere, tShown, "is shorter than " + xMin[2] + " characters")
                 end
             end
-            if JHas(aJS, "pattern")
+            if JHas(xJS, "pattern")
                 oRx = new Pattern
                 try
-                    bMatch = oRx.Search(JGet(aJS, "pattern"), xV)
+                    bMatch = oRx.Search(JGet(xJS, "pattern"), xV)
                 catch e
                     Say(tWhere, tShown, "the schema's pattern cannot be read: " + e.Message())
                     bMatch = true
                 end
                 if not bMatch
-                    Say(tWhere, tShown, JQuote(xV) + " does not match " + JGet(aJS, "pattern"))
+                    Say(tWhere, tShown, JQuote(xV) + " does not match " + JGet(xJS, "pattern"))
                 end
             end
-            if JHas(aJS, "format")
-                tF = JGet(aJS, "format")
+            if JHas(xJS, "format")
+                tF = JGet(xJS, "format")
                 if tF = "date"
                     if not IsDate(xV) Say(tWhere, tShown, JQuote(xV) + " is not a date, YYYY-MM-DD") end
                 elseif tF = "date-time"
@@ -1495,69 +1495,69 @@ class SchemaCheck
         end
 
         if xK = "array"
-            aI = JItems(xV)
-            nI = Len(aI)
-            if JHas(aJS, "minItems")
-                aMin = JGet(aJS, "minItems")
-                if nI < Number(aMin[2])
-                    Say(tWhere, tShown, "needs at least " + aMin[2] + " item(s)")
+            xI = JItems(xV)
+            nI = Len(xI)
+            if JHas(xJS, "minItems")
+                xMin = JGet(xJS, "minItems")
+                if nI < Number(xMin[2])
+                    Say(tWhere, tShown, "needs at least " + xMin[2] + " item(s)")
                 end
             end
-            aUniq = ["f"]
-            if JHas(aJS, "uniqueItems") aUniq = JGet(aJS, "uniqueItems") end
-            if aUniq[1] = "t"
+            vUniq = ["f"]
+            if JHas(xJS, "uniqueItems") vUniq = JGet(xJS, "uniqueItems") end
+            if vUniq[1] = "t"
                 for i = 1 to nI
                     for j = i + 1 to nI
-                        if JEqual(aI[i], aI[j])
+                        if JEqual(xI[i], xI[j])
                             Say(tWhere, tShown, "item " + String(j) + " repeats item " + String(i))
                         end
                     end
                 end
             end
-            if JHas(aJS, "items")
-                aIs = JGet(aJS, "items")
+            if JHas(xJS, "items")
+                xIs = JGet(xJS, "items")
                 for i = 1 to nI
-                    Check(aI[i], aIs, tWhere, tPath + "[" + String(i) + "]")
+                    Check(xI[i], xIs, tWhere, tPath + "[" + String(i) + "]")
                 end
             end
         end
 
         if xK = "object"
-            aOwn = JKeys(xV)
-            nO = Len(aOwn)
-            if JHas(aJS, "required")
-                aR = JItems(JGet(aJS, "required"))
-                nR = Len(aR)
+            xOwn = JKeys(xV)
+            nO = Len(xOwn)
+            if JHas(xJS, "required")
+                xR = JItems(JGet(xJS, "required"))
+                nR = Len(xR)
                 for i = 1 to nR
-                    if not JHas(xV, aR[i])
-                        Say(tWhere, tShown, "is missing " + aR[i])
+                    if not JHas(xV, xR[i])
+                        Say(tWhere, tShown, "is missing " + xR[i])
                     end
                 end
             end
-            if JHas(aJS, "minProperties")
-                aMin = JGet(aJS, "minProperties")
-                if nO < Number(aMin[2])
-                    Say(tWhere, tShown, "needs at least " + aMin[2] + " key(s)")
+            if JHas(xJS, "minProperties")
+                xMin = JGet(xJS, "minProperties")
+                if nO < Number(xMin[2])
+                    Say(tWhere, tShown, "needs at least " + xMin[2] + " key(s)")
                 end
             end
-            aProps = ["{", []]
-            if JHas(aJS, "properties") aProps = JGet(aJS, "properties") end
+            vProps = ["{", []]
+            if JHas(xJS, "properties") vProps = JGet(xJS, "properties") end
             for i = 1 to nO
-                tK = aOwn[i]
+                tK = xOwn[i]
                 tSub = tK
                 if tPath != "" tSub = tPath + "." + tK end
-                if JHas(aJS, "propertyNames")
-                    Check(tK, JGet(aJS, "propertyNames"), tWhere, tSub + " (as a key)")
+                if JHas(xJS, "propertyNames")
+                    Check(tK, JGet(xJS, "propertyNames"), tWhere, tSub + " (as a key)")
                 end
-                if JHas(aProps, tK)
-                    Check(JGet(xV, tK), JGet(aProps, tK), tWhere, tSub)
-                elseif JHas(aJS, "additionalProperties")
-                    Check(JGet(xV, tK), JGet(aJS, "additionalProperties"), tWhere, tSub)
+                if JHas(vProps, tK)
+                    Check(JGet(xV, tK), JGet(vProps, tK), tWhere, tSub)
+                elseif JHas(xJS, "additionalProperties")
+                    Check(JGet(xV, tK), JGet(xJS, "additionalProperties"), tWhere, tSub)
                 end
             end
         end
-end
     end
+end
 # ---------------------------------------------------------------- patterns
 #
 # The regular expressions schema/ uses: literals, ., \d \w \s and escaped punctuation,
@@ -1572,18 +1572,18 @@ class Pattern
     def Search(tPattern, tSubject)
         tPat = tPattern
         nAt = 1
-        aSeq = ParseSeq()
+        xSeq = ParseSeq()
         if nAt <= Len(tPat) Raise("an unmatched ) at " + String(nAt)) end
         nS = Len(tSubject)
-        aStart = []
+        vStart = []
         for p = 1 to nS + 1
-            aStart + p
+            vStart + p
         end
-        aEnd = Run(aSeq, tSubject, aStart)
-        return Len(aEnd) > 0
+        xEnd = Run(xSeq, tSubject, vStart)
+        return Len(xEnd) > 0
     end
     def ParseSeq
-        aSeq = []
+        xSeq = []
         nP = Len(tPat)
         while nAt <= nP
             tC = tPat[nAt]
@@ -1591,39 +1591,39 @@ class Pattern
             if tC = "|" Raise("alternation | is not supported") end
             if tC = "^"
                 nAt++
-                aSeq + ["bol", null, 1, 1]
+                xSeq + ["bol", "", 1, 1]
                 loop
             end
             if tC = "$"
                 nAt++
-                aSeq + ["eol", null, 1, 1]
+                xSeq + ["eol", "", 1, 1]
                 loop
             end
             if tC = "("
                 nAt++
-                aInner = ParseSeq()
+                xInner = ParseSeq()
                 if nAt > nP or tPat[nAt] != ")" Raise("a ( is never closed") end
                 nAt++
-                aNode = ["grp", aInner, 1, 1]
+                vNode = ["grp", xInner, 1, 1]
             elseif tC = "["
-                aNode = ["set", ParseClass(), 1, 1]
+                vNode = ["set", ParseClass(), 1, 1]
             elseif tC = "."
                 nAt++
-                aNode = ["set", [0, [[0, 9], [11, 255]]], 1, 1]     # any byte but a line feed
+                vNode = ["set", [0, [[0, 9], [11, 255]]], 1, 1]     # any byte but a line feed
             elseif tC = "\"
                 nAt++
-                aNode = ["set", EscapeSet(), 1, 1]
+                vNode = ["set", EscapeSet(), 1, 1]
             else
                 nAt++
                 nB = Ascii(tC)
-                aNode = ["set", [0, [[nB, nB]]], 1, 1]
+                vNode = ["set", [0, [[nB, nB]]], 1, 1]
             end
-            aQ = ParseQuantifier()
-            aNode[3] = aQ[1]
-            aNode[4] = aQ[2]
-            aSeq + aNode
+            xQ = ParseQuantifier()
+            vNode[3] = xQ[1]
+            vNode[4] = xQ[2]
+            xSeq + vNode
         end
-        return aSeq
+        return xSeq
     end
     # After a backslash: a class letter or a literal character. Returns [negate, ranges].
     def EscapeSet
@@ -1639,7 +1639,7 @@ class Pattern
     def ParseClass
         nAt++
         nNeg = 0
-        aR = []
+        xR = []
         nP = Len(tPat)
         if nAt <= nP and tPat[nAt] = "^"
             nNeg = 1
@@ -1656,10 +1656,10 @@ class Pattern
             bFirst = false
             if tC = "\"
                 nAt++
-                aE = EscapeSet()
-                nE = Len(aE[2])
+                xE = EscapeSet()
+                nE = Len(xE[2])
                 for i = 1 to nE
-                    aR + aE[2][i]
+                    xR + xE[2][i]
                 end
                 loop
             end
@@ -1668,12 +1668,12 @@ class Pattern
             if nAt + 1 <= nP and tPat[nAt] = "-" and tPat[nAt + 1] != "]"
                 nHi = Ascii(tPat[nAt + 1])
                 nAt += 2
-                aR + [nLo, nHi]
+                xR + [nLo, nHi]
             else
-                aR + [nLo, nLo]
+                xR + [nLo, nLo]
             end
         end
-        return [nNeg, aR]
+        return [nNeg, xR]
     end
     def ParseQuantifier
         nP = Len(tPat)
@@ -1715,70 +1715,70 @@ class Pattern
         return [Number(tLo), Number(tHi)]
     end
     # Every position reachable after matching the sequence from any of the given positions.
-    def Run(aSeq, tS, aPos)
-        nN = Len(aSeq)
+    def Run(xSeq, tS, xPos)
+        nN = Len(xSeq)
         for i = 1 to nN
-            aPos = Repeat(aSeq[i], tS, aPos)
-            if Len(aPos) = 0 return [] end
+            xPos = Repeat(xSeq[i], tS, xPos)
+            if Len(xPos) = 0 return [] end
         end
-        return aPos
+        return xPos
     end
-    def Repeat(aNode, tS, aPos)
-        nMin = aNode[3]
-        nMax = aNode[4]
-        aOut = []
-        if nMin = 0 aOut = aPos end
-        aCur = aPos
+    def Repeat(vNode, tS, xPos)
+        nMin = vNode[3]
+        nMax = vNode[4]
+        xOut = []
+        if nMin = 0 xOut = xPos end
+        xCur = xPos
         nGuard = Len(tS) + 2
         nK = 0
         while true
             nK++
-            aCur = StepOnce(aNode, tS, aCur)
-            if Len(aCur) = 0 exit end
-            if nK >= nMin aOut = Union(aOut, aCur) end
+            xCur = StepOnce(vNode, tS, xCur)
+            if Len(xCur) = 0 exit end
+            if nK >= nMin xOut = Union(xOut, xCur) end
             if nMax != -1 and nK >= nMax exit end
             if nK > nGuard and nK > nMin exit end
         end
-        return aOut
+        return xOut
     end
-    def StepOnce(aNode, tS, aPos)
-        tKind = aNode[1]
+    def StepOnce(vNode, tS, xPos)
+        tKind = vNode[1]
         nS = Len(tS)
-        aOut = []
-        nN = Len(aPos)
-        if tKind = "grp" return Run(aNode[2], tS, aPos) end
+        xOut = []
+        nN = Len(xPos)
+        if tKind = "grp" return Run(vNode[2], tS, xPos) end
         for i = 1 to nN
-            xP = aPos[i]
+            xP = xPos[i]
             if tKind = "bol"
-                if xP = 1 aOut + xP end
+                if xP = 1 xOut + xP end
             elseif tKind = "eol"
-                if xP = nS + 1 aOut + xP end
+                if xP = nS + 1 xOut + xP end
             else
-                if xP <= nS and InSet(aNode[2], Ascii(tS[xP])) aOut + (xP + 1) end
+                if xP <= nS and InSet(vNode[2], Ascii(tS[xP])) xOut + (xP + 1) end
             end
         end
-        return aOut
+        return xOut
     end
-    def InSet(aSet, xB)
-        aR = aSet[2]
-        nN = Len(aR)
+    def InSet(xSet, xB)
+        xR = xSet[2]
+        nN = Len(xR)
         bIn = false
         for i = 1 to nN
-            if xB >= aR[i][1] and xB <= aR[i][2]
+            if xB >= xR[i][1] and xB <= xR[i][2]
                 bIn = true
                 exit
             end
         end
-        if aSet[1] = 1 return not bIn end
+        if xSet[1] = 1 return not bIn end
         return bIn
     end
     def Union(xA, xB)
-        aOut = xA
+        xOut = xA
         nN = Len(xB)
         for i = 1 to nN
-            if Find(aOut, xB[i]) = 0 aOut + xB[i] end
+            if Find(xOut, xB[i]) = 0 xOut + xB[i] end
         end
-        return aOut
+        return xOut
     end
 end
 # ---------------------------------------------------------------- the YAML reader
@@ -1794,19 +1794,19 @@ end
 # Anything else is refused with its line number, never guessed. The result has the JSON reader's
 # shape, so every check that reads JSON reads this too.
 class YamlReader
-    aSrc = []
+    xSrc = []
     nAt = 1
     tDoc = ""
 
     def Parse(tText, tWhere)
         tDoc = tWhere
-        aSrc = YamlLines(StripCR(tText))
+        xSrc = YamlLines(StripCR(tText))
         nAt = 1
         SkipEmpty()
-        if nAt > Len(aSrc) return ["{", []] end
-        xV = Block(Indent(aSrc[nAt]))
+        if nAt > Len(xSrc) return ["{", []] end
+        xV = Block(Indent(xSrc[nAt]))
         SkipEmpty()
-        if nAt <= Len(aSrc) Fail("this line is indented less than its block and more than its parent") end
+        if nAt <= Len(xSrc) Fail("this line is indented less than its block and more than its parent") end
         return xV
     end
     def Fail(tMsg)
@@ -1824,7 +1824,7 @@ class YamlReader
         return Trim(xC) = ""
     end
     def SkipEmpty
-        while nAt <= Len(aSrc) and IsEmpty(aSrc[nAt]) nAt++ end
+        while nAt <= Len(xSrc) and IsEmpty(xSrc[nAt]) nAt++ end
     end
     # The text of a line with its comment removed: # starts a comment at the line's start or after a
     # space, outside quotes.
@@ -1845,56 +1845,56 @@ class YamlReader
     end
     # A block: every line at this indent is one key of a map, or one item of a list.
     def Block(nInd)
-        tFirst = Trim(Uncomment(aSrc[nAt]))
+        tFirst = Trim(Uncomment(xSrc[nAt]))
         if tFirst = "-" or Left(tFirst, 2) = "- " return Seq(nInd) end
         return Mapping(nInd)
     end
     def Mapping(nInd)
-        aPairs = []
-        aKeys = []
+        xPairs = []
+        xKeys = []
         while true
             SkipEmpty()
-            if nAt > Len(aSrc) exit end
-            xN = Indent(aSrc[nAt])
+            if nAt > Len(xSrc) exit end
+            xN = Indent(xSrc[nAt])
             if xN < nInd exit end
             if xN > nInd Fail("this line is indented more than the keys above it") end
-            tL = Trim(Uncomment(aSrc[nAt]))
+            tL = Trim(Uncomment(xSrc[nAt]))
             if Left(tL, 2) = "- " or tL = "-" Fail("a list item where a key of the map is expected") end
-            aKV = SplitKey(tL)
-            tK = aKV[1]
-            if Find(aKeys, tK) > 0 Fail("the key " + tK + " is written twice") end
-            aKeys + tK
-            aPairs + [tK, Value(aKV[2], nInd)]
+            xKV = SplitKey(tL)
+            tK = xKV[1]
+            if Find(xKeys, tK) > 0 Fail("the key " + tK + " is written twice") end
+            xKeys + tK
+            xPairs + [tK, Value(xKV[2], nInd)]
         end
-        return ["{", aPairs]
+        return ["{", xPairs]
     end
     def Seq(nInd)
-        aItems = []
+        xItems = []
         while true
             SkipEmpty()
-            if nAt > Len(aSrc) exit end
-            xN = Indent(aSrc[nAt])
+            if nAt > Len(xSrc) exit end
+            xN = Indent(xSrc[nAt])
             if xN < nInd exit end
             if xN > nInd Fail("this line is indented more than the list items above it") end
-            tL = Trim(Uncomment(aSrc[nAt]))
+            tL = Trim(Uncomment(xSrc[nAt]))
             if not (Left(tL, 2) = "- " or tL = "-") Fail("a key where a list item is expected") end
             tRest = Trim(SubStr(tL, 2, Len(tL)))
             if tRest = ""
                 nAt++
                 SkipEmpty()
-                if nAt > Len(aSrc) or Indent(aSrc[nAt]) <= nInd Fail("an empty list item") end
-                aItems + Block(Indent(aSrc[nAt]))
+                if nAt > Len(xSrc) or Indent(xSrc[nAt]) <= nInd Fail("an empty list item") end
+                xItems + Block(Indent(xSrc[nAt]))
             elseif IsKeyLine(tRest)
                 # "- key: value": a map whose keys sit where the text after "- " starts
                 nKeyInd = nInd + 2
-                aSrc[nAt] = Copy(" ", nKeyInd) + tRest
-                aItems + Mapping(nKeyInd)
+                xSrc[nAt] = Copy(" ", nKeyInd) + tRest
+                xItems + Mapping(nKeyInd)
             else
-                aItems + Scalar(tRest)
+                xItems + Scalar(tRest)
                 nAt++
             end
         end
-        return ["[", aItems]
+        return ["[", xItems]
     end
     def IsKeyLine(tL)
         if Left(tL, 1) = '"' or Left(tL, 1) = "'" or Left(tL, 1) = "[" return false end
@@ -1929,23 +1929,23 @@ class YamlReader
         nAt++
         if tRest != "" return Scalar(tRest) end
         SkipEmpty()
-        if nAt > Len(aSrc) return ["n"] end
-        xN = Indent(aSrc[nAt])
+        if nAt > Len(xSrc) return ["n"] end
+        xN = Indent(xSrc[nAt])
         if xN <= nInd
             # a list may sit at the key's own indent
-            tL = Trim(Uncomment(aSrc[nAt]))
+            tL = Trim(Uncomment(xSrc[nAt]))
             if xN = nInd and (Left(tL, 2) = "- " or tL = "-") return Seq(nInd) end
             return ["n"]
         end
         return Block(xN)
     end
     def TextBlock(nInd, bFold)
-        aOut = []
+        xOut = []
         nBody = -1
-        while nAt <= Len(aSrc)
-            tL = aSrc[nAt]
+        while nAt <= Len(xSrc)
+            tL = xSrc[nAt]
             if Trim(tL) = ""
-                aOut + ""
+                xOut + ""
                 nAt++
                 loop
             end
@@ -1953,21 +1953,21 @@ class YamlReader
             if xN <= nInd exit end
             if nBody < 0 nBody = xN end
             if xN < nBody Fail("a line of this text block is indented less than its first line") end
-            aOut + SubStr(tL, nBody + 1, Len(tL))
+            xOut + SubStr(tL, nBody + 1, Len(tL))
             nAt++
         end
-        while Len(aOut) > 0 and aOut[Len(aOut)] = "" Del(aOut, Len(aOut)) end
+        while Len(xOut) > 0 and xOut[Len(xOut)] = "" Del(xOut, Len(xOut)) end
         tText = ""
-        nO = Len(aOut)
+        nO = Len(xOut)
         for i = 1 to nO
             if i > 1
-                if bFold and aOut[i] != "" and aOut[i - 1] != ""
+                if bFold and xOut[i] != "" and xOut[i - 1] != ""
                     tText += " "
                 else
                     tText += Char(10)
                 end
             end
-            tText += aOut[i]
+            tText += xOut[i]
         end
         return tText
     end
@@ -1975,9 +1975,9 @@ class YamlReader
         tS = Trim(tS)
         if Left(tS, 1) = "[" return FlowList(tS) end
         if Left(tS, 1) = '"' or Left(tS, 1) = "'"
-            aQ = Quoted(tS, 1)
-            if Trim(SubStr(tS, aQ[2], Len(tS))) != "" Fail("text follows the closing quote") end
-            return aQ[1]
+            xQ = Quoted(tS, 1)
+            if Trim(SubStr(tS, xQ[2], Len(tS))) != "" Fail("text follows the closing quote") end
+            return xQ[1]
         end
         if tS = "true" return ["t"] end
         if tS = "false" return ["f"] end
@@ -2020,16 +2020,16 @@ class YamlReader
     def FlowList(tS)
         if Right(tS, 1) != "]" Fail("a [ list is closed with ] on the same line") end
         tIn = Trim(SubStr(tS, 2, Len(tS) - 2))
-        aItems = []
-        if tIn = "" return ["[", aItems] end
+        xItems = []
+        if tIn = "" return ["[", xItems] end
         nI = 1
         nS = Len(tIn)
         while nI <= nS
             while nI <= nS and tIn[nI] = " " nI++ end
             if tIn[nI] = '"' or tIn[nI] = "'"
-                aQ = Quoted(tIn, nI)
-                aItems + aQ[1]
-                nI = aQ[2]
+                xQ = Quoted(tIn, nI)
+                xItems + xQ[1]
+                nI = xQ[2]
                 while nI <= nS and tIn[nI] = " " nI++ end
                 if nI <= nS and tIn[nI] != "," Fail("items of a [ list are separated by commas") end
                 nI++
@@ -2038,27 +2038,27 @@ class YamlReader
                 while nComma <= nS and tIn[nComma] != "," nComma++ end
                 tItem = Trim(SubStr(tIn, nI, nComma - nI))
                 if tItem = "" Fail("an empty item in a [ list") end
-                aItems + Scalar(tItem)
+                xItems + Scalar(tItem)
                 nI = nComma + 1
             end
         end
-        return ["[", aItems]
+        return ["[", xItems]
     end
 # The lines of a text, split on line feeds.
 def YamlLines(tText)
-    aOut = []
+    xOut = []
     tCur = ""
     nT = Len(tText)
     for i = 1 to nT
         tC = tText[i]
         if Ascii(tC) = 10
-            aOut + tCur
+            xOut + tCur
             tCur = ""
         else
             tCur += tC
         end
     end
-    if tCur != "" aOut + tCur end
-    return aOut
+    if tCur != "" xOut + tCur end
+    return xOut
 end
 end
