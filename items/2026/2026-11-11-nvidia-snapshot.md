@@ -20,9 +20,9 @@
   "domains": ["models", "agents"],
   "concerns": ["speed", "cost"],
   "actions": [
-    { "area": "stzlib.intelligence", "do": "save the KV cache of a prefilled fixed prompt (system instructions, examples, a document) to disk, keyed by the model's sha256 and the prompt's tokens, and restore it instead of prefilling; measure restore time against the recorded 38.5 tokens per second CPU prefill, and check the next-token probabilities are identical", "state": "routed", "dates": { "proposed": "2026-11-11", "routed": "2026-11-12" } }
+    { "area": "stzlib.intelligence", "do": "save the KV cache of a prefilled fixed prompt (system instructions, examples, a document) to disk, keyed by the model's sha256 and the prompt's tokens, and restore it instead of prefilling; measure restore time against the recorded 38.5 tokens per second CPU prefill, and check the next-token probabilities are identical", "state": "done", "dates": { "proposed": "2026-11-11", "routed": "2026-11-11", "done": "2026-11-11" } }
   ],
-  "status": "routed",
+  "status": "done",
   "confidence": "claimed",
   "sources": [
     { "title": "ai-dynamo/snapshot (README)", "url": "https://github.com/ai-dynamo/snapshot", "by": "NVIDIA", "read": "2026-11-11" },
@@ -87,3 +87,6 @@ process, and measure it.
 ## Corrections
 
 - 2026-11-12: the proposals are routed to their desks; the facts are unchanged.
+- 2026-11-12: the proposal was built and measured on 2026-11-11. Softanza keeps a read prompt in memory and on disk with
+  logits equal to the bit: six tickets behind a 113-token system turn answered in 4.0 s instead of 29.9 s on
+  Nemotron 3.5 Bolt E4B, and the turn restored from disk in 113 ms instead of about 4.3 s of reading.
