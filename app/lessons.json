@@ -794,6 +794,51 @@
           "Whether its training pictures contained digits; a model does not learn shapes it was never shown."
         ]
       ]
+    },
+    "2026-11-13-llama-cpp-v1": {
+      "build": [
+        {
+          "why": "Read which version of the library your application was built with.",
+          "cmd": "llama-cli --version"
+        },
+        {
+          "why": "Pin the version you tested, by its tag, so that every build of your application uses the same library.",
+          "cmd": "git clone --depth 1 --branch v1.0.0 https://github.com/ggml-org/llama.cpp"
+        },
+        {
+          "why": "Before an upgrade, compare the two numbers: same first number, rebuild and run your tests; a new first number, read the release notes first.",
+          "cmd": "1.0.0 -> 1.4.2 : rebuild and test        1.4.2 -> 2.0.0 : read what changed"
+        }
+      ],
+      "lesson": "A library's version number can be a promise. Under semantic versioning the number has three parts: the first changes when the library breaks something your code calls, the second when it adds something, the third when it fixes a bug. llama.cpp and ggml, the libraries most local AI applications run on, adopted this rule at version 1.0.0, after removing the old functions they had marked for removal. An application that keeps its own copy of a library writes down exactly which version it took, and its own tests decide whether a newer one is accepted.",
+      "terms": [
+        [
+          "semantic versioning",
+          "a rule that gives each of the three parts of a version number a meaning: breaking change, new feature, bug fix"
+        ],
+        [
+          "API",
+          "the functions of a library that another program is allowed to call"
+        ],
+        [
+          "deprecated",
+          "still present, and announced as due for removal"
+        ],
+        [
+          "vendoring",
+          "keeping a copy of a library's source inside your own project, at a version you chose"
+        ]
+      ],
+      "quiz": [
+        [
+          "Your application uses a library at 1.2.0 and version 1.5.0 appears. What does the number promise?",
+          "The functions you call still work the same way; new ones were added. Rebuild and run your tests."
+        ],
+        [
+          "Why does a project remove its deprecated functions just before version 1.0.0?",
+          "After 1.0.0 a removal breaks the promise and forces a version 2; removing them first lets the stable line start clean."
+        ]
+      ]
     }
   }
 }

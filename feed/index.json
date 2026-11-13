@@ -6,6 +6,80 @@
   "title": "Softanza Radar",
   "items": [
     {
+      "id": "2026-11-13-llama-cpp-v1",
+      "date": "2026-11-13",
+      "title": "llama.cpp and ggml reach version 1.0.0 with a versioning promise; Softanza moves its engine's ggml to the stable line",
+      "kind": "release",
+      "summary": "On November 13, 2026 the ggml-org team at Hugging Face released llama.cpp v1.0.0 and ggml v1.0.0, three and a half years after the project began. Both libraries now follow semantic versioning: a breaking change to the public C API in their include folders raises the major version, a compatible feature, backend update or new model raises the minor, a bug fix raises the patch. To get there, llama.h loses 35 deprecated functions and ggml loses its deprecated API and the legacy DIAG_MASK operations. The release also adds FP8 key-value caches, an unbuffered model load on Windows, three text architectures, and fixes in llama-server for SSRF, CORS and DNS rebinding.",
+      "stance": "adopt",
+      "relevance": "medium",
+      "level": "advice",
+      "audiences": [
+        "developer",
+        "maintainer"
+      ],
+      "notice": {
+        "developer": "From 1.0.0 the version number of llama.cpp and ggml tells you what an upgrade costs: only a new major version changes the C API your application calls. If you run llama-server on a network, take this release for its SSRF, CORS and DNS-rebinding fixes.",
+        "maintainer": "Softanza's engine builds its own decoder directly on ggml, vendored at 0.29.0 from nine days earlier; it moves to 1.0.0, the first version whose number carries a compatibility promise, and keeps its neural checks as the proof."
+      },
+      "areas": [
+        "softanza",
+        "aicha"
+      ],
+      "domains": [
+        "models",
+        "code"
+      ],
+      "concerns": [
+        "sovereignty",
+        "correctness",
+        "cost"
+      ],
+      "actions": [
+        {
+          "area": "stzlib.intelligence",
+          "do": "move the engine's vendored ggml from 0.29.0 to tag v1.0.0 with the same pruning and patches, list every ggml function the engine calls against the 1.0.0 headers, run the neural, OCR and vision checks and the court's golden sets on both builds, and record 1.x as the line the engine follows",
+          "state": "routed",
+          "dates": {
+            "proposed": "2026-11-13",
+            "routed": "2026-11-13"
+          }
+        }
+      ],
+      "status": "routed",
+      "confidence": "read",
+      "sources": [
+        {
+          "title": "llama.cpp v1.0.0 (release notes)",
+          "url": "https://github.com/ggml-org/llama.cpp/releases/tag/v1.0.0",
+          "by": "ggml-org",
+          "read": "2026-11-13"
+        },
+        {
+          "title": "ggml v1.0.0 (release notes)",
+          "url": "https://github.com/ggml-org/ggml/releases/tag/v1.0.0",
+          "by": "ggml-org",
+          "read": "2026-11-13"
+        },
+        {
+          "title": "llama.cpp v1.0.0: A stronger foundation for the local AI ecosystem",
+          "url": "https://huggingface.co/blog/ggml-org/llama-cpp-v1",
+          "by": "ggml-org at Hugging Face",
+          "read": "2026-11-13"
+        }
+      ],
+      "review_by": "2027-02-13",
+      "tags": [
+        "llama-cpp",
+        "ggml",
+        "gguf",
+        "semantic-versioning",
+        "local-ai",
+        "release"
+      ],
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-13-llama-cpp-v1.md"
+    },
+    {
       "id": "2026-11-13-trocr-arabic-synthetic",
       "date": "2026-11-13",
       "title": "A small recogniser trained on synthetic Arabic words reads words it never saw; Softanza trains its Arabic recogniser the same way",

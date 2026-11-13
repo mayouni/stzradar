@@ -7,6 +7,25 @@
   "language": "en",
   "items": [
     {
+      "id": "2026-11-13-llama-cpp-v1",
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-13-llama-cpp-v1.md",
+      "title": "llama.cpp and ggml reach version 1.0.0 with a versioning promise; Softanza moves its engine's ggml to the stable line",
+      "summary": "On November 13, 2026 the ggml-org team at Hugging Face released llama.cpp v1.0.0 and ggml v1.0.0, three and a half years after the project began. Both libraries now follow semantic versioning: a breaking change to the public C API in their include folders raises the major version, a compatible feature, backend update or new model raises the minor, a bug fix raises the patch. To get there, llama.h loses 35 deprecated functions and ggml loses its deprecated API and the legacy DIAG_MASK operations. The release also adds FP8 key-value caches, an unbuffered model load on Windows, three text architectures, and fixes in llama-server for SSRF, CORS and DNS rebinding.",
+      "content_text": "On November 13, 2026 the ggml-org team at Hugging Face released llama.cpp v1.0.0 and ggml v1.0.0, three and a half years after the project began. Both libraries now follow semantic versioning: a breaking change to the public C API in their include folders raises the major version, a compatible feature, backend update or new model raises the minor, a bug fix raises the patch. To get there, llama.h loses 35 deprecated functions and ggml loses its deprecated API and the legacy DIAG_MASK operations. The release also adds FP8 key-value caches, an unbuffered model load on Windows, three text architectures, and fixes in llama-server for SSRF, CORS and DNS rebinding.",
+      "date_published": "2026-11-13T00:00:00Z",
+      "tags": [
+        "release",
+        "adopt",
+        "advice",
+        "llama-cpp",
+        "ggml",
+        "gguf",
+        "semantic-versioning",
+        "local-ai",
+        "release"
+      ]
+    },
+    {
       "id": "2026-11-13-trocr-arabic-synthetic",
       "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-13-trocr-arabic-synthetic.md",
       "title": "A small recogniser trained on synthetic Arabic words reads words it never saw; Softanza trains its Arabic recogniser the same way",

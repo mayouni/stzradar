@@ -2,6 +2,30 @@
 
 > What changed in AI and the tech field this week, and what it means for what we build in Softanza. Generated from the signed feed (https://mayouni.github.io/stzradar/feed/index.json); the feed is the reference.
 
+## llama.cpp and ggml reach version 1.0.0 with a versioning promise; Softanza moves its engine's ggml to the stable line
+
+- id: 2026-11-13-llama-cpp-v1
+- date: 2026-11-13
+- level: advice
+- kind: release
+- stance: adopt
+- relevance: medium
+- page: https://mayouni.github.io/stzradar/items/2026/2026-11-13-llama-cpp-v1.md
+
+On November 13, 2026 the ggml-org team at Hugging Face released llama.cpp v1.0.0 and ggml v1.0.0, three and a half years after the project began. Both libraries now follow semantic versioning: a breaking change to the public C API in their include folders raises the major version, a compatible feature, backend update or new model raises the minor, a bug fix raises the patch. To get there, llama.h loses 35 deprecated functions and ggml loses its deprecated API and the legacy DIAG_MASK operations. The release also adds FP8 key-value caches, an unbuffered model load on Windows, three text architectures, and fixes in llama-server for SSRF, CORS and DNS rebinding.
+
+For each reader:
+- developer: From 1.0.0 the version number of llama.cpp and ggml tells you what an upgrade costs: only a new major version changes the C API your application calls. If you run llama-server on a network, take this release for its SSRF, CORS and DNS-rebinding fixes.
+- maintainer: Softanza's engine builds its own decoder directly on ggml, vendored at 0.29.0 from nine days earlier; it moves to 1.0.0, the first version whose number carries a compatibility promise, and keeps its neural checks as the proof.
+
+Proposed:
+- stzlib.intelligence: move the engine's vendored ggml from 0.29.0 to tag v1.0.0 with the same pruning and patches, list every ggml function the engine calls against the 1.0.0 headers, run the neural, OCR and vision checks and the court's golden sets on both builds, and record 1.x as the line the engine follows (routed)
+
+Sources:
+- llama.cpp v1.0.0 (release notes): https://github.com/ggml-org/llama.cpp/releases/tag/v1.0.0
+- ggml v1.0.0 (release notes): https://github.com/ggml-org/ggml/releases/tag/v1.0.0
+- llama.cpp v1.0.0: A stronger foundation for the local AI ecosystem: https://huggingface.co/blog/ggml-org/llama-cpp-v1
+
 ## A small recogniser trained on synthetic Arabic words reads words it never saw; Softanza trains its Arabic recogniser the same way
 
 - id: 2026-11-13-trocr-arabic-synthetic
