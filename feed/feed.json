@@ -7,6 +7,24 @@
   "language": "en",
   "items": [
     {
+      "id": "2026-11-13-trocr-arabic-synthetic",
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-13-trocr-arabic-synthetic.md",
+      "title": "A small recogniser trained on synthetic Arabic words reads words it never saw; Softanza trains its Arabic recogniser the same way",
+      "summary": "An engineer reports fine-tuning Microsoft's TrOCR-Small, a 61-million-parameter recogniser of single printed text lines trained on English receipts, into an Arabic word reader: 78,000 unique Arabic words rendered into about 900,000 synthetic images with realistic augmentation, 80 minutes on one RTX 3090, 97.6% exact-word accuracy on vocabulary held out of training and 77.3% on photographs of street signs. TrOCR pairs an image Transformer encoder with a text Transformer decoder, scores 95.86 F1 on SROIE in its small size, and reads one line at a time.",
+      "content_text": "An engineer reports fine-tuning Microsoft's TrOCR-Small, a 61-million-parameter recogniser of single printed text lines trained on English receipts, into an Arabic word reader: 78,000 unique Arabic words rendered into about 900,000 synthetic images with realistic augmentation, 80 minutes on one RTX 3090, 97.6% exact-word accuracy on vocabulary held out of training and 77.3% on photographs of street signs. TrOCR pairs an image Transformer encoder with a text Transformer decoder, scores 95.86 F1 on SROIE in its small size, and reads one line at a time.",
+      "date_published": "2026-11-13T00:00:00Z",
+      "tags": [
+        "practice",
+        "learn",
+        "advice",
+        "ocr",
+        "arabic",
+        "trocr",
+        "synthetic-data",
+        "fine-tuning"
+      ]
+    },
+    {
       "id": "2026-11-12-nvidia-skillspector",
       "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-12-nvidia-skillspector.md",
       "title": "NVIDIA SkillSpector scans an agent skill before it is installed; Softanza checks its agent files the same way",
@@ -31,6 +49,7 @@
       "summary": "On November 11, 2026 Rayline Labs announced ARC 1.0, an open-weight (Apache 2.0) routing model built on Qwen3.5-0.8B. For each step of an agent it predicts, per candidate model, the probability of success and the tokens the step will bill, then a policy weighs that success against the prices the application supplies; a question head answers developer-defined yes/no, choice and score questions with probabilities. On six benchmarks Rayline reports that ARC, routing between Opus 5.5 and a locally served DeepSeek model, keeps 97.5% of Opus 5.5's quality at 92.9% lower cost.",
       "content_text": "On November 11, 2026 Rayline Labs announced ARC 1.0, an open-weight (Apache 2.0) routing model built on Qwen3.5-0.8B. For each step of an agent it predicts, per candidate model, the probability of success and the tokens the step will bill, then a policy weighs that success against the prices the application supplies; a question head answers developer-defined yes/no, choice and score questions with probabilities. On six benchmarks Rayline reports that ARC, routing between Opus 5.5 and a locally served DeepSeek model, keeps 97.5% of Opus 5.5's quality at 92.9% lower cost.",
       "date_published": "2026-11-12T00:00:00Z",
+      "date_modified": "2026-11-13T00:00:00Z",
       "tags": [
         "release",
         "learn",
@@ -50,6 +69,7 @@
       "summary": "LittleBit, from Samsung Research (NeurIPS 2025; fifth version February 5, 2026), compresses a language model's weights to between 0.1 and 1 bit per weight by factoring each weight matrix into two low-rank matrices of signs with three scaling vectors, plus a residual path of the same shape, trained against the original model. The paper reports Llama2-13B in under 0.9 GB at 0.1 bits per weight, about 31 times smaller than 16-bit, and a speedup of up to 11.6 times on one layer with its GPU kernel. Its code, with the follow-up LittleBit-2 (ICML 2026), is published under the non-commercial CC BY-NC 4.0 licence.",
       "content_text": "LittleBit, from Samsung Research (NeurIPS 2025; fifth version February 5, 2026), compresses a language model's weights to between 0.1 and 1 bit per weight by factoring each weight matrix into two low-rank matrices of signs with three scaling vectors, plus a residual path of the same shape, trained against the original model. The paper reports Llama2-13B in under 0.9 GB at 0.1 bits per weight, about 31 times smaller than 16-bit, and a speedup of up to 11.6 times on one layer with its GPU kernel. Its code, with the follow-up LittleBit-2 (ICML 2026), is published under the non-commercial CC BY-NC 4.0 licence.",
       "date_published": "2026-11-12T00:00:00Z",
+      "date_modified": "2026-11-13T00:00:00Z",
       "tags": [
         "paper",
         "watch",

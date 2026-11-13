@@ -1,10 +1,81 @@
 {
   "feed": "radar",
   "version": 1,
-  "updated": "2026-11-12T00:00:00Z",
+  "updated": "2026-11-13T00:00:00Z",
   "home": "https://github.com/mayouni/stzradar",
   "title": "Softanza Radar",
   "items": [
+    {
+      "id": "2026-11-13-trocr-arabic-synthetic",
+      "date": "2026-11-13",
+      "title": "A small recogniser trained on synthetic Arabic words reads words it never saw; Softanza trains its Arabic recogniser the same way",
+      "kind": "practice",
+      "summary": "An engineer reports fine-tuning Microsoft's TrOCR-Small, a 61-million-parameter recogniser of single printed text lines trained on English receipts, into an Arabic word reader: 78,000 unique Arabic words rendered into about 900,000 synthetic images with realistic augmentation, 80 minutes on one RTX 3090, 97.6% exact-word accuracy on vocabulary held out of training and 77.3% on photographs of street signs. TrOCR pairs an image Transformer encoder with a text Transformer decoder, scores 95.86 F1 on SROIE in its small size, and reads one line at a time.",
+      "stance": "learn",
+      "relevance": "medium",
+      "level": "advice",
+      "audiences": [
+        "developer",
+        "maintainer"
+      ],
+      "notice": {
+        "developer": "A recogniser learns a script from rendered text: tens of thousands of words, many fonts, realistic damage, and a test on words kept out of training; one consumer GPU and about an hour were enough for Arabic.",
+        "maintainer": "Softanza's OCR already runs an Arabic recogniser in its own engine; it trains that recogniser on synthetic lines built from its Arabic word list, with the periods and Western digits real documents carry, and judges it on its Arabic golden sentences."
+      },
+      "areas": [
+        "softanza",
+        "aicha"
+      ],
+      "domains": [
+        "models"
+      ],
+      "concerns": [
+        "correctness",
+        "sovereignty"
+      ],
+      "actions": [
+        {
+          "area": "stzlib.intelligence",
+          "do": "generate synthetic Arabic text lines from the engine's Arabic word list, with punctuation, Western and Arabic-Indic digits and mixed Latin words, in several fonts with scan and photo damage; fine-tune the PP-OCR Arabic recogniser the engine already runs on them, test on words held out of training, and judge it on the Arabic golden sentences against the platform floor",
+          "state": "routed",
+          "dates": {
+            "proposed": "2026-11-13",
+            "routed": "2026-11-13"
+          }
+        }
+      ],
+      "status": "routed",
+      "confidence": "claimed",
+      "sources": [
+        {
+          "title": "microsoft/trocr-small-printed (model card)",
+          "url": "https://huggingface.co/microsoft/trocr-small-printed",
+          "by": "Microsoft",
+          "read": "2026-11-13"
+        },
+        {
+          "title": "TrOCR: Transformer-based Optical Character Recognition with Pre-trained Models",
+          "url": "https://arxiv.org/abs/2109.10282",
+          "by": "Li et al., Microsoft",
+          "read": "2026-11-13"
+        },
+        {
+          "title": "microsoft/unilm, TrOCR (README)",
+          "url": "https://github.com/microsoft/unilm/tree/master/trocr",
+          "by": "Microsoft",
+          "read": "2026-11-13"
+        }
+      ],
+      "review_by": "2027-02-13",
+      "tags": [
+        "ocr",
+        "arabic",
+        "trocr",
+        "synthetic-data",
+        "fine-tuning"
+      ],
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-13-trocr-arabic-synthetic.md"
+    },
     {
       "id": "2026-11-12-nvidia-skillspector",
       "date": "2026-11-12",
@@ -83,6 +154,7 @@
     {
       "id": "2026-11-12-rayline-arc",
       "date": "2026-11-12",
+      "updated": "2026-11-13",
       "title": "Rayline's ARC: an open 0.8B model that picks the model for each step of an agent; Softanza learns its local-first escalation",
       "kind": "release",
       "summary": "On November 11, 2026 Rayline Labs announced ARC 1.0, an open-weight (Apache 2.0) routing model built on Qwen3.5-0.8B. For each step of an agent it predicts, per candidate model, the probability of success and the tokens the step will bill, then a policy weighs that success against the prices the application supplies; a question head answers developer-defined yes/no, choice and score questions with probabilities. On six benchmarks Rayline reports that ARC, routing between Opus 5.5 and a locally served DeepSeek model, keeps 97.5% of Opus 5.5's quality at 92.9% lower cost.",
@@ -115,14 +187,15 @@
         {
           "area": "stzlib.intelligence",
           "do": "measure local escalation on the support-desk golden sets: Granite-4.0-1b answers by StzOptionProbabilities, and a question whose top option probability falls below a threshold goes to the support-quality pack; first check on the same sets that the top probability is calibrated, then record accuracy and seconds per question against each model alone, across thresholds",
-          "state": "routed",
+          "state": "done",
           "dates": {
             "proposed": "2026-11-12",
-            "routed": "2026-11-12"
+            "routed": "2026-11-12",
+            "done": "2026-11-12"
           }
         }
       ],
-      "status": "routed",
+      "status": "done",
       "confidence": "claimed",
       "sources": [
         {
@@ -158,6 +231,7 @@
     {
       "id": "2026-11-12-samsung-littlebit",
       "date": "2026-11-12",
+      "updated": "2026-11-13",
       "title": "Samsung's LittleBit stores a model's weights in under one bit each; Softanza weighs memory against quality on its small models",
       "kind": "paper",
       "summary": "LittleBit, from Samsung Research (NeurIPS 2025; fifth version February 5, 2026), compresses a language model's weights to between 0.1 and 1 bit per weight by factoring each weight matrix into two low-rank matrices of signs with three scaling vectors, plus a residual path of the same shape, trained against the original model. The paper reports Llama2-13B in under 0.9 GB at 0.1 bits per weight, about 31 times smaller than 16-bit, and a speedup of up to 11.6 times on one layer with its GPU kernel. Its code, with the follow-up LittleBit-2 (ICML 2026), is published under the non-commercial CC BY-NC 4.0 licence.",
@@ -185,14 +259,15 @@
         {
           "area": "stzlib.intelligence",
           "do": "measure Nemotron 3.5 Bolt E4B in the lowest-bit GGUF formats the engine's ggml reads, against its Q4_K_M file on the support-desk golden sets: memory, CPU speed and court score at each format, to find the smallest file that keeps its triage-extract win",
-          "state": "routed",
+          "state": "done",
           "dates": {
             "proposed": "2026-11-12",
-            "routed": "2026-11-12"
+            "routed": "2026-11-12",
+            "done": "2026-11-13"
           }
         }
       ],
-      "status": "routed",
+      "status": "done",
       "confidence": "read",
       "sources": [
         {

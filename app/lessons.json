@@ -753,6 +753,47 @@
           "Usually the 1B model, because each of its fewer weights carries more of what it knows."
         ]
       ]
+    },
+    "2026-11-13-trocr-arabic-synthetic": {
+      "build": [
+        {
+          "why": "Try the base model on one printed English line. This downloads about 250 MB.",
+          "cmd": "python -c \"from transformers import TrOCRProcessor, VisionEncoderDecoderModel; from PIL import Image; p=TrOCRProcessor.from_pretrained('microsoft/trocr-small-printed'); m=VisionEncoderDecoderModel.from_pretrained('microsoft/trocr-small-printed'); print(p.batch_decode(m.generate(p(Image.open('line.png').convert('RGB'), return_tensors='pt').pixel_values), skip_special_tokens=True)[0])\""
+        },
+        {
+          "why": "Make a training picture from text: draw a word with a font, then damage it the way a camera or a scanner would.",
+          "cmd": "img = blur(rotate(render(word, font=random.choice(fonts)), random.uniform(-3, 3)))"
+        },
+        {
+          "why": "Keep some words out of training, and test only on those: that shows the model reads letters and does more than recall words.",
+          "cmd": "train_words, test_words = words[:70000], words[70000:]"
+        }
+      ],
+      "lesson": "A text recogniser learns a script from pictures of text, and those pictures can be made by a program: take a list of words, draw each one in many fonts, and add blur, tilt and noise. One engineer taught a small English model to read Arabic this way in 80 minutes on one graphics card. The honest test is on words the model never saw in training; a high score there means it learned the letters and how they join. What the training pictures leave out, such as digits or punctuation, the model does not learn.",
+      "terms": [
+        [
+          "fine-tuning",
+          "continuing the training of an existing model on new examples"
+        ],
+        [
+          "synthetic data",
+          "training examples a program generates, here pictures drawn from text"
+        ],
+        [
+          "held-out",
+          "kept out of training so that it can serve as an honest test"
+        ]
+      ],
+      "quiz": [
+        [
+          "Why test on words that were kept out of training?",
+          "A model can memorise the pictures of words it was shown; only unseen words show whether it reads letters."
+        ],
+        [
+          "A recogniser drops every digit it meets. What is the first thing to check?",
+          "Whether its training pictures contained digits; a model does not learn shapes it was never shown."
+        ]
+      ]
     }
   }
 }

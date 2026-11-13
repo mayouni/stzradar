@@ -4,6 +4,7 @@
 {
   "id": "2026-11-12-samsung-littlebit",
   "date": "2026-11-12",
+  "updated": "2026-11-13",
   "title": "Samsung's LittleBit stores a model's weights in under one bit each; Softanza weighs memory against quality on its small models",
   "kind": "paper",
   "summary": "LittleBit, from Samsung Research (NeurIPS 2025; fifth version February 5, 2026), compresses a language model's weights to between 0.1 and 1 bit per weight by factoring each weight matrix into two low-rank matrices of signs with three scaling vectors, plus a residual path of the same shape, trained against the original model. The paper reports Llama2-13B in under 0.9 GB at 0.1 bits per weight, about 31 times smaller than 16-bit, and a speedup of up to 11.6 times on one layer with its GPU kernel. Its code, with the follow-up LittleBit-2 (ICML 2026), is published under the non-commercial CC BY-NC 4.0 licence.",
@@ -18,9 +19,9 @@
   "domains": ["models"],
   "concerns": ["cost", "correctness"],
   "actions": [
-    { "area": "stzlib.intelligence", "do": "measure Nemotron 3.5 Bolt E4B in the lowest-bit GGUF formats the engine's ggml reads, against its Q4_K_M file on the support-desk golden sets: memory, CPU speed and court score at each format, to find the smallest file that keeps its triage-extract win", "state": "routed", "dates": { "proposed": "2026-11-12", "routed": "2026-11-12" } }
+    { "area": "stzlib.intelligence", "do": "measure Nemotron 3.5 Bolt E4B in the lowest-bit GGUF formats the engine's ggml reads, against its Q4_K_M file on the support-desk golden sets: memory, CPU speed and court score at each format, to find the smallest file that keeps its triage-extract win", "state": "done", "dates": { "proposed": "2026-11-12", "routed": "2026-11-12", "done": "2026-11-13" } }
   ],
-  "status": "routed",
+  "status": "done",
   "confidence": "read",
   "sources": [
     { "title": "LittleBit: Ultra Low-Bit Quantization via Latent Factorization (arXiv 2506.13771v5)", "url": "https://arxiv.org/html/2506.13771v5", "by": "Banseok Lee, Dongkyu Kim, Youngcheon You, Youngmin Kim (Samsung Research)", "read": "2026-11-12" },
@@ -72,3 +73,10 @@ machines can install it.
   [LittleBit: Ultra Low-Bit Quantization via Latent Factorization](https://arxiv.org/html/2506.13771v5), version 5,
   read 2026-11-12. Figures are the paper's own.
 - Samsung Research, [SamsungLabs/LittleBit](https://github.com/SamsungLabs/LittleBit), read 2026-11-12.
+
+## Corrections
+
+- 2026-11-13: the proposal is measured. Every lower-bit Bolt E4B file tested keeps its triage-extraction win in the
+  court on the English, French and Arabic sets. The smallest, UD-IQ2_M at 3.53 GB against 6.18 GB, uses 2.5 GB less
+  resident memory and peaks at 4.9 GB against 7.5 GB, at about half the speed on CPU; UD-Q3_K_XL at 4.22 GB keeps two
+  thirds of the speed. The Q4_K_M file measures 6.18 GB; this entry first gave it as 4 GB.

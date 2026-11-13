@@ -4,6 +4,7 @@
 {
   "id": "2026-11-12-rayline-arc",
   "date": "2026-11-12",
+  "updated": "2026-11-13",
   "title": "Rayline's ARC: an open 0.8B model that picks the model for each step of an agent; Softanza learns its local-first escalation",
   "kind": "release",
   "summary": "On November 11, 2026 Rayline Labs announced ARC 1.0, an open-weight (Apache 2.0) routing model built on Qwen3.5-0.8B. For each step of an agent it predicts, per candidate model, the probability of success and the tokens the step will bill, then a policy weighs that success against the prices the application supplies; a question head answers developer-defined yes/no, choice and score questions with probabilities. On six benchmarks Rayline reports that ARC, routing between Opus 5.5 and a locally served DeepSeek model, keeps 97.5% of Opus 5.5's quality at 92.9% lower cost.",
@@ -19,9 +20,9 @@
   "domains": ["models", "agents"],
   "concerns": ["cost", "speed", "correctness", "sovereignty"],
   "actions": [
-    { "area": "stzlib.intelligence", "do": "measure local escalation on the support-desk golden sets: Granite-4.0-1b answers by StzOptionProbabilities, and a question whose top option probability falls below a threshold goes to the support-quality pack; first check on the same sets that the top probability is calibrated, then record accuracy and seconds per question against each model alone, across thresholds", "state": "routed", "dates": { "proposed": "2026-11-12", "routed": "2026-11-12" } }
+    { "area": "stzlib.intelligence", "do": "measure local escalation on the support-desk golden sets: Granite-4.0-1b answers by StzOptionProbabilities, and a question whose top option probability falls below a threshold goes to the support-quality pack; first check on the same sets that the top probability is calibrated, then record accuracy and seconds per question against each model alone, across thresholds", "state": "done", "dates": { "proposed": "2026-11-12", "routed": "2026-11-12", "done": "2026-11-12" } }
   ],
-  "status": "routed",
+  "status": "done",
   "confidence": "claimed",
   "sources": [
     { "title": "rayline-ai/ARC-1.0 (model card)", "url": "https://huggingface.co/rayline-ai/ARC-1.0", "by": "Rayline", "read": "2026-11-12" },
@@ -86,3 +87,10 @@ LFM3's d1 models, and pricing that counts cache reads apart from fresh input, wh
 - Rayline Team, [ARC: Learned Model Routing for Long-Horizon Agentic Workflows](https://rayline.ai/research/report),
   read 2026-11-12. Benchmark figures are Rayline's own.
 - Rayline, [rayline.ai](https://rayline.ai/), read 2026-11-12.
+
+## Corrections
+
+- 2026-11-13: the proposal is measured. On 204 support-desk questions Granite-4.0-1b answers 167 and Bolt E4B 195;
+  sending Granite's answers below 85% confidence to Bolt gives 182 right in 77% of Bolt's time. Granite is over-sure:
+  above 99% confidence it is right 92.4% of the time, so a threshold recovers about half of the difference. Bolt costs
+  1.8 times Granite per question on this machine, which bounds what a local cascade can save.
