@@ -12,7 +12,7 @@
     { "id": "harness",      "name": "Harness",                     "line": "how Softanza is built and kept watch over", "beside": true }
   ],
   "projects": [
-    { "id": "zane",       "name": "Zane",               "layer": "experience",   "line": "The interface language and its constitution: rules a machine checks, so every screen reads well.", "link": "https://github.com/mayouni/zane", "aliases": ["stzzui"] },
+    { "id": "zane",       "name": "Zayn",               "layer": "experience",   "line": "The interface language and its constitution: rules a machine checks, so every screen reads well.", "link": "https://github.com/mayouni/zayn", "aliases": ["stzzui", "zayn"] },
     { "id": "atelier",    "name": "Atelier",            "layer": "experience",   "line": "The library's own examples, run live as checks, with a playground to try them." },
     { "id": "zindara",    "name": "Zindara",            "layer": "experience",   "line": "Softanza's education offering: courses, missions, projects and a tutor, for schools and learning designers." },
     { "id": "aicha",      "name": "Aïcha",              "layer": "intelligence", "line": "Knowledge, models and agents on your own device: a model proposes, a governed actor commits.", "aliases": ["stzlib.intelligence"] },

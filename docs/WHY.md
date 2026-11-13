@@ -48,7 +48,7 @@ Each requirement that followed came from using it:
 - **A bar for other sites.** One script line puts the newest notice for a site's readers at the top of its pages.
 - **Any project can run its own.** One file, `radar.yaml`, says which project a watch serves and what its agent
   learns, so the same tool serves projects well beyond Softanza.
-- **Pages people can read.** One reading size, one column, one scroll bar: the rules of Zane, Softanza's interface
+- **Pages people can read.** One reading size, one column, one scroll bar: the rules of Zayn, Softanza's interface
   constitution.
 
 ## What it gives Softanza

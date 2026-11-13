@@ -18,7 +18,7 @@
 <style>
 /* Softanza Radar. The reading laws of the estate's sites, applied:
    - one reading size (19 px) and nothing below 16 px; secondary text is a readable tone, never small-and-grey;
-   - one scroll bar on screen (Zane Rules 14 and 92), nothing scrolls sideways at 375 px;
+   - one scroll bar on screen (Zayn Rules 14 and 92), nothing scrolls sideways at 375 px;
    - no motion while navigating; a bar never covers content; no tabs that hide content (Rule 12).
    The palette is the Compass palette the estate's sites share (teal accent, serif titles). */
 :root{
@@ -116,7 +116,7 @@ main :is(p,li,dd,figcaption,summary,.lede){max-width:78ch}
 .railpage > .railmain{grid-column:1;grid-row:1;min-width:0}
 .railpage.wide{grid-template-columns:minmax(0,1fr) 17rem}
 .rail{grid-column:2;grid-row:1;position:sticky;top:calc(var(--head,150px) + 24px);display:flex;flex-direction:column;gap:28px}
-/* Zane's outline (stzzui site/stz.css, nav.list3.sections): the label grey and plain, outside the line; entries in ink,
+/* Zayn's outline (stzzui site/stz.css, nav.list3.sections): the label grey and plain, outside the line; entries in ink,
    no underline, one line each; the pointer turns an entry to the link colour; the section being read is bold */
 .rail .outline-title{margin:0 0 .8rem;font-weight:400;font-size:1rem;color:var(--ink2)}
 .outline ul{list-style:none;margin:0;padding:0 0 0 .9rem;border-left:1px solid var(--line)}
@@ -132,7 +132,7 @@ ul.points{margin:0 0 12px;padding-left:22px;display:flex;flex-direction:column;g
 .railtools .filters{display:flex;flex-direction:column;align-items:stretch;gap:12px;border:0;padding:0;margin:0}
 .railtools .period{margin:0;font-size:1.125rem;color:var(--ink2)}.railtools .period b{display:none}.railtools .period select{margin:0 0 6px;display:block}
 @media (max-height:640px){.rail{position:static}}
-/* a narrow screen: the tools go above the text, the outline below it, as Zane's site does */
+/* a narrow screen: the tools go above the text, the outline below it, as Zayn's site does */
 @media (max-width:1000px){.railpage{grid-template-columns:minmax(0,1fr);gap:20px}.rail{display:contents}
   .railtools{grid-row:1}.railpage > .railmain{grid-row:2}.outline{grid-row:3;padding-top:1.6rem}
   .outline ul{border-left:0;padding-left:0}
@@ -193,7 +193,7 @@ ul.points{margin:0 0 12px;padding-left:22px;display:flex;flex-direction:column;g
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .eyebrow{color:var(--accent)} }
 h1{font:700 clamp(1.75rem,3.2vw,2.5rem)/1.15 var(--f-title);margin:0 0 12px;max-width:30ch;text-wrap:balance}
 h1 .sent{display:block;text-wrap:balance}   /* one sentence, one block: lines break inside a sentence, never across two */
-/* lines in equilibrium (Zane amendment docket F-1, the author's recurring remark): a title balances its lines, and no
+/* lines in equilibrium (Zayn amendment docket F-1, the author's recurring remark): a title balances its lines, and no
    paragraph, list item or label leaves one short word alone on its last line */
 h1,h2,h3,h4,.card h3,.ititle,.fnode b,
 p,li,dd,dt,figcaption,summary,.lede,.finding,.notice,.kindline,.ihint,.fnode span,.hint,.q{text-wrap:balance}
@@ -206,7 +206,7 @@ body{text-wrap:pretty}
 h2{font:700 1.5rem/1.2 var(--f-title);margin:0 0 12px}
 h3{font:700 1.25rem/1.25 var(--f-title);margin:0}
 section.block{padding-block:28px 8px}
-/* Zane Rule 8 across the site: one primary axis, read top to bottom; figures in one aligned row, no boxes */
+/* Zayn Rule 8 across the site: one primary axis, read top to bottom; figures in one aligned row, no boxes */
 .facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(9rem,1fr));gap:12px;margin-top:18px;padding:4px 0;max-width:64rem}
 .fact{min-width:0}
 .fact b{display:block;font:700 1.75rem/1.1 var(--f-title);color:var(--deep)}
@@ -323,7 +323,7 @@ table.grid td a{display:inline-block;min-width:2.2rem;padding:2px 8px;color:var(
 
 /* all signals */
 /* the six filters share the row in equal parts, in rows that always come out full: 6, then 3 + 3, then 2 + 2 + 2;
-   a control never sits alone on a line while the line above has room (reported to Zane: ZANE-CONTROLROW-01) */
+   a control never sits alone on a line while the line above has room (reported to Zayn: ZANE-CONTROLROW-01) */
 .filters{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px 18px;align-items:end;padding:0;margin-bottom:28px}
 @media (max-width:1100px){.filters{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (max-width:560px){.filters{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -417,7 +417,7 @@ details.tv summary{font-size:1.125rem;color:var(--accent)}
 .tbl td{font-variant-numeric:tabular-nums}
 
 /* make your own */
-/* Zane Rule 8: the steps, the form and the bar's settings read in one column, top to bottom */
+/* Zayn Rule 8: the steps, the form and the bar's settings read in one column, top to bottom */
 ol.steps{list-style:none;counter-reset:st;padding:0;margin:0;max-width:64rem}
 /* only the steps themselves count and space (a bullet inside a step is not a step); space alone parts them */
 ol.steps > li{counter-increment:st;padding:22px 0 4px;min-width:0}
@@ -648,7 +648,7 @@ const radarLimit = () => Math.min(12, Math.max(3, Number(CONFIG?.watch?.radar_li
 /* ------------------------------------------------------------ a card */
 function card(it){
   /* one thing to click, in one place: the link at the card's foot; the card itself is not a link and does not react to
-     the pointer (the author's ruling, 2026-11-09; reported to Zane as ZANE-ONELINK-01) */
+     the pointer (the author's ruling, 2026-11-09; reported to Zayn as ZANE-ONELINK-01) */
   const c = el("div","card");
   const stripe = el("span","stripe"); stripe.style.background = css("--lv-"+it.level);
   const b = el("div","body"), m = el("span","meta");
@@ -674,7 +674,7 @@ function titleEl(text){
   return h;
 }
 /* A page head: an optional line of information above the title (the week and its dates), never a path: the two
-   pinned bars already mark every level of this site, so a path would say them again (Zane Rule 108) */
+   pinned bars already mark every level of this site, so a path would say them again (Zayn Rule 108) */
 function head(eyebrow, title, ledes){
   const h = el("div","head"), w = el("div","wrap");
   if (eyebrow) w.append(el("p","eyebrow",eyebrow));
@@ -686,9 +686,9 @@ function head(eyebrow, title, ledes){
 /* short labelled points instead of a dense paragraph (author, 2026-11-09): a bold label, then one short sentence */
 function points(rows){ const ul = el("ul","points"); for (const [k, v] of rows){ const li = el("li"); li.append(el("b",null,k), document.createTextNode(" " + v)); ul.append(li); } return ul; }
 
-/* ------------------------------------------------------------ the reading-page layout, as on Zane's own site
+/* ------------------------------------------------------------ the reading-page layout, as on Zayn's own site
    The text starts at the header's left edge and keeps a reading measure. On its right, a column that stays in view:
-   at its top what steers the page (the filters, the period), and under it "On this page", Zane's outline -- a grey
+   at its top what steers the page (the filters, the period), and under it "On this page", Zayn's outline -- a grey
    label, a thin line, one entry per section in the body ink, the section being read in bold (the author, 2026-11-09:
    "use the same 'On this page' submenu we used in the Zane website"). */
 function railPage(main, opt = {}){
@@ -720,7 +720,7 @@ function contentsOf(main, sel){
   });
   return ul;
 }
-/* the entry of the section being read is marked, as Zane's outline marks it: the last heading above the reading line */
+/* the entry of the section being read is marked, as Zayn's outline marks it: the last heading above the reading line */
 let spyList = null;
 function spyOn(ul){ spyList = ul; setTimeout(spy, 0); }
 function spy(){
@@ -1420,7 +1420,7 @@ function viewYours(){
 
   /* the builder: a window as wide as the screen allows, the questions on the left and the file they write on the
      right. Each line of the file knows which answers wrote it, so the lines an answer changes light up and come
-     into view as it is typed (Zane Rules 8 and 28: the questions read top to bottom, as a conversation). */
+     into view as it is typed (Zayn Rules 8 and 28: the questions read top to bottom, as a conversation). */
   const s3 = el("section","block wrap");
   const openB = el("button","btn big","Write your radar.yaml"); openB.type = "button";
   s3.append(el("h2",null,"Write your first radar.yaml"),
@@ -1698,7 +1698,7 @@ function flowDiagram(src){
 /* ------------------------------------------------------------ lines in equilibrium beyond six lines
    The browser balances a block of up to six lines (text-wrap: balance). A longer block, most often a paragraph on a
    phone, is narrowed here to the smallest width that keeps its number of lines, so its last line comes out full rather
-   than holding a word or two alone (Zane amendment docket F-1). */
+   than holding a word or two alone (Zayn amendment docket F-1). */
 function linesOf(e){
   const r = document.createRange(); r.selectNodeContents(e);
   const tops = new Set(); let lastL = Infinity, lastR = -Infinity, maxW = 0, lastTop = -1;

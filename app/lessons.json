@@ -605,7 +605,7 @@
           "cmd": "jq -r '.. | objects | select(.component? == \"Button\") | .label' screen.json"
         }
       ],
-      "lesson": "Most AI agents answer with text, even when a form or a chart would serve the user better. A2UI lets an agent answer with a screen. The agent does not send code: it sends a description built only from components the app has approved, and the app draws them with its own buttons, charts and fields. A protocol makes the screen possible; whether the screen is clear and usable still has to be checked, which is what a design law like Zane's is for.",
+      "lesson": "Most AI agents answer with text, even when a form or a chart would serve the user better. A2UI lets an agent answer with a screen. The agent does not send code: it sends a description built only from components the app has approved, and the app draws them with its own buttons, charts and fields. A protocol makes the screen possible; whether the screen is clear and usable still has to be checked, which is what a design law like Zayn's is for.",
       "terms": [
         [
           "generative UI",
