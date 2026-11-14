@@ -974,6 +974,51 @@
           "The cache holds that model's own internal numbers; another model, or another version of it, cannot use them."
         ]
       ]
+    },
+    "2026-11-14-nvidia-flare-confidential": {
+      "build": [
+        {
+          "why": "Measure what you run: the hash of a file is a short number that changes if one byte of the file changes.",
+          "cmd": "sha256sum model.gguf engine.dll > my_statement.txt"
+        },
+        {
+          "why": "Compare your statement with the list every party approved; one differing line means this machine stays outside.",
+          "cmd": "diff my_statement.txt approved.txt && echo admitted"
+        },
+        {
+          "why": "Sign the approved list, so that every site can check that it is the list the parties agreed on.",
+          "cmd": "ssh-keygen -Y sign -f approver_key -n approved-list approved.txt"
+        }
+      ],
+      "lesson": "In federated learning several organisations train one model together and each keeps its own data. Each has to trust the others' machines. Attestation replaces that trust with a check: a machine measures what it has started, as a chain of hashes, and a verifier compares the measurements with a list that all parties approved. In confidential computing the processor itself signs the measurements and keeps the machine's memory encrypted, so that even the site's administrator stays outside. NVIDIA FLARE 2.9.1 uses the result twice: the key that opens the training code is released only after the check, and each site checks the others when they join and again while they run. The check says which code runs. Whether that code is safe remains a question for the people who approved it.",
+      "terms": [
+        [
+          "federated learning",
+          "training one model across several sites while each site's data stays where it is"
+        ],
+        [
+          "attestation",
+          "evidence of what a machine runs, compared with approved values by another party"
+        ],
+        [
+          "reference value",
+          "an approved measurement, usually a hash, that evidence must equal"
+        ],
+        [
+          "key broker",
+          "a service that releases a secret only to a machine whose evidence passed"
+        ]
+      ],
+      "quiz": [
+        [
+          "A site's evidence matches the approved list. What has been shown, and what has not?",
+          "It runs the approved code on approved hardware. Whether that code is correct or safe has not been shown."
+        ],
+        [
+          "Why is the check repeated after a site has joined?",
+          "What a machine runs can change after admission; a periodic check finds the change and the site is quarantined."
+        ]
+      ]
     }
   }
 }

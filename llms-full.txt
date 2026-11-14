@@ -48,6 +48,31 @@ Sources:
 - llmgw: what leaves the cluster (docs/data.md): https://gitea.mynodes.xyz/ilker/llmgw/raw/branch/main/docs/data.md
 - llmgw: guardrails (docs/guardrails.md): https://gitea.mynodes.xyz/ilker/llmgw/raw/branch/main/docs/guardrails.md
 
+## NVIDIA FLARE 2.9.1 admits a site to shared training only after its hardware and software match what all parties approved; Softanza's federation learns the admission rule
+
+- id: 2026-11-14-nvidia-flare-confidential
+- date: 2026-11-14
+- level: advice
+- kind: release
+- stance: learn
+- relevance: low
+- page: https://mayouni.github.io/stzradar/items/2026/2026-11-14-nvidia-flare-confidential.md
+
+NVIDIA FLARE 2.9.1, released on November 12, 2026 under Apache-2.0, adds confidential computing as an optional technical preview to its federated-learning framework. Training runs inside confidential virtual machines or confidential containers on Intel TDX or AMD SEV-SNP, with or without NVIDIA confidential GPUs, on a site's own servers, on Kubernetes or on Azure, all in one federation. The application's image, code, configuration and secrets sit in an encrypted vault whose key the Trustee key broker releases only after the machine's measured boot matches approved reference values. Sites then check each other's evidence at registration and periodically; a site that fails is refused or quarantined.
+
+For each reader:
+- developer: Two decisions protect a shared computation: the key that opens the workload is released only to a machine whose measurements match an approved list, and each participant checks the others' evidence when they join and again while they run. A valid proof says which code runs; it says nothing about whether that code is safe.
+- maintainer: Softanza's compute federation admits a host by name, endpoint and facets, then governs, signs and encrypts each call. The admission rule adds what the host runs: its engine build and model hashes compared with a list every party approved, checked at joining and on a period, with each refusal written to the security ledger.
+
+Proposed:
+- stzlib.security: give the compute federation an admission rule: a joining host presents a signed statement of the engine build and model hashes it runs, the federation compares it with an approved reference list, repeats the check on a period, retires a host whose statement stops matching, and writes each refusal to the security ledger; state in the rule's own text that a statement is declared by the host and that hardware evidence is the stronger form (routed)
+
+Sources:
+- NVIDIA FLARE 2.9.1 release notes: https://nvflare.readthedocs.io/en/2.9.1/release_notes/flare_291.html
+- NVIDIA FLARE: confidential computing architecture: https://nvflare.readthedocs.io/en/2.9.1/user_guide/confidential_computing/architecture.html
+- Release 2.9.1: Confidential computing and security enhancements: https://github.com/NVIDIA/NVFlare/releases/tag/2.9.1
+- NVIDIA Confidential Computing: https://www.nvidia.com/en-us/data-center/solutions/confidential-computing/
+
 ## OpenInfer measures a serving GPU's math units busy 6 to 11% of the time and schedules the rest; Softanza gives its one GPU a single owner
 
 - id: 2026-11-14-openinfer-gpu-os
