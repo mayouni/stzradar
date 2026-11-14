@@ -1,10 +1,78 @@
 {
   "feed": "radar",
   "version": 1,
-  "updated": "2026-11-13T00:00:00Z",
+  "updated": "2026-11-14T00:00:00Z",
   "home": "https://github.com/mayouni/stzradar",
   "title": "Softanza Radar",
   "items": [
+    {
+      "id": "2026-11-14-openinfer-gpu-os",
+      "date": "2026-11-14",
+      "title": "OpenInfer measures a serving GPU's math units busy 6 to 11% of the time and schedules the rest; Softanza gives its one GPU a single owner",
+      "kind": "paper",
+      "summary": "In 'The GPU Needs an Operating System' (arXiv 2611.08720, November 5, 2026), Reza Nourai and Behnam Bastani of OpenInfer measure two large open models served with stock vLLM on NVIDIA RTX PRO 6000 Blackwell cards: the tensor units are active 6 to 11% of the time while kernels occupy the GPU about 94% of it, because each decoding step waits on memory. They propose a scheduler that lends idle parts of the chip to background work in pieces of 20 microseconds or less. With NVIDIA's static partitions, work written to share adds about a quarter of a GPU at a 5% slower decode step; their research kernel, running Llama-3.1-8B, adds the same at 0.3 to 1.6%.",
+      "stance": "learn",
+      "relevance": "low",
+      "level": "advice",
+      "audiences": [
+        "developer",
+        "maintainer"
+      ],
+      "notice": {
+        "developer": "A GPU that reports itself busy can have most of its arithmetic idle: text generation is limited by how fast memory delivers the weights. Read tokens per second and memory bandwidth, and treat the utilisation percentage as occupancy.",
+        "maintainer": "Softanza's GPU faculty already reports each kernel against the measured arithmetic peak and the memory bandwidth of the adapter; the paper adds the question of who may use the GPU at a given moment, and Softanza answers it for one machine with one owner at a time."
+      },
+      "areas": [
+        "softanza",
+        "harobanda"
+      ],
+      "domains": [
+        "models",
+        "devices"
+      ],
+      "concerns": [
+        "speed",
+        "cost",
+        "correctness"
+      ],
+      "actions": [
+        {
+          "area": "stzlib.gpu",
+          "do": "give the GPU one owner at a time across processes: a named lease the engine takes before it creates its device, so that a second process waits its turn or runs its job on the CPU; and report, for one decode step of a court model, the fraction of the adapter's measured peak and of its memory bandwidth",
+          "state": "routed",
+          "dates": {
+            "proposed": "2026-11-14",
+            "routed": "2026-11-14"
+          }
+        }
+      ],
+      "status": "routed",
+      "confidence": "claimed",
+      "sources": [
+        {
+          "title": "The GPU Needs an Operating System (arXiv 2611.08720v1)",
+          "url": "https://arxiv.org/html/2611.08720v1",
+          "by": "Reza Nourai, Behnam Bastani (OpenInfer)",
+          "read": "2026-11-14"
+        },
+        {
+          "title": "Busy isn't efficient: why the GPU needs an operating system",
+          "url": "https://openinfer.io/news/2026-11-09-busy-isnt-efficient-why-the-gpu-needs-an-operating-system/",
+          "by": "OpenInfer",
+          "read": "2026-11-14"
+        }
+      ],
+      "review_by": "2027-02-14",
+      "tags": [
+        "openinfer",
+        "gpu",
+        "scheduling",
+        "inference",
+        "roofline",
+        "memory-bandwidth"
+      ],
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-14-openinfer-gpu-os.md"
+    },
     {
       "id": "2026-11-13-llama-cpp-v1",
       "date": "2026-11-13",

@@ -839,6 +839,51 @@
           "After 1.0.0 a removal breaks the promise and forces a version 2; removing them first lets the stable line start clean."
         ]
       ]
+    },
+    "2026-11-14-openinfer-gpu-os": {
+      "build": [
+        {
+          "why": "Watch your GPU while a model answers: the first column is the share of time a program occupied it, the second the share of time its memory was being read or written.",
+          "cmd": "nvidia-smi --query-gpu=utilization.gpu,utilization.memory --format=csv -l 1"
+        },
+        {
+          "why": "See which programs are computing on the GPU right now. Two at once on a small card compete for it.",
+          "cmd": "nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv"
+        },
+        {
+          "why": "Compute your card's ratio: operations per second it can do, divided by bytes per second its memory delivers. A task that does fewer operations per byte than this is waiting on memory.",
+          "cmd": "ratio = peak_operations_per_second / memory_bytes_per_second"
+        }
+      ],
+      "lesson": "A GPU has two speed limits: how fast it can calculate, and how fast its memory can deliver the numbers to calculate with. When a language model writes a token it reads all of its weights and does only a little arithmetic on each one, so the memory limit is reached first and the calculating units wait. A utilisation gauge shows the GPU as busy during that wait, because a program is occupying it. One company measured the calculating units active only 6 to 11% of the time on large models, and proposes to lend the waiting time to other work in very short pieces, the way an operating system shares a processor among programs.",
+      "terms": [
+        [
+          "memory bandwidth",
+          "how many bytes per second a chip's memory can deliver to its calculating units"
+        ],
+        [
+          "utilisation",
+          "the share of time a program occupied the GPU, whatever the chip did in that time"
+        ],
+        [
+          "scheduler",
+          "the part of a system that decides which work uses a resource, and when"
+        ],
+        [
+          "decode step",
+          "one pass through the model that produces the next token"
+        ]
+      ],
+      "quiz": [
+        [
+          "A gauge shows 95% GPU utilisation while a model generates text. Does that mean the arithmetic units are nearly full?",
+          "No. It means a program occupied the GPU 95% of the time; the arithmetic can sit waiting for memory during most of it."
+        ],
+        [
+          "Why does generating text wait on memory?",
+          "Each token reads every weight of the model once and does only a few operations on each, so memory delivery is the slower of the two limits."
+        ]
+      ]
     }
   }
 }

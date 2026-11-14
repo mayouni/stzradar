@@ -7,6 +7,25 @@
   "language": "en",
   "items": [
     {
+      "id": "2026-11-14-openinfer-gpu-os",
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-14-openinfer-gpu-os.md",
+      "title": "OpenInfer measures a serving GPU's math units busy 6 to 11% of the time and schedules the rest; Softanza gives its one GPU a single owner",
+      "summary": "In 'The GPU Needs an Operating System' (arXiv 2611.08720, November 5, 2026), Reza Nourai and Behnam Bastani of OpenInfer measure two large open models served with stock vLLM on NVIDIA RTX PRO 6000 Blackwell cards: the tensor units are active 6 to 11% of the time while kernels occupy the GPU about 94% of it, because each decoding step waits on memory. They propose a scheduler that lends idle parts of the chip to background work in pieces of 20 microseconds or less. With NVIDIA's static partitions, work written to share adds about a quarter of a GPU at a 5% slower decode step; their research kernel, running Llama-3.1-8B, adds the same at 0.3 to 1.6%.",
+      "content_text": "In 'The GPU Needs an Operating System' (arXiv 2611.08720, November 5, 2026), Reza Nourai and Behnam Bastani of OpenInfer measure two large open models served with stock vLLM on NVIDIA RTX PRO 6000 Blackwell cards: the tensor units are active 6 to 11% of the time while kernels occupy the GPU about 94% of it, because each decoding step waits on memory. They propose a scheduler that lends idle parts of the chip to background work in pieces of 20 microseconds or less. With NVIDIA's static partitions, work written to share adds about a quarter of a GPU at a 5% slower decode step; their research kernel, running Llama-3.1-8B, adds the same at 0.3 to 1.6%.",
+      "date_published": "2026-11-14T00:00:00Z",
+      "tags": [
+        "paper",
+        "learn",
+        "advice",
+        "openinfer",
+        "gpu",
+        "scheduling",
+        "inference",
+        "roofline",
+        "memory-bandwidth"
+      ]
+    },
+    {
       "id": "2026-11-13-llama-cpp-v1",
       "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-13-llama-cpp-v1.md",
       "title": "llama.cpp and ggml reach version 1.0.0 with a versioning promise; Softanza moves its engine's ggml to the stable line",

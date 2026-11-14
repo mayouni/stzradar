@@ -2,6 +2,29 @@
 
 > What changed in AI and the tech field this week, and what it means for what we build in Softanza. Generated from the signed feed (https://mayouni.github.io/stzradar/feed/index.json); the feed is the reference.
 
+## OpenInfer measures a serving GPU's math units busy 6 to 11% of the time and schedules the rest; Softanza gives its one GPU a single owner
+
+- id: 2026-11-14-openinfer-gpu-os
+- date: 2026-11-14
+- level: advice
+- kind: paper
+- stance: learn
+- relevance: low
+- page: https://mayouni.github.io/stzradar/items/2026/2026-11-14-openinfer-gpu-os.md
+
+In 'The GPU Needs an Operating System' (arXiv 2611.08720, November 5, 2026), Reza Nourai and Behnam Bastani of OpenInfer measure two large open models served with stock vLLM on NVIDIA RTX PRO 6000 Blackwell cards: the tensor units are active 6 to 11% of the time while kernels occupy the GPU about 94% of it, because each decoding step waits on memory. They propose a scheduler that lends idle parts of the chip to background work in pieces of 20 microseconds or less. With NVIDIA's static partitions, work written to share adds about a quarter of a GPU at a 5% slower decode step; their research kernel, running Llama-3.1-8B, adds the same at 0.3 to 1.6%.
+
+For each reader:
+- developer: A GPU that reports itself busy can have most of its arithmetic idle: text generation is limited by how fast memory delivers the weights. Read tokens per second and memory bandwidth, and treat the utilisation percentage as occupancy.
+- maintainer: Softanza's GPU faculty already reports each kernel against the measured arithmetic peak and the memory bandwidth of the adapter; the paper adds the question of who may use the GPU at a given moment, and Softanza answers it for one machine with one owner at a time.
+
+Proposed:
+- stzlib.gpu: give the GPU one owner at a time across processes: a named lease the engine takes before it creates its device, so that a second process waits its turn or runs its job on the CPU; and report, for one decode step of a court model, the fraction of the adapter's measured peak and of its memory bandwidth (routed)
+
+Sources:
+- The GPU Needs an Operating System (arXiv 2611.08720v1): https://arxiv.org/html/2611.08720v1
+- Busy isn't efficient: why the GPU needs an operating system: https://openinfer.io/news/2026-11-09-busy-isnt-efficient-why-the-gpu-needs-an-operating-system/
+
 ## llama.cpp and ggml reach version 1.0.0 with a versioning promise; Softanza moves its engine's ggml to the stable line
 
 - id: 2026-11-13-llama-cpp-v1
