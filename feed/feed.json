@@ -7,6 +7,25 @@
   "language": "en",
   "items": [
     {
+      "id": "2026-11-14-google-tpu-sync",
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-14-google-tpu-sync.md",
+      "title": "Google's TPU Sync moves a model's working memory between chip, host memory, disk and network; Softanza manages its small models' state as one memory budget",
+      "summary": "On November 9, 2026 Google Cloud announced TPU Sync, an open-source C++ library with PyTorch and JAX bindings that treats a TPU's on-chip memory, the host's pinned memory, shared storage and the data-centre network as one hierarchy for a model's key-value cache and weights. Tensors keep the chip's own layout at every level and move by direct memory access while the chip computes. In Google's lab test of July 2026 on TPU v7x, serving Qwen3 235B with prefill and decode on separate nodes, the median transfer of the cache fell from several seconds to about 230 ms and time to first token fell by 60% on average; with prefix caching on 64K-token contexts it reports up to 90% lower time to first token.",
+      "content_text": "On November 9, 2026 Google Cloud announced TPU Sync, an open-source C++ library with PyTorch and JAX bindings that treats a TPU's on-chip memory, the host's pinned memory, shared storage and the data-centre network as one hierarchy for a model's key-value cache and weights. Tensors keep the chip's own layout at every level and move by direct memory access while the chip computes. In Google's lab test of July 2026 on TPU v7x, serving Qwen3 235B with prefill and decode on separate nodes, the median transfer of the cache fell from several seconds to about 230 ms and time to first token fell by 60% on average; with prefix caching on 64K-token contexts it reports up to 90% lower time to first token.",
+      "date_published": "2026-11-14T00:00:00Z",
+      "tags": [
+        "release",
+        "learn",
+        "advice",
+        "google",
+        "tpu",
+        "kv-cache",
+        "prefix-cache",
+        "memory-hierarchy",
+        "inference"
+      ]
+    },
+    {
       "id": "2026-11-14-llmgw-gateway",
       "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-14-llmgw-gateway.md",
       "title": "llmgw puts one gateway in front of an organisation's own GPUs; Softanza learns its priority bands and its residency rule",

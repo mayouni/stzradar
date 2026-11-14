@@ -2,6 +2,28 @@
 
 > What changed in AI and the tech field this week, and what it means for what we build in Softanza. Generated from the signed feed (https://mayouni.github.io/stzradar/feed/index.json); the feed is the reference.
 
+## Google's TPU Sync moves a model's working memory between chip, host memory, disk and network; Softanza manages its small models' state as one memory budget
+
+- id: 2026-11-14-google-tpu-sync
+- date: 2026-11-14
+- level: advice
+- kind: release
+- stance: learn
+- relevance: low
+- page: https://mayouni.github.io/stzradar/items/2026/2026-11-14-google-tpu-sync.md
+
+On November 9, 2026 Google Cloud announced TPU Sync, an open-source C++ library with PyTorch and JAX bindings that treats a TPU's on-chip memory, the host's pinned memory, shared storage and the data-centre network as one hierarchy for a model's key-value cache and weights. Tensors keep the chip's own layout at every level and move by direct memory access while the chip computes. In Google's lab test of July 2026 on TPU v7x, serving Qwen3 235B with prefill and decode on separate nodes, the median transfer of the cache fell from several seconds to about 230 ms and time to first token fell by 60% on average; with prefix caching on 64K-token contexts it reports up to 90% lower time to first token.
+
+For each reader:
+- developer: What a model has already read is an asset: stored in the layout the engine computes on, it can leave fast memory and come back without conversion. Keep it by a hash of the text it stands for, and evict the least recently used first.
+- maintainer: Softanza's decoder already keeps a read prompt in memory and on disk, keyed by the model's hash; with several small models on one machine it adds the layer above: one memory budget for weights and read prompts, with a measured time to bring each back.
+
+Proposed:
+- stzlib.intelligence: measure, for each model of the support-desk set, the time from disk to first token with a cold file, a file already in the system's cache and a restored prefix cache, and the memory each holds when ready; then give the engine one memory budget across loaded models and their prefix caches, evicting the least recently used to disk, and report how many models stay ready within the budget (routed)
+
+Sources:
+- Introducing TPU Sync: Fast KV cache and weight transfer for inference and RL on TPU: https://cloud.google.com/blog/topics/ai-infrastructure/introducing-tpu-sync-fast-kv-cache-and-weight-transfer-on-tpu
+
 ## llmgw puts one gateway in front of an organisation's own GPUs; Softanza learns its priority bands and its residency rule
 
 - id: 2026-11-14-llmgw-gateway

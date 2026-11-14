@@ -929,6 +929,51 @@
           "A fallback is used when the first model fails; if it runs outside, the data leaves at exactly the moment nobody is watching."
         ]
       ]
+    },
+    "2026-11-14-google-tpu-sync": {
+      "build": [
+        {
+          "why": "See the cache at work with llama.cpp: save what the model has read of a long instruction, so that the next run starts from it.",
+          "cmd": "llama-cli -m model.gguf --prompt-cache instructions.bin -f instructions.txt -n 0"
+        },
+        {
+          "why": "Run again with the same file: the model restores its reading of the instruction and reads only what is new.",
+          "cmd": "llama-cli -m model.gguf --prompt-cache instructions.bin -f instructions_and_question.txt"
+        },
+        {
+          "why": "Name each saved reading by a hash of the model and the text, so that a cache is never restored into another model or after another text.",
+          "cmd": "key = sha256(model_file) + sha256(prefix_text)"
+        }
+      ],
+      "lesson": "A language model reads a prompt once, from left to right, and keeps a working memory of what it read, called the key-value cache. Reading is the slow part; if the next prompt starts with the same text, the model can reuse that memory and read only the rest. This memory is large, so a system has to decide where each one lives: in the fastest memory beside the chip, in ordinary memory, on disk, or on another machine. Google's TPU Sync moves it between those levels without converting it, and reports the time to move it falling from seconds to about 230 milliseconds. The same idea works on a laptop with a file on disk.",
+      "terms": [
+        [
+          "key-value cache",
+          "the working memory a model keeps of the text it has already read"
+        ],
+        [
+          "prefix",
+          "the beginning that several prompts share, such as a fixed instruction"
+        ],
+        [
+          "memory hierarchy",
+          "levels of storage from small and fast to large and slow, used together"
+        ],
+        [
+          "eviction",
+          "moving the item used longest ago out of the fast level to make room"
+        ]
+      ],
+      "quiz": [
+        [
+          "Two prompts share their first 2,000 tokens. What can the model reuse for the second one?",
+          "Its key-value cache for those 2,000 tokens; it then reads only the tokens that differ."
+        ],
+        [
+          "Why must a saved cache be keyed by the model as well as by the text?",
+          "The cache holds that model's own internal numbers; another model, or another version of it, cannot use them."
+        ]
+      ]
     }
   }
 }
