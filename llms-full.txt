@@ -2,6 +2,30 @@
 
 > What changed in AI and the tech field this week, and what it means for what we build in Softanza. Generated from the signed feed (https://mayouni.github.io/stzradar/feed/index.json); the feed is the reference.
 
+## llmgw puts one gateway in front of an organisation's own GPUs; Softanza learns its priority bands and its residency rule
+
+- id: 2026-11-14-llmgw-gateway
+- date: 2026-11-14
+- level: advice
+- kind: release
+- stance: learn
+- relevance: low
+- page: https://mayouni.github.io/stzradar/items/2026/2026-11-14-llmgw-gateway.md
+
+llmgw, by Ilker Manap, is a gateway in one Go binary for organisations that run language models on their own GPU clusters: one OpenAI- and Anthropic-compatible endpoint over vLLM, SGLang, llama.cpp and TensorRT-LLM, with tenants, keys, budgets, guardrails, per-tenant knowledge bases and a three-machine high-availability setup. Its README, at version 0.16.3 of November 3, 2026, reports that the gateway adds 0.15 to 0.49 ms at the 99th percentile with authentication and guardrail patterns on, measured on loopback, and that with admission control interactive latency stays within 1.24 times idle while 500 batch requests run, against 58 times without. It is published under the Functional Source License, which becomes Apache 2.0 after two years.
+
+For each reader:
+- developer: When people and background jobs share one model, give each request a priority band and let the low band wait: llmgw reports interactive answers within 1.24 times their idle latency under 500 batch requests, and 58 times without that rule.
+- maintainer: Softanza runs its agents and models on the user's own machine, where several agents share one local model; it takes from llmgw two declared rules: a person's request is admitted ahead of background work, and a project marked as resident refuses any model outside, as a fallback too.
+
+Proposed:
+- stzlib.agentic: declare a priority band for each agent that calls a model, admit a person-facing call ahead of background calls when several agents share one local model, and measure a person's answer time with background agents running, with and without the rule; declare where a solution's model calls may run, refuse a model outside that place as a fallback too, and write the refusal in the run's record (routed)
+
+Sources:
+- ilker/llmgw (repository and README, v0.16.3): https://gitea.mynodes.xyz/ilker/llmgw
+- llmgw: what leaves the cluster (docs/data.md): https://gitea.mynodes.xyz/ilker/llmgw/raw/branch/main/docs/data.md
+- llmgw: guardrails (docs/guardrails.md): https://gitea.mynodes.xyz/ilker/llmgw/raw/branch/main/docs/guardrails.md
+
 ## OpenInfer measures a serving GPU's math units busy 6 to 11% of the time and schedules the rest; Softanza gives its one GPU a single owner
 
 - id: 2026-11-14-openinfer-gpu-os

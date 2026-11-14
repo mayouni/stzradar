@@ -884,6 +884,51 @@
           "Each token reads every weight of the model once and does only a few operations on each, so memory delivery is the slower of the two limits."
         ]
       ]
+    },
+    "2026-11-14-llmgw-gateway": {
+      "build": [
+        {
+          "why": "A gateway is one address your applications call; it forwards each request to a model. Here the application names a model and never learns which machine answers.",
+          "cmd": "curl http://gateway.local/v1/chat/completions -H \"Authorization: Bearer $KEY\" -d '{\"model\":\"assistant\",\"messages\":[{\"role\":\"user\",\"content\":\"Hello\"}]}'"
+        },
+        {
+          "why": "Mark a request as background work, so that it waits when people are being served.",
+          "cmd": "curl http://gateway.local/v1/chat/completions -H \"Authorization: Bearer $KEY\" -H \"x-llmgw-band: batch\" -d @job.json"
+        },
+        {
+          "why": "Keep a project's requests on your own machines: a model served outside is then refused, as a fallback too.",
+          "cmd": "llmgw keys residency --project finance/reports --in-cluster"
+        }
+      ],
+      "lesson": "When many programs and people share one language model, something has to stand in front of it and decide three things: who may call it, whose call goes first, and where a call may run. That something is called a gateway. Its simplest and most useful rule is the queue: requests from a waiting person go ahead, and background jobs wait their turn. One gateway reports that a person's answer took 1.24 times its usual time while 500 background jobs ran, and 58 times as long with the rule turned off. A second rule keeps data at home: a project marked as resident is refused any model outside the building.",
+      "terms": [
+        [
+          "gateway",
+          "a program that receives every request for a service and decides how each one is served"
+        ],
+        [
+          "admission control",
+          "deciding which requests start now and which wait, so that the urgent ones stay fast"
+        ],
+        [
+          "tenant",
+          "one group of users of a shared service, with its own keys, limits and data"
+        ],
+        [
+          "data residency",
+          "a rule about the place where data may be stored and processed"
+        ]
+      ],
+      "quiz": [
+        [
+          "Ten agents and one person share a single model. Which request should be served first, and why?",
+          "The person's: a person is waiting, and background agents lose little by waiting a few seconds."
+        ],
+        [
+          "A project must keep its data on its own machines. Why must the rule also cover the fallback model?",
+          "A fallback is used when the first model fails; if it runs outside, the data leaves at exactly the moment nobody is watching."
+        ]
+      ]
     }
   }
 }
