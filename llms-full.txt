@@ -2,6 +2,29 @@
 
 > What changed in AI and the tech field this week, and what it means for what we build in Softanza. Generated from the signed feed (https://mayouni.github.io/stzradar/feed/index.json); the feed is the reference.
 
+## GPUOS runs background work beside a latency-bound model on one GPU by making it yield at checkpoints; Softanza learns the yield rule for its own GPU jobs
+
+- id: 2026-11-15-gpuos-shared-gpu
+- date: 2026-11-15
+- level: advice
+- kind: paper
+- stance: learn
+- relevance: low
+- page: https://mayouni.github.io/stzradar/items/2026/2026-11-15-gpuos-shared-gpu.md
+
+GPUOS is an MIT research prototype from the Multi-V-VM group, described as sharing a GPU without NVIDIA's MIG or MPS. Its code keeps one persistent kernel running on the GPU with a work queue, replaces operators at run time through a table of device function pointers, and merges many tiny operations into one compiled batch. Its working-draft paper, pushed on November 12, 2026, builds on OpenInfer's 'The GPU Needs an Operating System' and specifies restartable tasks admitted under revocable resource leases. On one RTX 5090, background work that yields every 4 tiles costs a streaming foreground 0.62% at the 99th percentile, against 23.68% when it never yields. The authors state that the measurements support selected mechanisms.
+
+For each reader:
+- developer: Background work on a GPU is safe beside a latency-bound job when it is cut into short slices and checks, between slices, whether the foreground wants the device. The size of the slice is the price: GPUOS measured 0.62% of foreground cost with a short slice and 23.68% with none.
+- maintainer: Softanza's engine gives the GPU one owner at a time across processes. Inside that owner, the same rule applies one level down: a background job dispatches in short slices and yields to a foreground job between them, with the foreground's 99th-percentile time measured both ways.
+
+Proposed:
+- stzlib.gpu: inside the process that holds the GPU, let a background job dispatch in short slices and yield to a foreground job between them; measure the foreground's median and 99th-percentile step time alone, beside a background job that never yields and beside one that yields, with the background's own rate in each case; and measure the engine's fixed cost per dispatch, which says when merging small operations into one dispatch pays (routed)
+
+Sources:
+- GPUOS (repository at commit 9eb66b9): https://github.com/Multi-V-VM/GPUOS
+- GPUOS: An Operating-System Architecture for Shared GPU Execution (working draft, source in the repository): https://github.com/Multi-V-VM/GPUOS/tree/main/paper/osdi
+
 ## Google's TPU Sync moves a model's working memory between chip, host memory, disk and network; Softanza manages its small models' state as one memory budget
 
 - id: 2026-11-14-google-tpu-sync

@@ -1019,6 +1019,51 @@
           "What a machine runs can change after admission; a periodic check finds the change and the site is quarantined."
         ]
       ]
+    },
+    "2026-11-15-gpuos-shared-gpu": {
+      "build": [
+        {
+          "why": "Watch one GPU while a model answers: the utilisation column shows how often the device is busy, and the gaps are where other work could run.",
+          "cmd": "nvidia-smi dmon -s u"
+        },
+        {
+          "why": "Write background work as short slices with a check between them, so that it gives the device back within one slice.",
+          "cmd": "for tile in tiles: run(tile); if foreground_waiting(): yield_device()"
+        },
+        {
+          "why": "Measure the price on the foreground: its slowest one in a hundred steps, alone and then with the background running.",
+          "cmd": "p99 = sorted(step_times)[int(0.99 * len(step_times))]"
+        }
+      ],
+      "lesson": "A GPU serving a model that answers a person is often idle between steps, because the work arrives in small pieces with waits between them. Other work could use those gaps, but work that has started on a GPU usually runs to its end, and the person's next step then waits behind it. The remedy is cooperative yielding: the background job is cut into short slices, and after each slice it checks whether the foreground wants the device. GPUOS measured the difference on one card: a background job that never yields slowed the foreground's slowest steps by about 24 percent, and one that yields every few slices slowed them by under 1 percent. A shorter slice protects the foreground more and gives the background less.",
+      "terms": [
+        [
+          "foreground and background",
+          "work with a deadline, such as an answer to a person, and work that can wait"
+        ],
+        [
+          "cooperative yielding",
+          "a job gives the device back by itself at chosen points in its own code"
+        ],
+        [
+          "99th percentile",
+          "the time that 99 of 100 steps stay under; it describes the slow cases a person feels"
+        ],
+        [
+          "persistent kernel",
+          "a GPU program that stays running and takes new tasks from a queue"
+        ]
+      ],
+      "quiz": [
+        [
+          "Why is the 99th percentile used here, and the average left aside?",
+          "A person feels the slow steps. An average hides them; the 99th percentile shows them."
+        ],
+        [
+          "A background job yields after every slice. What happens when the slice is made four times longer?",
+          "The background gets more done, and the foreground waits longer each time it arrives during a slice."
+        ]
+      ]
     }
   }
 }

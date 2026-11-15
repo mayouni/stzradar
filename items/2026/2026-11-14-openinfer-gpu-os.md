@@ -83,3 +83,10 @@ going: the accelerator becomes a resource the system schedules, beside the proce
   main text and the first appendix. Figures are the paper's own.
 - OpenInfer, [Busy isn't efficient: why the GPU needs an operating system](https://openinfer.io/news/2026-11-09-busy-isnt-efficient-why-the-gpu-needs-an-operating-system/),
   read 2026-11-14.
+
+## Corrections
+
+- 2026-11-14: the lease is built in Softanza's engine. A process takes a per-adapter lease before it opens the GPU; a
+  second process waits, by default up to 30 seconds, then runs with no device and can name the holder. Measured with
+  real processes: a refusal after 2,000 ms naming the holder, and a take after a 12.4-second wait when the holder
+  closed. The reading of one decode step against the adapter's peak is ordered with the desk's next measurement.
