@@ -19,9 +19,9 @@
   "domains": ["security", "models"],
   "concerns": ["trust", "sovereignty"],
   "actions": [
-    { "area": "stzlib.security", "do": "give the compute federation an admission rule: a joining host presents a signed statement of the engine build and model hashes it runs, the federation compares it with an approved reference list, repeats the check on a period, retires a host whose statement stops matching, and writes each refusal to the security ledger; state in the rule's own text that a statement is declared by the host and that hardware evidence is the stronger form", "state": "routed", "dates": { "proposed": "2026-11-14", "routed": "2026-11-14" } }
+    { "area": "stzlib.security", "do": "give the compute federation an admission rule: a joining host presents a signed statement of the engine build and model hashes it runs, the federation compares it with an approved reference list, repeats the check on a period, retires a host whose statement stops matching, and writes each refusal to the security ledger; state in the rule's own text that a statement is declared by the host and that hardware evidence is the stronger form", "state": "done", "dates": { "proposed": "2026-11-14", "routed": "2026-11-14", "done": "2026-11-14" } }
   ],
-  "status": "routed",
+  "status": "done",
   "confidence": "claimed",
   "sources": [
     { "title": "NVIDIA FLARE 2.9.1 release notes", "url": "https://nvflare.readthedocs.io/en/2.9.1/release_notes/flare_291.html", "by": "NVIDIA", "read": "2026-11-14" },
@@ -87,3 +87,12 @@ federation whose members can show each other which engine and which models answe
 - NVIDIA, [Release 2.9.1 on GitHub](https://github.com/NVIDIA/NVFlare/releases/tag/2.9.1), November 12, 2026.
 - NVIDIA, [Confidential Computing](https://www.nvidia.com/en-us/data-center/solutions/confidential-computing/),
   read 2026-11-14. The 98% figure is NVIDIA's own.
+
+## Corrections
+
+- 2026-11-14: the admission rule is built in Softanza's security module. A host joins a federation when its
+  statement (the engine build digest, the SHA-256 of each model it serves and a one-time challenge) is signed with
+  its own key and matches a reference list an approver signed. A host with one changed model byte is refused at
+  joining, a host changed after joining is retired at the next check, and a replayed statement is refused. Admission
+  and recheck take 0.76 ms each. The statement is marked as declared by the host, and the threat model states that
+  hardware evidence takes the same place.

@@ -1064,6 +1064,51 @@
           "The background gets more done, and the foreground waits longer each time it arrives during a slice."
         ]
       ]
+    },
+    "2026-11-15-tur-metal-inference": {
+      "build": [
+        {
+          "why": "Measure one sequence first with llama.cpp's own bench: -npl is the number of parallel sequences, and the report gives tokens per second.",
+          "cmd": "llama-batched-bench -m model.gguf -c 4096 -b 2048 -npp 128 -ntg 128 -npl 1"
+        },
+        {
+          "why": "Now ask for 1, 2, 4 and 8 sequences in one run and read how the total speed grows.",
+          "cmd": "llama-batched-bench -m model.gguf -c 16384 -b 2048 -npp 128 -ntg 128 -npl 1,2,4,8"
+        },
+        {
+          "why": "Divide the total by the number of sequences: this is what each caller sees, and it falls slowly while the total rises.",
+          "cmd": "per_sequence = total_tokens_per_second / n_sequences"
+        }
+      ],
+      "lesson": "To write one token, a language model reads all of its weights from memory and does arithmetic with them. For a small model the reading takes most of the time. If several people are waiting, the model can advance all their texts in the same pass: it reads the weights once and does the arithmetic for each text. This is called batching. The total number of tokens per second rises almost with the number of texts, and each person's text slows only a little. Tur measured 123 tokens per second for one text and 729 for eight on one laptop. The limit comes when the arithmetic, and no longer the reading, takes most of the time.",
+      "terms": [
+        [
+          "decode step",
+          "one pass through the model that produces the next token"
+        ],
+        [
+          "batching",
+          "advancing several texts in the same pass through the model"
+        ],
+        [
+          "memory-bound",
+          "limited by how fast data is read from memory, with arithmetic to spare"
+        ],
+        [
+          "throughput and latency",
+          "tokens per second for everyone together, and the wait one person sees"
+        ]
+      ],
+      "quiz": [
+        [
+          "One text decodes at 123 tokens per second and eight together at 729. What does each of the eight see?",
+          "About 91 tokens per second each: 729 divided by 8. Each is a little slower, and together they are six times faster."
+        ],
+        [
+          "Why does batching help a small model more when its decode step is memory-bound?",
+          "The weights are read once for all texts, so the costly part is shared; only the cheaper arithmetic grows with each text."
+        ]
+      ]
     }
   }
 }

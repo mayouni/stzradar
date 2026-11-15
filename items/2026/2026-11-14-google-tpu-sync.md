@@ -19,9 +19,9 @@
   "domains": ["models", "devices"],
   "concerns": ["speed", "cost"],
   "actions": [
-    { "area": "stzlib.intelligence", "do": "measure, for each model of the support-desk set, the time from disk to first token with a cold file, a file already in the system's cache and a restored prefix cache, and the memory each holds when ready; then give the engine one memory budget across loaded models and their prefix caches, evicting the least recently used to disk, and report how many models stay ready within the budget", "state": "routed", "dates": { "proposed": "2026-11-14", "routed": "2026-11-14" } }
+    { "area": "stzlib.intelligence", "do": "measure, for each model of the support-desk set, the time from disk to first token with a cold file, a file already in the system's cache and a restored prefix cache, and the memory each holds when ready; then give the engine one memory budget across loaded models and their prefix caches, evicting the least recently used to disk, and report how many models stay ready within the budget", "state": "done", "dates": { "proposed": "2026-11-14", "routed": "2026-11-14", "done": "2026-11-14" } }
   ],
-  "status": "routed",
+  "status": "done",
   "confidence": "claimed",
   "sources": [
     { "title": "Introducing TPU Sync: Fast KV cache and weight transfer for inference and RL on TPU", "url": "https://cloud.google.com/blog/topics/ai-infrastructure/introducing-tpu-sync-fast-kv-cache-and-weight-transfer-on-tpu", "by": "Fenghui Zhang, Weiren Yu (Google Cloud)", "read": "2026-11-14" }
@@ -76,3 +76,13 @@ both makes the choice explicit and measurable.
 - Fenghui Zhang and Weiren Yu, Google Cloud,
   [Introducing TPU Sync: Fast KV cache and weight transfer for inference and RL on TPU](https://cloud.google.com/blog/topics/ai-infrastructure/introducing-tpu-sync-fast-kv-cache-and-weight-transfer-on-tpu),
   November 9, 2026, read 2026-11-14. Figures are Google's own, from a lab test.
+
+## Corrections
+
+- 2026-11-14: both parts are built and measured in Softanza's engine. Twelve model files of the support-desk set were
+  measured from disk to first token: ready memory is the file's size plus 5 to 92 MB, peak memory 1.2 to 2.1 times
+  that, and a restored prefix is read back in 12 to 600 ms. The engine now holds up to 32 models in named slots under
+  one budget in bytes, evicting the least recently used to its file. A request for a held model selects it in 0 ms
+  with a first token in about 75 ms; a model read back from its file takes 1.1 to 2.7 s. Under a skewed pattern of
+  requests, 22 of 29 found their model in memory with a 4 GB budget and 22 of 30 with 8 GB; a strict rotation over a
+  set larger than the budget found none.

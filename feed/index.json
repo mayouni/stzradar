@@ -72,6 +72,86 @@
       "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-15-gpuos-shared-gpu.md"
     },
     {
+      "id": "2026-11-15-tur-metal-inference",
+      "date": "2026-11-15",
+      "title": "Tur serves eight requests from one small model at six times the speed of one by reading the weights once per step; Softanza measures the same rule on its own decoder",
+      "kind": "release",
+      "summary": "Tur, by Danylo Kravchenko, is an Apache-2.0 inference engine in Rust for Apple Silicon Macs: one binary for generation, an OpenAI-compatible server, Whisper transcription and quantization, on Metal kernels and the Candle framework. Its continuous batching packs every request's next token into one pass, so the weights are read once for all of them: on an M3 Pro, Qwen3.5-0.8B at 8 bits decodes 123 tokens per second for one sequence and 729 for eight, against llama.cpp's 113 and 456. It plans all memory before loading a weight, keeps most experts of a mixture-of-experts model on the SSD behind a fixed cache, reuses shared prefixes, and drafts tokens from the prompt's own text. Figures are the author's.",
+      "stance": "learn",
+      "relevance": "medium",
+      "level": "advice",
+      "audiences": [
+        "developer",
+        "maintainer"
+      ],
+      "notice": {
+        "developer": "One decode step of a small model is mostly the time to read its weights from memory. Several sequences decoded in the same step share that read, so total speed grows with the number of sequences while each one slows a little: Tur reports a gap between tokens of 17.4 ms alone and 25.9 ms with eight.",
+        "maintainer": "Softanza's decoder holds several models in slots under one memory budget and decodes one sequence at a time. Decoding several independent sequences of one model in one step is the next measure: total tokens per second at 1, 2, 4 and 8 sequences on the processor, with each sequence's text identical to its solo run."
+      },
+      "areas": [
+        "softanza",
+        "aicha"
+      ],
+      "domains": [
+        "models",
+        "devices"
+      ],
+      "concerns": [
+        "speed",
+        "cost"
+      ],
+      "actions": [
+        {
+          "area": "stzlib.intelligence",
+          "do": "decode several independent sequences of one model in one step and measure total tokens per second and the gap between tokens at 1, 2, 4 and 8 sequences on the processor, each sequence's text identical to its solo run; and measure drafting from the prompt's own text, which adds no second model, on a task that copies from its prompt",
+          "state": "routed",
+          "dates": {
+            "proposed": "2026-11-15",
+            "routed": "2026-11-15"
+          }
+        }
+      ],
+      "status": "routed",
+      "confidence": "claimed",
+      "sources": [
+        {
+          "title": "Tur: local inference with a little muscle",
+          "url": "https://danylokravchenko.github.io/tur/",
+          "by": "Danylo Kravchenko",
+          "read": "2026-11-15"
+        },
+        {
+          "title": "Tur benchmarks",
+          "url": "https://danylokravchenko.github.io/tur/benchmarks/",
+          "by": "Danylo Kravchenko",
+          "read": "2026-11-15"
+        },
+        {
+          "title": "Tur design: scope",
+          "url": "https://danylokravchenko.github.io/tur/docs/design/scope/",
+          "by": "Danylo Kravchenko",
+          "read": "2026-11-15"
+        },
+        {
+          "title": "tur (repository)",
+          "url": "https://github.com/danylokravchenko/tur",
+          "by": "Danylo Kravchenko",
+          "read": "2026-11-15"
+        }
+      ],
+      "review_by": "2027-02-15",
+      "tags": [
+        "inference",
+        "continuous-batching",
+        "apple-silicon",
+        "metal",
+        "rust",
+        "speculative-decoding",
+        "prefix-cache"
+      ],
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-15-tur-metal-inference.md"
+    },
+    {
       "id": "2026-11-14-google-tpu-sync",
       "date": "2026-11-14",
       "title": "Google's TPU Sync moves a model's working memory between chip, host memory, disk and network; Softanza manages its small models' state as one memory budget",
@@ -104,14 +184,15 @@
         {
           "area": "stzlib.intelligence",
           "do": "measure, for each model of the support-desk set, the time from disk to first token with a cold file, a file already in the system's cache and a restored prefix cache, and the memory each holds when ready; then give the engine one memory budget across loaded models and their prefix caches, evicting the least recently used to disk, and report how many models stay ready within the budget",
-          "state": "routed",
+          "state": "done",
           "dates": {
             "proposed": "2026-11-14",
-            "routed": "2026-11-14"
+            "routed": "2026-11-14",
+            "done": "2026-11-14"
           }
         }
       ],
-      "status": "routed",
+      "status": "done",
       "confidence": "claimed",
       "sources": [
         {
@@ -240,14 +321,15 @@
         {
           "area": "stzlib.security",
           "do": "give the compute federation an admission rule: a joining host presents a signed statement of the engine build and model hashes it runs, the federation compares it with an approved reference list, repeats the check on a period, retires a host whose statement stops matching, and writes each refusal to the security ledger; state in the rule's own text that a statement is declared by the host and that hardware evidence is the stronger form",
-          "state": "routed",
+          "state": "done",
           "dates": {
             "proposed": "2026-11-14",
-            "routed": "2026-11-14"
+            "routed": "2026-11-14",
+            "done": "2026-11-14"
           }
         }
       ],
-      "status": "routed",
+      "status": "done",
       "confidence": "claimed",
       "sources": [
         {

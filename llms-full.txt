@@ -25,6 +25,31 @@ Sources:
 - GPUOS (repository at commit 9eb66b9): https://github.com/Multi-V-VM/GPUOS
 - GPUOS: An Operating-System Architecture for Shared GPU Execution (working draft, source in the repository): https://github.com/Multi-V-VM/GPUOS/tree/main/paper/osdi
 
+## Tur serves eight requests from one small model at six times the speed of one by reading the weights once per step; Softanza measures the same rule on its own decoder
+
+- id: 2026-11-15-tur-metal-inference
+- date: 2026-11-15
+- level: advice
+- kind: release
+- stance: learn
+- relevance: medium
+- page: https://mayouni.github.io/stzradar/items/2026/2026-11-15-tur-metal-inference.md
+
+Tur, by Danylo Kravchenko, is an Apache-2.0 inference engine in Rust for Apple Silicon Macs: one binary for generation, an OpenAI-compatible server, Whisper transcription and quantization, on Metal kernels and the Candle framework. Its continuous batching packs every request's next token into one pass, so the weights are read once for all of them: on an M3 Pro, Qwen3.5-0.8B at 8 bits decodes 123 tokens per second for one sequence and 729 for eight, against llama.cpp's 113 and 456. It plans all memory before loading a weight, keeps most experts of a mixture-of-experts model on the SSD behind a fixed cache, reuses shared prefixes, and drafts tokens from the prompt's own text. Figures are the author's.
+
+For each reader:
+- developer: One decode step of a small model is mostly the time to read its weights from memory. Several sequences decoded in the same step share that read, so total speed grows with the number of sequences while each one slows a little: Tur reports a gap between tokens of 17.4 ms alone and 25.9 ms with eight.
+- maintainer: Softanza's decoder holds several models in slots under one memory budget and decodes one sequence at a time. Decoding several independent sequences of one model in one step is the next measure: total tokens per second at 1, 2, 4 and 8 sequences on the processor, with each sequence's text identical to its solo run.
+
+Proposed:
+- stzlib.intelligence: decode several independent sequences of one model in one step and measure total tokens per second and the gap between tokens at 1, 2, 4 and 8 sequences on the processor, each sequence's text identical to its solo run; and measure drafting from the prompt's own text, which adds no second model, on a task that copies from its prompt (routed)
+
+Sources:
+- Tur: local inference with a little muscle: https://danylokravchenko.github.io/tur/
+- Tur benchmarks: https://danylokravchenko.github.io/tur/benchmarks/
+- Tur design: scope: https://danylokravchenko.github.io/tur/docs/design/scope/
+- tur (repository): https://github.com/danylokravchenko/tur
+
 ## Google's TPU Sync moves a model's working memory between chip, host memory, disk and network; Softanza manages its small models' state as one memory budget
 
 - id: 2026-11-14-google-tpu-sync
@@ -42,7 +67,7 @@ For each reader:
 - maintainer: Softanza's decoder already keeps a read prompt in memory and on disk, keyed by the model's hash; with several small models on one machine it adds the layer above: one memory budget for weights and read prompts, with a measured time to bring each back.
 
 Proposed:
-- stzlib.intelligence: measure, for each model of the support-desk set, the time from disk to first token with a cold file, a file already in the system's cache and a restored prefix cache, and the memory each holds when ready; then give the engine one memory budget across loaded models and their prefix caches, evicting the least recently used to disk, and report how many models stay ready within the budget (routed)
+- stzlib.intelligence: measure, for each model of the support-desk set, the time from disk to first token with a cold file, a file already in the system's cache and a restored prefix cache, and the memory each holds when ready; then give the engine one memory budget across loaded models and their prefix caches, evicting the least recently used to disk, and report how many models stay ready within the budget (done)
 
 Sources:
 - Introducing TPU Sync: Fast KV cache and weight transfer for inference and RL on TPU: https://cloud.google.com/blog/topics/ai-infrastructure/introducing-tpu-sync-fast-kv-cache-and-weight-transfer-on-tpu
@@ -88,7 +113,7 @@ For each reader:
 - maintainer: Softanza's compute federation admits a host by name, endpoint and facets, then governs, signs and encrypts each call. The admission rule adds what the host runs: its engine build and model hashes compared with a list every party approved, checked at joining and on a period, with each refusal written to the security ledger.
 
 Proposed:
-- stzlib.security: give the compute federation an admission rule: a joining host presents a signed statement of the engine build and model hashes it runs, the federation compares it with an approved reference list, repeats the check on a period, retires a host whose statement stops matching, and writes each refusal to the security ledger; state in the rule's own text that a statement is declared by the host and that hardware evidence is the stronger form (routed)
+- stzlib.security: give the compute federation an admission rule: a joining host presents a signed statement of the engine build and model hashes it runs, the federation compares it with an approved reference list, repeats the check on a period, retires a host whose statement stops matching, and writes each refusal to the security ledger; state in the rule's own text that a statement is declared by the host and that hardware evidence is the stronger form (done)
 
 Sources:
 - NVIDIA FLARE 2.9.1 release notes: https://nvflare.readthedocs.io/en/2.9.1/release_notes/flare_291.html

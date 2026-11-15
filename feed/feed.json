@@ -26,6 +26,26 @@
       ]
     },
     {
+      "id": "2026-11-15-tur-metal-inference",
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-15-tur-metal-inference.md",
+      "title": "Tur serves eight requests from one small model at six times the speed of one by reading the weights once per step; Softanza measures the same rule on its own decoder",
+      "summary": "Tur, by Danylo Kravchenko, is an Apache-2.0 inference engine in Rust for Apple Silicon Macs: one binary for generation, an OpenAI-compatible server, Whisper transcription and quantization, on Metal kernels and the Candle framework. Its continuous batching packs every request's next token into one pass, so the weights are read once for all of them: on an M3 Pro, Qwen3.5-0.8B at 8 bits decodes 123 tokens per second for one sequence and 729 for eight, against llama.cpp's 113 and 456. It plans all memory before loading a weight, keeps most experts of a mixture-of-experts model on the SSD behind a fixed cache, reuses shared prefixes, and drafts tokens from the prompt's own text. Figures are the author's.",
+      "content_text": "Tur, by Danylo Kravchenko, is an Apache-2.0 inference engine in Rust for Apple Silicon Macs: one binary for generation, an OpenAI-compatible server, Whisper transcription and quantization, on Metal kernels and the Candle framework. Its continuous batching packs every request's next token into one pass, so the weights are read once for all of them: on an M3 Pro, Qwen3.5-0.8B at 8 bits decodes 123 tokens per second for one sequence and 729 for eight, against llama.cpp's 113 and 456. It plans all memory before loading a weight, keeps most experts of a mixture-of-experts model on the SSD behind a fixed cache, reuses shared prefixes, and drafts tokens from the prompt's own text. Figures are the author's.",
+      "date_published": "2026-11-15T00:00:00Z",
+      "tags": [
+        "release",
+        "learn",
+        "advice",
+        "inference",
+        "continuous-batching",
+        "apple-silicon",
+        "metal",
+        "rust",
+        "speculative-decoding",
+        "prefix-cache"
+      ]
+    },
+    {
       "id": "2026-11-14-google-tpu-sync",
       "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-14-google-tpu-sync.md",
       "title": "Google's TPU Sync moves a model's working memory between chip, host memory, disk and network; Softanza manages its small models' state as one memory budget",
