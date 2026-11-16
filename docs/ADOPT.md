@@ -61,8 +61,8 @@ other name in braces is refused by the check, so a typo never reaches a reader. 
 
 ## The map
 
-The map is a JSON file with four lists: `layers` (each with `id`, `name`, `line`, and `beside: true` for a layer
-drawn beside the stack), `projects` (each with `id`, `name`, `layer`, `line`, and optionally `link` and `aliases`),
+The map is a JSON file with four lists: `layers` (each with `id`, `name`, `line`, `beside: true` for a layer
+drawn beside the stack, and `outside: true` for a band of products drawn under it), `projects` (each with `id`, `name`, `layer`, `line`, and optionally `link` and `aliases`),
 `domains` and `concerns` (each with `id`, `name`, `line`). Softanza's is [`map/estate.json`](../map/estate.json).
 
 ## What every watch shares

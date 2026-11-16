@@ -275,6 +275,7 @@ section.block{padding-block:28px 8px}
 .radarstage .sl.up{align-items:flex-end}.radarstage .sl.down{align-items:flex-start}
 .radarstage .sl b{color:var(--ink);flex:none}
 .radarstage .sl span{max-width:7.5em;text-wrap:balance}
+.radarstage.many .sl span{max-width:6.2em}   /* twelve names: each wraps narrow, so two share a corner */
 .radarstage .sl.side span{max-width:6em}   /* beside the circle a name wraps narrow, so the circle keeps its size */
 .radarstage svg{display:block}
 /* on a phone the names go in a numbered list under the radar */
@@ -320,6 +321,9 @@ section.block{padding-block:28px 8px}
 
 .beside{background:var(--tint);border:1px dashed var(--accent);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
 .beside .proj{flex:none}
+/* products built on the platform stand apart from the layers, in a band of their own under the stack */
+.outside{margin-top:20px;display:flex;flex-direction:column;gap:10px}
+.layer.built{border-style:dashed;border-color:var(--accent);background:var(--tint)}
 table.grid{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;font-size:var(--read)}
 table.grid th,table.grid td{border:1px solid var(--line);padding:8px 10px;text-align:center;vertical-align:middle}
 table.grid thead th{background:var(--tint);font-weight:700}
@@ -869,7 +873,7 @@ function radar(items, title, limit = radarLimit()){
   const mkDots = s => items.map(it => {
     const lid = placeOf(it), li = layers.findIndex(l => l.id === lid);
     const grp = groups[keyOf(it)], k = grp.indexOf(it), m = grp.length, [lo, hi] = BAND[it.relevance] || BAND.medium;
-    const margin = 6, a0 = li * step + margin, a1 = (li + 1) * step - margin;
+    const margin = Math.min(6, step * .13), a0 = li * step + margin, a1 = (li + 1) * step - margin;
     return { it, a0, a1, lo, hi, size: Math.max(3.5, SIZE[it.level] * s),
              ang: a0 + (a1 - a0) * (k + 1) / (m + 1), r: lo + (hi - lo) * (m > 1 ? (k % 3 + 1) / 4 : .5) };
   });
@@ -943,10 +947,19 @@ function radar(items, title, limit = radarLimit()){
      keep the page's reading size at any radar size; place() sizes the radar to leave them room. Where the card is too
      narrow for names beside a radar worth reading (a phone), the names go in a short list under it instead. */
   const labs = layers.map((l, i) => {
-    const m = ((i + .5) * step) * Math.PI / 180, s = el("div", "sl" + (Math.sin(m) < 0 ? " left" : "") + (Math.cos(m) > 0 ? " up" : " down") + (Math.abs(Math.sin(m)) > .7 ? " side" : ""));
+    const m = ((i + .5) * step) * Math.PI / 180, s = el("div", "sl" + (Math.sin(m) < 0 ? " left" : "") + (Math.cos(m) > 0 ? " up" : " down") + (n <= 8 && Math.abs(Math.sin(m)) > .7 ? " side" : ""));
     s.append(el("b",null,String(i + 1)), el("span",null,l.name)); s.hidden = true; stage.append(s);   /* shown once place() has put it */
-    return { s, m, b: s.firstChild, pole: Math.abs(Math.cos(m)) > .7 };   /* pole: above or below the circle */
+    return { s, m, b: s.firstChild, pole: Math.abs(Math.cos(m)) > .9 };   /* pole: above or below the circle */
   });
+  /* With more than eight slices, two names share each corner of the card, one above the other. Each then also has its
+     number on the rim, at its slice, so a name in a corner is tied to its slice by that number. */
+  const many = n > 8; stage.classList.toggle("many", many);
+  const digits = layers.map((l, i) => { const a = ((i + .5) * step) * Math.PI / 180;
+    const d = mk("text",{x:C + 199 * Math.sin(a), y:C - 199 * Math.cos(a), "text-anchor":"middle", "dominant-baseline":"central", "font-size":"13", "font-weight":"700", fill:css("--ink")});
+    d.textContent = String(i + 1); d.style.display = "none"; svg.append(d); return d; });
+  const quadOf = o => (Math.sin(o.m) >= 0 ? "R" : "L") + (Math.cos(o.m) > 0 ? "U" : "D");
+  const poles = labs.filter(o => o.pole), corners = Object.values(labs.filter(o => !o.pole).reduce((a, o) => ((a[quadOf(o)] = a[quadOf(o)] || []).push(o), a), {}));
+  corners.forEach(g => g.sort((a, b) => Math.abs(Math.cos(a.m)) - Math.abs(Math.cos(b.m))));   /* nearest the level line first */
   const order = el("ol","slices"); layers.forEach(l => order.append(el("li",null,l.name)));
   const place = () => {
     const W = stage.clientWidth, H0 = stage.clientHeight; let H = H0; if (!W || !H) return;
@@ -959,18 +972,25 @@ function radar(items, title, limit = radarLimit()){
     /* A name beside the circle used to set the circle's size by its own width. Now, when it has no room on the line out
        from its slice, it moves to the card's side edge and up (or down) into the corner the circle leaves free, its
        number nearest the rim, and the circle takes the height it is given (author, 2026-11-16: "enlarge it"). */
-    const sideAt = (o, r) => {
-      const w = o.s.offsetWidth - o.b.offsetWidth / 2 + 4, h = o.s.offsetHeight + 4, sx = Math.abs(Math.sin(o.m)), cyy = Math.abs(Math.cos(o.m));
-      if ((r + gap) * sx + w <= W / 2 && (r + gap) * cyy + (h - o.b.offsetHeight / 2) <= H / 2) return { corner:false };
-      const x0 = W / 2 - o.s.offsetWidth - 2; if (x0 < 0) return null;
-      const yb = Math.sqrt(Math.max(0, (r + clear + 4) ** 2 - x0 * x0));        /* the box's inner corner stays off the rim */
-      return yb + o.s.offsetHeight <= Math.min(H / 2, r + clear - 2) ? { corner:true, yb } : null;   /* and under the name above the circle */
+    const layout = r => {                                           /* where each side name goes at rim r, or null when one has no place */
+      const out = new Map();
+      for (const g of corners){
+        const radial = g.length === 1 && g.every(o => { const w = o.s.offsetWidth - o.b.offsetWidth / 2 + 4, h = o.s.offsetHeight + 4, sx = Math.abs(Math.sin(o.m)), cyy = Math.abs(Math.cos(o.m));
+          return (r + gap) * sx + w <= W / 2 && (r + gap) * cyy + (h - o.b.offsetHeight / 2) <= H / 2; });
+        if (radial){ out.set(g[0], { corner:false }); continue; }
+        const wmax = Math.max(...g.map(o => o.s.offsetWidth)), x0 = W / 2 - wmax - 2; if (x0 < 0) return null;
+        let y = Math.sqrt(Math.max(0, (r + (many ? 26 : clear + 4)) ** 2 - x0 * x0));   /* the lowest box's inner corner stays off the rim (and off its number) */
+        const pl = poles.find(q => quadOf(q) === quadOf(g[0]));     /* the name above (or below) the circle on this side */
+        const lim = pl && (r + gap) * Math.abs(Math.sin(pl.m)) + pl.s.offsetWidth > x0 ? r + clear - 2 : H / 2;
+        for (const o of g){ out.set(o, { corner:true, yb:y }); y += o.s.offsetHeight + 4; }
+        if (y - 4 > Math.min(H / 2, lim)) return null;
+      }
+      return out;
     };
-    const holds = r => labs.every(o => {
-      if (!o.pole) return sideAt(o, r);
+    const holds = r => poles.every(o => {
       const w = o.s.offsetWidth - o.b.offsetWidth / 2 + 4, h = o.s.offsetHeight + 4, sx = Math.abs(Math.sin(o.m));
       return (r + gap) * sx + w <= W / 2 && r <= H / 2 - h - clear;
-    });
+    }) && layout(r);
     const fit = () => { let lo = 0, hi = Math.min(W, H) / 2; if (holds(hi)) return hi;
       for (let i = 0; i < 18; i++){ const mid = (lo + hi) / 2; if (holds(mid)) lo = mid; else hi = mid; }
       return lo; };
@@ -989,13 +1009,15 @@ function radar(items, title, limit = radarLimit()){
       const g = rim * 34 / 186 / 2, x = cx + (rim + g) * Math.sin(o.m), y = cy - (rim + g) * Math.cos(o.m);
       Object.assign(o.s.style, { left: x + "px", top: y + "px", right: "auto", transform: "translate(-50%,-50%)" });
     }
+    const lay = (beside && layout(rim)) || new Map();
+    labs.forEach((o, i) => { const at = lay.get(o); digits[i].style.display = many && at && at.corner ? "" : "none"; });
     if (beside) for (const o of labs){
       const sx = Math.sin(o.m), cyy = Math.cos(o.m), x = cx + (rim + gap) * sx, half = o.b.offsetWidth / 2;
       /* above the circle a label's foot rests just over its top; below, its head just under its bottom; beside it, the
          number stands on the rim's line out from the slice */
       const pos = o.pole ? (cyy > 0 ? { top: (cy - rim - clear) + "px", transform: "translateY(-100%)" } : { top: (cy + rim + clear) + "px", transform: "none" })
                          : { top: (cy - (rim + gap) * cyy) + "px", transform: cyy > 0 ? "translateY(calc(-100% + " + (o.b.offsetHeight / 2) + "px))" : "translateY(-" + (o.b.offsetHeight / 2) + "px)" };
-      const at = o.pole ? null : sideAt(o, rim);
+      const at = lay.get(o);
       if (at && at.corner) Object.assign(o.s.style, sx >= 0 ? { right: "0px", left: "auto" } : { left: "0px", right: "auto" },
         cyy > 0 ? { top: (cy - at.yb) + "px", transform: "translateY(-100%)" } : { top: (cy + at.yb) + "px", transform: "none" });
       else Object.assign(o.s.style, sx >= 0 ? { left: (x - half) + "px", right: "auto" } : { right: (W - x - half) + "px", left: "auto" }, pos);
@@ -1054,27 +1076,28 @@ function viewEstate(){
     return t;
   };
   const s = el("section","block wrap"); s.append(el("h2",null,"The stack"));
-  const grid = el("div","estate"), stack = el("div","stack"), beside = el("aside","beside");
+  const grid = el("div","estate"), stack = el("div","stack"), beside = el("aside","beside"), outside = el("div","outside");
   for (const l of MAP.layers){
     const ps = MAP.projects.filter(p => p.layer === l.id);
     if (l.beside){ beside.append(el("h3",null,l.name), el("p",null,l.line)); for (const p of ps) beside.append(projTile(p)); continue; }
-    const row = el("div","layer"), nm = el("div","name"); nm.append(el("h3",null,l.name), el("p",null,l.line));
+    const row = el("div", l.outside ? "layer built" : "layer"), nm = el("div","name"); nm.append(el("h3",null,l.name), el("p",null,l.line));
     const pr = el("div","projects"); for (const p of ps) pr.append(projTile(p));
-    row.append(nm, pr); stack.append(row);
+    row.append(nm, pr); (l.outside ? outside : stack).append(row);   /* an outside layer is a band of its own under the stack */
   }
-  grid.append(stack, beside); s.append(grid); frag.append(s);
+  grid.append(stack, beside); s.append(grid, outside); frag.append(s);
 
   /* domains against layers: the strict grid, and the same content as a list on a phone */
   const s2 = el("section","block wrap"); s2.append(el("h2",null,"Domains against layers"));
-  s2.append(el("p","lede","Each number is the count of live signals in that domain touching that layer. Click it to read them."));
+  s2.append(el("p","lede","Each number is the count of live signals in that domain touching that layer. Click it to read them. The columns are the layers signals have touched."));
   const t = el("table","grid"), thead = el("thead"), hr = el("tr"); hr.append(el("th",null,"Domain"));
-  for (const l of MAP.layers) hr.append(el("th",null,l.name));
+  const cols = MAP.layers.filter(l => live.some(it => layersOf(it).includes(l.id)));   /* the layers signals have touched: twelve columns do not fit a page */
+  for (const l of cols) hr.append(el("th",null,l.name));
   thead.append(hr); t.append(thead);
   const tb = el("tbody"), gl = el("div","gridlist");
   for (const d of MAP.domains){
     const tr = el("tr"), th = el("th"); th.scope = "row"; th.textContent = d.name; tr.append(th);
     const li = el("div","dom"), chips = el("div","chips"); li.append(el("h3",null,d.name));
-    for (const l of MAP.layers){
+    for (const l of cols){
       const n = live.filter(it => (it.domains||[]).includes(d.id) && layersOf(it).includes(l.id)).length;
       const td = el("td");
       if (n){ const a = el("a",null,String(n)); a.href = "#/signals?d=" + d.id + "&l=" + l.id; a.setAttribute("aria-label", plural(n,"signal") + ": " + d.name + ", " + l.name); td.append(a);

@@ -122,7 +122,8 @@ the action has not reached. When a proposal moves, its `state` changes, its new 
 `updated` moves with it.
 
 **The estate map.** [`map/estate.json`](../map/estate.json) lists the layers of the Softanza stack (machine, language,
-foundation, data, web and server, intelligence, interfaces and applications, and the harness beside them), the
+foundation, evidence, data, web and server, intelligence, learning, interfaces and applications, delivery; the harness
+beside them, and the products built with Softanza apart from them), the
 projects on each layer with their aliases, the domains and the concerns. It is served beside the feed at
 `https://mayouni.github.io/stzradar/map/estate.json`. The feed tool refuses an entry whose `areas`, `domains` or
 `concerns` name something the map does not list, so every entry can be placed on the map.
