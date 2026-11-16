@@ -650,7 +650,8 @@ function indexMap(){
   for (const c of MAP.concerns) CONCERN[c.id] = c;
 }
 const projOf = a => ALIAS[a] || ALIAS[a.split(".")[0]] || null;
-const projectsOf = it => [...new Set((it.areas||[]).map(projOf).filter(Boolean))];
+/* a signal touches the projects its entry names and the parts its actions are proposed to */
+const projectsOf = it => [...new Set((it.areas||[]).concat((it.actions||[]).map(a => a.area || "")).map(projOf).filter(Boolean))];
 const layersOf = it => [...new Set(projectsOf(it).map(p => PROJ[p].layer))];
 /* the one slice a signal stands in on the radar: the layer of the part that acts on it (the area most of its actions
    name, the first on a tie), and only without an action the layer of its first project. Placing by the first project
