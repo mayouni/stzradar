@@ -652,6 +652,14 @@ function indexMap(){
 const projOf = a => ALIAS[a] || ALIAS[a.split(".")[0]] || null;
 const projectsOf = it => [...new Set((it.areas||[]).map(projOf).filter(Boolean))];
 const layersOf = it => [...new Set(projectsOf(it).map(p => PROJ[p].layer))];
+/* the one slice a signal stands in on the radar: the layer of the part that acts on it (the area most of its actions
+   name, the first on a tie), and only without an action the layer of its first project. Placing by the first project
+   put 18 of one week's 20 signals in one slice, because their entries named the library first (author, 2026-11-16). */
+const placeOf = it => {
+  const n = {}; let best = null;
+  for (const a of (it.actions || [])){ const p = projOf(a.area || ""); if (!p) continue; const l = PROJ[p].layer; n[l] = (n[l] || 0) + 1; if (!best || n[l] > n[best]) best = l; }
+  return best || layersOf(it)[0] || "foundation";
+};
 /* a level reads as dark text in its own hue on a pale tint of it, with a border in the full colour: no text on a mid-tone fill */
 const levelPill = lv => { const p = el("span","pill lv",WORD[lv]); p.style.setProperty("--c", "var(--lv-" + lv + ")"); return p; };
 function weekOf(dateStr){
@@ -849,7 +857,7 @@ function radar(items, title, limit = radarLimit()){
     svg.append(mk("line",{x1:C,y1:C,x2:C + 186*Math.sin(a),y2:C - 186*Math.cos(a),stroke:css("--line")}));
   });
   /* the dots of one slice and one ring are spread evenly across the slice's width, alternating in depth, so none hides another */
-  const keyOf = it => (layersOf(it)[0] || "foundation") + "|" + it.relevance;
+  const keyOf = it => placeOf(it) + "|" + it.relevance;
   const groups = {}; for (const it of items) (groups[keyOf(it)] = groups[keyOf(it)] || []).push(it);
   /* each dot stays inside its slice and its ring band (high near the centre, low at the rim); touching dots are pushed
      apart a few times within those bounds */
@@ -858,7 +866,7 @@ function radar(items, title, limit = radarLimit()){
      the week fills: a first size from the count, then smaller again until no two touch inside their slice and ring. */
   const SIZE = {info:7,advice:9,action:11,urgent:13};
   const mkDots = s => items.map(it => {
-    const lid = layersOf(it)[0] || "foundation", li = layers.findIndex(l => l.id === lid);
+    const lid = placeOf(it), li = layers.findIndex(l => l.id === lid);
     const grp = groups[keyOf(it)], k = grp.indexOf(it), m = grp.length, [lo, hi] = BAND[it.relevance] || BAND.medium;
     const margin = 6, a0 = li * step + margin, a1 = (li + 1) * step - margin;
     return { it, a0, a1, lo, hi, size: Math.max(3.5, SIZE[it.level] * s),

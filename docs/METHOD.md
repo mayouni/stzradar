@@ -89,6 +89,8 @@ This repository is public. So it never holds:
 
 ## The radar shows every signal and highlights a few
 
+- **A signal stands in the slice of the part that acts on it:** the layer of the area its actions name, and the
+  layer of its first project when it carries no action.
 - **Every signal of the week is drawn.** The dots shrink as the week fills, so that none touches another.
 - **Seven stand out at first,** set by `watch.radar_limit` in `radar.yaml`; a field beside the radar's title lets the reader
   type any number, and the browser remembers it. The others stay in place, faded.
