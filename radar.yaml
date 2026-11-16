@@ -18,7 +18,9 @@ project:                          # the project the watch serves
   logo_dark: assets/wordmark-dark.png
   pitch: >
     The governed software platform of the AI age: a library and its Zig engine, a declared machine
-    (Harobanda), a language of languages (Haro), and the projects built on them.
+    (Harobanda), a language of languages (Haro), a testing framework that grades its evidence (Testoor),
+    a foundry that delivers an agentic solution as one signed pack (Softanza Foundry), and the projects
+    built on them.
 
 # A text below may say {project}, {topic}, {watch} or {title}: it is published with this file's values in their
 # place, so the watch speaks in its own project's voice. {week} names the week on an earlier week's page.

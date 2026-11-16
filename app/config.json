@@ -9,7 +9,7 @@
     "licence_url": "https://github.com/mayouni/stzradar/blob/main/LICENSE",
     "logo": "assets/wordmark.png",
     "logo_dark": "assets/wordmark-dark.png",
-    "pitch": "The governed software platform of the AI age: a library and its Zig engine, a declared machine (Harobanda), a language of languages (Haro), and the projects built on them."
+    "pitch": "The governed software platform of the AI age: a library and its Zig engine, a declared machine (Harobanda), a language of languages (Haro), a testing framework that grades its evidence (Testoor), a foundry that delivers an agentic solution as one signed pack (Softanza Foundry), and the projects built on them."
   },
   "watch": {
     "name": "Radar",
