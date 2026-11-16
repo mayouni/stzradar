@@ -236,6 +236,16 @@ section.block{padding-block:28px 8px}
 .blip{cursor:pointer}
 .blip:focus-visible circle.halo,.blip:hover circle.halo{stroke-width:4}
 .blip:focus{outline:none}
+/* a signal outside the reader's choice stays on the radar, faded: it is there, and it is not chosen */
+.blip.dim circle.dot{fill-opacity:.16}
+.blip.dim circle.halo{stroke-opacity:.38}
+.blip.dim:hover circle.dot,.blip.dim:focus-visible circle.dot,.blip.dim.picked circle.dot{fill-opacity:.5}
+.key i.fade{background:var(--lv-advice);opacity:.3;outline:1.5px solid var(--lv-advice);outline-offset:2px}
+.fadedkey[hidden]{display:none}
+.radarpick{display:flex;align-items:center;flex-wrap:wrap;gap:6px 14px;margin:0 0 clamp(14px,2.4vh,24px);font-size:var(--read);color:var(--ink2)}
+.radarpick label{display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px;flex:1 1 16rem;min-width:0}
+.radarpick input{flex:1 1 9rem;min-width:8rem;accent-color:var(--accent);height:1.6rem}
+.radarpick output{font-weight:700;color:var(--ink);white-space:nowrap;min-width:5.5em}
 /* the info bar under the radar: one height, information only; the level stands out as its tinted label */
 .infobar{min-height:4.4rem;margin-top:8px;padding:8px 12px;border-left:4px solid var(--line);background:var(--bg);border-radius:0 10px 10px 0;display:flex;align-items:center;gap:6px 12px;flex-wrap:wrap}
 .infobar.on{border-left-color:var(--accent)}
@@ -245,7 +255,7 @@ section.block{padding-block:28px 8px}
 .infobar .ititle{font:700 1.0625rem/1.35 var(--f-title);flex:1 1 14rem;min-width:0}
 /* the card's own words (title and hint) and the drawing's labels are two levels of reading: a clear gap between them,
    about twice the line height, so the slice names never read as part of the hint (author, 2026-11-09) */
-.radarhint{margin:0 0 clamp(18px,3.2vh,32px);font-size:var(--read);line-height:1.4;color:var(--ink2)}
+.radarhint{margin:0 0 8px;font-size:var(--read);line-height:1.4;color:var(--ink2)}
 /* around the rim, each slice's number sits just outside it and its name runs outward from the number, as plain text
    (author, 2026-11-09: labels are not links) */
 .radarstage .sl{position:absolute;display:flex;align-items:center;gap:.4em;font-size:1.125rem;line-height:1.25;color:var(--lab)}
@@ -752,7 +762,7 @@ function viewHome(){
   fact(new Set(items.flatMap(projectsOf)).size, "projects touched");
   txt.append(titleEl(H.headline), el("p","lede",H.promise), cta, el("p","herofact","Week " + wk + ", " + weekSpan(wk)), facts);
   const pane = el("div","scope heroradar");
-  pane.append(el("h2",null,"This week across " + NAME()), radar(items.slice(0, radarLimit()), items.length));
+  pane.append(el("h2",null,"This week across " + NAME()), radar(items));
   w.append(txt, pane); hero.append(w); frag.append(hero);
   const outer = el("div","wrap"), cols = el("div","homecols"); outer.append(cols);
   const list = xs => { const ul = el("ul"); for (const t of xs) ul.append(el("li",null,t)); return ul; };
@@ -809,7 +819,7 @@ function viewWeek(wkArg){
   h.querySelector(".wrap").append(facts, nav);
   frag.append(h);
   const s = el("section","block wrap week");
-  const scope = el("div","scope"); scope.append(el("h2",null,"The week across " + NAME()), radar(items.slice(0, radarLimit()), items.length));   /* a few, each worth a look (docs/METHOD.md) */
+  const scope = el("div","scope"); scope.append(el("h2",null,"The week across " + NAME()), radar(items));   /* a few, each worth a look (docs/METHOD.md) */
   const list = el("div");
   for (const lv of ["urgent","action","advice","info"]){
     const g = items.filter(i => i.level === lv); if (!g.length) continue;
@@ -820,7 +830,7 @@ function viewWeek(wkArg){
   return frag;
 }
 
-function radar(items, total = items.length){
+function radar(items, limit = radarLimit()){
   const NS = "http://www.w3.org/2000/svg", mk = (t, a) => { const e = document.createElementNS(NS,t); for (const k in a) e.setAttribute(k,a[k]); return e; };
   const svg = mk("svg",{viewBox:"0 0 440 440",role:"img","aria-label":"Radar: each slice is a layer of " + NAME() + "; the closer to the centre, the more relevant"});
   const C = 220, R = {high:72, medium:122, low:168}, layers = MAP.layers, n = layers.length, step = 360 / n;
@@ -836,19 +846,25 @@ function radar(items, total = items.length){
   /* each dot stays inside its slice and its ring band (high near the centre, low at the rim); touching dots are pushed
      apart a few times within those bounds */
   const BAND = {high:[30, 96], medium:[100, 144], low:[148, 180]};
-  const dots = items.map(it => {
+  /* every signal of the week is on the radar (author, 2026-11-16: showing 7 of 20 "is illusionary"). The dots shrink as
+     the week fills: a first size from the count, then smaller again until no two touch inside their slice and ring. */
+  const SIZE = {info:7,advice:9,action:11,urgent:13};
+  const mkDots = s => items.map(it => {
     const lid = layersOf(it)[0] || "foundation", li = layers.findIndex(l => l.id === lid);
     const grp = groups[keyOf(it)], k = grp.indexOf(it), m = grp.length, [lo, hi] = BAND[it.relevance] || BAND.medium;
     const margin = 6, a0 = li * step + margin, a1 = (li + 1) * step - margin;
-    return { it, a0, a1, lo, hi, size: {info:7,advice:9,action:11,urgent:13}[it.level],
+    return { it, a0, a1, lo, hi, size: Math.max(3.5, SIZE[it.level] * s),
              ang: a0 + (a1 - a0) * (k + 1) / (m + 1), r: lo + (hi - lo) * (m > 1 ? (k % 3 + 1) / 4 : .5) };
   });
+  const pad = s => Math.max(2, 4 * s);                              /* the ring around a dot stands this far from it */
   const xy = d => [C + d.r * Math.sin(d.ang * Math.PI / 180), C - d.r * Math.cos(d.ang * Math.PI / 180)];
-  for (let pass = 0; pass < 60; pass++){
+  const relax = (dots, s) => {                                      /* returns how far the closest pair still overlaps */
+   const gap = 2 * pad(s) + 2;
+   for (let pass = 0; pass < 120; pass++){
     let moved = false;
     for (let i = 0; i < dots.length; i++) for (let j = i + 1; j < dots.length; j++){
       const a = dots[i], b = dots[j], [ax, ay] = xy(a), [bx, by] = xy(b);
-      const need = a.size + b.size + 10, dist = Math.hypot(ax - bx, ay - by) || .01;
+      const need = a.size + b.size + gap, dist = Math.hypot(ax - bx, ay - by) || .01;
       if (dist >= need) continue;
       moved = true;
       const push = (need - dist) / 2, ux = (ax - bx) / dist, uy = (ay - by) / dist;
@@ -859,8 +875,17 @@ function radar(items, total = items.length){
         d.ang = Math.min(d.a1, Math.max(d.a0, ang));
       }
     }
-    if (!moved) break;
-  }
+    if (!moved) return 0;
+   }
+   let worst = 0;
+   for (let i = 0; i < dots.length; i++) for (let j = i + 1; j < dots.length; j++){
+     const a = dots[i], b = dots[j], [ax, ay] = xy(a), [bx, by] = xy(b);
+     worst = Math.max(worst, a.size + b.size + gap - Math.hypot(ax - bx, ay - by));
+   }
+   return worst;
+  };
+  let scale = Math.min(1, Math.sqrt(9 / Math.max(1, items.length))), dots = [];
+  for (let t = 0; t < 10; t++){ dots = mkDots(scale); if (relax(dots, scale) < 1 || scale <= .4) break; scale *= .88; }
   /* an info bar under the radar, on the author's ruling (2026-11-09): at rest it asks the reader to hover a signal;
      on a hovered or focused dot it shows the signal's level and title. It is information only, with nothing to click,
      and it keeps one height so the radar never moves. */
@@ -882,9 +907,9 @@ function radar(items, total = items.length){
   for (const d of dots){
     const it = d.it, [x, y] = xy(d), size = d.size;
     const g = mk("a",{class:"blip",tabindex:"0",href:"#/signal/" + it.id,"aria-describedby":"radarInfo","aria-label":WORD[it.level] + ": " + clean(it.title) + ". Opens its page in All signals."});
-    g.append(mk("circle",{class:"hit",cx:x,cy:y,r:size+11,fill:"transparent"}));   /* a target a finger can hit */
-    g.append(mk("circle",{class:"halo",cx:x,cy:y,r:size+4,fill:"none",stroke:css("--lv-"+it.level),"stroke-width":"2"}));
-    g.append(mk("circle",{cx:x,cy:y,r:size,fill:css("--lv-"+it.level)}));
+    g.append(mk("circle",{class:"hit",cx:x,cy:y,r:size+Math.max(4, 11*scale),fill:"transparent"}));   /* a target a finger can hit */
+    g.append(mk("circle",{class:"halo",cx:x,cy:y,r:size+pad(scale),fill:"none",stroke:css("--lv-"+it.level),"stroke-width":scale < .7 ? "1.5" : "2"}));
+    g.append(mk("circle",{class:"dot",cx:x,cy:y,r:size,fill:css("--lv-"+it.level)}));
     g.addEventListener("pointerdown", e => { lastType = e.pointerType || lastType; });
     g.addEventListener("click", e => {
       if (lastType !== "touch" || picked === it) return;            /* a mouse click, or the second tap: open */
@@ -948,11 +973,32 @@ function radar(items, total = items.length){
   window.placeRadar = place;                                                          /* the window's resize hook calls the current one */
   stage.append(svg);
   const box = el("div");
-  box.append(el("p","radarhint",(touchUI ? "Tap a signal to read it below; tap it again to open its page." : "Click a signal to open its page.") + (total > items.length ? " Showing the " + items.length + " that ask most, of " + total + "." : "")), stage);
+  box.append(el("p","radarhint",touchUI ? "Tap a signal to read it below; tap it again to open its page." : "Click a signal to open its page."));
   const key = el("div","key");
   for (const lv of ["urgent","action","advice","info"]){ const s = el("span"); const d = el("i"); d.style.background = css("--lv-"+lv); s.append(d, document.createTextNode(WORD[lv])); key.append(s); }
   key.append(el("span",null,"centre: most relevant"));
-  box.append(info, key, order); return box;
+  /* the reader chooses how many signals stand out (author, 2026-11-16); the items arrive in the order of what they ask,
+     so the first n are "the n that ask most". The others stay where they are, faded: present, and outside the choice.
+     Positions never move with the choice, so a reader can slide and watch one picture. */
+  const total = items.length, faded = el("span","fadedkey"); { const d = el("i"); d.className = "fade"; faded.append(d, document.createTextNode("faded: outside your choice")); }
+  key.append(faded);
+  const choose = n => {
+    blips.forEach((g, i) => g.classList.toggle("dim", i >= n));
+    blips.filter((g, i) => i >= n).concat(blips.filter((g, i) => i < n)).forEach(g => svg.append(g));   /* the chosen ones are drawn last, on top */
+    faded.hidden = n >= total;
+  };
+  let want = limit; try { const v = Number(localStorage.getItem("radar.show")); if (v >= 1) want = v; } catch (e) {}
+  want = Math.min(total, Math.max(1, want));
+  if (total > 1){
+    const pick = el("div","radarpick"), lab = el("label"), rng = el("input"), out = el("output");
+    Object.assign(rng, { type:"range", min:"1", max:String(total), step:"1", value:String(want) });
+    const say = n => { out.textContent = n >= total ? "all " + total : n + " of " + total; };
+    lab.append(document.createTextNode("Signals that stand out"), rng); pick.append(lab, out);
+    rng.addEventListener("input", () => { const n = Number(rng.value); say(n); choose(n); try { localStorage.setItem("radar.show", String(n)); } catch (e) {} });
+    say(want); box.append(pick);
+  }
+  choose(want);
+  box.append(stage, info, key, order); return box;
 }
 
 /* ------------------------------------------------------------ view: the estate */

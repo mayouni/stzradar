@@ -87,12 +87,14 @@ This repository is public. So it never holds:
 - **Follow one instruction.** `docs/WEEKLY.md` is the exact instruction a scheduled run follows.
 - **Depth beats breadth.** Four entries read properly are worth more than twenty headlines.
 
-## The radar highlights a few
+## The radar shows every signal and highlights a few
 
-- **At most seven a week,** set by `watch.radar_limit` in `radar.yaml`.
+- **Every signal of the week is drawn.** The dots shrink as the week fills, so that none touches another.
+- **Seven stand out at first,** set by `watch.radar_limit` in `radar.yaml`; a slider above the radar lets the reader
+  choose any number, and the browser remembers it. The others stay in place, faded.
 - **Chosen in a fixed order:** what a signal asks of its reader (to do now, to do, to consider, to know), then how
   much it touches Softanza, then the newest.
 - **Nothing is hidden.** Every signal of the week stays in the list beside the radar, in All signals, in the digest
   and in the feed.
-- **The reason is attention.** A few dots, each worth a look, say where to look first; twenty say that everything
-  matters, which tells a reader nothing.
+- **The reason is attention.** A few bright dots say where to look first; the faded ones show how much else the
+  week held, each in its place.
