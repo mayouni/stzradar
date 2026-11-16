@@ -4,6 +4,7 @@
 {
   "id": "2026-11-15-gpuos-shared-gpu",
   "date": "2026-11-15",
+  "updated": "2026-11-16",
   "title": "GPUOS runs background work beside a latency-bound model on one GPU by making it yield at checkpoints; Softanza learns the yield rule for its own GPU jobs",
   "kind": "paper",
   "summary": "GPUOS is an MIT research prototype from the Multi-V-VM group, described as sharing a GPU without NVIDIA's MIG or MPS. Its code keeps one persistent kernel running on the GPU with a work queue, replaces operators at run time through a table of device function pointers, and merges many tiny operations into one compiled batch. Its working-draft paper, pushed on November 12, 2026, builds on OpenInfer's 'The GPU Needs an Operating System' and specifies restartable tasks admitted under revocable resource leases. On one RTX 5090, background work that yields every 4 tiles costs a streaming foreground 0.62% at the 99th percentile, against 23.68% when it never yields. The authors state that the measurements support selected mechanisms.",
@@ -19,9 +20,9 @@
   "domains": ["models", "devices"],
   "concerns": ["speed", "cost"],
   "actions": [
-    { "area": "stzlib.gpu", "do": "inside the process that holds the GPU, let a background job dispatch in short slices and yield to a foreground job between them; measure the foreground's median and 99th-percentile step time alone, beside a background job that never yields and beside one that yields, with the background's own rate in each case; and measure the engine's fixed cost per dispatch, which says when merging small operations into one dispatch pays", "state": "routed", "dates": { "proposed": "2026-11-15", "routed": "2026-11-15" } }
+    { "area": "stzlib.gpu", "do": "inside the process that holds the GPU, let a background job dispatch in short slices and yield to a foreground job between them; measure the foreground's median and 99th-percentile step time alone, beside a background job that never yields and beside one that yields, with the background's own rate in each case; and measure the engine's fixed cost per dispatch, which says when merging small operations into one dispatch pays", "state": "done", "dates": { "proposed": "2026-11-15", "routed": "2026-11-15", "done": "2026-11-16" } }
   ],
-  "status": "routed",
+  "status": "done",
   "confidence": "claimed",
   "sources": [
     { "title": "GPUOS (repository at commit 9eb66b9)", "url": "https://github.com/Multi-V-VM/GPUOS", "by": "Multi-V-VM", "read": "2026-11-15" },
@@ -83,3 +84,12 @@ price is known, the engine can say at which size several small operations belong
 - Multi-V-VM, [GPUOS](https://github.com/Multi-V-VM/GPUOS), commit 9eb66b9 of November 12, 2026, read 2026-11-15: the
   README, the working draft's abstract, evidence section, claim map and generated tables. The design and control
   sections and the code itself were left unread. Figures are the authors' own.
+
+## Corrections
+
+- 2026-11-16: measured in Softanza's engine on an RTX 3050, three runs. A foreground step that takes 1.34 to 1.69 ms
+  alone has a median of 91.6 to 112.8 ms beside a background job that never yields, because the card's queue runs in
+  order. When the job submits slices of 4 products (about 7 ms) and waits for each, the median is 4.48 to 4.80 ms and
+  the job keeps about 96% of its rate; slices of 1 give 2.02 to 2.92 ms at 87%, slices of 16 give 13.9 to 16.1 ms at
+  98%. The rule is written down: a background job submits slices of 5 to 10 ms and waits for each. One dispatch costs
+  about 9 microseconds.

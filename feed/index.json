@@ -1,13 +1,14 @@
 {
   "feed": "radar",
   "version": 1,
-  "updated": "2026-11-15T00:00:00Z",
+  "updated": "2026-11-16T00:00:00Z",
   "home": "https://github.com/mayouni/stzradar",
   "title": "Softanza Radar",
   "items": [
     {
       "id": "2026-11-15-gpuos-shared-gpu",
       "date": "2026-11-15",
+      "updated": "2026-11-16",
       "title": "GPUOS runs background work beside a latency-bound model on one GPU by making it yield at checkpoints; Softanza learns the yield rule for its own GPU jobs",
       "kind": "paper",
       "summary": "GPUOS is an MIT research prototype from the Multi-V-VM group, described as sharing a GPU without NVIDIA's MIG or MPS. Its code keeps one persistent kernel running on the GPU with a work queue, replaces operators at run time through a table of device function pointers, and merges many tiny operations into one compiled batch. Its working-draft paper, pushed on November 12, 2026, builds on OpenInfer's 'The GPU Needs an Operating System' and specifies restartable tasks admitted under revocable resource leases. On one RTX 5090, background work that yields every 4 tiles costs a streaming foreground 0.62% at the 99th percentile, against 23.68% when it never yields. The authors state that the measurements support selected mechanisms.",
@@ -37,14 +38,15 @@
         {
           "area": "stzlib.gpu",
           "do": "inside the process that holds the GPU, let a background job dispatch in short slices and yield to a foreground job between them; measure the foreground's median and 99th-percentile step time alone, beside a background job that never yields and beside one that yields, with the background's own rate in each case; and measure the engine's fixed cost per dispatch, which says when merging small operations into one dispatch pays",
-          "state": "routed",
+          "state": "done",
           "dates": {
             "proposed": "2026-11-15",
-            "routed": "2026-11-15"
+            "routed": "2026-11-15",
+            "done": "2026-11-16"
           }
         }
       ],
-      "status": "routed",
+      "status": "done",
       "confidence": "claimed",
       "sources": [
         {

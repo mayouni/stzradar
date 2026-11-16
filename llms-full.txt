@@ -19,7 +19,7 @@ For each reader:
 - maintainer: Softanza's engine gives the GPU one owner at a time across processes. Inside that owner, the same rule applies one level down: a background job dispatches in short slices and yields to a foreground job between them, with the foreground's 99th-percentile time measured both ways.
 
 Proposed:
-- stzlib.gpu: inside the process that holds the GPU, let a background job dispatch in short slices and yield to a foreground job between them; measure the foreground's median and 99th-percentile step time alone, beside a background job that never yields and beside one that yields, with the background's own rate in each case; and measure the engine's fixed cost per dispatch, which says when merging small operations into one dispatch pays (routed)
+- stzlib.gpu: inside the process that holds the GPU, let a background job dispatch in short slices and yield to a foreground job between them; measure the foreground's median and 99th-percentile step time alone, beside a background job that never yields and beside one that yields, with the background's own rate in each case; and measure the engine's fixed cost per dispatch, which says when merging small operations into one dispatch pays (done)
 
 Sources:
 - GPUOS (repository at commit 9eb66b9): https://github.com/Multi-V-VM/GPUOS
