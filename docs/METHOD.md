@@ -90,8 +90,8 @@ This repository is public. So it never holds:
 ## The radar shows every signal and highlights a few
 
 - **Every signal of the week is drawn.** The dots shrink as the week fills, so that none touches another.
-- **Seven stand out at first,** set by `watch.radar_limit` in `radar.yaml`; a slider above the radar lets the reader
-  choose any number, and the browser remembers it. The others stay in place, faded.
+- **Seven stand out at first,** set by `watch.radar_limit` in `radar.yaml`; a field beside the radar's title lets the reader
+  type any number, and the browser remembers it. The others stay in place, faded.
 - **Chosen in a fixed order:** what a signal asks of its reader (to do now, to do, to consider, to know), then how
   much it touches Softanza, then the newest.
 - **Nothing is hidden.** Every signal of the week stays in the list beside the radar, in All signals, in the digest
