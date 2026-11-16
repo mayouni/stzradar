@@ -943,16 +943,29 @@ function radar(items, title, limit = radarLimit()){
        below the circle sit clear of its top and bottom (the author's drawing, 2026-11-09) and keep their name on one
        line while the radar stays a readable size; only a narrow card lets them wrap. */
     const gap = 18, clear = 8;                                      /* the number's centre this far outside the rim keeps its box off the circle */
-    const fit = () => { let r = Math.min(W, H) / 2;
-      for (const o of labs){
-        const w = o.s.offsetWidth - o.b.offsetWidth / 2 + 4, h = o.s.offsetHeight + 4, sx = Math.abs(Math.sin(o.m)), cy = Math.abs(Math.cos(o.m));
-        r = Math.min(r, (W / 2 - w) / Math.max(sx, .01) - gap);
-        r = Math.min(r, o.pole ? H / 2 - h - clear : (H / 2 - (h - o.b.offsetHeight / 2)) / cy - gap);
-      }
-      return r; };
+    /* A name beside the circle used to set the circle's size by its own width. Now, when it has no room on the line out
+       from its slice, it moves to the card's side edge and up (or down) into the corner the circle leaves free, its
+       number nearest the rim, and the circle takes the height it is given (author, 2026-11-16: "enlarge it"). */
+    const sideAt = (o, r) => {
+      const w = o.s.offsetWidth - o.b.offsetWidth / 2 + 4, h = o.s.offsetHeight + 4, sx = Math.abs(Math.sin(o.m)), cyy = Math.abs(Math.cos(o.m));
+      if ((r + gap) * sx + w <= W / 2 && (r + gap) * cyy + (h - o.b.offsetHeight / 2) <= H / 2) return { corner:false };
+      const x0 = W / 2 - o.s.offsetWidth - 2; if (x0 < 0) return null;
+      const yb = Math.sqrt(Math.max(0, (r + clear + 4) ** 2 - x0 * x0));        /* the box's inner corner stays off the rim */
+      return yb + o.s.offsetHeight <= Math.min(H / 2, r + clear - 2) ? { corner:true, yb } : null;   /* and under the name above the circle */
+    };
+    const holds = r => labs.every(o => {
+      if (!o.pole) return sideAt(o, r);
+      const w = o.s.offsetWidth - o.b.offsetWidth / 2 + 4, h = o.s.offsetHeight + 4, sx = Math.abs(Math.sin(o.m));
+      return (r + gap) * sx + w <= W / 2 && r <= H / 2 - h - clear;
+    });
+    const fit = () => { let lo = 0, hi = Math.min(W, H) / 2; if (holds(hi)) return hi;
+      for (let i = 0; i < 18; i++){ const mid = (lo + hi) / 2; if (holds(mid)) lo = mid; else hi = mid; }
+      return lo; };
     labs.forEach(o => o.s.classList.toggle("one", o.pole));
     let rim = fit();
-    if (rim < 110){ labs.forEach(o => o.s.classList.remove("one")); rim = fit(); }
+    /* a name above or below the circle keeps one line only while that costs the circle next to nothing */
+    { labs.forEach(o => o.s.classList.remove("one")); const wrapped = fit();
+      if (rim < 110 || wrapped > rim * 1.06) rim = wrapped; else labs.forEach(o => o.s.classList.toggle("one", o.pole)); }
     const beside = rim >= 80;
     order.hidden = beside;
     labs.forEach(o => { o.s.hidden = false; o.s.classList.toggle("numonly", !beside); });   /* too narrow for names: the numbers stay, the names go in the list */
@@ -969,7 +982,10 @@ function radar(items, title, limit = radarLimit()){
          number stands on the rim's line out from the slice */
       const pos = o.pole ? (cyy > 0 ? { top: (cy - rim - clear) + "px", transform: "translateY(-100%)" } : { top: (cy + rim + clear) + "px", transform: "none" })
                          : { top: (cy - (rim + gap) * cyy) + "px", transform: cyy > 0 ? "translateY(calc(-100% + " + (o.b.offsetHeight / 2) + "px))" : "translateY(-" + (o.b.offsetHeight / 2) + "px)" };
-      Object.assign(o.s.style, sx >= 0 ? { left: (x - half) + "px", right: "auto" } : { right: (W - x - half) + "px", left: "auto" }, pos);
+      const at = o.pole ? null : sideAt(o, rim);
+      if (at && at.corner) Object.assign(o.s.style, sx >= 0 ? { right: "0px", left: "auto" } : { left: "0px", right: "auto" },
+        cyy > 0 ? { top: (cy - at.yb) + "px", transform: "translateY(-100%)" } : { top: (cy + at.yb) + "px", transform: "none" });
+      else Object.assign(o.s.style, sx >= 0 ? { left: (x - half) + "px", right: "auto" } : { right: (W - x - half) + "px", left: "auto" }, pos);
     }
   };
   new ResizeObserver(place).observe(stage);
