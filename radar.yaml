@@ -39,10 +39,10 @@ watch:                            # the watch itself
     where each one lands in {project}: the machine (Harobanda), the language (Haro), the foundation
     (Softanza), and the projects built on them.
   schedule:
-    every: monday
-    at: "07:00"
+    every: sunday
+    at: "20:00"
     timezone: Africa/Niamey
-    week: the latest ISO week that has ended
+    week: the ISO week that ends that night
   publish: after-reading          # the owner reads the digest; only then is the feed signed and pushed
   radar_limit: 7                  # how many signals stand out on the radar at first; it draws them all, and the reader moves the number
 

@@ -10,9 +10,11 @@ project is in `radar.yaml`, which the run reads first.
 - You are an **unattended run**. Everything you write stays inside this repository. Your memo goes into
   `.central/outbox.md` and Central relays it. You message no other session.
 - Read `radar.yaml`, then `CLAUDE.md`, `docs/AGENT.md`, `docs/METHOD.md` and `docs/FEED.md`.
-- Read the clock. The week is the latest ISO week that has **ended** at that reading, Monday to Sunday: a run on a
-  Monday surveys the week before (`docs/SCHEDULE.md`). An attended run may survey the current week when the author
-  asks. Write it `YYYY-Www`.
+- Read the clock. The run is on Sunday evening and surveys the ISO week that ends that night, Monday to Sunday
+  (`docs/SCHEDULE.md`). Write it `YYYY-Www`. A run that starts late, on a Monday, surveys the week that ended the
+  night before and writes into the new week's digest.
+- Read `.central/surveyed.txt`. A week listed there is complete: write a short memo and stop. A digest that exists
+  for a week absent from that file was opened by entries from the author's links; you add to it.
 - Read `feed/index.json` and the latest file in `digests/`, so that you never write an entry twice.
 
 ## The survey
@@ -34,6 +36,8 @@ project is in `radar.yaml`, which the run reads first.
 ## The outputs
 
 1. Write `digests/<YYYY-Www>.md`: one paragraph per entry, most important first, each linking to its page.
+   When the digest exists, keep its paragraphs, add one for each new entry in the same order of importance, and
+   extend "How this week was read".
    Then add each new entry to `app/lessons.json`, which the radar site shows beside it: under `build`, the checks a
    programmer runs in their own project (each with `why` and `cmd`; say so in `why` when a command writes); under
    `lesson`, `terms` and `quiz`, the entry explained for a learner. `haro tools/feed.haro` accepts a lesson only under the id
@@ -47,7 +51,8 @@ project is in `radar.yaml`, which the run reads first.
    and `haro tools/feed.haro verify` must pass before any push (`docs/FEED.md`, "The signature").
 5. Write the memo in `.central/outbox.md`. List the entries, their levels, and every action proposed, with its area,
    so that Central can route it. An `urgent` entry goes first, with the word URGENT in the subject.
-6. Append the cost line to `.central/cost.jsonl`, reading `closed` from the clock just before you write it, in UTC.
+6. Append the week, as `YYYY-Www`, on its own line to `.central/surveyed.txt`.
+7. Append the cost line to `.central/cost.jsonl`, reading `closed` from the clock just before you write it, in UTC.
 
 ## What a run never does
 

@@ -22,10 +22,10 @@
     "tagline_past": "What changed in AI and the tech field in week {week}, and what it meant for what we build in Softanza",
     "intro": "Each week the radar reads the papers, releases, security findings and practices at their source, and shows where each one lands in Softanza: the machine (Harobanda), the language (Haro), the foundation (Softanza), and the projects built on them.",
     "schedule": {
-      "every": "monday",
-      "at": "07:00",
+      "every": "sunday",
+      "at": "20:00",
       "timezone": "Africa/Niamey",
-      "week": "the latest ISO week that has ended"
+      "week": "the ISO week that ends that night"
     },
     "publish": "after-reading",
     "radar_limit": "7"

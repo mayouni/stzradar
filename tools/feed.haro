@@ -55,14 +55,26 @@ func Verify(tSigner, tNamespace)
         if not FExists(tF + ".sig")
             FWrite(stdout, "REFUSED " + tF + ": it has no signature, " + tF + ".sig" + Char(10))
             nBad++
-            loop
         end
-        tCmd = "ssh-keygen -Y verify -f keys/allowed_signers -I " + tSigner + " -n " + tNamespace + " -s " +
-               tF + ".sig < " + tF
-        if System(tCmd) != 0
-            FWrite(stdout, "REFUSED " + tF + ": its signature does not verify; sign it again after any change" + Char(10))
-            nBad++
-        end
+    end
+    if nBad > 0
+        FWrite(stdout, "signatures checked " + String(nF) + ", problems " + String(nBad) + Char(10))
+        return nBad
+    end
+    # Haro runs a command line only when it is written at the call (v0.75), and ssh-keygen reads the signed file on
+    # its standard input, which a declared command cannot be given today. So the two lines are written whole, for
+    # this watch's signer and namespace, and a watch whose radar.yaml names others is told to write its own here.
+    if tSigner != "feed@radar" or tNamespace != "radar-feed"
+        FWrite(stdout, "REFUSED tools/feed.haro: its two verify lines are written for signer feed@radar and namespace radar-feed, and radar.yaml names " + tSigner + " and " + tNamespace + "; write them for yours" + Char(10))
+        return 1
+    end
+    if System("ssh-keygen -Y verify -f keys/allowed_signers -I feed@radar -n radar-feed -s feed/index.json.sig < feed/index.json") != 0
+        FWrite(stdout, "REFUSED feed/index.json: its signature does not verify; sign it again after any change" + Char(10))
+        nBad++
+    end
+    if System("ssh-keygen -Y verify -f keys/allowed_signers -I feed@radar -n radar-feed -s feed/feed.json.sig < feed/feed.json") != 0
+        FWrite(stdout, "REFUSED feed/feed.json: its signature does not verify; sign it again after any change" + Char(10))
+        nBad++
     end
     FWrite(stdout, "signatures checked " + String(nF) + ", problems " + String(nBad) + Char(10))
     return nBad
