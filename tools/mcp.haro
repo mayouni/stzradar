@@ -70,11 +70,23 @@ func CheckSignature
     tIdx = $tRoot + "/feed/index.json"
     if not FExists(tIdx + ".sig") return "feed/index.json has no signature (feed/index.json.sig)" end
     if not FExists($tRoot + "/keys/allowed_signers") return "there is no key to check the feed against (keys/allowed_signers)" end
-    tQuiet = " >/dev/null 2>&1"
-    if IsWindows() tQuiet = " >nul 2>&1" end
-    tCmd = "ssh-keygen -Y verify -f " + Q($tRoot + "/keys/allowed_signers") + " -I " + Cf("feed.signer") +
-           " -n " + Cf("feed.namespace") + " -s " + Q(tIdx + ".sig") + " < " + Q(tIdx) + tQuiet
-    if System(tCmd) != 0 return "feed/index.json's signature does not check against keys/allowed_signers (or ssh-keygen is missing)" end
+    # Haro runs a command line only when it is written at the call (v0.75), and ssh-keygen reads the signed file on
+    # its standard input, which a declared command cannot be given today. So this stands in the radar's folder and
+    # runs a line written whole, for this watch's signer and namespace, as tools/feed.haro verify does; a watch
+    # whose configuration names others writes its own two lines here.
+    if Cf("feed.signer") != "feed@radar" or Cf("feed.namespace") != "radar-feed"
+        return "this reader's signature check is written for signer feed@radar and namespace radar-feed, and the radar's configuration names " + Cf("feed.signer") + " and " + Cf("feed.namespace")
+    end
+    tWas = CurrentDir()
+    ChDir($tRoot)
+    nCode = 1
+    if IsWindows()
+        nCode = System("ssh-keygen -Y verify -f keys/allowed_signers -I feed@radar -n radar-feed -s feed/index.json.sig < feed/index.json >nul 2>&1")
+    else
+        nCode = System("ssh-keygen -Y verify -f keys/allowed_signers -I feed@radar -n radar-feed -s feed/index.json.sig < feed/index.json >/dev/null 2>&1")
+    end
+    ChDir(tWas)
+    if nCode != 0 return "feed/index.json's signature does not check against keys/allowed_signers (or ssh-keygen is missing)" end
     return ""
 end
 func Q(tC)
