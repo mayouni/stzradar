@@ -4,6 +4,7 @@
 {
   "id": "2026-11-14-openinfer-gpu-os",
   "date": "2026-11-14",
+  "updated": "2026-11-23",
   "title": "OpenInfer measures a serving GPU's math units busy 6 to 11% of the time and schedules the rest; Softanza gives its one GPU a single owner",
   "kind": "paper",
   "summary": "In 'The GPU Needs an Operating System' (arXiv 2611.08720, November 5, 2026), Reza Nourai and Behnam Bastani of OpenInfer measure two large open models served with stock vLLM on NVIDIA RTX PRO 6000 Blackwell cards: the tensor units are active 6 to 11% of the time while kernels occupy the GPU about 94% of it, because each decoding step waits on memory. They propose a scheduler that lends idle parts of the chip to background work in pieces of 20 microseconds or less. With NVIDIA's static partitions, work written to share adds about a quarter of a GPU at a 5% slower decode step; their research kernel, running Llama-3.1-8B, adds the same at 0.3 to 1.6%.",
@@ -19,9 +20,9 @@
   "domains": ["models", "devices"],
   "concerns": ["speed", "cost", "correctness"],
   "actions": [
-    { "area": "stzlib.gpu", "do": "give the GPU one owner at a time across processes: a named lease the engine takes before it creates its device, so that a second process waits its turn or runs its job on the CPU; and report, for one decode step of a court model, the fraction of the adapter's measured peak and of its memory bandwidth", "state": "routed", "dates": { "proposed": "2026-11-14", "routed": "2026-11-14" } }
+    { "area": "stzlib.gpu", "do": "give the GPU one owner at a time across processes: a named lease the engine takes before it creates its device, so that a second process waits its turn or runs its job on the CPU; and report, for one decode step of a court model, the fraction of the adapter's measured peak and of its memory bandwidth", "state": "done", "dates": { "proposed": "2026-11-14", "routed": "2026-11-14", "done": "2026-11-15" } }
   ],
-  "status": "routed",
+  "status": "done",
   "confidence": "claimed",
   "sources": [
     { "title": "The GPU Needs an Operating System (arXiv 2611.08720v1)", "url": "https://arxiv.org/html/2611.08720v1", "by": "Reza Nourai, Behnam Bastani (OpenInfer)", "read": "2026-11-14" },
@@ -90,3 +91,6 @@ going: the accelerator becomes a resource the system schedules, beside the proce
   second process waits, by default up to 30 seconds, then runs with no device and can name the holder. Measured with
   real processes: a refusal after 2,000 ms naming the holder, and a take after a 12.4-second wait when the holder
   closed. The reading of one decode step against the adapter's peak is ordered with the desk's next measurement.
+- 2026-11-23: the reading of one decode step is recorded. Softanza's decoder runs on the processor: a 676 MB 8-bit
+  model takes 24.8 to 25.4 ms a token, reading about 27 GB of weights a second, and the engine's GPU router claimed
+  0 nodes of the graph over 33 tokens.

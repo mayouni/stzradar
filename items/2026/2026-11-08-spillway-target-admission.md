@@ -4,7 +4,7 @@
 {
   "id": "2026-11-08-spillway-target-admission",
   "date": "2026-11-08",
-  "updated": "2026-11-09",
+  "updated": "2026-11-23",
   "title": "SPILLWAY: an agent may act only on targets that came from a trusted, typed field",
   "kind": "paper",
   "summary": "A paper submitted on November 4, 2026 proposes a defence for tool-using agents against prompt injection that does not rely on a model: a call with side effects is admitted only if every target it names that is not in the user's request was returned in a typed identity field, such as an email address or a channel, by a read-only tool. A rule-based sanitizer removes instruction-like text, and a local model reviews only the calls the rule refused. The authors report no successful in-scope attack across twelve benchmark settings.",
@@ -20,9 +20,9 @@
   "domains": ["agents", "security"],
   "concerns": ["trust", "correctness"],
   "actions": [
-    { "area": "stzlib.security", "do": "study whether Softanza's agent governance can check the provenance of a side effect's target, not only the tool's name, and report what it would take", "state": "routed", "dates": { "proposed": "2026-11-08", "routed": "2026-11-08" } }
+    { "area": "stzlib.security", "do": "study whether Softanza's agent governance can check the provenance of a side effect's target, not only the tool's name, and report what it would take", "state": "done", "dates": { "proposed": "2026-11-08", "routed": "2026-11-08", "done": "2026-11-17" } }
   ],
-  "status": "routed",
+  "status": "done",
   "confidence": "read",
   "sources": [
     { "title": "SPILLWAY: Separating Target Admission from Sanitization to Defend Tool-Using Agents against Prompt Injection", "url": "https://arxiv.org/abs/2611.07222", "by": "Woosang Lim et al.", "read": "2026-11-08" },
@@ -78,3 +78,7 @@ but **where its target came from**. The answer is a set lookup and costs nothing
 - 2026-11-09: the paragraph on Softanza now says what holds and what is proposed, in affirmative sentences; the facts are unchanged.
 - 2026-11-09: placed on the estate map, with the domains and concerns it touches; the facts are unchanged.
 - 2026-11-09: each proposal now carries the day it reached each stage, read from this repository's history; the facts are unchanged.
+- 2026-11-23: built in Softanza, in three parts. A governed skill names its target in its declaration file, and the
+  gate every agent passes admits that target before any code of the skill runs: governance is asked first, then the
+  target must be exactly one value in memory, from a source the rule accepts. A refusal is a recorded decision. Its
+  guard passes 27 of 27, and a planted bypass of the admission turns 7 of them to failures.

@@ -4,6 +4,7 @@
 {
   "id": "2026-11-15-tur-metal-inference",
   "date": "2026-11-15",
+  "updated": "2026-11-23",
   "title": "Tur serves eight requests from one small model at six times the speed of one by reading the weights once per step; Softanza measures the same rule on its own decoder",
   "kind": "release",
   "summary": "Tur, by Danylo Kravchenko, is an Apache-2.0 inference engine in Rust for Apple Silicon Macs: one binary for generation, an OpenAI-compatible server, Whisper transcription and quantization, on Metal kernels and the Candle framework. Its continuous batching packs every request's next token into one pass, so the weights are read once for all of them: on an M3 Pro, Qwen3.5-0.8B at 8 bits decodes 123 tokens per second for one sequence and 729 for eight, against llama.cpp's 113 and 456. It plans all memory before loading a weight, keeps most experts of a mixture-of-experts model on the SSD behind a fixed cache, reuses shared prefixes, and drafts tokens from the prompt's own text. Figures are the author's.",
@@ -19,9 +20,9 @@
   "domains": ["models", "devices"],
   "concerns": ["speed", "cost"],
   "actions": [
-    { "area": "stzlib.intelligence", "do": "decode several independent sequences of one model in one step and measure total tokens per second and the gap between tokens at 1, 2, 4 and 8 sequences on the processor, each sequence's text identical to its solo run; and measure drafting from the prompt's own text, which adds no second model, on a task that copies from its prompt", "state": "routed", "dates": { "proposed": "2026-11-15", "routed": "2026-11-15" } }
+    { "area": "stzlib.intelligence", "do": "decode several independent sequences of one model in one step and measure total tokens per second and the gap between tokens at 1, 2, 4 and 8 sequences on the processor, each sequence's text identical to its solo run; and measure drafting from the prompt's own text, which adds no second model, on a task that copies from its prompt", "state": "done", "dates": { "proposed": "2026-11-15", "routed": "2026-11-15", "done": "2026-11-23" } }
   ],
-  "status": "routed",
+  "status": "done",
   "confidence": "claimed",
   "sources": [
     { "title": "Tur: local inference with a little muscle", "url": "https://danylokravchenko.github.io/tur/", "by": "Danylo Kravchenko", "read": "2026-11-15" },
@@ -86,3 +87,11 @@ its own measurement on tasks that copy from their prompt, such as extraction.
   [scope](https://danylokravchenko.github.io/tur/docs/design/scope/) and its
   [repository](https://github.com/danylokravchenko/tur), read 2026-11-15. The architecture and measured-performance
   chapters of its book were left unread. All figures are the author's own.
+
+## Corrections
+
+- 2026-11-23: measured and built in Softanza's engine. On the processor, a pass of several rows costs a small 8-bit
+  model little more than one: for Qwen3 0.6B, 1.13 times at 2 rows, 1.47 at 4 and 2.08 at 8, about 3.8 times the
+  tokens a second for eight sequences. For the 4 GB Bolt model the pass is bound by arithmetic, about 1.4 times for
+  eight. Drafting from the prompt's own text is built as an option: on 36 held-out tickets the texts are identical
+  36 of 36, and it runs 1.31 to 1.37 times faster on Qwen3 0.6B and 1.13 times faster on Bolt.

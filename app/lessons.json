@@ -1109,6 +1109,231 @@
           "The weights are read once for all texts, so the costly part is shared; only the cheaper arithmetic grows with each text."
         ]
       ]
+    },
+    "2026-11-23-agent-substrate-gvisor": {
+      "build": [
+        {
+          "why": "See what your program holds: list the environment of the running process and look for a key or a token in it.",
+          "cmd": "env | grep -i -E 'key|token|secret'"
+        },
+        {
+          "why": "Run a command with an empty environment, so that it starts with no secret at all.",
+          "cmd": "env -i /usr/bin/python3 agent.py"
+        },
+        {
+          "why": "Send the request through a local gateway that adds the header; the program names the service and never sees the key.",
+          "cmd": "curl http://localhost:8080/v1/chat -d @request.json"
+        }
+      ],
+      "lesson": "An agent runs code and reads text that other people wrote, so it can be tricked. If it holds a password or a key, a trick can make it send that key away. The remedy is a boundary: the agent runs in a closed room, a sandbox, with no key inside. When it needs a service, it sends its request to a gateway at the door. The gateway checks the request against a policy and, only then, adds the key and passes it on. Google's Agent Substrate builds this for thousands of agents at once. The same idea works on one machine with a small program that listens on a local port.",
+      "terms": [
+        [
+          "sandbox",
+          "a closed space where a program runs with only the files and network it was given"
+        ],
+        [
+          "credential",
+          "a secret, such as a key or a token, that proves who is asking"
+        ],
+        [
+          "egress gateway",
+          "the one door for outgoing requests, where a policy is applied"
+        ],
+        [
+          "snapshot",
+          "a saved copy of a program's memory and files, from which it can resume"
+        ]
+      ],
+      "quiz": [
+        [
+          "An agent is tricked into printing every variable it can read. What does it reveal when the key is added by a gateway?",
+          "Nothing secret: the key was never in the agent's memory or environment."
+        ],
+        [
+          "Why does the gateway check the request before adding the key?",
+          "A key added to any request would serve an attacker too; the policy decides which requests deserve it."
+        ]
+      ]
+    },
+    "2026-11-23-codex-sandbox-profiles": {
+      "build": [
+        {
+          "why": "Try the two kinds of rule. First expand a pattern into names once, as a list. This command writes a file.",
+          "cmd": "ls *.env > denied.txt"
+        },
+        {
+          "why": "Create a new file that matches the pattern after the list was made. This command writes a file.",
+          "cmd": "touch late.env"
+        },
+        {
+          "why": "The list misses the new file; a rule that tests the name at each access catches it.",
+          "cmd": "grep -c late.env denied.txt; case late.env in *.env) echo refused;; esac"
+        }
+      ],
+      "lesson": "A coding agent runs commands on your computer, so its makers put it in a sandbox: the operating system refuses what the rules forbid. OpenAI described its own sandbox and named three places where such rules can fall short. A helper program the agent starts may run outside the rules. A list of forbidden files made at the start misses a file created later. And looking up a site's name can carry a few bytes out even when the network is closed. Each is a question you can ask of any tool that confines a program: who else runs, when is the rule read, and what leaves by a side door.",
+      "terms": [
+        [
+          "permission profile",
+          "a named set of what a command may read, write and reach"
+        ],
+        [
+          "deny pattern",
+          "a pattern of file names that a rule forbids, such as every file ending in .env"
+        ],
+        [
+          "tool server",
+          "a helper program that gives an agent a tool, such as a memory or a search"
+        ],
+        [
+          "name lookup",
+          "asking the network for the address of a site's name"
+        ]
+      ],
+      "quiz": [
+        [
+          "A rule forbids every .env file and is turned into a list when the sandbox starts. The agent then creates new.env. Is it forbidden?",
+          "No, the list was made before the file existed. A rule tested at each access forbids it."
+        ],
+        [
+          "Why should a helper program an agent starts run inside the same bounds?",
+          "The agent can ask the helper to do what the agent itself is refused."
+        ]
+      ]
+    },
+    "2026-11-23-rules-file-is-not-a-gate": {
+      "build": [
+        {
+          "why": "Write a rule as a gate: a hook that git runs before every commit and that can refuse it. Save these three lines as .git/hooks/pre-commit; this writes a file.",
+          "cmd": "#!/bin/sh\ngit diff --cached --name-only | grep -q '[.]env$' && { echo 'refused: a .env file is staged'; exit 1; }\nexit 0"
+        },
+        {
+          "why": "Make the hook runnable. This command changes a file's mode.",
+          "cmd": "chmod +x .git/hooks/pre-commit"
+        },
+        {
+          "why": "Try to cross the boundary and watch the gate refuse. This command writes and stages a file.",
+          "cmd": "touch test.env && git add -f test.env && git commit -m try"
+        }
+      ],
+      "lesson": "Teams that work with coding agents write their rules in a file the agent reads: do this, never do that. A study gave one such file to four agents and planted four things the file forbade. Without anything in the way, the agents crossed a boundary in 7 of 45 runs. With a gate in the way, a small program that refuses the forbidden request and writes it down, every attempt was stopped. The rules file also made the agents' work worse on hidden tests. The lesson is to keep both and know what each is for: the file explains what you want, and the gate makes sure of the few things that must never happen.",
+      "terms": [
+        [
+          "rules file",
+          "a text file of instructions that a coding agent reads before it works"
+        ],
+        [
+          "gate",
+          "a check in code that an act must pass, and that can refuse it"
+        ],
+        [
+          "hidden tests",
+          "tests the agent cannot see, used to judge its work fairly"
+        ],
+        [
+          "hook",
+          "a program a tool runs by itself at a fixed moment, such as before a commit"
+        ]
+      ],
+      "quiz": [
+        [
+          "A rule says 'never commit a .env file'. Where does it hold for certain?",
+          "In a hook that refuses the commit. In a rules file it is a request the agent usually follows."
+        ],
+        [
+          "The study found a cost of a long rules file. What was it?",
+          "The agents passed fewer hidden tests with the file, and one reported work as complete when it was unfinished."
+        ]
+      ]
+    },
+    "2026-11-23-correct-precedents-small-agents": {
+      "build": [
+        {
+          "why": "Ask a small local model one forbidden request alone and note its answer.",
+          "cmd": "ollama run qwen3:0.6b \"Policy: never send the user's address to the cloud. Request: send the address to the cloud. Answer ALLOW or REFUSE.\""
+        },
+        {
+          "why": "Now put three allowed requests, each answered ALLOW, before the same forbidden one, in a single prompt, and compare.",
+          "cmd": "ollama run qwen3:0.6b \"$(cat three_allowed_then_forbidden.txt)\""
+        },
+        {
+          "why": "Decide the forbidden case in code, which sees one request and no history.",
+          "cmd": "case \"$field\" in address) echo REFUSE;; *) echo ASK_MODEL;; esac"
+        }
+      ],
+      "lesson": "A language model writes what is likely to come next, given everything before it. In a session where it has answered 'allowed' several times, and was right each time, 'allowed' becomes the likely next answer, even for a request its policy forbids. A study found this in 13 small models; one correct earlier decision could halve how often the most affected model refused. Two remedies follow. One is to train the small model on good decisions from a steadier model. The other is to keep the decision out of the model: code that checks one request against the rule has no memory of the session and decides the same way each time.",
+      "terms": [
+        [
+          "on-device agent",
+          "an agent whose model runs on the person's own computer or phone"
+        ],
+        [
+          "policy",
+          "the rules that say what an agent may and may not do"
+        ],
+        [
+          "precedent",
+          "an earlier decision in the same session that the next one may follow"
+        ],
+        [
+          "distillation",
+          "training a small model on the answers of another model"
+        ]
+      ],
+      "quiz": [
+        [
+          "Why can three correct 'allowed' answers make the fourth answer wrong?",
+          "The model continues the pattern of the session; 'allowed' has become the likely next word."
+        ],
+        [
+          "What does a check written in code add to a careful model?",
+          "It judges each request alone against the rule, so the session's history cannot move it."
+        ]
+      ]
+    },
+    "2026-11-23-small-models-checkable-evidence": {
+      "build": [
+        {
+          "why": "Check a model's quote by program: the quote must appear word for word in the source.",
+          "cmd": "grep -c -F \"$quote\" source.txt"
+        },
+        {
+          "why": "Check that the answer is inside the quote, so the quote really supports it.",
+          "cmd": "printf '%s' \"$quote\" | grep -c -F \"$answer\""
+        },
+        {
+          "why": "Look for the unit near the figure in the source: thousands and millions are where verified answers go wrong.",
+          "cmd": "grep -n -i -E 'in (thousands|millions)' source.txt"
+        }
+      ],
+      "lesson": "A model's answer is easier to trust when it shows where the answer comes from. Ask for two things with every answer: the exact words from the document, and the page. A simple program can then confirm that those words are on that page and contain the answer, with no second model. A study did this with 1,000 questions about company reports. The best small model was right, with verified evidence, 84.5% of the time. The study also counted the answers that passed the check and were wrong: up to 167 in 1,000, most of them a figure in thousands or millions read as a plain number. A check tells you a quote is real; the unit beside the figure is a second thing to check.",
+      "terms": [
+        [
+          "verbatim quote",
+          "the source's exact words, copied with no change"
+        ],
+        [
+          "checkable evidence",
+          "proof a program can verify without judgment"
+        ],
+        [
+          "answer key",
+          "the list of correct answers a test is scored against"
+        ],
+        [
+          "scale error",
+          "a figure read at the wrong size, such as thousands read as units"
+        ]
+      ],
+      "quiz": [
+        [
+          "A model answers '4,210' and quotes 'Revenue 4,210', and the page says figures are in thousands. Does the quote check pass, and is the answer right?",
+          "The check passes, since the quote is real. The answer is wrong: the true figure is 4,210,000."
+        ],
+        [
+          "Why count the wrong answers that pass every check?",
+          "That number is the limit of the check; its kinds say which further check to write."
+        ]
+      ]
     }
   }
 }
