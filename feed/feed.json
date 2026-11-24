@@ -7,6 +7,25 @@
   "language": "en",
   "items": [
     {
+      "id": "2026-11-24-working-with-ai-interviews",
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-24-working-with-ai-interviews.md",
+      "title": "Anthropic interviews 58 companies: AI's value comes from more output and from roles rebuilt around a whole workflow, and the bottleneck is review; Softanza's Foundry states the review each pack creates",
+      "summary": "On November 23, 2026 Anthropic's economics team (Nathan Wilmers, Maxim Massenkoff, Peter McCrory) published Working with AI, a study of 66 face-to-face interviews in 58 US companies adopting AI, covering nearly 300 applications. Most of the value interviewees reported came from more output rather than lower cost, and around half of the output gains came from doing existing work faster. The largest gains came with broad change: one person or team owning a whole workflow, and staff moved to the tasks that hold work up. The bottlenecks named were inside the companies, above all the load of reviewing what AI produces and uneven adoption. Two-thirds of the companies reported hiring less because of AI, 10 reported hiring more, and two saw a position fully automated away. The authors describe the study as qualitative, with value as the interviewees describe it.",
+      "content_text": "On November 23, 2026 Anthropic's economics team (Nathan Wilmers, Maxim Massenkoff, Peter McCrory) published Working with AI, a study of 66 face-to-face interviews in 58 US companies adopting AI, covering nearly 300 applications. Most of the value interviewees reported came from more output rather than lower cost, and around half of the output gains came from doing existing work faster. The largest gains came with broad change: one person or team owning a whole workflow, and staff moved to the tasks that hold work up. The bottlenecks named were inside the companies, above all the load of reviewing what AI produces and uneven adoption. Two-thirds of the companies reported hiring less because of AI, 10 reported hiring more, and two saw a position fully automated away. The authors describe the study as qualitative, with value as the interviewees describe it.",
+      "date_published": "2026-11-24T00:00:00Z",
+      "tags": [
+        "paper",
+        "learn",
+        "advice",
+        "anthropic",
+        "economics",
+        "adoption",
+        "work",
+        "review",
+        "interviews"
+      ]
+    },
+    {
       "id": "2026-11-23-agent-substrate-gvisor",
       "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-23-agent-substrate-gvisor.md",
       "title": "Google gives Agent Substrate 1.0 and gVisor to the CNCF: an agent holds no credential, and the gateway adds it outside the sandbox; Softanza reads its credential broker against that line",

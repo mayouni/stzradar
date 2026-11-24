@@ -2,6 +2,28 @@
 
 > What changed in AI and the tech field this week, and what it means for what we build in Softanza. Generated from the signed feed (https://mayouni.github.io/stzradar/feed/index.json); the feed is the reference.
 
+## Anthropic interviews 58 companies: AI's value comes from more output and from roles rebuilt around a whole workflow, and the bottleneck is review; Softanza's Foundry states the review each pack creates
+
+- id: 2026-11-24-working-with-ai-interviews
+- date: 2026-11-24
+- level: advice
+- kind: paper
+- stance: learn
+- relevance: medium
+- page: https://mayouni.github.io/stzradar/items/2026/2026-11-24-working-with-ai-interviews.md
+
+On November 23, 2026 Anthropic's economics team (Nathan Wilmers, Maxim Massenkoff, Peter McCrory) published Working with AI, a study of 66 face-to-face interviews in 58 US companies adopting AI, covering nearly 300 applications. Most of the value interviewees reported came from more output rather than lower cost, and around half of the output gains came from doing existing work faster. The largest gains came with broad change: one person or team owning a whole workflow, and staff moved to the tasks that hold work up. The bottlenecks named were inside the companies, above all the load of reviewing what AI produces and uneven adoption. Two-thirds of the companies reported hiring less because of AI, 10 reported hiring more, and two saw a position fully automated away. The authors describe the study as qualitative, with value as the interviewees describe it.
+
+For each reader:
+- developer: When AI writes more, a person reviews more. The study found that review, not the model, is where work most often waits, so the time a reviewer spends per item is the figure that decides whether a tool pays.
+- maintainer: A Softanza pack delivers an agentic solution whole. The study says the value of such a solution shows as output and as a role rebuilt around the workflow, and that review is the common bottleneck; each pack can state the review it creates and its measured minutes per item.
+
+Proposed:
+- foundry: record in each pack's delivery the review its outputs need: what a person checks, how many items a day, and the minutes per item measured in the pilot; and report the pack's value as the output it adds, beside any cost it removes (routed)
+
+Sources:
+- Working with AI: https://www.anthropic.com/research/working-with-ai
+
 ## Google gives Agent Substrate 1.0 and gVisor to the CNCF: an agent holds no credential, and the gateway adds it outside the sandbox; Softanza reads its credential broker against that line
 
 - id: 2026-11-23-agent-substrate-gvisor

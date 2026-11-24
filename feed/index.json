@@ -1,10 +1,70 @@
 {
   "feed": "radar",
   "version": 1,
-  "updated": "2026-11-23T00:00:00Z",
+  "updated": "2026-11-24T00:00:00Z",
   "home": "https://github.com/mayouni/stzradar",
   "title": "Softanza Radar",
   "items": [
+    {
+      "id": "2026-11-24-working-with-ai-interviews",
+      "date": "2026-11-24",
+      "title": "Anthropic interviews 58 companies: AI's value comes from more output and from roles rebuilt around a whole workflow, and the bottleneck is review; Softanza's Foundry states the review each pack creates",
+      "kind": "paper",
+      "summary": "On November 23, 2026 Anthropic's economics team (Nathan Wilmers, Maxim Massenkoff, Peter McCrory) published Working with AI, a study of 66 face-to-face interviews in 58 US companies adopting AI, covering nearly 300 applications. Most of the value interviewees reported came from more output rather than lower cost, and around half of the output gains came from doing existing work faster. The largest gains came with broad change: one person or team owning a whole workflow, and staff moved to the tasks that hold work up. The bottlenecks named were inside the companies, above all the load of reviewing what AI produces and uneven adoption. Two-thirds of the companies reported hiring less because of AI, 10 reported hiring more, and two saw a position fully automated away. The authors describe the study as qualitative, with value as the interviewees describe it.",
+      "stance": "learn",
+      "relevance": "medium",
+      "level": "advice",
+      "audiences": [
+        "developer",
+        "maintainer"
+      ],
+      "notice": {
+        "developer": "When AI writes more, a person reviews more. The study found that review, not the model, is where work most often waits, so the time a reviewer spends per item is the figure that decides whether a tool pays.",
+        "maintainer": "A Softanza pack delivers an agentic solution whole. The study says the value of such a solution shows as output and as a role rebuilt around the workflow, and that review is the common bottleneck; each pack can state the review it creates and its measured minutes per item."
+      },
+      "areas": [
+        "foundry",
+        "agents"
+      ],
+      "domains": [
+        "agents"
+      ],
+      "concerns": [
+        "cost",
+        "trust"
+      ],
+      "actions": [
+        {
+          "area": "foundry",
+          "do": "record in each pack's delivery the review its outputs need: what a person checks, how many items a day, and the minutes per item measured in the pilot; and report the pack's value as the output it adds, beside any cost it removes",
+          "state": "routed",
+          "dates": {
+            "proposed": "2026-11-24",
+            "routed": "2026-11-24"
+          }
+        }
+      ],
+      "status": "routed",
+      "confidence": "reported",
+      "sources": [
+        {
+          "title": "Working with AI",
+          "url": "https://www.anthropic.com/research/working-with-ai",
+          "by": "Nathan Wilmers, Maxim Massenkoff, Peter McCrory (Anthropic)",
+          "read": "2026-11-24"
+        }
+      ],
+      "review_by": "2027-02-24",
+      "tags": [
+        "anthropic",
+        "economics",
+        "adoption",
+        "work",
+        "review",
+        "interviews"
+      ],
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-24-working-with-ai-interviews.md"
+    },
     {
       "id": "2026-11-23-agent-substrate-gvisor",
       "date": "2026-11-23",

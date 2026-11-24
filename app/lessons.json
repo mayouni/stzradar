@@ -1334,6 +1334,47 @@
           "That number is the limit of the check; its kinds say which further check to write."
         ]
       ]
+    },
+    "2026-11-24-working-with-ai-interviews": {
+      "build": [
+        {
+          "why": "Count the changes waiting for a person to review them. This only reads.",
+          "cmd": "gh pr list --state open --json number --jq 'length'"
+        },
+        {
+          "why": "Measure the average hours from opening a change to merging it, over the last 50. This only reads.",
+          "cmd": "gh pr list --state merged --limit 50 --json createdAt,mergedAt --jq 'map((.mergedAt|fromdate)-(.createdAt|fromdate)) | add/length/3600'"
+        },
+        {
+          "why": "See who writes the changes of the last four weeks; uneven adoption shows as a few names doing most of it. This only reads.",
+          "cmd": "git log --since='4 weeks ago' --format='%an' | sort | uniq -c | sort -rn"
+        }
+      ],
+      "lesson": "Anthropic talked to people in 58 companies about how they use AI at work. Most said the gain was more work done, not money saved, and the biggest gains came when one person or team took charge of a whole job from start to end. Where work got stuck, it was usually waiting for someone to check what the AI had made. So when you add AI to your work, count the checking too: how many things a person must review, and how long each takes. If checking grows faster than the work, the tool has moved the queue rather than removed it.",
+      "terms": [
+        [
+          "bottleneck",
+          "the one step where work waits, which sets the pace of the whole"
+        ],
+        [
+          "review load",
+          "the number of AI outputs a person must check, and the time it takes"
+        ],
+        [
+          "qualitative study",
+          "a study built from interviews and descriptions rather than measured experiments"
+        ]
+      ],
+      "quiz": [
+        [
+          "In the companies interviewed, where did work with AI most often get stuck?",
+          "In review: people checking what the AI produced, and adoption that was uneven across the team."
+        ],
+        [
+          "How did most interviewees describe the value of AI?",
+          "As more output, more work done faster or better, rather than lower cost."
+        ]
+      ]
     }
   }
 }
