@@ -7,6 +7,26 @@
   "language": "en",
   "items": [
     {
+      "id": "2026-11-24-declare-ui-language",
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-24-declare-ui-language.md",
+      "title": "Declare, a user-interface language written by models and checked by its compiler: half React's lines and eleven hidden checks of eleven in one run; Softanza measures Zayn and Haro's diagnostics the same way",
+      "summary": "Declare, by David Temkin (co-founder of Laszlo Systems, which made OpenLaszlo), is an MIT-licensed declarative language for user interfaces, described as a UI language for you and your AI. Square brackets hold the view tree and braces hold TypeScript; an attribute in braces is a constraint whose dependencies the compiler extracts, and an assignment makes its dependents recompute. There is no CSS. The same tree renders to the DOM, to a canvas or to a native Mac host, in Node or the browser with no build step. It ships an agent skill, a six-rung verifier, and diagnostics that each name the rewrite that fixes them. In the author's single-run comparison, a ticket-buying app took 1,279 lines against React's 2,666, and its first build that ran passed eleven hidden checks of eleven against React's six. The figures are the author's own.",
+      "content_text": "Declare, by David Temkin (co-founder of Laszlo Systems, which made OpenLaszlo), is an MIT-licensed declarative language for user interfaces, described as a UI language for you and your AI. Square brackets hold the view tree and braces hold TypeScript; an attribute in braces is a constraint whose dependencies the compiler extracts, and an assignment makes its dependents recompute. There is no CSS. The same tree renders to the DOM, to a canvas or to a native Mac host, in Node or the browser with no build step. It ships an agent skill, a six-rung verifier, and diagnostics that each name the rewrite that fixes them. In the author's single-run comparison, a ticket-buying app took 1,279 lines against React's 2,666, and its first build that ran passed eleven hidden checks of eleven against React's six. The figures are the author's own.",
+      "date_published": "2026-11-24T00:00:00Z",
+      "tags": [
+        "release",
+        "learn",
+        "advice",
+        "declare",
+        "ui-language",
+        "declarative",
+        "constraints",
+        "coding-agents",
+        "diagnostics",
+        "openlaszlo"
+      ]
+    },
+    {
       "id": "2026-11-24-medical-asr-post-training",
       "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-24-medical-asr-post-training.md",
       "title": "Besimple post-trains two open speech models on medical terms for about $500 and beats three closed models on medical dictation; Softanza measures its own transcriber on the words of a domain",

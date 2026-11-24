@@ -2,6 +2,30 @@
 
 > What changed in AI and the tech field this week, and what it means for what we build in Softanza. Generated from the signed feed (https://mayouni.github.io/stzradar/feed/index.json); the feed is the reference.
 
+## Declare, a user-interface language written by models and checked by its compiler: half React's lines and eleven hidden checks of eleven in one run; Softanza measures Zayn and Haro's diagnostics the same way
+
+- id: 2026-11-24-declare-ui-language
+- date: 2026-11-24
+- level: advice
+- kind: release
+- stance: learn
+- relevance: high
+- page: https://mayouni.github.io/stzradar/items/2026/2026-11-24-declare-ui-language.md
+
+Declare, by David Temkin (co-founder of Laszlo Systems, which made OpenLaszlo), is an MIT-licensed declarative language for user interfaces, described as a UI language for you and your AI. Square brackets hold the view tree and braces hold TypeScript; an attribute in braces is a constraint whose dependencies the compiler extracts, and an assignment makes its dependents recompute. There is no CSS. The same tree renders to the DOM, to a canvas or to a native Mac host, in Node or the browser with no build step. It ships an agent skill, a six-rung verifier, and diagnostics that each name the rewrite that fixes them. In the author's single-run comparison, a ticket-buying app took 1,279 lines against React's 2,666, and its first build that ran passed eleven hidden checks of eleven against React's six. The figures are the author's own.
+
+For each reader:
+- developer: Code a model writes is usually judged by whether it looks right. A language whose structure the compiler can check, and whose every error names its fix, lets the model correct itself before a person reads the result.
+- maintainer: Softanza has its own interface (Zayn) and its own language (Haro), both meant to be written by models. Declare measures what that buys: lines, compiler errors per build, and hidden checks passed by the first build that runs. The same three figures apply to a Zayn screen, and a diagnostic that names its fix is a form Haro can count.
+
+Proposed:
+- zayn: give a model one small Zayn application to build under hidden behaviour checks, as Declare's ticket-buying test does, and record the lines written, the compiler errors per build, and the checks passed by the first build that runs (routed)
+- haro: count, over a sample of agent sessions, the share of Haro's diagnostics that name the rewrite that fixes them, and give that form to the most frequent ones (routed)
+
+Sources:
+- Declare: https://davidtemkin.github.io/declarelang/
+- declarelang (repository): https://github.com/davidtemkin/declarelang
+
 ## Besimple post-trains two open speech models on medical terms for about $500 and beats three closed models on medical dictation; Softanza measures its own transcriber on the words of a domain
 
 - id: 2026-11-24-medical-asr-post-training

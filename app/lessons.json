@@ -1420,6 +1420,51 @@
           "Nemotron stayed about the same; Qwen3-ASR went from 4.59% to 5.52% errors, which the general test set showed."
         ]
       ]
+    },
+    "2026-11-24-declare-ui-language": {
+      "build": [
+        {
+          "why": "Fetch the language to read its examples and its agent skill. This downloads a repository into a new folder.",
+          "cmd": "git clone --depth 1 https://github.com/davidtemkin/declarelang"
+        },
+        {
+          "why": "Read the instructions written for coding agents. This only reads.",
+          "cmd": "cat declarelang/AGENTS.md"
+        },
+        {
+          "why": "Count how many lines your own interface takes, to compare with the author's figures. This only reads.",
+          "cmd": "git ls-files '*.tsx' '*.jsx' '*.css' | xargs wc -l | tail -1"
+        }
+      ],
+      "lesson": "When an AI writes a user interface, people usually judge it by looking at it: does it seem right? Declare is a new language that lets a compiler check the structure of an interface instead, so many mistakes are caught before anyone looks. Its error messages say how to fix the error, which helps an AI correct itself. In the author's own comparison, the same app took half the lines of React, and its first working version passed all eleven hidden tests where the React version passed six. The lesson is that a language can be designed for the one who writes it, and today that is often a model.",
+      "terms": [
+        [
+          "declarative",
+          "describing what the result should be, and letting the system work out how to produce it"
+        ],
+        [
+          "constraint",
+          "a value defined by others, kept up to date whenever they change"
+        ],
+        [
+          "hidden checks",
+          "tests the builder cannot see, used to judge the work fairly"
+        ],
+        [
+          "diagnostic",
+          "a message from the compiler about an error or a risk in the code"
+        ]
+      ],
+      "quiz": [
+        [
+          "What does the author mean by 'resemblance is not correctness'?",
+          "A model's code can look right without being right; a checker that understands the structure catches what looking misses."
+        ],
+        [
+          "Why does an error message that names its fix help a model?",
+          "The model can apply the named rewrite directly, so it corrects itself in fewer attempts."
+        ]
+      ]
     }
   }
 }
