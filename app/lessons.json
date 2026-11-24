@@ -1465,6 +1465,51 @@
           "The model can apply the named rewrite directly, so it corrects itself in fewer attempts."
         ]
       ]
+    },
+    "2026-11-24-microsoft-mai-ignite": {
+      "build": [
+        {
+          "why": "Record what each model costs you on your own task, not on the vendor's: a file of model, price per million input and output tokens, and the date you read the price. This writes a file.",
+          "cmd": "printf 'model,in_per_m,out_per_m,price_basis,read\\n' > prices.csv"
+        },
+        {
+          "why": "Add one row for each model you compare, saying whether the price is a list price or a promotion. This writes a file.",
+          "cmd": "printf 'model-a,1.00,5.00,list,2026-11-24\\n' >> prices.csv"
+        },
+        {
+          "why": "List the rows whose price is a promotion, so the comparison is redone when it ends. This only reads.",
+          "cmd": "grep -v ',list,' prices.csv"
+        }
+      ],
+      "lesson": "Microsoft announced seven new AI models in one day: for writing code, defending systems, making images, talking in real time, and choosing which model should answer a request. Its coding model is said to do almost as well as the best models of OpenAI and Anthropic for a small part of their cost. The footnote matters: that cost uses a launch discount of half the normal price. When you compare models, write down the price you used and whether it is a discount, and test them on your own work, because a score averaged over someone else's tests may not match yours.",
+      "terms": [
+        [
+          "benchmark",
+          "a fixed set of tasks used to score and compare models"
+        ],
+        [
+          "promotional price",
+          "a temporary discount, often at launch, that ends on a stated date"
+        ],
+        [
+          "model routing",
+          "choosing, for each request, which model should answer it"
+        ],
+        [
+          "open weights",
+          "a model whose trained numbers are published, so anyone can run it on their own machine"
+        ]
+      ],
+      "quiz": [
+        [
+          "Microsoft says MAI Code 2 costs 5% of Claude Opus 5.5. What does that figure assume?",
+          "MAI Code 2 at its 50% promotional price, on Microsoft's average of four coding benchmarks."
+        ],
+        [
+          "What does Decision 1.1 do?",
+          "It routes each request inside an application to a suitable model; it is built on Google's open Gemma 4 model."
+        ]
+      ]
     }
   }
 }

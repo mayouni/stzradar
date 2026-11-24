@@ -48,6 +48,26 @@
       ]
     },
     {
+      "id": "2026-11-24-microsoft-mai-ignite",
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-24-microsoft-mai-ignite.md",
+      "title": "Microsoft announces seven MAI models at Ignite, among them a coding model priced against GPT-6.1 Sol and Claude Opus 5.5 and a routing model built on Gemma 4; Softanza states the price basis of every comparison and measures its own router",
+      "summary": "At Ignite on November 17, 2026, Microsoft AI announced seven models: MAI Code 2 and MAI Code 2 Flash for coding, MAI Cyber 2 Flash for security defence, MAI Image 2.7 and MAI Image 2.7 Flash, MAI Realtime 1 for live speech to speech, and Microsoft Decision 1.1 for routing requests inside applications. Microsoft states that MAI Code 2 reaches 98% of GPT-6.1 Sol's performance at 40% of the cost and 96% of Claude Opus 5.5's at 5%, averaged over four coding benchmarks, with MAI Code 2's cost taken at its 50% promotional price. MAI Realtime 1 is priced at $0.01 per audio minute. Decision 1.1 is built on Gemma 4 26B A4B and is described as 50 times faster and 79 times cheaper than GPT-6.1 Sol. The coding models are in GitHub Copilot; none of the seven is released as open weights. The figures are Microsoft's own.",
+      "content_text": "At Ignite on November 17, 2026, Microsoft AI announced seven models: MAI Code 2 and MAI Code 2 Flash for coding, MAI Cyber 2 Flash for security defence, MAI Image 2.7 and MAI Image 2.7 Flash, MAI Realtime 1 for live speech to speech, and Microsoft Decision 1.1 for routing requests inside applications. Microsoft states that MAI Code 2 reaches 98% of GPT-6.1 Sol's performance at 40% of the cost and 96% of Claude Opus 5.5's at 5%, averaged over four coding benchmarks, with MAI Code 2's cost taken at its 50% promotional price. MAI Realtime 1 is priced at $0.01 per audio minute. Decision 1.1 is built on Gemma 4 26B A4B and is described as 50 times faster and 79 times cheaper than GPT-6.1 Sol. The coding models are in GitHub Copilot; none of the seven is released as open weights. The figures are Microsoft's own.",
+      "date_published": "2026-11-24T00:00:00Z",
+      "tags": [
+        "release",
+        "watch",
+        "advice",
+        "microsoft",
+        "mai",
+        "ignite",
+        "coding-models",
+        "model-routing",
+        "speech",
+        "pricing"
+      ]
+    },
+    {
       "id": "2026-11-24-working-with-ai-interviews",
       "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-24-working-with-ai-interviews.md",
       "title": "Anthropic interviews 58 companies: AI's value comes from more output and from roles rebuilt around a whole workflow, and the bottleneck is review; Softanza's Foundry states the review each pack creates",
