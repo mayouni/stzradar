@@ -1375,6 +1375,51 @@
           "As more output, more work done faster or better, rather than lower cost."
         ]
       ]
+    },
+    "2026-11-24-medical-asr-post-training": {
+      "build": [
+        {
+          "why": "List, in lower case, every term from your glossary that the reference transcript contains. terms.txt holds one term per line. This writes a file.",
+          "cmd": "tr 'A-Z' 'a-z' < reference.txt | grep -oiwFf terms.txt | sort > said.txt"
+        },
+        {
+          "why": "Do the same for what the model transcribed. This writes a file.",
+          "cmd": "tr 'A-Z' 'a-z' < transcript.txt | grep -oiwFf terms.txt | sort > heard.txt"
+        },
+        {
+          "why": "Count the terms that were said and not heard: this is the error the overall rate hides. This only reads.",
+          "cmd": "comm -23 said.txt heard.txt | wc -l"
+        }
+      ],
+      "lesson": "A speech-to-text model is usually judged by how many words it gets wrong overall. In a doctor's note, most words are ordinary, so a model can score well and still mishear the drug name. A company called Besimple took two open speech models, taught them medical words with sentences spoken by synthetic voices and some real recordings, and spent about $500 of computing time. On real medical dictation, their errors on medical terms dropped below those of three well-known commercial services. Their general English got slightly worse, which they measured too. The lesson: score the words that matter separately, and keep a general test to see what the specialisation cost.",
+      "terms": [
+        [
+          "ASR",
+          "automatic speech recognition: a model that turns speech into text"
+        ],
+        [
+          "word error rate",
+          "the share of words a transcript gets wrong, counted against a correct reference"
+        ],
+        [
+          "LoRA",
+          "a way to adapt a model by training a small set of added weights instead of all of them"
+        ],
+        [
+          "synthetic speech",
+          "audio produced by a text-to-speech voice rather than recorded from a person"
+        ]
+      ],
+      "quiz": [
+        [
+          "Why score medical terms apart from all words?",
+          "Because ordinary words dominate the count, so a model can have a low overall error rate and still miss the terms that change the meaning."
+        ],
+        [
+          "What did adapting the models cost them on general English?",
+          "Nemotron stayed about the same; Qwen3-ASR went from 4.59% to 5.52% errors, which the general test set showed."
+        ]
+      ]
     }
   }
 }

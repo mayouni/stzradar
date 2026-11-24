@@ -2,6 +2,28 @@
 
 > What changed in AI and the tech field this week, and what it means for what we build in Softanza. Generated from the signed feed (https://mayouni.github.io/stzradar/feed/index.json); the feed is the reference.
 
+## Besimple post-trains two open speech models on medical terms for about $500 and beats three closed models on medical dictation; Softanza measures its own transcriber on the words of a domain
+
+- id: 2026-11-24-medical-asr-post-training
+- date: 2026-11-24
+- level: advice
+- kind: practice
+- stance: learn
+- relevance: high
+- page: https://mayouni.github.io/stzradar/items/2026/2026-11-24-medical-asr-post-training.md
+
+On November 23, 2026 Baseten published how Besimple adapted two open speech recognition models, Nemotron 3.5 Transcribe and Qwen3-ASR, to medical vocabulary. From a dictionary of 274,541 terms they generated sentences, spoke them with synthetic voices of varied accents, replaced about 29% of those clips with human recordings over several rounds, and mixed in general speech: 813 hours in all, trained with LoRA for an estimated $500 of GPU time for both models. Errors on medical terms in human dictation fell from 2.83% to 0.87% for Nemotron and from 5.84% to 2.05% for Qwen3-ASR; the best closed model measured scored 1.05%. On general English speech the adapted models stay behind the closed ones, and Qwen3-ASR lost ground there. The figures are the authors' own.
+
+For each reader:
+- developer: An overall word error rate hides the words that matter. A transcriber can be right on 95% of words and wrong on the drug name; score the domain's terms on their own, and keep a general set to see what adapting cost.
+- maintainer: Softanza's transcriber runs Whisper in its own engine, raises its hearing with a glossary prompt, and already routes Hausa to an adapted checkpoint by the court's measure. The same route serves a domain: a term-dense set spoken from the glossary, errors on terms scored apart, and an adapter kept only where it wins.
+
+Proposed:
+- stzlib.intelligence: score the transcriber's errors on a domain's own words apart from its overall word error rate, on a term-dense set spoken from the glossary and a general set kept as a guard against regression; then compare the glossary prompt with a small adapter trained on that set, and route a domain to the adapter only where the court measures it better (routed)
+
+Sources:
+- Post-train your own medical ASR model to outperform the frontier: https://www.baseten.co/blog/post-train-your-own-medical-asr-model-to-outperform-the-frontier/
+
 ## Anthropic interviews 58 companies: AI's value comes from more output and from roles rebuilt around a whole workflow, and the bottleneck is review; Softanza's Foundry states the review each pack creates
 
 - id: 2026-11-24-working-with-ai-interviews
