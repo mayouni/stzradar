@@ -132,6 +132,10 @@
         "url": "https://mistral.ai/news"
       },
       {
+        "name": "Microsoft AI news",
+        "url": "https://microsoft.ai/news/"
+      },
+      {
         "name": "Claude Code changelog",
         "url": "https://raw.githubusercontent.com/anthropics/claude-code/refs/heads/main/CHANGELOG.md"
       },
