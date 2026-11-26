@@ -7,6 +7,26 @@
   "language": "en",
   "items": [
     {
+      "id": "2026-11-26-memo-memory-as-a-model",
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-26-memo-memory-as-a-model.md",
+      "title": "MeMo trains a small model on question-answer pairs drawn from a corpus and lets the main model question it in place of a search index; it leads retrieval on long narratives and ties it on web questions, at 240 to 420 GPU-hours per corpus",
+      "summary": "MeMo: Memory as a Model (arXiv 2605.15156, May 2026), by nine authors from NUS, A*STAR, the University of Tokyo, Liquid AI, MIT CSAIL and the Singapore-MIT Alliance, replaces the retrieval index with a model. A 32B generator turns the corpus into question-answer pairs (about 0.7 to 1.6 million per corpus); a smaller model, Qwen2.5-14B in the main setting, is fully fine-tuned on them and never sees the documents; the main model, left unchanged, questions it in three stages. On NarrativeQA with Gemini 3 Flash as the main model, MeMo scores 53.58% against 26.62% for dense retrieval and 23.21% for graph retrieval; on BrowseComp-Plus graph retrieval scores 56.11% against MeMo's 54.22% with Qwen2.5-32B, and the two tie with Gemini. With added false documents, retrieval loses up to 6.22 points and MeMo stays level. Building one corpus's memory costs about 240 to 420 H200 GPU-hours. The figures are the authors' own.",
+      "content_text": "MeMo: Memory as a Model (arXiv 2605.15156, May 2026), by nine authors from NUS, A*STAR, the University of Tokyo, Liquid AI, MIT CSAIL and the Singapore-MIT Alliance, replaces the retrieval index with a model. A 32B generator turns the corpus into question-answer pairs (about 0.7 to 1.6 million per corpus); a smaller model, Qwen2.5-14B in the main setting, is fully fine-tuned on them and never sees the documents; the main model, left unchanged, questions it in three stages. On NarrativeQA with Gemini 3 Flash as the main model, MeMo scores 53.58% against 26.62% for dense retrieval and 23.21% for graph retrieval; on BrowseComp-Plus graph retrieval scores 56.11% against MeMo's 54.22% with Qwen2.5-32B, and the two tie with Gemini. With added false documents, retrieval loses up to 6.22 points and MeMo stays level. Building one corpus's memory costs about 240 to 420 H200 GPU-hours. The figures are the authors' own.",
+      "date_published": "2026-11-26T00:00:00Z",
+      "tags": [
+        "paper",
+        "watch",
+        "advice",
+        "memory",
+        "rag",
+        "retrieval",
+        "fine-tuning",
+        "small-models",
+        "model-merging",
+        "long-documents"
+      ]
+    },
+    {
       "id": "2026-11-24-declare-ui-language",
       "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-24-declare-ui-language.md",
       "title": "Declare, a user-interface language written by models and checked by its compiler: half React's lines and eleven hidden checks of eleven in one run; Softanza measures Zayn and Haro's diagnostics the same way",

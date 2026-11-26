@@ -1510,6 +1510,51 @@
           "It routes each request inside an application to a suitable model; it is built on Google's open Gemma 4 model."
         ]
       ]
+    },
+    "2026-11-26-memo-memory-as-a-model": {
+      "build": [
+        {
+          "why": "Measure the size of the documents you want an AI to know. This only reads.",
+          "cmd": "cat docs/*.txt | wc -w"
+        },
+        {
+          "why": "See how many documents one name appears in: an answer spread over many of them is where search falls short. This only reads.",
+          "cmd": "grep -ril 'contract 2041' docs/ | wc -l"
+        },
+        {
+          "why": "Count the documents changed in the last month: a trained memory must be trained again for each change, an index only re-reads them. This only reads.",
+          "cmd": "git log --since='30 days ago' --name-only --format= -- docs | sort -u | wc -l"
+        }
+      ],
+      "lesson": "Most AI assistants answer questions about your documents by searching them first, then reading the passages they found. A new paper tries another way: it trains a smaller AI on many questions and answers made from the documents, and the main AI asks that smaller one. On long stories, where the answer is spread across the whole text, this did twice as well as search. On other tests, search did as well or better. The trained memory costs hundreds of hours of computing per set of documents, and it must be trained again when they change. So the choice depends on your documents: how long, how connected, and how often they change.",
+      "terms": [
+        [
+          "RAG",
+          "retrieval-augmented generation: search the documents first, then let the model answer from what was found"
+        ],
+        [
+          "memory model",
+          "a model trained on a set of documents so that it can answer questions about them without searching"
+        ],
+        [
+          "fine-tuning",
+          "training an existing model further on new examples"
+        ],
+        [
+          "GPU-hour",
+          "one hour of work by one graphics processor, a common unit of training cost"
+        ]
+      ],
+      "quiz": [
+        [
+          "Where did MeMo clearly beat search, and why?",
+          "On long stories (NarrativeQA), where an answer is spread across the text and no single passage holds it."
+        ],
+        [
+          "What is MeMo's main cost?",
+          "Training: about 240 to 420 GPU-hours per set of documents, and more work each time the documents change."
+        ]
+      ]
     }
   }
 }
