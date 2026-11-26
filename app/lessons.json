@@ -1555,6 +1555,51 @@
           "Training: about 240 to 420 GPU-hours per set of documents, and more work each time the documents change."
         ]
       ]
+    },
+    "2026-11-26-llm-asm-bare-metal": {
+      "build": [
+        {
+          "why": "Measure what a program needs beneath it: list the shared libraries it loads. A program like llm.asm lists none. This only reads.",
+          "cmd": "ldd $(which python3)"
+        },
+        {
+          "why": "Compare the size of the program with the size of the model it runs: the weights are almost all of it. This only reads.",
+          "cmd": "ls -lh model.gguf $(which llama-cli)"
+        },
+        {
+          "why": "Time how long a model takes to give its first word on your own machine, the figure a small machine is judged by. This only reads.",
+          "cmd": "time llama-cli -m model.gguf -p 'Hello' -n 1"
+        }
+      ],
+      "lesson": "A program that runs an AI model usually sits on a tall stack: an operating system, libraries, Python, a framework. One developer wrote the whole thing in assembly, the language closest to the processor, for a small model from Qwen. One version runs on Linux without any library; another boots the computer by itself and runs the model with no operating system at all. The program is a few kilobytes; the model's numbers are still over 600 megabytes. It shows how little an AI really needs beneath it, and that the model, not the software, is the heavy part.",
+      "terms": [
+        [
+          "assembly",
+          "a programming language that maps almost directly to the processor's own instructions"
+        ],
+        [
+          "bare metal",
+          "running directly on the hardware, with no operating system beneath"
+        ],
+        [
+          "libc",
+          "the standard C library most programs rely on to talk to the operating system"
+        ],
+        [
+          "Q8_0",
+          "a way of storing a model's numbers in 8 bits each, in blocks that share one scale"
+        ]
+      ],
+      "quiz": [
+        [
+          "What is the large part of llm.asm, the program or the model?",
+          "The model: its weights are about 614 MiB, against 14.7 KB and 24 KB for the two programs."
+        ],
+        [
+          "Why must the comparison with llama.cpp be read with care?",
+          "llm.asm reads the prompt one token at a time and llama.cpp in batches, so the figures compare decoding speed."
+        ]
+      ]
     }
   }
 }

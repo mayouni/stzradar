@@ -7,6 +7,26 @@
   "language": "en",
   "items": [
     {
+      "id": "2026-11-26-llm-asm-bare-metal",
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-26-llm-asm-bare-metal.md",
+      "title": "llm.asm runs Qwen3-0.6B from 17,252 lines of x86-64 assembly, as a 14.7 KB Linux program with no libc and as a 24 KB kernel booted by GRUB; it states decode speeds above llama.cpp's on the same processor",
+      "summary": "llm.asm (MIT, published by alesha-pro on November 25, 2026) runs the full 28-layer forward pass of Qwen3-0.6B, with its BPE tokenizer, in NASM assembly. It comes as a static Linux program of 14,712 bytes that uses raw system calls and no libc, and as a bare-metal kernel of 24,252 bytes booted by GRUB through Multiboot, with VGA text, a PS/2 keyboard and a serial port, which boots in 74 to 94 ms. A Python script converts the published weights once into a 613.66 MiB Q8_0 file. On an AMD EPYC 7642 the author measures 20.70 tokens per second on one thread and 125.86 on 40, and states 18 to 36% faster decoding than llama.cpp at Q8_0, with the prompt read one token at a time where llama.cpp reads it in batches; the kernel reaches 134.9 tokens per second under KVM. Its greedy output matches PyTorch on 64 of 64 tokens. The figures are the author's own.",
+      "content_text": "llm.asm (MIT, published by alesha-pro on November 25, 2026) runs the full 28-layer forward pass of Qwen3-0.6B, with its BPE tokenizer, in NASM assembly. It comes as a static Linux program of 14,712 bytes that uses raw system calls and no libc, and as a bare-metal kernel of 24,252 bytes booted by GRUB through Multiboot, with VGA text, a PS/2 keyboard and a serial port, which boots in 74 to 94 ms. A Python script converts the published weights once into a 613.66 MiB Q8_0 file. On an AMD EPYC 7642 the author measures 20.70 tokens per second on one thread and 125.86 on 40, and states 18 to 36% faster decoding than llama.cpp at Q8_0, with the prompt read one token at a time where llama.cpp reads it in batches; the kernel reaches 134.9 tokens per second under KVM. Its greedy output matches PyTorch on 64 of 64 tokens. The figures are the author's own.",
+      "date_published": "2026-11-26T00:00:00Z",
+      "tags": [
+        "release",
+        "learn",
+        "advice",
+        "assembly",
+        "bare-metal",
+        "inference",
+        "qwen3",
+        "quantization",
+        "small-models",
+        "unikernel"
+      ]
+    },
+    {
       "id": "2026-11-26-memo-memory-as-a-model",
       "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-26-memo-memory-as-a-model.md",
       "title": "MeMo trains a small model on question-answer pairs drawn from a corpus and lets the main model question it in place of a search index; it leads retrieval on long narratives and ties it on web questions, at 240 to 420 GPU-hours per corpus",
