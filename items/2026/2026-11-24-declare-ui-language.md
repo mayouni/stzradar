@@ -4,6 +4,7 @@
 {
   "id": "2026-11-24-declare-ui-language",
   "date": "2026-11-24",
+  "updated": "2026-11-27",
   "title": "Declare, a user-interface language written by models and checked by its compiler: half React's lines and eleven hidden checks of eleven in one run; Softanza measures Zayn and Haro's diagnostics the same way",
   "kind": "release",
   "summary": "Declare, by David Temkin (co-founder of Laszlo Systems, which made OpenLaszlo), is an MIT-licensed declarative language for user interfaces, described as a UI language for you and your AI. Square brackets hold the view tree and braces hold TypeScript; an attribute in braces is a constraint whose dependencies the compiler extracts, and an assignment makes its dependents recompute. There is no CSS. The same tree renders to the DOM, to a canvas or to a native Mac host, in Node or the browser with no build step. It ships an agent skill, a six-rung verifier, and diagnostics that each name the rewrite that fixes them. In the author's single-run comparison, a ticket-buying app took 1,279 lines against React's 2,666, and its first build that ran passed eleven hidden checks of eleven against React's six. The figures are the author's own.",
@@ -20,7 +21,7 @@
   "concerns": ["correctness", "clarity"],
   "actions": [
     {"area": "zayn", "do": "give a model one small Zayn application to build under hidden behaviour checks, as Declare's ticket-buying test does, and record the lines written, the compiler errors per build, and the checks passed by the first build that runs", "state": "routed", "dates": {"proposed": "2026-11-24", "routed": "2026-11-24"}},
-    {"area": "haro", "do": "count, over a sample of agent sessions, the share of Haro's diagnostics that name the rewrite that fixes them, and give that form to the most frequent ones", "state": "routed", "dates": {"proposed": "2026-11-24", "routed": "2026-11-24"}}
+    {"area": "haro", "do": "count, over a sample of agent sessions, the share of Haro's diagnostics that name the rewrite that fixes them, and give that form to the most frequent ones", "state": "in-progress", "dates": {"proposed": "2026-11-24", "routed": "2026-11-24", "in-progress": "2026-11-27"}}
   ],
   "status": "routed",
   "confidence": "claimed",

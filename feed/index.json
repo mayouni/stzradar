@@ -1,10 +1,81 @@
 {
   "feed": "radar",
   "version": 1,
-  "updated": "2026-11-26T00:00:00Z",
+  "updated": "2026-11-27T00:00:00Z",
   "home": "https://github.com/mayouni/stzradar",
   "title": "Softanza Radar",
   "items": [
+    {
+      "id": "2026-11-27-distilling-kimi-into-qwen",
+      "date": "2026-11-27",
+      "title": "Together AI distils Kimi-K3.1-Pro's Lao translation into Qwen3.8-27B for $260 in all, from 4,000 teacher translations, reaching 93% of the teacher's score while a language it was not trained on holds",
+      "kind": "practice",
+      "summary": "Together AI (Zain Hasan and Sonny Khan, November 26, 2026) taught Qwen3.8-27B to translate English into Lao from Kimi-K3.1-Pro's own translations. The two models use different tokenizers, so the teacher passes only text: it translates FLORES-200 and Wikipedia sentences at temperature 0 with thinking off, a filter keeps translations written at least 70% in the target script, and the student is trained on them with LoRA and cross-entropy on its own chat template. On chrF++ the student's Lao rises from 5.5 to 44.3, against 47.5 for the teacher, and its Thai, mixed into the data, rises from 46.7 to 47.8; training on 945 human Lao references alone scores 44.7 on Lao and drops Thai to 5.3. The teacher's 4,000 Lao translations cost $7.46 and all the experiments $260. A five-language adapter raised Northern Sotho from 32.7 to 48.0 and Zulu from 37.7 to 39.2. The figures are the authors' own.",
+      "stance": "adopt",
+      "relevance": "high",
+      "level": "advice",
+      "audiences": [
+        "developer",
+        "maintainer",
+        "learner"
+      ],
+      "notice": {
+        "learner": "A large AI model can teach a small one a new language from its own translations; check the languages the small one already knew, because it can forget them.",
+        "developer": "A large model's translations can teach a small one a language it barely knows, for a few dollars of teacher text. Check a language you did not train on as well: training on Lao alone took the student's Thai from 46.7 to 5.3.",
+        "maintainer": "Softanza measures its models language by language, and runs small models where the data lives. This recipe moves a large model's skill in one language into a small model, with text alone, across different tokenizers: the way to raise a language where the local model trails, measured with a guard language beside it."
+      },
+      "areas": [
+        "aicha",
+        "softanza"
+      ],
+      "domains": [
+        "models",
+        "data"
+      ],
+      "concerns": [
+        "cost",
+        "correctness",
+        "sovereignty"
+      ],
+      "actions": [
+        {
+          "area": "stzlib.intelligence",
+          "do": "for each language of the matrix where a small local model trails a large one, generate the large model's translations of public sentences, keep those in the right script, train the small model on them with a guard language mixed in, and measure on held-out sentences the target language, the guard language, and the cost of the teacher's text",
+          "state": "routed",
+          "dates": {
+            "proposed": "2026-11-27",
+            "routed": "2026-11-27"
+          }
+        }
+      ],
+      "status": "routed",
+      "confidence": "claimed",
+      "sources": [
+        {
+          "title": "Distilling Kimi into Qwen",
+          "url": "https://www.together.ai/blog/distilling-kimi-into-qwen",
+          "by": "Zain Hasan and Sonny Khan, Together AI",
+          "read": "2026-11-27"
+        },
+        {
+          "title": "post-training cookbook: distillation",
+          "url": "https://github.com/togethercomputer/post-training-cookbook/tree/main/post_training_cookbook/distillation",
+          "by": "Together AI",
+          "read": "2026-11-27"
+        }
+      ],
+      "review_by": "2027-02-27",
+      "tags": [
+        "distillation",
+        "translation",
+        "low-resource-languages",
+        "lora",
+        "fine-tuning",
+        "small-models",
+        "multilingual"
+      ],
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-27-distilling-kimi-into-qwen.md"
+    },
     {
       "id": "2026-11-26-llm-asm-bare-metal",
       "date": "2026-11-26",
@@ -140,6 +211,7 @@
     {
       "id": "2026-11-24-declare-ui-language",
       "date": "2026-11-24",
+      "updated": "2026-11-27",
       "title": "Declare, a user-interface language written by models and checked by its compiler: half React's lines and eleven hidden checks of eleven in one run; Softanza measures Zayn and Haro's diagnostics the same way",
       "kind": "release",
       "summary": "Declare, by David Temkin (co-founder of Laszlo Systems, which made OpenLaszlo), is an MIT-licensed declarative language for user interfaces, described as a UI language for you and your AI. Square brackets hold the view tree and braces hold TypeScript; an attribute in braces is a constraint whose dependencies the compiler extracts, and an assignment makes its dependents recompute. There is no CSS. The same tree renders to the DOM, to a canvas or to a native Mac host, in Node or the browser with no build step. It ships an agent skill, a six-rung verifier, and diagnostics that each name the rewrite that fixes them. In the author's single-run comparison, a ticket-buying app took 1,279 lines against React's 2,666, and its first build that ran passed eleven hidden checks of eleven against React's six. The figures are the author's own.",
@@ -179,10 +251,11 @@
         {
           "area": "haro",
           "do": "count, over a sample of agent sessions, the share of Haro's diagnostics that name the rewrite that fixes them, and give that form to the most frequent ones",
-          "state": "routed",
+          "state": "in-progress",
           "dates": {
             "proposed": "2026-11-24",
-            "routed": "2026-11-24"
+            "routed": "2026-11-24",
+            "in-progress": "2026-11-27"
           }
         }
       ],

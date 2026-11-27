@@ -1600,6 +1600,51 @@
           "llm.asm reads the prompt one token at a time and llama.cpp in batches, so the figures compare decoding speed."
         ]
       ]
+    },
+    "2026-11-27-distilling-kimi-into-qwen": {
+      "build": [
+        {
+          "why": "Keep only the translations written mostly in the target script, as the authors did at 70%; here for Lao, whose letters run from U+0E80 to U+0EFF. This only reads.",
+          "cmd": "python3 -c \"import sys,re;[print(l,end='') for l in sys.stdin if len(re.findall('[\\u0e80-\\u0eff]',l))>=0.7*max(1,len(re.findall(r'\\w',l)))]\" < teacher_lao.txt"
+        },
+        {
+          "why": "Score a translation file against references with chrF++, the measure used in the post. This only reads.",
+          "cmd": "sacrebleu refs.lo -i student.lo -m chrf --chrf-word-order 2"
+        },
+        {
+          "why": "Score a language you did not train on as well, before and after training, to see that it held. This only reads.",
+          "cmd": "sacrebleu refs.th -i student_after.th -m chrf --chrf-word-order 2"
+        }
+      ],
+      "lesson": "A large AI model can teach a smaller one a language. Here a big model translated a few thousand English sentences into Lao, and a smaller model was trained on those translations. The small model went from almost no Lao to close to the big one, for a few hundred dollars. Two lessons came with it. Training on Lao alone made the small model forget Thai, so the authors mixed Thai back in and checked it. And the big model translated better when it did not stop to reason first.",
+      "terms": [
+        [
+          "distillation",
+          "training a smaller model to copy what a larger one does"
+        ],
+        [
+          "teacher and student",
+          "the large model whose outputs are copied, and the small model that learns from them"
+        ],
+        [
+          "tokenizer",
+          "the part of a model that cuts text into the pieces it reads; two models may cut text differently"
+        ],
+        [
+          "chrF++",
+          "a translation score that compares the letters and words of a translation with a reference"
+        ]
+      ],
+      "quiz": [
+        [
+          "Why did the authors train on the teacher's text and not its probabilities?",
+          "The two models use different tokenizers, so their probabilities cannot be compared piece by piece."
+        ],
+        [
+          "What happened to Thai when the student was trained on human Lao translations alone?",
+          "It fell from 46.7 to 5.3; mixing Thai into the data kept it at 47.8."
+        ]
+      ]
     }
   }
 }
