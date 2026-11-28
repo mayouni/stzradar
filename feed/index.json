@@ -1,10 +1,249 @@
 {
   "feed": "radar",
   "version": 1,
-  "updated": "2026-11-27T00:00:00Z",
+  "updated": "2026-11-28T00:00:00Z",
   "home": "https://github.com/mayouni/stzradar",
   "title": "Softanza Radar",
   "items": [
+    {
+      "id": "2026-11-28-arm-reference-takedown",
+      "date": "2026-11-28",
+      "title": "Jon's Arm Reference, a searchable site for the AArch64 instruction set and system registers, closes on December 4, 2026 at Arm's request; a reference a project depends on is safest taken from the vendor's own published source",
+      "kind": "practice",
+      "summary": "Jon's Arm Reference (arm.jonpalmisc.com) gives searchable documentation for the AArch64 instructions (base, SIMD, SVE and SME) and the AArch64 and AArch32 system registers of the Armv8-A and Armv9-A architectures. Its author announces that it will close on December 4, 2026, after Arm's lawyers asked for it to be taken down, and that he is looking for a way to keep its links working. The site states no licence and no data source.",
+      "stance": "learn",
+      "relevance": "low",
+      "level": "advice",
+      "audiences": [
+        "developer",
+        "maintainer"
+      ],
+      "notice": {
+        "developer": "A third-party reference built from a vendor's documentation can disappear at the vendor's request. Link the vendor's own pages in code and documents, and save the version you used.",
+        "maintainer": "Softanza's machines run on x86-64 and arm64 hosts, and its tools cite architecture references. Citing the vendor's own published source, with its version, keeps a citation valid when a convenient mirror closes."
+      },
+      "areas": [
+        "harobanda",
+        "softanza"
+      ],
+      "domains": [
+        "code",
+        "society"
+      ],
+      "concerns": [
+        "sovereignty",
+        "clarity"
+      ],
+      "status": "analysed",
+      "confidence": "read",
+      "sources": [
+        {
+          "title": "Jon's Arm Reference",
+          "url": "https://arm.jonpalmisc.com/",
+          "by": "Jon (jonpalmisc.com)",
+          "read": "2026-11-28"
+        }
+      ],
+      "review_by": "2026-12-05",
+      "tags": [
+        "arm",
+        "aarch64",
+        "documentation",
+        "licensing",
+        "references"
+      ],
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-28-arm-reference-takedown.md"
+    },
+    {
+      "id": "2026-11-28-micro-language-models",
+      "date": "2026-11-28",
+      "title": "Micro language models of 8 to 30 million parameters write the first four to eight words of an answer on the device in 55 ms while a cloud model continues it; people rated the joined answer as good as the cloud's alone or better in 75.6% of judgments",
+      "kind": "paper",
+      "summary": "Wen Cheng, Tuochao Chen, Karim Helwani, Sriram Srinivasan, Luke Zettlemoyer and Shyamnath Gollakota, of the University of Washington and Meta AI, present micro language models at EMNLP 2026 (pages 3240-3264). Models of 8.8 to 29.5 million parameters, trained from scratch on 1.485 billion tokens of chat, write the first 4 to 8 words of an answer on the device and commit them; a cloud model, prompted as a continuator, finishes the sentence. On an Orange Pi the 28M model gives its first token in 45 ms and four words in 55 ms, against 0.2 to 5 seconds or more for a cloud answer. The cloud model must correct the opener in 3.7% of answers at 4 words, 8.4% at 8 and 16.4% at 16. With 25 participants the joined answer was preferred in 33.6% of cases, judged equal in 42.0% and the cloud's alone preferred in 24.4%; in a live test 10 participants preferred it in 42 of 50 trials. The checkpoint and a demo are published. The figures are the authors' own.",
+      "stance": "learn",
+      "relevance": "high",
+      "level": "advice",
+      "audiences": [
+        "developer",
+        "maintainer",
+        "learner"
+      ],
+      "notice": {
+        "developer": "The wait before the first word is what a user feels. A model small enough for a watch can write the first words while a large model answers the rest; keep the committed opener to 4 to 8 words, where the large model rarely has to repair it.",
+        "maintainer": "Softanza places models where the data and the user are. This paper adds a placement: a micro model on the device for the first words, a large model for the rest, joined mid-sentence. It sets a figure to measure Softanza's own small models against, the time to the first word on the user's machine.",
+        "learner": "A very small AI on your watch can start an answer at once while a big AI far away writes the rest, so you never wait for the first word."
+      },
+      "areas": [
+        "aicha",
+        "harobanda"
+      ],
+      "domains": [
+        "models",
+        "devices",
+        "interfaces"
+      ],
+      "concerns": [
+        "speed",
+        "sovereignty"
+      ],
+      "actions": [
+        {
+          "area": "stzlib.intelligence",
+          "do": "measure the time to the first word of the local answer path on the client's machine beside the time to the whole answer, and evaluate a micro opener model that writes the first 4 to 8 words while the chosen model continues, counting how often the continuation must repair the opener",
+          "state": "routed",
+          "dates": {
+            "proposed": "2026-11-28",
+            "routed": "2026-11-28"
+          }
+        }
+      ],
+      "status": "routed",
+      "confidence": "reported",
+      "sources": [
+        {
+          "title": "Micro Language Models Enable Instant Responses",
+          "url": "https://aclanthology.org/2026.emnlp-main.141/",
+          "by": "Wen Cheng, Tuochao Chen, Karim Helwani, Sriram Srinivasan, Luke Zettlemoyer, Shyamnath Gollakota",
+          "read": "2026-11-28"
+        }
+      ],
+      "review_by": "2027-02-28",
+      "tags": [
+        "small-models",
+        "on-device",
+        "latency",
+        "wearables",
+        "collaborative-generation",
+        "edge"
+      ],
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-28-micro-language-models.md"
+    },
+    {
+      "id": "2026-11-28-open486-fpga-pc",
+      "date": "2026-11-28",
+      "title": "open486 rebuilds a 486 PC in one FPGA, with its own microcoded core, x87 unit, graphics, sound and BIOS, and runs Windows 95, DOOM and Quake on one FPGA board after two weeks of work",
+      "kind": "release",
+      "summary": "open486, a Vayner Systems project begun on November 12, 2026, rebuilds a 486-compatible PC in a Digilent Arty A7-100T FPGA at 50 MHz: its own staged, microcoded CPU core with an x87 unit, its own SVGA, Sound Blaster 16, OPL3 and MPU-401 audio, NE2000 network, IDE on microSD, and its own BIOS and VGA BIOS, using about 59,000 of the board's 63,400 LUTs (93%). It runs DOS and Windows 95 OSR2.5, browses the web from Windows 95, and runs DOOM, Quake, Wolfenstein 3D and Prince of Persia. It scores 174 on TopBench in CrystalMark Retro 2.1.0. Cycle counts are published per instruction against Intel's 486 manual. The source is to be published under Apache 2.0. The figures are the project's own.",
+      "stance": "watch",
+      "relevance": "low",
+      "level": "advice",
+      "audiences": [
+        "developer",
+        "learner"
+      ],
+      "notice": {
+        "developer": "A whole PC, processor to sound card, fits in one mid-range FPGA, and its makers publish cycle counts per instruction against the original manual: a model of how to show a hardware design's progress.",
+        "learner": "Someone rebuilt a 1990s computer chip out of a reprogrammable chip, and it runs Windows 95 and DOOM."
+      },
+      "areas": [
+        "harobanda"
+      ],
+      "domains": [
+        "devices"
+      ],
+      "concerns": [
+        "clarity"
+      ],
+      "status": "analysed",
+      "confidence": "claimed",
+      "sources": [
+        {
+          "title": "open486",
+          "url": "https://open486.com/",
+          "by": "Lev Vayner, Vayner Systems",
+          "read": "2026-11-28"
+        },
+        {
+          "title": "Cycles, cycles, cycles",
+          "url": "https://open486.com/blog/engineering/cycles-cycles-cycles",
+          "by": "Lev Vayner",
+          "read": "2026-11-28"
+        }
+      ],
+      "review_by": "2027-02-28",
+      "tags": [
+        "fpga",
+        "x86",
+        "retro-computing",
+        "hardware",
+        "microcode"
+      ],
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-28-open486-fpga-pc.md"
+    },
+    {
+      "id": "2026-11-28-shirudo-live-patching",
+      "date": "2026-11-28",
+      "title": "OpenAI and Cisco publish Shirudo, a BSD-licensed runtime that loads signed eBPF patches into a running Linux system to block an exploit until the fix ships, each load verified by the kernel and recorded in the TPM",
+      "kind": "security",
+      "summary": "On November 23, 2026 OpenAI and Cisco introduced Shirudo, an open-source runtime (BSD 2-Clause, its BPF programs dual BSD and GPL) that protects a running Linux system while a patch is prepared. A protection, called an upatch, is a signed eBPF loader that attaches to hooks such as BPF LSM, fentry and fexit, uprobes and XDP; the kernel checks its ML-DSA-87 signature against a sealed keyring before it loads, and every change to the loaded set extends a TPM 2.0 register that can be attested offline. Engineers and agents can write upatches. In a controlled test, a Codex-generated protection added an input check to Java's Base64 decoder and blocked an exploit attempt against a running Elasticsearch without a restart. The project is pre-release and needs a kernel with its signed-loader patches. The claims are the vendors' own.",
+      "stance": "learn",
+      "relevance": "medium",
+      "level": "advice",
+      "audiences": [
+        "developer",
+        "maintainer"
+      ],
+      "notice": {
+        "developer": "A flaw can be blocked in a running service before its fix ships: a small signed program in the kernel checks the input the exploit needs. It is a mitigation for the days between the advisory and the patch, and its signature and its record in the TPM say which ones ran.",
+        "maintainer": "Harobanda declares its machine and pins its kernel; between two pins, an advisory waits. Shirudo shows a signed, attested way to cover that wait with a narrow program loaded live, and an agent that writes it. Its requirement, a patched kernel with a sealed keyring, is the price to weigh against the next pin."
+      },
+      "areas": [
+        "harobanda",
+        "security"
+      ],
+      "domains": [
+        "security",
+        "agents"
+      ],
+      "concerns": [
+        "trust",
+        "speed"
+      ],
+      "actions": [
+        {
+          "area": "harobanda",
+          "do": "for the next advisory that reaches a pinned kernel or a service in a Harobanda machine, write down the days between the advisory and the pin that fixes it, and evaluate on one machine whether a signed eBPF mitigation in Shirudo's shape, with its load recorded, covers those days",
+          "state": "routed",
+          "dates": {
+            "proposed": "2026-11-28",
+            "routed": "2026-11-28"
+          }
+        }
+      ],
+      "status": "routed",
+      "confidence": "claimed",
+      "sources": [
+        {
+          "title": "OpenAI and Cisco introduce Shirudo",
+          "url": "https://openai.com/index/introducing-shirudo/",
+          "by": "OpenAI",
+          "read": "2026-11-28"
+        },
+        {
+          "title": "shirudo",
+          "url": "https://github.com/shirudo-dev/shirudo",
+          "by": "shirudo-dev",
+          "read": "2026-11-28"
+        },
+        {
+          "title": "Shirudo documentation",
+          "url": "https://docs.shirudo.dev/",
+          "by": "shirudo-dev",
+          "read": "2026-11-28"
+        }
+      ],
+      "review_by": "2027-02-28",
+      "tags": [
+        "ebpf",
+        "live-patching",
+        "linux",
+        "tpm",
+        "signing",
+        "vulnerability-response",
+        "agents"
+      ],
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-28-shirudo-live-patching.md"
+    },
     {
       "id": "2026-11-27-distilling-kimi-into-qwen",
       "date": "2026-11-27",

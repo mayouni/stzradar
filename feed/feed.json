@@ -7,6 +7,81 @@
   "language": "en",
   "items": [
     {
+      "id": "2026-11-28-arm-reference-takedown",
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-28-arm-reference-takedown.md",
+      "title": "Jon's Arm Reference, a searchable site for the AArch64 instruction set and system registers, closes on December 4, 2026 at Arm's request; a reference a project depends on is safest taken from the vendor's own published source",
+      "summary": "Jon's Arm Reference (arm.jonpalmisc.com) gives searchable documentation for the AArch64 instructions (base, SIMD, SVE and SME) and the AArch64 and AArch32 system registers of the Armv8-A and Armv9-A architectures. Its author announces that it will close on December 4, 2026, after Arm's lawyers asked for it to be taken down, and that he is looking for a way to keep its links working. The site states no licence and no data source.",
+      "content_text": "Jon's Arm Reference (arm.jonpalmisc.com) gives searchable documentation for the AArch64 instructions (base, SIMD, SVE and SME) and the AArch64 and AArch32 system registers of the Armv8-A and Armv9-A architectures. Its author announces that it will close on December 4, 2026, after Arm's lawyers asked for it to be taken down, and that he is looking for a way to keep its links working. The site states no licence and no data source.",
+      "date_published": "2026-11-28T00:00:00Z",
+      "tags": [
+        "practice",
+        "learn",
+        "advice",
+        "arm",
+        "aarch64",
+        "documentation",
+        "licensing",
+        "references"
+      ]
+    },
+    {
+      "id": "2026-11-28-micro-language-models",
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-28-micro-language-models.md",
+      "title": "Micro language models of 8 to 30 million parameters write the first four to eight words of an answer on the device in 55 ms while a cloud model continues it; people rated the joined answer as good as the cloud's alone or better in 75.6% of judgments",
+      "summary": "Wen Cheng, Tuochao Chen, Karim Helwani, Sriram Srinivasan, Luke Zettlemoyer and Shyamnath Gollakota, of the University of Washington and Meta AI, present micro language models at EMNLP 2026 (pages 3240-3264). Models of 8.8 to 29.5 million parameters, trained from scratch on 1.485 billion tokens of chat, write the first 4 to 8 words of an answer on the device and commit them; a cloud model, prompted as a continuator, finishes the sentence. On an Orange Pi the 28M model gives its first token in 45 ms and four words in 55 ms, against 0.2 to 5 seconds or more for a cloud answer. The cloud model must correct the opener in 3.7% of answers at 4 words, 8.4% at 8 and 16.4% at 16. With 25 participants the joined answer was preferred in 33.6% of cases, judged equal in 42.0% and the cloud's alone preferred in 24.4%; in a live test 10 participants preferred it in 42 of 50 trials. The checkpoint and a demo are published. The figures are the authors' own.",
+      "content_text": "Wen Cheng, Tuochao Chen, Karim Helwani, Sriram Srinivasan, Luke Zettlemoyer and Shyamnath Gollakota, of the University of Washington and Meta AI, present micro language models at EMNLP 2026 (pages 3240-3264). Models of 8.8 to 29.5 million parameters, trained from scratch on 1.485 billion tokens of chat, write the first 4 to 8 words of an answer on the device and commit them; a cloud model, prompted as a continuator, finishes the sentence. On an Orange Pi the 28M model gives its first token in 45 ms and four words in 55 ms, against 0.2 to 5 seconds or more for a cloud answer. The cloud model must correct the opener in 3.7% of answers at 4 words, 8.4% at 8 and 16.4% at 16. With 25 participants the joined answer was preferred in 33.6% of cases, judged equal in 42.0% and the cloud's alone preferred in 24.4%; in a live test 10 participants preferred it in 42 of 50 trials. The checkpoint and a demo are published. The figures are the authors' own.",
+      "date_published": "2026-11-28T00:00:00Z",
+      "tags": [
+        "paper",
+        "learn",
+        "advice",
+        "small-models",
+        "on-device",
+        "latency",
+        "wearables",
+        "collaborative-generation",
+        "edge"
+      ]
+    },
+    {
+      "id": "2026-11-28-open486-fpga-pc",
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-28-open486-fpga-pc.md",
+      "title": "open486 rebuilds a 486 PC in one FPGA, with its own microcoded core, x87 unit, graphics, sound and BIOS, and runs Windows 95, DOOM and Quake on one FPGA board after two weeks of work",
+      "summary": "open486, a Vayner Systems project begun on November 12, 2026, rebuilds a 486-compatible PC in a Digilent Arty A7-100T FPGA at 50 MHz: its own staged, microcoded CPU core with an x87 unit, its own SVGA, Sound Blaster 16, OPL3 and MPU-401 audio, NE2000 network, IDE on microSD, and its own BIOS and VGA BIOS, using about 59,000 of the board's 63,400 LUTs (93%). It runs DOS and Windows 95 OSR2.5, browses the web from Windows 95, and runs DOOM, Quake, Wolfenstein 3D and Prince of Persia. It scores 174 on TopBench in CrystalMark Retro 2.1.0. Cycle counts are published per instruction against Intel's 486 manual. The source is to be published under Apache 2.0. The figures are the project's own.",
+      "content_text": "open486, a Vayner Systems project begun on November 12, 2026, rebuilds a 486-compatible PC in a Digilent Arty A7-100T FPGA at 50 MHz: its own staged, microcoded CPU core with an x87 unit, its own SVGA, Sound Blaster 16, OPL3 and MPU-401 audio, NE2000 network, IDE on microSD, and its own BIOS and VGA BIOS, using about 59,000 of the board's 63,400 LUTs (93%). It runs DOS and Windows 95 OSR2.5, browses the web from Windows 95, and runs DOOM, Quake, Wolfenstein 3D and Prince of Persia. It scores 174 on TopBench in CrystalMark Retro 2.1.0. Cycle counts are published per instruction against Intel's 486 manual. The source is to be published under Apache 2.0. The figures are the project's own.",
+      "date_published": "2026-11-28T00:00:00Z",
+      "tags": [
+        "release",
+        "watch",
+        "advice",
+        "fpga",
+        "x86",
+        "retro-computing",
+        "hardware",
+        "microcode"
+      ]
+    },
+    {
+      "id": "2026-11-28-shirudo-live-patching",
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-28-shirudo-live-patching.md",
+      "title": "OpenAI and Cisco publish Shirudo, a BSD-licensed runtime that loads signed eBPF patches into a running Linux system to block an exploit until the fix ships, each load verified by the kernel and recorded in the TPM",
+      "summary": "On November 23, 2026 OpenAI and Cisco introduced Shirudo, an open-source runtime (BSD 2-Clause, its BPF programs dual BSD and GPL) that protects a running Linux system while a patch is prepared. A protection, called an upatch, is a signed eBPF loader that attaches to hooks such as BPF LSM, fentry and fexit, uprobes and XDP; the kernel checks its ML-DSA-87 signature against a sealed keyring before it loads, and every change to the loaded set extends a TPM 2.0 register that can be attested offline. Engineers and agents can write upatches. In a controlled test, a Codex-generated protection added an input check to Java's Base64 decoder and blocked an exploit attempt against a running Elasticsearch without a restart. The project is pre-release and needs a kernel with its signed-loader patches. The claims are the vendors' own.",
+      "content_text": "On November 23, 2026 OpenAI and Cisco introduced Shirudo, an open-source runtime (BSD 2-Clause, its BPF programs dual BSD and GPL) that protects a running Linux system while a patch is prepared. A protection, called an upatch, is a signed eBPF loader that attaches to hooks such as BPF LSM, fentry and fexit, uprobes and XDP; the kernel checks its ML-DSA-87 signature against a sealed keyring before it loads, and every change to the loaded set extends a TPM 2.0 register that can be attested offline. Engineers and agents can write upatches. In a controlled test, a Codex-generated protection added an input check to Java's Base64 decoder and blocked an exploit attempt against a running Elasticsearch without a restart. The project is pre-release and needs a kernel with its signed-loader patches. The claims are the vendors' own.",
+      "date_published": "2026-11-28T00:00:00Z",
+      "tags": [
+        "security",
+        "learn",
+        "advice",
+        "ebpf",
+        "live-patching",
+        "linux",
+        "tpm",
+        "signing",
+        "vulnerability-response",
+        "agents"
+      ]
+    },
+    {
       "id": "2026-11-27-distilling-kimi-into-qwen",
       "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-27-distilling-kimi-into-qwen.md",
       "title": "Together AI distils Kimi-K3.1-Pro's Lao translation into Qwen3.8-27B for $260 in all, from 4,000 teacher translations, reaching 93% of the teacher's score while a language it was not trained on holds",

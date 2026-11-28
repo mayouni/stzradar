@@ -1645,6 +1645,146 @@
           "It fell from 46.7 to 5.3; mixing Thai into the data kept it at 47.8."
         ]
       ]
+    },
+    "2026-11-28-micro-language-models": {
+      "build": [
+        {
+          "why": "Measure how long your assistant takes to show its first word, the wait a user feels. This only reads.",
+          "cmd": "curl -s -o /dev/null -w '%{time_starttransfer}\\n' -N http://localhost:8080/v1/chat/completions -H 'Content-Type: application/json' -d '{\"messages\":[{\"role\":\"user\",\"content\":\"Hello\"}],\"stream\":true}'"
+        },
+        {
+          "why": "Measure the time to the whole answer beside it. This only reads.",
+          "cmd": "curl -s -o /dev/null -w '%{time_total}\\n' http://localhost:8080/v1/chat/completions -H 'Content-Type: application/json' -d '{\"messages\":[{\"role\":\"user\",\"content\":\"Hello\"}]}'"
+        }
+      ],
+      "lesson": "When you ask an AI assistant on a watch or glasses a question, the answer usually comes from a big model far away, and you wait a second or more for the first word. These researchers built tiny models, thousands of times smaller than the big ones, that run on the device and write the first few words at once. The big model then continues the same sentence. Most people found the joined answer as good as the big model's alone, and clearly faster. When the tiny model starts wrong, the big one steers the answer back smoothly.",
+      "terms": [
+        [
+          "parameters",
+          "the numbers a model learns; their count measures its size"
+        ],
+        [
+          "time to first token",
+          "how long a model takes before it shows the first piece of its answer"
+        ],
+        [
+          "on-device",
+          "running on the user's own device rather than on a distant server"
+        ],
+        [
+          "continuator",
+          "a model asked to continue a text already started, rather than to answer from scratch"
+        ]
+      ],
+      "quiz": [
+        [
+          "Why do 4 to 8 words hide the cloud's delay?",
+          "People read about 4 words a second, so the opener keeps them reading for 1 to 2 seconds while the cloud answers."
+        ],
+        [
+          "Why not commit 16 words?",
+          "The cloud model had to correct the opener in 16.4% of answers at 16 words, against 3.7% at 4."
+        ]
+      ]
+    },
+    "2026-11-28-shirudo-live-patching": {
+      "build": [
+        {
+          "why": "See whether your kernel can run BPF LSM programs, the hook such protections use. This only reads.",
+          "cmd": "cat /sys/kernel/security/lsm"
+        },
+        {
+          "why": "List the eBPF programs loaded on your machine now. This only reads, and needs root.",
+          "cmd": "sudo bpftool prog list"
+        },
+        {
+          "why": "See whether your machine has a TPM 2.0, which records what was loaded. This only reads.",
+          "cmd": "ls /dev/tpm*"
+        }
+      ],
+      "lesson": "When a security flaw is announced, the fix can take days to reach your servers. OpenAI and Cisco published a tool that fills those days: a small program, loaded into the running system's kernel, that blocks the input the attack needs, without restarting anything. Each program must carry a signature the kernel trusts, and the machine's security chip keeps a record of every one loaded. An AI agent can write the program, but it cannot sign it.",
+      "terms": [
+        [
+          "eBPF",
+          "a way to run small, checked programs inside the Linux kernel without changing the kernel itself"
+        ],
+        [
+          "TPM",
+          "a security chip in the computer that keeps a tamper-proof record of what was loaded"
+        ],
+        [
+          "mitigation",
+          "a measure that blocks or reduces an attack until the real fix is installed"
+        ],
+        [
+          "live patching",
+          "changing a running system's behaviour without restarting it"
+        ]
+      ],
+      "quiz": [
+        [
+          "What stops an agent from loading its own protection?",
+          "The kernel loads only programs signed with a key in its sealed keyring, which the agent does not hold."
+        ],
+        [
+          "What does Shirudo need from the machine?",
+          "A kernel with its signed-loader patches and a TPM 2.0."
+        ]
+      ]
+    },
+    "2026-11-28-open486-fpga-pc": {
+      "build": [
+        {
+          "why": "See which instructions your own processor supports, the list a compatible core must match. This only reads.",
+          "cmd": "grep -m1 flags /proc/cpuinfo"
+        }
+      ],
+      "lesson": "An FPGA is a chip whose circuits can be rewired by a program. One developer used one to rebuild a complete 1990s PC: the processor, the graphics card, the sound card and the startup software, all designed from scratch. In two weeks it ran Windows 95, browsed the web, and played DOOM and Quake. The project shows its progress with numbers anyone can check: what runs, a benchmark score, and how many clock cycles each instruction takes compared with the original chip.",
+      "terms": [
+        [
+          "FPGA",
+          "a chip whose internal circuits can be configured by a program, used to build custom hardware"
+        ],
+        [
+          "microcode",
+          "small internal programs a processor runs to carry out its more complex instructions"
+        ],
+        [
+          "LUT",
+          "a look-up table, the basic building block of an FPGA; its count measures how full the chip is"
+        ]
+      ],
+      "quiz": [
+        [
+          "What does open486 run on?",
+          "One Digilent Arty A7-100T FPGA board at 50 MHz, using 93% of its LUTs."
+        ]
+      ]
+    },
+    "2026-11-28-arm-reference-takedown": {
+      "build": [
+        {
+          "why": "Find the links to a third-party reference in your project, so they can point at the vendor's own pages. This only reads.",
+          "cmd": "grep -rn 'arm.jonpalmisc.com' ."
+        }
+      ],
+      "lesson": "Programmers who write code close to the processor need a reference that lists every instruction. A developer built a fast, searchable one for Arm processors, from Arm's own documentation. Arm's lawyers asked him to take it down, and it closes on December 4. If your project depends on such a page, link to the maker's own documentation and keep a copy of the version you used.",
+      "terms": [
+        [
+          "AArch64",
+          "the 64-bit instruction set of Arm processors"
+        ],
+        [
+          "system register",
+          "a processor register that controls or reports the state of the machine"
+        ]
+      ],
+      "quiz": [
+        [
+          "Why is the reference closing?",
+          "Arm's lawyers asked its author to take it down."
+        ]
+      ]
     }
   }
 }
