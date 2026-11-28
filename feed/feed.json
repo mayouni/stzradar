@@ -25,6 +25,25 @@
       ]
     },
     {
+      "id": "2026-11-28-grok-toolkit-list-checked",
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-28-grok-toolkit-list-checked.md",
+      "title": "A list of 14 agent repositories said to be SpaceXAI's overlooked Grok toolkit, checked on GitHub: all 14 exist, Grok Build's Rust coding agent has 27,910 stars, and the published Grok prompts were last changed in November 2025",
+      "summary": "A widely shared post lists 14 GitHub repositories as a free Grok toolkit that almost nobody opened. Checked on GitHub on 2026-11-28, all 14 exist. Seven belong to xai-org, SpaceXAI's organisation: grok-build, the Rust source of its terminal coding agent (Apache 2.0, opened 2026-07-14, 27,910 stars), synced from the company's monorepo with a SOURCE_REV file naming the commit; grok-build-plugin-cc, a Claude Code plugin that hands reviews and tasks to the grok CLI (Apache 2.0); plugin-marketplace (no licence file); the Python and TypeScript SDKs (Apache 2.0); xai-cookbook; and grok-prompts (AGPL 3.0, 4,686 stars), whose system prompts were last changed on 2025-11-17. The other seven are third-party projects, among them orca (MIT, 143,324 stars), OpenHands (MIT, 94,494), litellm and MetaGPT. Grok Build installs by piping a script from x.ai into a shell, or builds from source.",
+      "content_text": "A widely shared post lists 14 GitHub repositories as a free Grok toolkit that almost nobody opened. Checked on GitHub on 2026-11-28, all 14 exist. Seven belong to xai-org, SpaceXAI's organisation: grok-build, the Rust source of its terminal coding agent (Apache 2.0, opened 2026-07-14, 27,910 stars), synced from the company's monorepo with a SOURCE_REV file naming the commit; grok-build-plugin-cc, a Claude Code plugin that hands reviews and tasks to the grok CLI (Apache 2.0); plugin-marketplace (no licence file); the Python and TypeScript SDKs (Apache 2.0); xai-cookbook; and grok-prompts (AGPL 3.0, 4,686 stars), whose system prompts were last changed on 2025-11-17. The other seven are third-party projects, among them orca (MIT, 143,324 stars), OpenHands (MIT, 94,494), litellm and MetaGPT. Grok Build installs by piping a script from x.ai into a shell, or builds from source.",
+      "date_published": "2026-11-28T00:00:00Z",
+      "tags": [
+        "practice",
+        "watch",
+        "advice",
+        "coding-agents",
+        "grok",
+        "open-source",
+        "prompts",
+        "verification",
+        "licensing"
+      ]
+    },
+    {
       "id": "2026-11-28-llm-os-browser-tab",
       "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-28-llm-os-browser-tab.md",
       "title": "LLM.OS runs Qwen models in a browser tab from a 52 KB engine written in Zig and compiled to WebAssembly: Qwen3-0.6B at about 124 tokens per second on an M3 Max's CPU, against 163 for llama.cpp on the same CPU, with a Python sandbox in the tab",

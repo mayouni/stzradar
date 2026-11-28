@@ -1892,6 +1892,35 @@
           "An organisation above $2M of revenue or funding using it commercially, and anyone building a parser that competes with LlamaParse."
         ]
       ]
+    },
+    "2026-11-28-grok-toolkit-list-checked": {
+      "build": [
+        {
+          "why": "Check a repository's licence, age and activity before trusting a list that names it. This only reads.",
+          "cmd": "gh api repos/xai-org/grok-build --jq '[.license.spdx_id, .created_at, .pushed_at, .stargazers_count]'"
+        },
+        {
+          "why": "See when published prompts last changed. This only reads.",
+          "cmd": "gh api 'repos/xai-org/grok-prompts/commits?per_page=1' --jq '.[0].commit.author.date'"
+        }
+      ],
+      "lesson": "Lists of 'secret' AI tools spread fast. Checking one takes a few minutes: open each link and read its licence, its age and its last change. This list's links were all real, but its claims were not: the tools were already popular, and the prompts it called the real ones had not changed in a year.",
+      "terms": [
+        [
+          "coding agent",
+          "a program in which an AI edits files and runs commands to complete a programming task"
+        ],
+        [
+          "system prompt",
+          "the hidden instructions a chat assistant receives before your message"
+        ]
+      ],
+      "quiz": [
+        [
+          "What does Grok Build's SOURCE_REV file record?",
+          "The commit of SpaceXAI's internal monorepo that the published source comes from."
+        ]
+      ]
     }
   }
 }

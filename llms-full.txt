@@ -21,6 +21,28 @@ For each reader:
 Sources:
 - Jon's Arm Reference: https://arm.jonpalmisc.com/
 
+## A list of 14 agent repositories said to be SpaceXAI's overlooked Grok toolkit, checked on GitHub: all 14 exist, Grok Build's Rust coding agent has 27,910 stars, and the published Grok prompts were last changed in November 2025
+
+- id: 2026-11-28-grok-toolkit-list-checked
+- date: 2026-11-28
+- level: advice
+- kind: practice
+- stance: watch
+- relevance: low
+- page: https://mayouni.github.io/stzradar/items/2026/2026-11-28-grok-toolkit-list-checked.md
+
+A widely shared post lists 14 GitHub repositories as a free Grok toolkit that almost nobody opened. Checked on GitHub on 2026-11-28, all 14 exist. Seven belong to xai-org, SpaceXAI's organisation: grok-build, the Rust source of its terminal coding agent (Apache 2.0, opened 2026-07-14, 27,910 stars), synced from the company's monorepo with a SOURCE_REV file naming the commit; grok-build-plugin-cc, a Claude Code plugin that hands reviews and tasks to the grok CLI (Apache 2.0); plugin-marketplace (no licence file); the Python and TypeScript SDKs (Apache 2.0); xai-cookbook; and grok-prompts (AGPL 3.0, 4,686 stars), whose system prompts were last changed on 2025-11-17. The other seven are third-party projects, among them orca (MIT, 143,324 stars), OpenHands (MIT, 94,494), litellm and MetaGPT. Grok Build installs by piping a script from x.ai into a shell, or builds from source.
+
+For each reader:
+- developer: Grok Build is a vendor's coding agent with its Rust source in the open and the monorepo commit recorded beside it; read it as a reference harness. Check a list before acting on it: the published Grok prompts are a year old, and one repository in the list carries no licence.
+- learner: Posts that list many tools often add claims nobody checked. Here every link was real, but the tools were not overlooked, and the prompts called 'the real ones' had not changed for a year.
+
+Sources:
+- xai-org on GitHub: https://github.com/xai-org
+- grok-build: https://github.com/xai-org/grok-build
+- grok-build-plugin-cc: https://github.com/xai-org/grok-build-plugin-cc
+- grok-prompts: https://github.com/xai-org/grok-prompts
+
 ## LLM.OS runs Qwen models in a browser tab from a 52 KB engine written in Zig and compiled to WebAssembly: Qwen3-0.6B at about 124 tokens per second on an M3 Max's CPU, against 163 for llama.cpp on the same CPU, with a Python sandbox in the tab
 
 - id: 2026-11-28-llm-os-browser-tab
