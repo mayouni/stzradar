@@ -16,7 +16,7 @@
     "maintainer": "Softanza places models where the data and the user are. This paper adds a placement: a micro model on the device for the first words, a large model for the rest, joined mid-sentence. It sets a figure to measure Softanza's own small models against, the time to the first word on the user's machine.",
     "learner": "A very small AI on your watch can start an answer at once while a big AI far away writes the rest, so you never wait for the first word."
   },
-  "areas": ["aicha", "harobanda"],
+  "areas": ["aicha", "harobanda-edge"],
   "domains": ["models", "devices", "interfaces"],
   "concerns": ["speed", "sovereignty"],
   "actions": [

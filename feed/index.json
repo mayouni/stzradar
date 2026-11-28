@@ -75,7 +75,7 @@
       },
       "areas": [
         "aicha",
-        "harobanda"
+        "harobanda-edge"
       ],
       "domains": [
         "models",
@@ -136,7 +136,7 @@
         "learner": "Someone rebuilt a 1990s computer chip out of a reprogrammable chip, and it runs Windows 95 and DOOM."
       },
       "areas": [
-        "harobanda"
+        "harobanda-edge"
       ],
       "domains": [
         "devices"
