@@ -1785,6 +1785,76 @@
           "Arm's lawyers asked its author to take it down."
         ]
       ]
+    },
+    "2026-11-28-llm-os-browser-tab": {
+      "build": [
+        {
+          "why": "See whether your browser offers threads to WebAssembly: a page can share memory between threads only when it is cross-origin isolated. Run it in the browser's console. This only reads.",
+          "cmd": "console.log(self.crossOriginIsolated, typeof SharedArrayBuffer)"
+        },
+        {
+          "why": "Measure native decode speed for the same model file, the figure a browser engine is compared against. This only reads.",
+          "cmd": "llama-bench -m Qwen3-0.6B-Q4_K_M.gguf -t 8 -p 0 -n 64"
+        }
+      ],
+      "lesson": "An AI model can run inside a web page. LLM.OS downloads a small Qwen model once, keeps it in the browser, and computes every word on your own processor with a tiny engine of about 52 kilobytes. It reaches about three quarters of the speed of the usual native program on the same computer. The model can also write a short Python program, which runs in a sandbox in the same tab, to count or calculate what it would otherwise guess.",
+      "terms": [
+        [
+          "WebAssembly",
+          "a compact program format that web browsers run at close to native speed"
+        ],
+        [
+          "Q4_K_M",
+          "a way of storing a model's numbers in about 4 to 6 bits each, to make the model smaller"
+        ],
+        [
+          "Pyodide",
+          "the Python language compiled to WebAssembly, so it runs inside a browser"
+        ]
+      ],
+      "quiz": [
+        [
+          "Why does the model write Python to count the letters in a word?",
+          "A language model reads words in pieces and often miscounts; a program counts exactly."
+        ],
+        [
+          "What does 90.6% at Q4_K_M measure?",
+          "How often the 4-bit model's first choice of next token matches the full-precision model's."
+        ]
+      ]
+    },
+    "2026-11-28-unkernel-linux-wasm": {
+      "build": [
+        {
+          "why": "Boot unkernel's Alpine in your terminal with Node 24 or later; it downloads the kernel and an image and starts a shell.",
+          "cmd": "npx unkernel"
+        },
+        {
+          "why": "Inside the booted machine, see which kernel and processor the programs believe they run on. This only reads.",
+          "cmd": "uname -a"
+        }
+      ],
+      "lesson": "Linux, the system under most servers, can now start inside a web page. unkernel turns the Linux kernel into one WebAssembly file that a browser runs, then runs ordinary Linux programs on top of it by imitating an Arm processor. It reaches a shell in under a second, keeps your files between visits, and needs nothing installed. Programs that compute a lot run slower than on a real machine, because their instructions are imitated.",
+      "terms": [
+        [
+          "kernel",
+          "the core of an operating system, which manages memory, processes and devices"
+        ],
+        [
+          "MMU",
+          "the memory management unit, which gives each program its own view of memory"
+        ],
+        [
+          "JIT",
+          "just-in-time compilation: turning often-run code into faster code while the program runs"
+        ]
+      ],
+      "quiz": [
+        [
+          "Which part of unkernel is compiled and which is emulated?",
+          "The Linux kernel is compiled to WebAssembly; user programs are aarch64 binaries run on an emulated processor."
+        ]
+      ]
     }
   }
 }

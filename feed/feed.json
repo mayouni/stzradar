@@ -25,6 +25,27 @@
       ]
     },
     {
+      "id": "2026-11-28-llm-os-browser-tab",
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-28-llm-os-browser-tab.md",
+      "title": "LLM.OS runs Qwen models in a browser tab from a 52 KB engine written in Zig and compiled to WebAssembly: Qwen3-0.6B at about 124 tokens per second on an M3 Max's CPU, against 163 for llama.cpp on the same CPU, with a Python sandbox in the tab",
+      "summary": "Tesseracted Labs GmbH published LLM.OS, a terminal in a browser tab that runs Qwen3.5-2B, Qwen3.5-0.8B, Qwen3-1.7B and Qwen3-0.6B, as Unsloth's Q4_K_M weights downloaded once and kept in the browser cache. The engine is 52 to 55 KB, written in Zig for wasm32-freestanding, and began as a port of llm.asm; it runs on the CPU with a small thread pool on shared memory and a faster dot product where the browser has relaxed SIMD. Measured on 27 and 28 November 2026 on an Apple M3 Max with 8 threads in headless Chrome, it decodes Qwen3-0.6B at about 124 tokens per second and Qwen3-1.7B at about 52, against 163 and 80 for llama.cpp on the same CPU; it reads the prompt one token at a time, at about 160 tokens per second against llama.cpp's 513. The tab holds 0.6 to 1.4 GB. A /python command has the model write code that runs in Pyodide in the same tab, with the standard library only, no network and a 15-second limit. The page measures how often Qwen3-0.6B's first choice matches full precision: 98.5% at 8 bits, 90.6% at Q4_K_M, 84.4% at Q4_0. The figures are the authors' own.",
+      "content_text": "Tesseracted Labs GmbH published LLM.OS, a terminal in a browser tab that runs Qwen3.5-2B, Qwen3.5-0.8B, Qwen3-1.7B and Qwen3-0.6B, as Unsloth's Q4_K_M weights downloaded once and kept in the browser cache. The engine is 52 to 55 KB, written in Zig for wasm32-freestanding, and began as a port of llm.asm; it runs on the CPU with a small thread pool on shared memory and a faster dot product where the browser has relaxed SIMD. Measured on 27 and 28 November 2026 on an Apple M3 Max with 8 threads in headless Chrome, it decodes Qwen3-0.6B at about 124 tokens per second and Qwen3-1.7B at about 52, against 163 and 80 for llama.cpp on the same CPU; it reads the prompt one token at a time, at about 160 tokens per second against llama.cpp's 513. The tab holds 0.6 to 1.4 GB. A /python command has the model write code that runs in Pyodide in the same tab, with the standard library only, no network and a 15-second limit. The page measures how often Qwen3-0.6B's first choice matches full precision: 98.5% at 8 bits, 90.6% at Q4_K_M, 84.4% at Q4_0. The figures are the authors' own.",
+      "date_published": "2026-11-28T00:00:00Z",
+      "tags": [
+        "release",
+        "learn",
+        "advice",
+        "webassembly",
+        "browser",
+        "zig",
+        "inference",
+        "qwen3",
+        "quantization",
+        "small-models",
+        "pyodide"
+      ]
+    },
+    {
       "id": "2026-11-28-micro-language-models",
       "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-28-micro-language-models.md",
       "title": "Micro language models of 8 to 30 million parameters write the first four to eight words of an answer on the device in 55 ms while a cloud model continues it; people rated the joined answer as good as the cloud's alone or better in 75.6% of judgments",
@@ -79,6 +100,26 @@
         "signing",
         "vulnerability-response",
         "agents"
+      ]
+    },
+    {
+      "id": "2026-11-28-unkernel-linux-wasm",
+      "url": "https://github.com/mayouni/stzradar/blob/main/items/2026/2026-11-28-unkernel-linux-wasm.md",
+      "title": "unkernel compiles the Linux 7 kernel to one WebAssembly module with a real MMU, boots it to a shell in under a second in a browser tab or in Node, and runs unmodified Alpine and Debian aarch64 programs on an emulated processor with a JIT",
+      "summary": "unkernel, by Pooya Parsa and sponsored by Vercel's open source programme, builds Linux 7.x as a single WebAssembly module with page tables and a real MMU, grown from Joel Severin's arch/wasm port. The kernel is compiled, not emulated; user programs are unmodified aarch64 Linux binaries run on kwemu, an emulated processor written in Zig and linked into the kernel, whose JIT compiles hot code to WebAssembly. The kernel reaches /init in about 70 ms, and an Alpine prompt appears 0.3 s after Node starts; getppid takes about 170 ns against 110 natively and fork with exit and wait about 60 microseconds. Several processors run as threads on shared memory, about 3 times faster with 4 on parallel work. The root is a read-only erofs image under a persistent ext4 disk; in the browser writes are kept in IndexedDB. Networking runs Linux's own TCP/IP through a Wisp proxy in the browser or host sockets in Node. The repository (pithings/unkernel, GPL-2.0 on GitHub, opened 2026-11-12) is public. The figures are the author's own.",
+      "content_text": "unkernel, by Pooya Parsa and sponsored by Vercel's open source programme, builds Linux 7.x as a single WebAssembly module with page tables and a real MMU, grown from Joel Severin's arch/wasm port. The kernel is compiled, not emulated; user programs are unmodified aarch64 Linux binaries run on kwemu, an emulated processor written in Zig and linked into the kernel, whose JIT compiles hot code to WebAssembly. The kernel reaches /init in about 70 ms, and an Alpine prompt appears 0.3 s after Node starts; getppid takes about 170 ns against 110 natively and fork with exit and wait about 60 microseconds. Several processors run as threads on shared memory, about 3 times faster with 4 on parallel work. The root is a read-only erofs image under a persistent ext4 disk; in the browser writes are kept in IndexedDB. Networking runs Linux's own TCP/IP through a Wisp proxy in the browser or host sockets in Node. The repository (pithings/unkernel, GPL-2.0 on GitHub, opened 2026-11-12) is public. The figures are the author's own.",
+      "date_published": "2026-11-28T00:00:00Z",
+      "tags": [
+        "release",
+        "learn",
+        "advice",
+        "webassembly",
+        "linux",
+        "browser",
+        "emulation",
+        "jit",
+        "sandbox",
+        "zig"
       ]
     },
     {

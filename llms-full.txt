@@ -21,6 +21,29 @@ For each reader:
 Sources:
 - Jon's Arm Reference: https://arm.jonpalmisc.com/
 
+## LLM.OS runs Qwen models in a browser tab from a 52 KB engine written in Zig and compiled to WebAssembly: Qwen3-0.6B at about 124 tokens per second on an M3 Max's CPU, against 163 for llama.cpp on the same CPU, with a Python sandbox in the tab
+
+- id: 2026-11-28-llm-os-browser-tab
+- date: 2026-11-28
+- level: advice
+- kind: release
+- stance: learn
+- relevance: medium
+- page: https://mayouni.github.io/stzradar/items/2026/2026-11-28-llm-os-browser-tab.md
+
+Tesseracted Labs GmbH published LLM.OS, a terminal in a browser tab that runs Qwen3.5-2B, Qwen3.5-0.8B, Qwen3-1.7B and Qwen3-0.6B, as Unsloth's Q4_K_M weights downloaded once and kept in the browser cache. The engine is 52 to 55 KB, written in Zig for wasm32-freestanding, and began as a port of llm.asm; it runs on the CPU with a small thread pool on shared memory and a faster dot product where the browser has relaxed SIMD. Measured on 27 and 28 November 2026 on an Apple M3 Max with 8 threads in headless Chrome, it decodes Qwen3-0.6B at about 124 tokens per second and Qwen3-1.7B at about 52, against 163 and 80 for llama.cpp on the same CPU; it reads the prompt one token at a time, at about 160 tokens per second against llama.cpp's 513. The tab holds 0.6 to 1.4 GB. A /python command has the model write code that runs in Pyodide in the same tab, with the standard library only, no network and a 15-second limit. The page measures how often Qwen3-0.6B's first choice matches full precision: 98.5% at 8 bits, 90.6% at Q4_K_M, 84.4% at Q4_0. The figures are the authors' own.
+
+For each reader:
+- developer: A small model needs no server: a 52 KB WebAssembly engine runs a 0.6B model in a tab at about three quarters of native CPU speed. Choose the quantization by measured agreement: at Q4_K_M the 0.6B model's first choice differs from full precision on almost one token in ten.
+- maintainer: Softanza's engine is written in Zig and runs small models where the data lives. LLM.OS shows a Zig inference engine compiled to WebAssembly reaching 76% of llama.cpp's CPU decode speed on the same machine, with tools run in a sandbox in the same tab: a measured reference for a tier where the user installs nothing.
+- learner: This page runs a small AI inside your web browser. The model is downloaded once, and every word is computed on your own computer, so nothing you type leaves it.
+
+Proposed:
+- stzlib.intelligence: measure a browser tier for the local answer path: run the same Q4_K_M small model through a Zig engine compiled to wasm32 on the client's machine and record decode and prompt speed against the native engine, the memory the tab holds, and the share of first choices that match full precision at each quantization offered (routed)
+
+Sources:
+- LLM.OS: https://tesseracted.com/experiments-llm-os/
+
 ## Micro language models of 8 to 30 million parameters write the first four to eight words of an answer on the device in 55 ms while a cloud model continues it; people rated the joined answer as good as the cloud's alone or better in 75.6% of judgments
 
 - id: 2026-11-28-micro-language-models
@@ -87,6 +110,30 @@ Sources:
 - OpenAI and Cisco introduce Shirudo: https://openai.com/index/introducing-shirudo/
 - shirudo: https://github.com/shirudo-dev/shirudo
 - Shirudo documentation: https://docs.shirudo.dev/
+
+## unkernel compiles the Linux 7 kernel to one WebAssembly module with a real MMU, boots it to a shell in under a second in a browser tab or in Node, and runs unmodified Alpine and Debian aarch64 programs on an emulated processor with a JIT
+
+- id: 2026-11-28-unkernel-linux-wasm
+- date: 2026-11-28
+- level: advice
+- kind: release
+- stance: learn
+- relevance: medium
+- page: https://mayouni.github.io/stzradar/items/2026/2026-11-28-unkernel-linux-wasm.md
+
+unkernel, by Pooya Parsa and sponsored by Vercel's open source programme, builds Linux 7.x as a single WebAssembly module with page tables and a real MMU, grown from Joel Severin's arch/wasm port. The kernel is compiled, not emulated; user programs are unmodified aarch64 Linux binaries run on kwemu, an emulated processor written in Zig and linked into the kernel, whose JIT compiles hot code to WebAssembly. The kernel reaches /init in about 70 ms, and an Alpine prompt appears 0.3 s after Node starts; getppid takes about 170 ns against 110 natively and fork with exit and wait about 60 microseconds. Several processors run as threads on shared memory, about 3 times faster with 4 on parallel work. The root is a read-only erofs image under a persistent ext4 disk; in the browser writes are kept in IndexedDB. Networking runs Linux's own TCP/IP through a Wisp proxy in the browser or host sockets in Node. The repository (pithings/unkernel, GPL-2.0 on GitHub, opened 2026-11-12) is public. The figures are the author's own.
+
+For each reader:
+- developer: A real Linux, with its packages, can now run in a browser tab or a Node process with nothing installed: about 10 MB to download, a shell in under a second, and a disk that keeps its changes. Expect CPU-heavy programs to run well behind native, since user code is emulated.
+- maintainer: Harobanda declares the machine an application runs on. unkernel adds a machine that exists only inside a browser tab or a Node process, with real Linux semantics, persistence and networking through a proxy: a target to measure for trying a Softanza application with nothing installed.
+
+Proposed:
+- harobanda: measure unkernel as a declared machine: run a Linux aarch64 build of a Softanza tool under it in Node and in the browser, and record boot to first output, the tool's run time against native, memory held, and whether its files persist across reloads (routed)
+
+Sources:
+- unkernel: https://unkernel.dev/
+- unkernel documentation: https://docs.unkernel.dev/
+- pithings/unkernel: https://github.com/pithings/unkernel
 
 ## Together AI distils Kimi-K3.1-Pro's Lao translation into Qwen3.8-27B for $260 in all, from 4,000 teacher translations, reaching 93% of the teacher's score while a language it was not trained on holds
 
