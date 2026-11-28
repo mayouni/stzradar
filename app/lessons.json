@@ -1855,6 +1855,43 @@
           "The Linux kernel is compiled to WebAssembly; user programs are aarch64 binaries run on an emulated processor."
         ]
       ]
+    },
+    "2026-11-28-ocria-document-parsing": {
+      "build": [
+        {
+          "why": "Render one PDF page to an image at 300 DPI, the input the model expects. This only reads the PDF.",
+          "cmd": "python3 -c \"import fitz;fitz.open('doc.pdf')[0].get_pixmap(dpi=300).save('page.png')\""
+        },
+        {
+          "why": "Parse the page with the model through Ollama, with thinking off as its card requires.",
+          "cmd": "ollama run llamaindex/ocria-1 --think=false ./page.png"
+        }
+      ],
+      "lesson": "OCR reads the letters on a picture of a page. Newer models do more: they read a whole page and rewrite it as clean text, with its tables, charts and formulas kept as structure. OCRia-1 does this with a model of 4 billion parameters, small enough for one graphics card, and scores ahead of models many times its size. Its maker shares the model's numbers, but its licence asks larger companies to pay and forbids building a rival service on it, so read the licence before you build.",
+      "terms": [
+        [
+          "OCR",
+          "optical character recognition: reading text from an image"
+        ],
+        [
+          "vision-language model",
+          "a model that reads images and text together and answers in text"
+        ],
+        [
+          "open weights",
+          "a model whose numbers are published; its licence still sets what you may do with them"
+        ]
+      ],
+      "quiz": [
+        [
+          "Why is the 4-bit version of OCRia-1 not published?",
+          "It lost over 6 points on financial tables against the 8-bit version."
+        ],
+        [
+          "Who must buy a commercial licence for OCRia-1?",
+          "An organisation above $2M of revenue or funding using it commercially, and anyone building a parser that competes with LlamaParse."
+        ]
+      ]
     }
   }
 }
