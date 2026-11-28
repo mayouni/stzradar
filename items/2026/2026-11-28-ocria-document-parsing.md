@@ -30,7 +30,7 @@
     {"title": "OCRia-nano-1 model card", "url": "https://huggingface.co/llamaindex/OCRia-nano-1", "by": "LlamaIndex", "read": "2026-11-28"}
   ],
   "review_by": "2027-02-28",
-  "tags": ["ocr", "document-parsing", "vision-language-models", "tables", "licensing", "ollama", "qwen3.5"]
+  "tags": ["ocr", "document-parsing", "vision-language-models", "tables", "licensing", "ollama", "qwen"]
 }
 ```
 
